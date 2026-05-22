@@ -19,6 +19,7 @@
 | **V3.3** | Sprints históricas pendentes (SPRINT_ORDER.md) | 111–115 | P1–P2 |
 | **V3.4** | COSMIC nativo (forward-looking, opt-in) | 116–119 | P2–P3 |
 | **V3.5** | Polish/UX a partir de uso real | aberto | P3 |
+| **V3.6** | Acabamento COSMIC round 2 (bugs de uso real pós-v3.5.0) | 120–121 + 116 (promovida) | P0–P1 |
 
 ---
 
@@ -206,6 +207,44 @@ Integração com `cosmic-settings` para registrar atalhos globais (alternativa a
 **Tamanho:** L | **Status:** PENDING (depende 116)
 
 Widget de painel COSMIC (não confundir com tray) mostrando bateria + perfil ativo. Implementado via libcosmic.
+
+---
+
+## Wave V3.6 — Acabamento COSMIC round 2 (bugs de uso real pós-v3.5.0)
+
+Origem: validação em hardware da mantenedora (Pop!_OS COSMIC + DualSense USB,
+2026-05-21), após a v3.5.0. Três frentes disjuntas (CSS / daemon / Rust) →
+executáveis em paralelo.
+
+### 120 — BUG-GUI-COSMIC-WIDGET-CONTRAST-01
+
+**Tamanho:** M | **Modelo:** opus | **Status:** READY | **Prioridade:** P0
+
+**Problema:** botões aparecem brancos (texto branco sobre fundo branco) e
+dropdowns "feios" em todas as abas no COSMIC. O v3.5.0 corrigiu o header do
+notebook e o popup de menu, mas os botões (`background: transparent`) e o display
+do combobox seguem herdando o tema claro do sistema. Fix em `gui/theme.css` (fundo
+sólido nos botões + toggle `:checked` + containers + combobox) + `app/theme.py`
+(prefer-dark). Ver sprint dedicada.
+
+### 121 — BUG-DAEMON-CONNECT-GHOST-INPUT-01
+
+**Tamanho:** M | **Modelo:** opus | **Status:** READY | **Prioridade:** P0
+
+**Problema:** ao conectar o DualSense, o microfone do sistema muta e teclas/atalhos
+disparam sozinhos. Causa: estado inicial cru (HID `micBtn` sujo + snapshot evdev) é
+tratado como input real — `previous_buttons` vazio e edge-trackers zerados no 1º
+tick, sem grace-period. Fix: baseline de botões no 1º tick + período de assentamento
+pós-conexão no `_poll_loop`/`connection.py`. Ver sprint dedicada.
+
+### 116 — FEAT-COSMIC-APPLET-RUST-01 (promovida de V3.4)
+
+**Tamanho:** XL | **Modelo:** opus | **Status:** READY | **Prioridade:** P1
+
+**Problema:** o "tray" não aparece nos Miniaplicativos do COSMIC. Entrega: applet
+nativo COSMIC em Rust + libcosmic (espelha `extra-cosmic-xkill-applet` da mantenedora),
+registrado via `.desktop` `X-CosmicApplet=true`, falando com o daemon pelo IPC Unix
+socket. Subprojeto isolado em `packaging/cosmic-applet/`. Ver sprint dedicada.
 
 ---
 
