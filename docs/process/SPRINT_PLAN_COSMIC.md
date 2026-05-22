@@ -20,6 +20,7 @@
 | **V3.4** | COSMIC nativo (forward-looking, opt-in) | 116–119 | P2–P3 |
 | **V3.5** | Polish/UX a partir de uso real | aberto | P3 |
 | **V3.6** | Acabamento COSMIC round 2 (bugs de uso real pós-v3.5.0) | 120–121 + 116 (promovida) | P0–P1 |
+| **V3.7** | Recuperação de instalação + áudio COSMIC (auditoria pós-instalação mista) | 122–129 | P0 |
 
 ---
 
@@ -287,6 +288,93 @@ Para tag `v3.1.0` (COSMIC hardening):
 - [ ] Ruff + mypy strict verdes
 - [ ] `./run.sh --smoke` USB verde em COSMIC real
 - [ ] Smoke `.deb` install funciona em `ubuntu-24.04` (CI)
+
+---
+
+## Wave V3.7 — Recuperação de instalação + áudio COSMIC — P0
+
+Objetivo: recuperar a máquina da mantenedora após instalação mista (.deb +
+flatpak + nativo) e fechar os bugs de instalação/áudio da auditoria profunda de
+2026-05-22. Índice agregado: `docs/process/sprints/V3.7-INDEX.md`.
+
+### 122 — CHORE-CONFIG-MIGRATE-LEGACY-SHORT-PATH-01
+
+**Tamanho:** S | **Modelo:** opus | **Status:** DONE
+
+**Problema:** código usa `~/.config/hefesto-dualsense4unix` (longo) mas os perfis
+da usuária estão no curto legado `~/.config/hefesto`; `gui_prefs.py` ainda gravava
+no curto. Reinstalar → perfis "somem".
+**Entrega:** `utils/migrate_legacy_paths.py` (copy-if-missing) no boot do daemon e
+da GUI; `gui_prefs.py` passa a usar `xdg_paths`; `install.sh` migra antes dos defaults.
+**Validação:** `tests/unit/test_migrate_legacy_paths.py`; gates.
+
+### 123 — BUG-UDEV-HOTPLUG-UNIT-NAME-MISMATCH-01
+
+**Tamanho:** XS | **Modelo:** opus | **Status:** DONE
+
+**Problema:** `assets/73,74` chamavam `hefesto-gui-hotplug.service`; a unit real é
+`hefesto-dualsense4unix-gui-hotplug.service` → hotplug nunca abriu a GUI.
+**Entrega:** nome corrigido nas 4 regras + comentários; herdado por todas as formas.
+**Validação:** `check_packaging_parity.sh`; `doctor.sh` 73/74 OK pós-reaplicar.
+
+### 124 — BUG-UNINSTALL-COSMIC-APPLET-CONFIG-PATH-01
+
+**Tamanho:** S | **Modelo:** opus | **Status:** DONE
+
+**Problema:** uninstall não removia o applet COSMIC nem o config legado; esquecia a
+regra 74; apagava config por padrão sem backup.
+**Entrega:** remove applet+74+drop-in WP; preserva config por padrão
+(`--purge-config` + backup); cobre curto e longo.
+**Validação:** `bash -n`; ausência de rastros.
+
+### 125 — CHORE-PURGE-ALL-INSTALL-FORMS-01
+
+**Tamanho:** S | **Modelo:** opus | **Status:** DONE
+
+**Problema:** sem botão único para limpar as 3 formas; contenção multi-daemon
+causava desconecta/reconecta.
+**Entrega:** `scripts/purge.sh` (`--yes/--dry-run/--with-config`) envelopa o
+uninstall + reforços + `apt purge`/`flatpak uninstall`.
+**Validação:** `--dry-run`; `doctor.sh` sem rastros pós-purge.
+
+### 126 — FEAT-INSTALL-COSMIC-APPLET-INTEGRATION-01
+
+**Tamanho:** S | **Modelo:** opus | **Status:** DONE
+
+**Problema:** applet não listado no COSMIC (ícone sem `-symbolic`) e não integrado
+ao install.
+**Entrega:** `.desktop` Icon `-symbolic`; justfile roda `update-desktop-database`;
+install ganha `--enable-cosmic-applet` (passo 9/10).
+**Validação:** `check_packaging_parity.sh`; `doctor.sh` ícone OK; smoke no painel.
+
+### 127 — FEAT-WIREPLUMBER-DUALSENSE-NOT-DEFAULT-SOURCE-01
+
+**Tamanho:** S | **Modelo:** opus | **Status:** DONE
+
+**Problema:** WirePlumber fixou o mic do DualSense como source padrão → "controle
+diminui o microfone".
+**Entrega:** drop-in que rebaixa a source do DualSense +
+`fix_wireplumber_default_source.sh` (reset) + flag `--with-wireplumber-fix` (passo
+10/10); entrega uniforme via `doctor --fix`.
+**Validação empírica:** `wpctl status` source != DualSense após restart.
+
+### 128 — FEAT-DOCTOR-HEALTHCHECK-01
+
+**Tamanho:** S | **Modelo:** opus | **Status:** DONE
+
+**Problema:** sem diagnóstico único de saúde.
+**Entrega:** `scripts/doctor.sh` (PASS/FAIL/WARN, `--fix`, `--quiet`): daemon,
+serviço, socket, udev+hotplug, uinput, applet+ícone, WirePlumber, controle.
+**Validação:** rodado no estado pré-recuperação (FAILs corretos) em 2026-05-22.
+
+### 129 — CHORE-PACKAGING-PARITY-ALL-FORMS-01
+
+**Tamanho:** S | **Modelo:** opus | **Status:** DONE
+
+**Problema:** garantir que .deb/Arch/flatpak/AppImage não carreguem os mesmos bugs.
+**Entrega:** verificado que build_deb/PKGBUILD/flatpak copiam `assets/` corrigidos;
+postrm alinhado; guard `scripts/check_packaging_parity.sh` (anti-regressão).
+**Validação:** guard verde.
 
 ---
 
