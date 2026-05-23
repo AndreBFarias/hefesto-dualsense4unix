@@ -388,6 +388,26 @@ auditoria de config no boot, shutdown com timeout, auto-aviso de infra quebrada)
 
 ---
 
+## Wave V3.8.1 — Correções pós-V3.8 (sprints 140–144)
+
+Surgiu durante o review de UI/UX da v3.8 instalada na máquina. Problemas concretos:
+
+- **Drift dos sticks** ao plugar o controle após o boot do daemon — `EvdevReader` cacheava o
+  caminho do evdev no `__init__` e nunca o reavaliava no hotplug, caindo no fallback HID-raw cru.
+- **GUI a 100% de CPU consumindo gigabytes de RAM** em poucos minutos — `install_status_polling`
+  passava callbacks que retornam `True` direto para `GLib.idle_add`, criando dois busy-loops
+  infinitos na thread GTK.
+- **Aba Perfis travava** ao clicar/digitar/salvar — `load_all_profiles()` rodava síncrono na thread
+  GTK em vários pontos.
+- **Item selecionado do dropdown** herdava o realce claro do tema do sistema, ilegível sobre o
+  corpo Drácula.
+- **Pedido novo:** suprimir a emulação de mouse/teclado ao entrar num jogo, via gesto físico do
+  controle (sem precisar abrir GUI/CLI).
+
+Índice e detalhes: [`sprints/V3.8.1-INDEX.md`](sprints/V3.8.1-INDEX.md). Lançada como v3.8.1.
+
+---
+
 ## Princípio de execução (deste agente)
 
 1. **Documentar primeiro:** cada sprint executada gera entry em `CHANGELOG.md` `[Unreleased]`.
