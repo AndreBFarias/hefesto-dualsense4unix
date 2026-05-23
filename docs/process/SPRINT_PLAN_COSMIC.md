@@ -378,6 +378,16 @@ postrm alinhado; guard `scripts/check_packaging_parity.sh` (anti-regressão).
 
 ---
 
+## Wave V3.8 — controle de ativação, robustez e applet visível (sprints 130–139)
+
+Após a v3.7.0: generalizar a "sacada do doctor" (subcomando CLI + checks via IPC), poder
+**pausar/desligar** o programa sem desinstalar, robustez do daemon (subsystems resilientes,
+auditoria de config no boot, shutdown com timeout, auto-aviso de infra quebrada) e corrigir o
+**applet COSMIC** que não aparecia em Miniaplicativos. Índice e detalhes:
+[`sprints/V3.8-INDEX.md`](sprints/V3.8-INDEX.md). Lançada como v3.8.0.
+
+---
+
 ## Princípio de execução (deste agente)
 
 1. **Documentar primeiro:** cada sprint executada gera entry em `CHANGELOG.md` `[Unreleased]`.
