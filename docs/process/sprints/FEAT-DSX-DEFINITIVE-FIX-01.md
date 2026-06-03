@@ -62,6 +62,9 @@ boot de 2026-06-03 (`journalctl -b -k`):
 - `systemctl --user is-active hefesto-steam-input-guard.{path,timer}` → `active`.
 - `sudo systemctl is-active hefesto-dsx-recover.service` → `active` (watcher vigiando o journal).
 - `grep cosmic-panel /etc/default/earlyoom` → presente.
+- **(2026-06-03, 2a leva)** `aplay -l | grep -i dualsense` → **vazio** (áudio USB do controle desligado
+  pela regra `75-…`; HID `js0` intacto). `cat /etc/kernelstub/configuration | grep max_cstate` →
+  `processor.max_cstate=1` registrado (**vale após reboot**).
 
 ## 5. AÇÃO PENDENTE: 1 reboot
 
@@ -134,15 +137,14 @@ journalctl -b -o short-precise | grep -iE 'cosmic-comp|drm|mode property|xwaylan
   acoplamento USB→modeset. Escale o lado USB em §7.5 (matar o gatilho mais a fundo).
 
 ### 7.5 ESCALADA — se o storm `-71` persiste mesmo com tudo acima
-O `node.disabled` do WirePlumber tira o **mic** do DualSense, mas o kernel ainda enumera a placa
-de áudio USB do controle (sink + monitor). Se a Steam/áudio continua re-inicializando isso e
-disparando o `-71`, o próximo nível é **remover toda a interface de áudio USB do DualSense**:
+> **Nota (2026-06-03, 2a leva): a Opção A abaixo JÁ FOI FEITA** — a regra
+> `75-ps5-controller-disable-usb-audio.rules` deixa o controle pure-HID no USB. Se mesmo assim o
+> `-71` persiste, o gatilho NÃO é o áudio → vá direto pras rotas de hardware (§8.B BIOS / §8.C BT /
+> §8.D porta do chipset), que atacam a raiz no controlador.
 
-**Opção A — bloquear `snd-usb-audio` no DualSense (kernel, reversível):** criar
-`/etc/modprobe.d/dualsense-noaudio.conf` testando se o quirk de `quirks-table` cobre `054c:0ce6`,
-ou usar uma udev rule que faz `unbind` da interface de áudio (`3-2:1.0/.1/.2`) deixando só a HID
-(`3-2:1.3`). Isso torna o controle **de verdade só-HID no nível USB** (perde áudio out também).
-Esse é o passo que NÃO foi feito ainda (a decisão da sessão foi só o mic).
+**Opção A — bloquear `snd-usb-audio` no DualSense (FEITO):** a regra `75-…` faz `unbind` das
+interfaces de áudio (`3-2:1.0/.1/.2`) no evento `bind`, deixando só a HID (`3-2:1.3`). Controle
+**só-HID de verdade no nível USB** (perde áudio out também). Reverter: remover o `75-…` + replugar.
 
 **Opção B — desligar o sink do DualSense no WirePlumber também:** estender o drop-in 52 para casar
 `alsa_output.*[Dd]ual[Ss]ense.*` com `node.disabled = true` (além do `alsa_input`). Menos profundo
@@ -176,7 +178,65 @@ sudo kernelstub --delete-options "usbcore.quirks=054c:0ce6:k"
 #  ensure_kernel_option em ~/.config/zsh/scripts/ritual-aurora-self-heal.sh)
 ```
 
-## 8. Sprints relacionadas (implementadas aqui)
+## 8. Rotas DEFINITIVAS (todas as 4 escolhidas em 2026-06-03)
+
+A usuária pediu o arsenal completo. Tier 2 (software) já aplicado; Tier 1 (BIOS/BT/porta) é ação dela.
+
+### 8.A — Software agressivo (APLICADO; reversível)
+- **`processor.max_cstate=1`** no kernelstub (limita C-state ao C1; `acpi_idle` expõe POLL/C1/C2).
+  Mantém o I/O die mais acordado. **Vale após reboot.** Reverter:
+  `sudo kernelstub --delete-options "processor.max_cstate=1"` + tirar a linha do self-heal.
+- **DualSense pure-HID no USB** — regra `assets/75-ps5-controller-disable-usb-audio.rules` desliga
+  as 3 interfaces de áudio USB (classe 01), deixando só a HID (classe 03). Testado ao vivo: áudio
+  some, `js0` intacto, nenhum `-71` disparado. Instalada em `/etc/udev/rules.d/75-…`. **Trade-off:
+  o controle perde áudio POR INTEIRO** (sem mic e sem fone do jack). Opt-in via
+  `install_udev.sh --disable-usb-audio` (o `dsx.sh` já passa essa flag). Reverter: remover o `75-…`
+  + replugar. **Confiança ~40-60%** (se o gatilho for re-init de áudio pela Steam, ajuda muito).
+- **GPU**: já fixada `power/control=on` (impede RTD3/blip do link PCIe) + `nvidia-drm.fbdev=1`.
+  Travar clock (`nvidia-smi -lgc`) NÃO foi aplicado — custo de calor/energia 24/7 alto para ganho
+  marginal; disponível se quiser testar.
+
+### 8.B — BIOS (MAIOR confiança; ação da usuária) — settings DIFERENTES do que você já fez
+Você ajustou **Power Supply Idle Control**. Faltam estes dois, em telas diferentes (placa B450 /
+"400 Series Chipset" — nomes variam por fabricante, geralmente sob **Advanced → AMD CBS**):
+- **Global C-state Control = Disabled** (em *AMD CBS → Zen Common Options*, ou às vezes *Advanced →
+  AMD CBS → CPU Common*). Impede os cores de entrarem em C-state — o I/O die não rebaixa.
+- **DF C-States (Data Fabric C-states) = Disabled** (em *AMD CBS → DF Common Options*, ou
+  *NBIO Common Options*). É o lever mais cirúrgico pro nosso mecanismo (a Infinity Fabric que liga
+  CPUI/O die). Se só puder mexer em um, é este.
+- Trade-off: idle um pouco mais quente. É a rota de **maior confiança** pra eliminar o `-71` na raiz.
+
+### 8.C — Bluetooth (definitivo; sidestepa o USB)
+O `-71` é erro de **enumeração USB**; por BT o controle não é device USB → o storm não existe.
+`hid_playstation` suporta DualSense por BT.
+```bash
+bluetoothctl
+  power on
+  scan on
+# no controle: segure PS + Create (botão de cima ao lado do touchpad) até a lightbar PISCAR rápido
+  pair <MAC_do_DualSense>
+  trust <MAC_do_DualSense>
+  connect <MAC_do_DualSense>
+```
+Ressalva: seu **dongle BT está na Bus 4 (Matisse, frágil)** — mova-o pra uma porta do chipset
+(§8.D) pra deixar o BT à prova de bala. Trade-off: latência mínima, precisa carregar o controle.
+
+### 8.D — Porta do chipset (determinístico, NÃO é adivinhação)
+Mapa real desta máquina:
+- **Bus 1 + Bus 2 = chipset `02:00.0` (ROBUSTO)** — teclado/mouse estão aqui, nunca caem.
+- **Bus 3 + Bus 4 = Matisse `0c:00.3` (FRÁGIL)** — DualSense (Bus 3) e dongle BT (Bus 4) estão aqui.
+
+Como achar a porta física do chipset (verificação, não chute):
+```bash
+# pluga o controle numa porta e roda:
+lsusb -t | grep -iB2 dualsense
+# Bus 001 ou Bus 002 no topo do bloco = porta do CHIPSET (robusta). Fim do problema.
+# Bus 003/004 = Matisse — tenta outra porta.
+# Dica: as portas onde o teclado/mouse estão HOJE sao do chipset — use as vizinhas.
+```
+O `doctor.sh` (seção USB/dropout) também diz em qual controlador o controle está a cada checagem.
+
+## 9. Sprints relacionadas (implementadas aqui)
 - `FEAT-WIREPLUMBER-DISABLE-SOURCE-MODE-01` → modo `--disable-source` (item 2). **DONE.**
 - `BUG-WIREPLUMBER-FIX-FALSE-SUCCESS-01` → doctor/fix checam o ATIVO, não o configured (item 3). **DONE.**
 - `FEAT-DOCTOR-USB-DROPOUT-DIAGNOSTIC-01` → seção USB/dropout + `--watch-dropout` (item 3). **DONE.**
