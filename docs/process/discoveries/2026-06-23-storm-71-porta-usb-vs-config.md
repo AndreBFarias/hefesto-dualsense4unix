@@ -1,5 +1,21 @@
 # 2026-06-23 — Storm `-71` do DualSense: causa-raiz é porta USB, não o áudio
 
+> **SUPERADO (2026-06-26):** a teoria deste documento — "a causa-raiz é porta USB física ruim
+> (full-speed vs high-speed)" — foi **REFUTADA**. Um teste A/B controlado mostrou que com o áudio
+> USB do controle **desligado** o storm `-71` cai a **0 em qualquer porta** (inclusive a do
+> chipset e a antes apontada como "ruim"), e com o áudio **ligado** o storm volta independente da
+> porta. O storm é **PORTA-INDEPENDENTE**: ele vem da **enumeração das interfaces de áudio USB**
+> (`snd-usb-audio`) sob carga — uma rajada de control-transfers no EP0 que tomba o link →
+> `-71` → re-enumeração. Não é porta, não é cabo, não é BIOS/C-state/I-O-die do Ryzen, e não é
+> software de usuário (daemon/WirePlumber foram eliminados na investigação). As alavancas reais
+> são **alternativas** (uma OU outra): (A) **quirk** de cmdline
+> `usbcore.quirks=054c:0ce6:gn,054c:0df2:gn` (`g`=DELAY_INIT, `n`=DELAY_CTRL_MSG), que **preserva
+> o áudio** espaçando a rajada — via `scripts/install_usb_quirk.sh` ou `./install.sh
+> --with-usb-quirk`; ou (B) a regra udev `75` (`authorized=0`), que **desliga o áudio** (sem
+> mic/fone) — via `scripts/install_udev.sh --disable-usb-audio`.
+> Mantido aqui apenas como **histórico** da hipótese descartada.
+> **Doc canônico:** `docs/process/discoveries/2026-06-26-storm-audio-pesquisa-profunda-quirk-vs-audiooff.md`.
+
 ## TL;DR
 O storm `-71` (EPROTO / `device not accepting address` / `device descriptor read/64, error -71`)
 do DualSense via USB **não** é causado pelo áudio USB do controle. A causa-raiz observada é
@@ -50,7 +66,18 @@ de resolvê-lo, e o "fix" de matar o áudio (regra `75`) era paliativo.
 - Se precisar da escalada antiga (porta comprovadamente ruim e sem alternativa): `HEFESTO_PURE_HID=1
   ./dsx.sh` reativa o watcher e o modo pure-HID.
 
-## Microfone embutido — RESOLVIDO via profile `pro-audio`
+## Microfone embutido — ~~RESOLVIDO via profile `pro-audio`~~ (SUPERADA)
+
+> **SUPERADA (2026-06-26):** a receita abaixo (`pactl set-card-profile ... pro-audio` +
+> `pactl set-default-source ...DualSense...`) **reintroduz o mic-default-hijack** — exatamente o
+> comportamento que os drop-ins WirePlumber `52`/`53` existem para evitar (impedir que o microfone
+> do DualSense vire a **entrada padrão** do sistema). Com `52`/`53` instalados, forçar o card a
+> `pro-audio` e o source a padrão briga com a supressão e pode realimentar o tug-of-war de áudio.
+> O microfone do DualSense só deve voltar como entrada **via opt-in explícito**: **remover** os
+> drop-ins `52`/`53` **e** exportar `HEFESTO_DUALSENSE4UNIX_DUALSENSE_MIC_INTENDED=1`. Fora desse
+> opt-in, **não** rode os comandos abaixo. Mantido como histórico técnico de que o array embutido
+> capta no profile `pro-audio`.
+
 O array embutido **capta** — a chave é o profile **`pro-audio`** do card, que expõe os terminais
 crus e **ignora o jack-sensing**:
 
