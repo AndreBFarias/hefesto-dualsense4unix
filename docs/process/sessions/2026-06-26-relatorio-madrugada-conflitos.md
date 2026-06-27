@@ -182,7 +182,7 @@ aplicado — é cardápio pra você priorizar.
 - **4 commits novos** (sem push), anônimos, gate verde:
   - `4d9bb6b` feat(emulacao): modo-jogo via combo PS+Options, mouse-persist e latch anti-leak
   - `1e6e8c9` fix(autoswitch): elimina flood no journal e revive perfil-por-app no COSMIC
-  - `36fc2c8` fix(audio): WP desabilita a saida do DualSense (53) — mic nao volta como default-source
+  - `36fc2c8` fix(audio): WP desabilita a saída do DualSense (53) — mic não volta como default-source
   - `858a9f8` chore(packaging/ci/doctor): udev canonico 70/71/72, revive gate de anonimato, loadtest
 - **Untracked** (deixados pra sua revisão, não commitados):
   `assets/76-dualsense-touchpad-libinput-ignore.rules`, `docs/process/...`
