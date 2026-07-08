@@ -2,7 +2,28 @@
 
 **Tipo:** feat (médio-grande — CLI + GUI + integração de sistema).
 **Wave:** V3.12.
-**Status:** SPEC (aguarda materialização).
+**Status:** CAMADAS 1-2 MATERIALIZADAS (CLI, commit 8471ef1). Camada 3 (cartão na
+GUI) DEFERIDA — ver nota abaixo.
+
+## Materializado (2026-07-08)
+
+- `integrations/storm_doctor.py`: diagnóstico READ-ONLY (quirk anti-storm no
+  usbcore, Steam Input nos `localconfig.vdf`, drop-in do WirePlumber, regra
+  `authorized=0`), paths injetáveis, testado com fixtures. Validado ao vivo:
+  achou Steam Input LIGADO + quirk ativo + WP configurado.
+- `doctor` mostra o bloco "anti-storm / sistema"; `doctor --fix-safe` roda o
+  SEGURO sem sudo (Steam Input OFF via `--apply-quiet` + WirePlumber `--install`);
+  `doctor --reapply-all` invoca o `dsx.sh` (motor privilegiado, PEDE SENHA em
+  terminal, confirma antes).
+
+**Camada 3 (cartão na GUI) DEFERIDA — decisão de engenharia:** o botão
+"reaplicar tudo" é PRIVILEGIADO (sudo). Do daemon/GUI (Wayland) isso exigiria um
+askpass GRÁFICO; o `dsx.sh` já resolve sudo em TERMINAL (`Terminal=true` no
+`.desktop` "DualSense Fix (dsx)") e o CLI `doctor --reapply-all` roda no terminal
+onde o sudo funciona. Duplicar isso num botão de GUI (com askpass gráfico) é mais
+frágil e redundante. O caminho primário do privilegiado fica CLI/`.desktop`; um
+cartão só-diagnóstico na GUI (sem o botão privilegiado) pode entrar depois se a
+Vitória sentir falta.
 **Decisão da Vitória (2026-07-07):** *"Absorver o seguro + botão que chama o resto."*
 
 ---
