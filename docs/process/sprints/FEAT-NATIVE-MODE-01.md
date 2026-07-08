@@ -82,6 +82,21 @@ desligada + nada re-aplicando perfil**.
 - [ ] (Manual, Vitória) Sackboy: `dsx native on` → gatilhos adaptativos do jogo
       funcionam sem briga; rumble do jogo ok; `dsx native off` → hefesto volta.
 
+## Revisão pós-auditoria (2026-07-07)
+
+A auditoria adversarial achou 5 pontos; o design foi ajustado:
+- **NÃO usa mais `pause()`**: o poll loop gateia o dispatch pelo próprio
+  `_native_mode` (`input_ready = ... and not self._native_mode`). Isso resolve de
+  uma vez: (a) `daemon.resume` durante o Modo Nativo NÃO "des-solta" o controle
+  (estado contraditório native+resume); (b) um pause manual anterior não é pisado
+  nem some num restart (o bit não vivia mais só em memória).
+- **Stash da emulação**: o `native_mode.flag` virou JSON com o estado de
+  emulação (mouse/gamepad) capturado ANTES do release. Ao desligar, o gamepad/
+  mouse pré-nativo é RESTAURADO (gamepad tem precedência) — antes o release
+  apagava o `gamepad_emulation.flag` e o off/boot não o trazia de volta.
+- Testes adicionados: boot com flag (não restaura emulação), resume-durante-
+  native, restore do gamepad do stash, round-trip do flag JSON + legado.
+
 ## Fora de escopo (V3.12+)
 
 - Botão na GUI / no applet / hotkey do controle p/ o modo nativo (entra depois
