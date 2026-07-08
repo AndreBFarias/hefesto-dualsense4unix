@@ -2,8 +2,8 @@
 
 **Tipo:** feat (médio-grande — CLI + GUI + integração de sistema).
 **Wave:** V3.12.
-**Status:** CAMADAS 1-2 MATERIALIZADAS (CLI, commit 8471ef1). Camada 3 (cartão na
-GUI) DEFERIDA — ver nota abaixo.
+**Status:** MATERIALIZADO — camadas 1-2 (CLI, commit 8471ef1) + camada 3 (cartão
+na GUI, commit 789c7fe).
 
 ## Materializado (2026-07-08)
 
@@ -16,14 +16,13 @@ GUI) DEFERIDA — ver nota abaixo.
   `doctor --reapply-all` invoca o `dsx.sh` (motor privilegiado, PEDE SENHA em
   terminal, confirma antes).
 
-**Camada 3 (cartão na GUI) DEFERIDA — decisão de engenharia:** o botão
-"reaplicar tudo" é PRIVILEGIADO (sudo). Do daemon/GUI (Wayland) isso exigiria um
-askpass GRÁFICO; o `dsx.sh` já resolve sudo em TERMINAL (`Terminal=true` no
-`.desktop` "DualSense Fix (dsx)") e o CLI `doctor --reapply-all` roda no terminal
-onde o sudo funciona. Duplicar isso num botão de GUI (com askpass gráfico) é mais
-frágil e redundante. O caminho primário do privilegiado fica CLI/`.desktop`; um
-cartão só-diagnóstico na GUI (sem o botão privilegiado) pode entrar depois se a
-Vitória sentir falta.
+**Camada 3 (cartão na GUI) MATERIALIZADA:** cartão "Anti-storm / Sistema" na aba
+Daemon com o diagnóstico read-only + 2 botões. O botão "Reaplicar fixes seguros"
+roda o SEGURO sem sudo (em worker). O botão privilegiado "Reaplicar tudo
+(terminal)" NÃO usa askpass gráfico — faz `gtk-launch` do `.desktop`
+"dsx-dualsense" (`Terminal=true` → o sudo roda no terminal, onde funciona), então
+o privilegiado permanece no fluxo de terminal (CLI/`.desktop`), só disparado pela
+GUI. Evita a fragilidade de um askpass gráfico no Wayland.
 **Decisão da Vitória (2026-07-07):** *"Absorver o seguro + botão que chama o resto."*
 
 ---
