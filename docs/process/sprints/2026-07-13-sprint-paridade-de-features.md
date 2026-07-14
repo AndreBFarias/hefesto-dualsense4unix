@@ -57,7 +57,37 @@ Células "?" = investigar. Para cada MORTO encontrado: classificar
    funciona no nativo — gatilhos adaptativos, gyro, touchpad — e por quê).
 4. Testes de regressão por célula corrigida.
 
+## Caso concreto PRIORITÁRIO: rumble in-game no vpad (SPRINT-GAME-RUMBLE-01)
+
+Estado após a v3.12.0, validado em gameplay ao vivo (Sackboy, 2026-07-13 noite):
+
+- O pipeline FF do vpad FUNCIONA de ponta a ponta: efeito injetado por processo
+  externo (upload → play) fez os DOIS DualSense vibrarem fisicamente.
+- No JOGO: input/co-op/2 jogadores perfeitos, mas o rumble NÃO dispara nos
+  vpads — enquanto o Nintendo Pro Controller (fora do Hefesto) vibra.
+  Conclusão: o gargalo é o caminho de rumble do Proton/SDL por TIPO de
+  controle, não o nosso pipeline.
+
+Hipóteses, em ordem de investigação:
+
+1. **Máscara DualSense atrai o caminho "PS5 nativo"**: o vpad se apresenta como
+   054c:0ce6; o SDL/winebus pode classificá-lo como DualSense e tentar rumble
+   via HIDAPI/hidraw (que o vpad NÃO tem) ou haptics-por-áudio (idem), em vez
+   do FF evdev. TESTE RÁPIDO (1 clique, aba Início): máscara **Xbox 360** — o
+   caminho XInput de vibração é o clássico e casa com nosso FF. Se vibrar,
+   solução de curto prazo = recomendar máscara Xbox p/ jogos Proton (ou criar
+   VID/PID neutro próprio) e documentar.
+2. **winebus/Proton e FF via evdev**: verificar se o SDL do Proton exige
+   hidraw para rumble em devices Sony (SDL_JOYSTICK_HIDAPI_PS5) e se
+   SDL_JOYSTICK_HIDAPI=0 (launch option) força o caminho evdev+FF. Testar:
+   `SDL_JOYSTICK_HIDAPI=0 %command%`.
+3. **js vs evdev**: o jogo pode estar no node js* (joydev não propaga FF).
+4. Instrumentação: contador de eventos FF recebidos por vpad no state_full
+   (diagnóstico visível na GUI — "o jogo mandou rumble? quantas vezes?").
+
 ## Status
 
-- [ ] Agendada — executar após o release v3.12.0 (rumble validado ao vivo).
-- [x] Rumble vpad/nativo: corrigidos nesta mesma noite (ver CHANGELOG).
+- [ ] SPRINT-GAME-RUMBLE-01 (acima) — primeiro item da fila.
+- [ ] Matriz de paridade completa — executar em seguida.
+- [x] Rumble vpad/nativo (pipeline): corrigidos e validados fisicamente
+      nesta mesma noite (ver CHANGELOG v3.12.0).
