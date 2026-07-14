@@ -92,6 +92,35 @@ SESSÃO 2b (2026-07-13, noite) — hardening multi-controle (6 frentes, 4 agente
   cosmic-comp não expõe wlr-foreign-toplevel; suporte nativo futuro =
   zcosmic_toplevel_info_v1 via pywayland ou helper Rust/cosmic-client-toolkit).
 
+SESSÃO 3 (2026-07-13, noite) — feedback da mantenedora + auditoria aba-a-aba:
+- BUG-GUI-HOVER-JITTER-01 (CORRIGIDO): "interface balança no hover" em todas as
+  abas — o :hover mudava a borda de 1px→2px, o botão crescia e o layout oscilava
+  em loop; ênfase de hover agora é só cor. Provado no sandbox: 3 frames com o
+  mouse sobre o botão = 0 pixels de diferença.
+- UX-MODE-TERMS-01: "Modo do sistema/Desktop/Jogo (gamepad virtual)/Jogo nativo"
+  viraram "O que o controle faz agora: Controlar o PC / Jogar pelo Hefesto /
+  Jogar direto (Sony)" — GUI (Início + editor de Perfis) e applet.
+- FEAT-COOP-DEFAULT-ON-01: co-op é o PADRÃO (decisão da mantenedora: "cada
+  controle = um jogador deveria ser o padrão") — flag invertido para opt-out
+  (coop_disabled.flag), perfil não persiste escolha (só gesto manual), sair
+  para desktop preserva a preferência. Cards de controle homogêneos;
+  BUG-HOME-MASK-CLIP-01 também no editor de Perfis (corrigido).
+- Auditoria funcional 4 agentes (17 bugs, TODOS corrigidos): rodapé "Salvar
+  Perfil" descartava match/mode/suppress/priority (BUG-FOOTER-SAVE-DROPS-
+  SECTIONS-01, HIGH); rename criava perfil default (BUG-RENAME-DROPS-CONFIG-01);
+  lista de Perfis/aba Daemon sem refresh; toast falso "Falha" (timeout IPC
+  0.25s→2s); "Desligar" mentia em rc!=0; render offline stale; poller 10Hz com
+  aba invisível; cartão UINPUT stale offline; "Personalizar" duplicado nos
+  gatilhos; sliders/preset de gatilho e política de rumble fora do draft
+  (agora: o que a tela mostra = o que salva); slider custom até 200%; Início
+  ausente no start_hidden.
+- Auditoria install/packaging: Flatpak com udev QUEBRADO (manifesto só 70/71/72,
+  script exige 76/77/78 e aborta — FIX-FLATPAK-UDEV-PARITY-01, parity check
+  agora cobre flatpak/*.yml); dev_bootstrap sem --system-site-packages (GUI sem
+  gi em bootstrap fresco); AppImage sem presets (bundla + candidato sys.prefix
+  no seeder). Deps todas declaradas (filelock ok); requirements.txt fiel.
+- Docs: CHANGELOG [Unreleased] completo da wave; README (Estado/versão).
+
 PENDENTE (próximas sessões): chip de alvo nas abas de output; draft de lightbar/LEDs
 nascendo do estado vivo; fusão Emulação+Mouse+Teclado numa aba "Entrada" (W4.2);
 wm_class real do Sackboy (abrir o jogo e ler window_detect_last_class por IPC, ajustar
@@ -99,7 +128,12 @@ o preset); validação de gameplay 2P/3P/4P + bench py-spy antes/depois; card
 "detectado, não gerenciado" p/ controles não-DualSense (ex.: Switch Pro Controller);
 cliente zcosmic_toplevel_info_v1 p/ detecção em Wayland nativo no COSMIC;
 FEAT-HIDE-PHYSICAL-01 (esconder também os nodes físicos grabados via flag+path-unit —
-fase B do HidHide).
+fase B do HidHide); preview JSON do editor pode mostrar match stale ("any") logo após
+selecionar perfil criteria (cosmético — salvar reconstrói certo); linha "co-op: N
+jogador(es)" aparece na Início mesmo em modo desktop (ruído leve); lock de 30s do
+gesto manual agora também é armado por coop.set — revisar se deve; unificar
+live-preview vs Aplicar na aba Lightbar (cor/brilho exigem Aplicar, player-LEDs são
+imediatos — sinalizado no texto, mas contratos opostos na mesma aba).
 Método: leitura dirigida do código (file:line), 2 varreduras independentes (runtime e UX),
 inspeção AO VIVO da GUI com 2 DualSense USB conectados + co-op ligado (screenshots
 2026-07-13 16:56–16:58), inventário de /proc/bus/input/devices e `daemon.state_full` por IPC.
