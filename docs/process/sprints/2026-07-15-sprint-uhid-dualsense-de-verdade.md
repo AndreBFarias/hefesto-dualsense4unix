@@ -103,6 +103,44 @@ O que isso muda, célula por célula da matriz de paridade:
   (fd falso, rodam em CI sem `/dev/uhid`).
 - Falta ligar ao co-op — ver `UHID-01b` e `UHID-02`.
 
+### UHID-02 — ENTREGUE E VALIDADO NO HARDWARE (2026-07-15)
+
+**Veredito**: simulação completa de um jogo SDL sobre o vpad uhid —
+```
+[ OK ] o jogo vê VID:PID de PlayStation (054c:0ce6) -> prompts PS
+[ OK ] o vpad anuncia FORCE FEEDBACK
+[ OK ] stick / triângulo / L1 chegam ao jogo
+[ OK ] o RUMBLE do jogo chegou ao controle físico: [(64, 128), (0, 0)]
+[ OK ] com a intensidade certa (weak=64, strong=128)
+```
+Entregue: encoder do input report 0x01, `forward_analog`/`forward_buttons` com a assinatura
+do `UinputGamepad`, `forward_battery`, `for_flavor`, `wait_for_bind`, o Protocol
+`VirtualPad` + a factory `make_virtual_pad` (fallback num lugar só, cada motivo logado),
+`hidraw_path()` no backend e o `player` por slot no co-op.
+Factory validada no hardware nos 5 caminhos + 2 vpads simultâneos com MACs distintos.
+
+**Cinco bugs que o gate verde NÃO pegou — só o hardware:**
+1. `_INPUT_PAYLOAD_SIZE = 62` (certo: 63): o driver compara com
+   `DS_INPUT_REPORT_USB_SIZE=64` e **descarta calado**. O vpad nascia **mudo**.
+2. `wait_for_bind` dizia OK com o probe **falhando** (o `UHID_START` chega no começo do
+   probe). O fallback — razão de existir do método — nunca aconteceria.
+3. Toques do touchpad em 31/35 (certo: **32/36**, o `reserved2` empurra): o vpad nascia com
+   **dois dedos fantasma** presos no canto.
+4. **O daemon adotava o próprio vpad como controle físico**: ele tem VID/PID Sony e agora
+   cria hidraw; o `_enumerate_device_keys` filtrava só por vendor/product. Medido:
+   `('02:fe:00:00:00:02', b'/dev/hidraw7')` — o MAC que nós forjamos. Feedback loop.
+   Fix: `_is_virtual_hidraw`, espelhando o `_is_virtual_evdev` que já existia no evdev.
+5. Byte de status zerado → o vpad anunciava **5% descarregando para sempre** (o físico
+   manda 0x29 = 95%). Fix: `forward_battery` espelha a bateria real; sem dado, "cheio".
+
+Ajustado com medição, não com chute: o bind leva **2,3 ms** (não os 10 ms estimados) → o
+settle caiu de 150 ms para 50 ms e o timeout de 2,0 s para 0,5 s. Importa porque o
+`wait_for_bind` roda **dentro do poll loop** — cada milissegundo ali é input congelado.
+
+Falta (o co-op já passa o player e o hidraw): ligar o `forward_battery` ao dado real do
+daemon, e os gyro/accel do vpad seguem zerados (jogo com aim-gyro no vpad ainda não
+funciona — é o `UHID-03`).
+
 ### UHID-01b — O que falta para o co-op poder trocar de backend
 Levantado pelo review adversarial do `UHID-01` (o módulo existe e está provado, mas ainda
 **não tem call site** — nada em `src/` o importa, então nada disso quebra hoje):
