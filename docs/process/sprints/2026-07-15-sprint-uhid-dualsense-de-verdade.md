@@ -119,11 +119,23 @@ Levantado pelo review adversarial do `UHID-01` (o módulo existe e está provado
   `pump_ff`. Para o fallback do `UHID-06` ser honesto, o chamador precisa de um
   `wait_for_bind(timeout)` — senão "deu certo" e o jogo fica sem controle.
 
-### UHID-02 — Rumble e gatilhos do jogo → controle físico (passthrough)
-- **Arquivos**: `core/uhid_device.py`, `daemon/subsystems/rumble.py`,
+### UHID-02 — Ligar o backend ao co-op (é o item que a Vitória sente no jogo)
+- **Arquivos**: `integrations/uhid_gamepad.py`, `daemon/subsystems/coop.py`,
+  `daemon/subsystems/gamepad.py`, `daemon/subsystems/rumble.py`,
   `core/backend_pydualsense.py`.
-- Decodificar UHID_OUTPUT (report 0x02) e repassar motores/gatilhos/lightbar ao
-  físico correspondente, respeitando o throttle de 20 ms e a política de rumble.
+- **O encoder do input report** é o que falta para o vpad uhid receber o que o
+  controle físico faz: no uinput o input vai em eventos evdev
+  (`forward_analog`/`forward_buttons`); aqui vai em **report HID** (`send_report`).
+  Montar o input report 0x01 (USB) do DualSense a partir do snapshot do físico —
+  sticks, gatilhos, botões, d-pad — e alimentá-lo a cada tick do poll loop.
+   Já provado: `send_report` sem padding é aceito pelo kernel e o
+  `hid_playstation` decodifica (criou o input node do vpad).
+- Fechar os gaps do `UHID-01b` (`for_flavor`, `Protocol` comum, `player` por slot,
+  `wait_for_bind`).
+- O **rumble já está pronto e provado** (`UHID_OUTPUT` → `rumble_sink` →
+  `(64, 128)` no hardware): aqui é só plugar no sink real do daemon, respeitando o
+  throttle de 20 ms e a política de rumble. Gatilhos/lightbar do jogo chegam pelo
+  mesmo report 0x02 (ver `UHID-03` para os LEDs, que agora vêm do kernel).
 - **Aceite**: jogo SDL vibra o controle físico **com a máscara DualSense**
   selecionada (o que hoje é impossível). Validar ao vivo, 1 USB + 1 BT.
 

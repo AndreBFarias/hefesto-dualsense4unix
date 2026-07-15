@@ -51,8 +51,8 @@ nós** (`UHID_OUTPUT`). Uma troca de fundação cura a queixa nº 3 inteira e me
 | 2 | [`SPRINT-HARMONIA-01`](2026-07-15-sprint-harmonia-um-dono-por-conceito.md) | Um dono por conceito: modo, mouse/teclado, máscara, alvo, desligar, sincronização | É a queixa central ("harmonia e coexistência"). Depende do 1 para saber o que sobra |
 | 3 | [`SPRINT-LEIGO-01`](2026-07-15-sprint-leigo-fala-de-gente.md) + [anexo (270 textos)](2026-07-15-anexo-inventario-de-textos.md) | O checkbox de co-op some; a interface fala português de gente | Reescrever texto de tela que o 1 e o 2 vão apagar é desperdício |
 | 4 | [`SPRINT-4P-01`](2026-07-15-sprint-4-jogadores.md) | 4 controles USB+BT com **todas** as features de **todas** as abas | Depende da fundação por-controle e da higiene de dispositivos |
-| 5 | `SPRINT-ESTETICA-01` (a abrir) | Design system: um padrão de título/margem/estado, dark/light, i18n completa | Polimento sobre telas já estáveis |
-| 6 | `SPRINT-INFRA-01` (a abrir) | Instalador: `/dev/uhid`, feature morta "abrir GUI ao plugar", formatos flatpak/deb pulando steps, flags contraditórias | Fecha "tudo via script install" |
+| 5 | [`SPRINT-INFRA-01`](2026-07-15-sprint-infra-o-install-garante.md) | O install garante tudo: paridade nos 5 formatos, `doctor.sh` cobrindo o que o install faz, feature morta "abrir GUI ao plugar", flags contraditórias, BT e 4 controles | Fecha *"tudo fácil a nível de no install garantirmos o funcionamento de tudo"*. Pode andar **em paralelo** — quase não toca a GUI |
+| 6 | [`SPRINT-ESTETICA-01`](2026-07-15-sprint-estetica-um-so-sistema.md) | A interface parece um sistema só: tokens, um padrão de título/margem, contraste AA, foco, e os 4 controles cabendo na tela | Polimento sobre telas já estáveis. **Exceção**: `EST-10` (código acoplado a texto de UI) e `EST-11` (i18n) têm de vir **antes** do `LEIGO-03`, que renomeia a aba "Daemon" |
 
 ## O que já foi feito nesta sessão (2026-07-15, madrugada)
 
@@ -81,6 +81,12 @@ Fundação do sprint 1 entregue e **provada no hardware**, não só em teste:
   de forçar `dualsense` (`HARM-08` — matava o rumble de quem tinha Xbox), e o applet parou
   de ter o mesmo default divergente. Um teste de paridade trava os três defaults (Python,
   Rust, daemon) — verificado que ele **falha** quando o bug é reintroduzido.
+- **O `doctor.sh` passou a ver o que o install faz** (`INFRA-05`): conhece a
+  `71-uhid.rules`, checa `/dev/uhid` e o driver `hid_playstation`. E o `check_uinput`
+  deixou de dar **falso positivo** — ele só olhava se o nó *existia*, então dizia "presente"
+  com o nó root-only e o daemon incapaz de criar vpad nenhum; agora checa se é **gravável**.
+  Verificado ao vivo: com o `/dev/uhid` em 0600 o doctor avisa e explica o que se perde; o
+  trigger do install cura.
 
 **O review adversarial (41 agentes) achou um defeito grave no meu próprio fix** e vale
 registrar, porque é a lição da noite: eu havia checado o `valid_flag0` com `& 0x01`
