@@ -55,6 +55,40 @@ promete e não entrega, em silêncio.**
   `udevadm trigger --subsystem-match=misc` do install cura.
   Regra que fica valendo: **um item no install = um check no doctor**.
 
+## Prioridade 1b — O que o ciclo uninstall→install revelou (medido em 2026-07-15)
+
+Rodei o ciclo completo na máquina de teste. Três achados novos, todos confirmados:
+
+- `INFRA-19` — **Assimetria do fix do microfone (a mais daninha).** O `uninstall`
+  remove os drop-ins do WirePlumber **por default**; o `install` só os aplica **com
+  flag** (`--with-wireplumber-disable-mic` / `--with-wireplumber-fix`). Resultado
+  medido: depois de uninstall+install, o **DualSense virou o microfone padrão** do
+  sistema e o `doctor.sh` acusou `[FAIL] DualSense é o microfone ATIVO`. Quem
+  reinstalar cai nisso calado.
+  Viola a regra da casa que o próprio uninstall cita no cabeçalho: *"se install
+  aplica X sem flag, uninstall remove X sem flag"* — aqui é o inverso, e ninguém
+  tinha olhado.
+  **Aceite**: install e uninstall concordam sobre o mic; `doctor.sh` verde depois
+  do ciclo, sem `--fix` manual.
+
+- `INFRA-20` — **O install diz "instalado" com o applet quebrado.** Sem TTY o
+  `sudo` do build do applet falha (`sudo: a terminal is required to read the
+  password`), o `just install` sai com erro, e o install segue e imprime
+  ` Hefesto - Dualsense4Unix instalado ` como se nada fosse. O aviso
+  ("build/instalacao do applet falhou — veja o log acima") se perde no meio de 11
+  passos.
+  Relacionado à lição já registrada: **sem TTY o ticket do sudo não é herdado por
+  filhos** — o `acquire_sudo` cobre o install, mas não o `sudo` de dentro do
+  `justfile` do applet.
+  **Aceite**: passo que falha aparece no resumo final; o install não afirma sucesso
+  sobre o que não entregou.
+
+- `INFRA-21` — **O uninstall não removeu udev/modules-load nesta execução.** As 7
+  regras e o `hefesto-dualsense4unix.conf` continuaram lá depois de
+  `uninstall.sh --yes` (o `--keep-udev` NÃO foi passado). Mesma família do
+  `INFRA-20`: sudo sem TTY. O `--yes` responde prompts, mas não dá senha.
+  **Aceite**: ou remove, ou diz alto que não conseguiu (hoje passa como sucesso).
+
 ## Prioridade 2 — Coisas que o install faz e não devia
 
 - `INFRA-06` — **Fecha a Steam (e o jogo aberto) sem perguntar**, no step 11, por default
