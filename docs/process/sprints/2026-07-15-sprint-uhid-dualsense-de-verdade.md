@@ -90,16 +90,18 @@ O que isso muda, célula por célula da matriz de paridade:
 
 ## Itens
 
-### UHID-01 — Backend uhid do vpad
-- **Arquivos**: `src/hefesto_dualsense4unix/core/` (novo `uhid_device.py`),
-  `daemon/subsystems/coop.py`, `daemon/subsystems/gamepad.py`.
-- Criar `UhidDualSense`: CREATE2 com descriptor+features capturados do físico,
-  MAC próprio por jogador, loop de eventos (START/OPEN/OUTPUT/GET_REPORT/
-  SET_REPORT/CLOSE/STOP), INPUT2 para encaminhar o estado do físico, DESTROY
-  limpo. Sem dependência nova (só `struct`/`os`/`fcntl`).
-- **Aceite**: com 1 controle físico, `dmesg` mostra `Registered DualSense
-  controller` para o vpad; `/dev/input/js*` do vpad responde a `jstest`; nenhum
-  device órfão após desligar o modo.
+### UHID-01 — Backend uhid do vpad  ENTREGUE (2026-07-15)
+- **Arquivo**: `src/hefesto_dualsense4unix/integrations/uhid_gamepad.py` (fica ao lado
+  do `uinput_gamepad.py`, cuja interface ele espelha — não em `core/`, como o plano
+  original dizia).
+- `UhidDualSense` + `capture_dualsense_blueprint`: CREATE2 com descriptor+features
+  capturados do físico, MAC próprio por jogador, loop de eventos (START/OPEN/OUTPUT/
+  GET_REPORT/SET_REPORT/CLOSE/STOP), INPUT2 (`send_report`), DESTROY limpo. Sem
+  dependência nova (só `struct`/`os`/`fcntl`/`re`).
+- **Aceite — cumprido**: `dmesg` mostra `Registered DualSense controller` para o vpad;
+  hidraw + evdev + LEDs criados; `stop()` não deixa device órfão; 33 testes herméticos
+  (fd falso, rodam em CI sem `/dev/uhid`).
+- Falta ligar ao co-op — ver `UHID-01b` e `UHID-02`.
 
 ### UHID-01b — O que falta para o co-op poder trocar de backend
 Levantado pelo review adversarial do `UHID-01` (o módulo existe e está provado, mas ainda
