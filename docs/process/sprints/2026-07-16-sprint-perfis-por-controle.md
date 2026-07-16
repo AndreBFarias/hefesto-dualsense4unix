@@ -36,8 +36,8 @@ editando JSON à mão, que é exatamente a burocracia que a regra de ouro proíb
 ### PROVADO AO VIVO (na máquina dela, hoje)
 
 - **Identidade = MAC BT, estável entre USB e BT.** O DualSense no cabo expõe
-  `HID_UNIQ=a0:fa:9c:00:00:01` (bus 0003/USB) e esse exato MAC está no cache do BlueZ
-  como "DualSense Wireless Controller"; o do BT expõe `14:3a:9a:00:00:04` == MAC pareado
+  `HID_UNIQ=aa:bb:cc:00:00:01` (bus 0003/USB) e esse exato MAC está no cache do BlueZ
+  como "DualSense Wireless Controller"; o do BT expõe `aa:bb:cc:00:00:02` == MAC pareado
   no bluetoothctl. Todos os nós evdev do mesmo controle carregam o mesmo uniq
   (event17-20 vs event22/27/28). Re-provado por DOIS revisores de forma independente.
 - **O autoload está quebrado na prática.** `session.json = {"last_profile": "Navegação"}`
@@ -290,7 +290,7 @@ DraftConfig** para o "Salvar Perfil" não apagar o mapa.
 `tests/unit/test_profile_schema.py`, `tests/unit/test_profile_manager.py`.
 
 **Critério de aceite (verificável)** — reescrito conforme a refutação:
-1. vitoria.json ganhando `controllers: {"143a9a13ebab": {leds: {lightbar: [0,255,0]}}}`
+1. vitoria.json ganhando `controllers: {"aabbcc000002": {leds: {lightbar: [0,255,0]}}}`
    valida, ativa aplicando verde SÓ nesse controle (broadcast segue a seção global) e
    sobrevive a save/load sem perda.
 2. Perfil antigo (sem o campo): round-trip load→save **não introduz** a chave

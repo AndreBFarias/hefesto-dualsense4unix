@@ -53,7 +53,7 @@ estado para LER.
 
 - A cor de cada lightbar é legível sem privilégio, por MAC, em USB **e** BT:
   `/sys/class/leds/input30:rgb:indicator/multi_intensity` = `16 32 72`
-  (BT, `HID_UNIQ=14:3a:9a:00:00:04`) e `input75` idem (USB, `a0:fa:9c:00:00:01`);
+  (BT, `HID_UNIQ=aa:bb:cc:00:00:02`) e `input75` idem (USB, `aa:bb:cc:00:00:01`);
   permissão `-rw-rw-rw-` (regra 77 instalada); `brightness=255`.
 - As duas lightbars dela estão na **MESMA** cor (consequência do fan-out global do
   `_desired`) — ver a dependência entre frentes em §Fronteiras.

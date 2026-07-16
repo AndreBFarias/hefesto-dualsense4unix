@@ -103,7 +103,10 @@ validação decorativa: é o **gate da entrega** e parte da investigação. E o 
   viabilidade do uhid deixa de depender do físico (o `hid_playstation` autocarrega por modalias
   na criação do device uhid — `alias: hid:b0003g*v0000054Cp00000DF2` confirmado no kernel desta
   máquina). Chamar a promoção no hotplug nunca conseguirá o que a criação não conseguiu. O item
-  foi reescrito (ver BT-04).
+  foi reescrito (ver BT-04). *(Atualização 2026-07-16: o que segue refutado é vendê-la como fix
+  da causa-raiz. Como REDE DE SEGURANÇA para disponibilidade tardia do uhid — ex.: ACL do
+  `/dev/uhid` aplicada depois do boot — o call site do `reconnect_loop` FICOU, por decisão do
+  VPAD-01; ver a NOTA DE RESOLUÇÃO no BT-04.)*
 
 ## O que a causa-raiz NÃO explica (segunda causa em aberto)
 
@@ -310,6 +313,25 @@ irmã).
 2. AO VIVO: ligar o controle depois do daemon resulta em vpad Edge 0df2 sem reiniciar nada
    (consequência do BT-01, verificada aqui).
 3. Gate verde; nenhum caminho recria vpad em loop sob flapping simulado do autoswitch.
+
+> **NOTA DE RESOLUÇÃO (2026-07-16, pós-revisão adversarial da Fase 1).** Este item conflitava
+> com o **VPAD-01** do doc irmão (`2026-07-16-sprint-vpad-sempre-edge.md`): o (c) daqui mandava
+> aposentar o upgrade de hotplug SEM call site novo no `reconnect_loop`; o VPAD-01 mandava
+> exatamente o call site. Resolução registrada nos dois docs:
+>
+> - **VPAD-01 VENCE no (c)**: o call site do `reconnect_loop` FICA, como rede de segurança com
+>   precheck `uhid_available()` + cooldown compartilhado. A premissa do (c) — "pós-BT-01 a
+>   disponibilidade do uhid é estática, logo a promoção no hotplug é código morto" — não vale:
+>   a ACL do `/dev/uhid` pode chegar DEPOIS do boot do daemon (primeira sessão pós-install, o
+>   `udevadm trigger` do subsystem misc), e nesse cenário real o vpad nasceu uinput e a borda
+>   de conexão é o único gatilho automático de recuperação. O **(c) fica SUPERADO nessa parte**;
+>   um agente de fase futura NÃO deve remover o call site "ao pé da letra" deste doc.
+> - **(a) e (b) IMPLEMENTADOS** (`_deve_promover_backend` em
+>   `daemon/subsystems/gamepad.py`): o (a) compara (flavor, backend); o (b) virou latch por
+>   ORIGEM — `origin='profile'` (perfil/autoswitch) NUNCA promove por apply idêntico, só o
+>   gesto manual da usuária tenta (1 clique = 1 tentativa, cooldown de 30 s contra clique
+>   repetido). O critério 1 acima está coberto por teste
+>   (`tests/unit/test_vpad_backend_wiring.py::TestRebackendPorReselecao`).
 
 ### ~~BT-05~~ — ABSORVIDO no BT-01 *(decisão da revisão de escopo)*
 

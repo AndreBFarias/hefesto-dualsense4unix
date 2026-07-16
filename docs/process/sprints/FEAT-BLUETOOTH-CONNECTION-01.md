@@ -1,7 +1,7 @@
 # FEAT-BLUETOOTH-CONNECTION-01 — Conexão funcional via Bluetooth (input + output + hotplug)
 
 **Status:** **MERGED** em 2026-05-16 (sessão V3.1). Validado em hardware real
-(DualSense a0:fa:9c:00:00:01 pareado + USB unplugged + daemon `transport=bt` +
+(DualSense AA:BB:CC:00:00:01 pareado + USB unplugged + daemon `transport=bt` +
 lightbar magenta + profile activate fps via BT + evdev event2 + touchpad
 event4 OK). Proof-of-work em `CHECKLIST_VALIDACAO_v3.md` seção "#29 — Bluetooth
 (MERGED 2026-05-16)".

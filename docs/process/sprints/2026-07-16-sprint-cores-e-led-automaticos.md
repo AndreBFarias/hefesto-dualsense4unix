@@ -47,8 +47,8 @@ por 3 revisores independentes) ou **PROVADO AO VIVO** (medido nesta máquina hoj
    escreve sysfs direto, fora do backend. [PROVADO NO CÓDIGO]
 5. **Ao vivo**: `cat /sys/class/leds/input{30,75}:rgb:indicator/multi_intensity` →
    ambos `16 32 72`; player-3 brightness=1 nos dois (padrão P1 idêntico). BT =
-   input30/hidraw4 (MAC `14:3a:9a:00:00:04`), USB = input75/hidraw2 (MAC
-   `a0:fa:9c:00:00:01`). A origem foi rastreada de ponta a ponta: perfil "Navegação"
+   input30/hidraw4 (MAC `aa:bb:cc:00:00:02`), USB = input75/hidraw2 (MAC
+   `aa:bb:cc:00:00:01`). A origem foi rastreada de ponta a ponta: perfil "Navegação"
    com lightbar `[40,80,180]` × brightness `0.4` = `(16,32,72)` exatos — broadcast do
    perfil confirmado. [PROVADO AO VIVO]
 6. **A rota sysfs por-controle funciona nos DOIS transportes AGORA**: escrita real

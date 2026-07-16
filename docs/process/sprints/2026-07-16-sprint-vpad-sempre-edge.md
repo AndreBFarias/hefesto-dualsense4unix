@@ -270,6 +270,19 @@ nas reconexões normais — com o VPAD-03, este item vira raridade de recuperaç
 controle, plugar depois, e nunca mais ver `uinput_device_created flavor=dualsense
 product=0xce6` no journal após hotplug.
 
+> **NOTA DE RESOLUÇÃO (2026-07-16, pós-revisão adversarial da Fase 1).** Este item
+> conflitava com o **BT-04(c)** do doc irmão (`2026-07-16-sprint-bluetooth-vpad-mudo.md`),
+> que mandava "aposentar/simplificar `upgrade_primary_vpad_to_uhid` EM VEZ DE adicionar
+> call site no reconnect_loop". Decisão registrada nos dois docs: **o VPAD-01 vence** —
+> o call site existe (`daemon/connection.py`, bloco offline→online) como rede de
+> segurança, com precheck `uhid_available()` e cooldown compartilhado com o VPAD-02. A
+> premissa do BT-04(c) ("disponibilidade do uhid é estática") não vale: a ACL do
+> `/dev/uhid` pode ser aplicada DEPOIS do boot do daemon (primeira sessão pós-install),
+> e a borda de conexão é o único gatilho automático de recuperação desse cenário.
+> Complemento anti-churn: o latch do BT-04(b) foi implementado por ORIGEM —
+> `origin='profile'` nunca promove por apply idêntico (só gesto manual da usuária), então
+> autoswitch/perfil flapando não recriam o vpad degradado em loop.
+
 ### VPAD-02 — Early-return por (flavor, backend): a GUI ganha botão de força — P0 — CLAUDE
 
 **O que fazer.** Em `start_gamepad_emulation` (`gamepad.py:295-298`): se
