@@ -54,7 +54,7 @@ para afirmações: cada uma abaixo carrega o seu nível.
 
 - **O "8BitDo por cabo" está em modo Switch**: enumera como Nintendo Pro Controller
   `057e:2009`, driver `hid-nintendo` — mas o OUI do MAC (`E4:17:D8`) é da 8BITDO TECHNOLOGY HK
-  LIMITED (`systemd-hwdb query OUI:E417D8`; `uniq=e4:17:d8:00:00:02`).
+  LIMITED (`systemd-hwdb query OUI:E417D8`; `uniq=AA:BB:CC:00:00:03`).
 - **A morte "sem desconectar" é o `hid-nintendo` desistindo, por Bluetooth**: 3 sessões BT
   (`0005:057E:2009.0008` às 12:38:46-47 e `.0014` às 13:15:34 e 13:22:52-13:24:00) com dezenas
   de `timeout waiting for input report` culminando em `joycon_enforce_subcmd_rate: exceeded max
