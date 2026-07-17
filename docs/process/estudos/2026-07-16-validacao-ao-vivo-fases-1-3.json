@@ -1,0 +1,351 @@
+{
+  "summary": "Valida ao vivo, na maquina real, o que as Fases 1-3 construiram: vpad Edge, wrapper, launch_env, perfis por controle, doctor",
+  "agentCount": 5,
+  "logs": [
+    "Sondas ao vivo em paralelo"
+  ],
+  "result": {
+    "sintese": {
+      "veredito_geral": "VALIDADO_COM_RESSALVAS",
+      "por_frente": [
+        {
+          "frente": "Fase 1 — boot do daemon + vpad Edge/UHID",
+          "veredito": "PARCIAL (núcleo VALIDADO AO VIVO, critério literal do boot não cumprido como-encontrado)",
+          "resumo": "Daemon subiu limpo com o código do repo (active, zero traceback/error/critical no journal, IPC no ar, controle físico bound, perfil vitoria ativo). PORÉM no boot como-encontrado o vpad NÃO nasceu Edge: a flag persistida da sessão anterior era 'xbox' e máscara Xbox usa uinput POR DESIGN — não é defeito, mas o critério 'hidraw 054C:0DF2 após o boot' só vale com máscara dualsense. O núcleo da fase foi então provado ao vivo via IPC: gamepad.emulation.set → vpad Edge 054C:0DF2 via UHID, kernel bindou hid_playstation, MAC próprio 02:fe:00:00:00:01, state_full confirma backend=uhid/dedup_ok=true/degraded=false, físico 0CE6 e vpad 0DF2 coexistem separados. NÃO foi o caso venenoso uinput/0ce6. Efeito colateral honesto: a troca persistiu a flag de 'xbox' para 'dualsense' (estado-alvo do sprint, mas mudança real na máquina dela que precisa ratificação). Um boot frio já com flag dualsense → Edge direto NÃO foi observado ao vivo (só inferido; o restart das 22:35 ocorreu no meio, mas o veredito de boot-frio-Edge segue coberto só por teste/lógica).",
+          "arquivos": "src/hefesto_dualsense4unix/gamepad/virtual_pad.py (linha 176: hid_playstation só binda VID/PID Sony)"
+        },
+        {
+          "frente": "Wrapper hefesto-launch (DEDUP-04) — 3 estados + latência + fail-safe",
+          "veredito": "VALIDADO_AO_VIVO",
+          "resumo": "100% validável por máquina e todos os casos passaram: daemon vivo+SteamAppId exporta exatamente as 4 envs do default.env (fallback correto quando não há steam_app_N.env); sem SteamAppId = zero envs em 0,001s; daemon morto = zero envs, não trava, serviço voltou; socket órfão (ECONNREFUSED) = exec roda em 0,015s; pior caso (socket mudo de daemon zumbi) respeita o teto de 1,0s do timeout e o jogo abre em fail-safe; LaunchOptions pré-existentes (MANGOHUD=1 %command%) sobrevivem junto com as nossas. Latência real: 16-98ms no caso vivo. Nenhuma falha funcional. Observações: o teto de 1s só ocorre com daemon zumbi (comportamento desenhado); default.env não contém SDL_JOYSTICK_HIDAPI — conferir se é intenção do UHID-04 para máscara dualsense/uhid. Estado da máquina restaurado após os testes. ATENÇÃO: o wrapper foi testado a partir de assets/ — o doctor confirma que ele ainda NÃO está instalado na máquina (falta re-rodar install.sh).",
+          "arquivos": "assets/hefesto-launch.sh, ~/.local/state/hefesto-dualsense4unix/launch_env/default.env"
+        },
+        {
+          "frente": "LAUNCH_ENV + perfis por controle (PERFIL-03)",
+          "veredito": "VALIDADO_AO_VIVO",
+          "resumo": "Materialização viva: default.env + steam_app_1599660.env regravados a cada transição, conteúdo coerente com o estado (uhid+dualsense+emulação → IGNORE presente para dedup no layout PS). Perfil por controle provado de ponta a ponta no hardware dela: override por uniq (a0fa9cc311f0) venceu o global — sysfs do físico virou lightbar verde 0 255 0 + player-2, sobreviveu a daemon.reload sem dropar o mapa controllers do JSON. Semântica PERFIL-03 observada no caso real: session.json tinha lixo herdado ('Navegação') divergindo do active_profile.txt ('vitoria'); o marker venceu e o primeiro gesto manual convergiu os dois — comportamento documentado, não defeito. Limpeza confirmada (perfil de teste apagado, roxo 129 61 156 dela restaurado, daemon saudável). Ressalva de cobertura: a cláusula 'perfil nativo omite IGNORE' NÃO disparou ao vivo porque nenhum perfil dela é kind=native hoje — esse ramo segue coberto só por teste. Doctor integral: 2 FAILs — wrapper ausente (ESPERADO, install.sh pendente) e mic DualSense ativo (pré-existente, WP-51 é default do install ainda não re-rodado).",
+          "arquivos": "src/hefesto_dualsense4unix/launch_env.py, ~/.local/state/hefesto-dualsense4unix/launch_env/, scripts/doctor.sh"
+        },
+        {
+          "frente": "Histerese do autoswitch (UX-01) + banner de degradação (UX-03/DEDUP-06) + applet",
+          "veredito": "VALIDADO_AO_VIVO",
+          "resumo": "Antes-vs-depois provado no MESMO journal de hoje: instâncias antigas (03:40 e 13:07) caíam de sackboy_nativo para vitoria com wm_class=unknown; a instância nova, sob ~70s de janela unknown a 2 Hz, logou o gap 1 única vez e reteve o perfil (zero profile_autoswitch com unknown). Prova mais forte: GUI fechada → detector cego de novo → perfil retido com current=vitoria no log. Detector não foi lobotomizado: evidência positiva (a própria GUI XWayland) ainda troca perfil normalmente. Banner ausente com tudo saudável provado duas vezes (função pura com estado ao vivo = None + screenshot da GUI real sem banner, máscara DualSense ativa). Applet vivo há 10h, conectado. RESSALVA HONESTA: o caminho NEGATIVO do banner (dedup_ok=false/backend=uinput → banner aparece) NÃO foi exercitado ao vivo — exigiria degradar o vpad em uso dela; está coberto só pela lógica lida e pelos testes do gate. Interferência ambiental (restart por agente irmão às 22:35) não invalidou nada — a instância nova reproduziu a histerese identicamente.",
+          "arquivos": "src/hefesto_dualsense4unix/profiles/autoswitch.py, src/hefesto_dualsense4unix/app/actions/home_actions.py, /tmp/Screenshot_2026-07-16_22-37-22.png"
+        }
+      ],
+      "falhas_bloqueantes": [
+        "NENHUMA falha real do código novo foi encontrada nas 4 frentes — nada quebrou, nada regrediu, nenhum caso venenoso (uinput/0ce6) ocorreu. Os itens abaixo bloqueiam o RELEASE/estado da máquina, não são defeitos das Fases 1-3:",
+        "Veneno estático persistido em ~/.steam/steam/userdata/1300222895/config/localconfig.vdf (IGNORE_DEVICES gravado na Steam): se o daemon cair ou degradar, aquele jogo abre com ZERO controles — é exatamente o cenário provado em 2026-07-16. Precisa migrar (botão 'Aplicar aos jogos da Steam' ou steam_launch_options.py --migrate) com a Steam FECHADA antes de considerar o release seguro. As regras da validação proibiam tocar na Steam real.",
+        "install.sh ainda não foi re-rodado nesta máquina: o wrapper hefesto-launch NÃO está instalado (doctor FAIL, esperado) e o fix do mic WP-51 não foi aplicado (DualSense segue como microfone padrão ATIVO com outra fonte disponível). Um único ./install.sh com TTY real cura os dois FAILs do doctor.",
+        "Pendência global que segura o release (decisão já registrada da onda): validação HUMANA do layout PS + rumble num jogo real com a máscara DualSense/Edge, e o ciclo Bluetooth — nenhum dos dois foi exercitado nesta rodada (só USB, sem jogo real)."
+      ],
+      "so_a_vitoria": [
+        "Ratificar (ou mandar reverter) a máscara persistida: durante a validação eu troquei gamepad_emulation.flag de 'xbox' para 'dualsense' via IPC — é o estado-alvo do sprint para o layout PS de amanhã, mas é mudança real na máquina dela e o daemon ficou RODANDO assim.",
+        "Validação humana do layout PS num jogo real: botões PlayStation corretos + rumble na máscara DualSense/Edge, sem controle duplicado — a pendência central do UHID-04 que nenhuma máquina pode substituir.",
+        "Teste por Bluetooth: toda esta rodada foi USB; o BT estava dormindo. O histórico de EIO flaky no blueprint em BT é justamente o caminho que degrada para uinput/0ce6.",
+        "Rodar ./install.sh sem flags, com TTY real (sudo exige TTY): instala o wrapper hefesto-launch e aplica a simetria do mic (WP-51) de uma vez — cura os 2 FAILs do doctor.",
+        "Com a Steam FECHADA: migrar o veneno estático do localconfig.vdf (botão 'Aplicar aos jogos da Steam' na GUI ou --migrate).",
+        "Rodar scripts/doctor.sh --fix para o warning do WirePlumber (DualSense fixado como microfone padrão) — aparece em toda subida do daemon de hoje.",
+        "Decidir sobre /dev/hidraw0/1/3/5 em 0666 (rw global, provável resíduo de debug manual): um replug ou udevadm trigger restaura 0660+uaccess.",
+        "Ciente (não exige ação): o caminho negativo do banner de degradação (dedup_ok=false → banner aparece) e o ramo 'perfil nativo omite IGNORE' seguem cobertos só por teste — degradar o vpad de propósito na máquina dela não foi feito por prudência."
+      ]
+    },
+    "boot": {
+      "frente": "Fase 1 — boot do daemon com o código novo + veredito do vpad Edge/UHID (validação ao vivo, máquina da mantenedora)",
+      "veredito": "PARCIAL",
+      "provas": [
+        {
+          "afirmacao": "Daemon subiu e ficou ativo com o código do repo (pip -e), sem erro, traceback ou critical no journal",
+          "saida": "systemctl --user is-active → active | grep -icE 'traceback|error|critical' no journal dos últimos 4 min → 0 | boot: single_instance_adquirido pid=166222, ipc_server_listening path=/run/user/1000/hefesto-dualsense4unix/hefesto-dualsense4unix.sock, controller_primary_bound transport=usb, profile_activated name=vitoria"
+        },
+        {
+          "afirmacao": "NO BOOT o vpad NÃO subiu Edge: nasceu uinput com máscara Xbox porque a flag persistida gamepad_emulation.flag continha 'xbox' (preferência da sessão anterior, default desde v3.13.0) — e máscara Xbox usa uinput POR DESIGN (virtual_pad.py:176: o hid_playstation só binda VID/PID Sony). NÃO foi o caso venenoso uinput/0ce6",
+          "saida": "journal 22:29:58: uinput_device_created ff=True flavor=xbox name='Microsoft X-Box 360 pad (Hefesto - Dualsense4Unix virtual)' product=0x28e vendor=0x45e | launch_env_materializado backends=['uinput'] mascara=xbox | grep -l 0DF2 /sys/class/hidraw/*/device/uevent → rc=1 (nenhum) | cat gamepad_emulation.flag → xbox"
+        },
+        {
+          "afirmacao": "Ao trocar a máscara para dualsense via IPC (gamepad.emulation.set), o núcleo da Fase 1 funcionou ao vivo: vpad nasceu Edge 054C:0DF2 via UHID com blueprint canônico, kernel bindou o hid_playstation, MAC próprio",
+          "saida": "hidraw6/device/uevent: DRIVER=playstation, HID_ID=0003:0000054C:00000DF2, HID_NAME='Hefesto Virtual DualSense P1', HID_UNIQ=02:fe:00:00:00:01 | journal 22:32:59: uhid_device_created → uhid_bind_ok → vpad_uhid_ativo mac=02:fe:00:00:00:01 player=1 → launch_env_materializado backends=['uhid'] mascara=dualsense → gamepad_emulation_started flavor=dualsense"
+        },
+        {
+          "afirmacao": "IPC de produção responde daemon.state_full e confirma backend uhid com dedup_ok true, sem degradação, FF suportado; o físico 0CE6 segue presente separado do vpad 0DF2",
+          "saida": "daemon.state_full → gamepad_emulation: {\"enabled\": true, \"flavor\": \"dualsense\", \"backend\": \"uhid\", \"ff_supported\": true, \"degraded\": false, \"dedup_ok\": true} | grep -l 0CE6 → /sys/class/hidraw/hidraw2 (físico) | grep -l 0DF2 → /sys/class/hidraw/hidraw6 (vpad)"
+        },
+        {
+          "afirmacao": "Daemon deixado RODANDO ao final, com máscara dualsense ativa (estado-alvo do sprint e da validação humana do layout PS)",
+          "saida": "systemctl --user is-active → active | gamepad_emulation.flag agora contém 'dualsense' (persistido pelo próprio daemon ao aceitar o set via IPC)"
+        }
+      ],
+      "problemas": [
+        "O critério literal da fase (hidraw 054C:0DF2 existir após o boot) NÃO se cumpriu no boot como-encontrado: a flag persistida da sessão anterior era 'xbox' e o daemon a honrou — comportamento por design, não defeito da Fase 1, mas significa que 'vpad sempre Edge' só vale quando a máscara é dualsense.",
+        "Efeito colateral da validação: a troca via IPC persistiu gamepad_emulation.flag de 'xbox' para 'dualsense'. É o estado que o sprint quer (layout PS amanhã), mas é uma mudança de estado real da máquina dela que precisa de ciência/ratificação.",
+        "Warning pré-existente no boot (não é desta fase): system_check_warning 'WirePlumber fixou o DualSense como microfone padrão — rode: scripts/doctor.sh --fix'.",
+        "Avisos conhecidos no boot: autoswitch_window_info_unavailable wm_class=unknown (armadilha já mapeada: autoswitch pode desligar a emulação quando a janela vira 'unknown' no XWayland)."
+      ],
+      "precisa_da_vitoria": [
+        "Ratificar que a máscara padrão persistida agora é 'dualsense' (eu a troquei via IPC durante a validação; antes estava 'xbox' da sessão anterior) — ou mandar reverter.",
+        "Validação humana do layout PS num jogo real (botões PS corretos + rumble na máscara DualSense/Edge) — pendência já conhecida do UHID-04.",
+        "Teste por Bluetooth (o BT estava dormindo/não usado nesta sonda; só o USB foi exercitado).",
+        "Rodar scripts/doctor.sh --fix para o warning do WirePlumber (DualSense fixado como microfone padrão)."
+      ]
+    },
+    "sondas": [
+      {
+        "frente": "Wrapper hefesto-launch (DEDUP-04) — validação ao vivo nos 3 estados + latência + fail-safe do exec",
+        "veredito": "VALIDADO_AO_VIVO",
+        "provas": [
+          {
+            "afirmacao": "Estado VIVO+SteamAppId=99999: o wrapper exporta exatamente as envs de dedup do default.env materializado (fallback correto: não existe steam_app_99999.env, caiu em default.env)",
+            "saida": "SDL_GAMECONTROLLER_IGNORE_DEVICES=0x054c/0x0ce6 | PROTON_ENABLE_HIDRAW=1 | __GL_SHADER_DISK_CACHE=1 | __GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1 — idêntico a ~/.local/state/hefesto-dualsense4unix/launch_env/default.env (linha de estado: native=False emulacao=True mascara=dualsense backends=['uhid'] | 2026-07-16T22:32:59). SDL_JOYSTICK_HIDAPI não está no arquivo, logo não foi exportada (allowlist só passa o que o daemon gravou)."
+          },
+          {
+            "afirmacao": "Estado SEM SteamAppId: nenhuma env nossa",
+            "saida": "grep -cE 'SDL_|PROTON_|__GL_' = 0; saída literal do teste: 'NENHUMA env nossa'; rc=0; tempo 0,001s"
+          },
+          {
+            "afirmacao": "Estado DAEMON MORTO (systemctl --user stop, is-active=inactive): nenhuma env, launch não trava, e o serviço voltou depois",
+            "saida": "3a (sem socket — o stop limpa o .sock): NENHUMA env nossa, rc=0, 0,001s. Após systemctl --user start: is-active=active, socket srw------- recriado, e a rodada seguinte voltou a exportar as 4 envs (0,098s)."
+          },
+          {
+            "afirmacao": "Socket SUJO/ÓRFÃO nunca quebra o comando: exec final roda mesmo assim",
+            "saida": "Criei socket AF_UNIX órfão no caminho exato de produção (bind+close, ninguém escutando): 'SteamAppId=99999 sh assets/hefesto-launch.sh echo LAUNCH-OK arg1 \"arg 2\"' imprimiu 'LAUNCH-OK arg1 arg 2', rc=0, NENHUMA env nossa, 0,015s (ECONNREFUSED imediato)."
+          },
+          {
+            "afirmacao": "Pior caso do gate IPC (socket que ACEITA mas nunca responde) respeita o timeout de 1s e não trava o launch",
+            "saida": "time: 1,022s total, rc=0, NENHUMA env nossa — o teto é o settimeout(1.0) do probe python; o jogo abre em fail-safe."
+          },
+          {
+            "afirmacao": "Latência adicionada ao launch, medida com time nos casos reais",
+            "saida": "vivo+appid: 0,016s (1ª rodada) / 0,098s (pós-restart, cache frio) | sem appid: 0,001s | daemon morto sem socket: 0,001s | socket órfão: 0,015s | pior caso socket mudo: 1,022s (cap do timeout)."
+          },
+          {
+            "afirmacao": "LaunchOptions pré-existentes no formato VAR=VAL %command% sobrevivem junto com as nossas (exec env \"$@\")",
+            "saida": "'SteamAppId=99999 sh assets/hefesto-launch.sh MANGOHUD=1 env' → MANGOHUD=1 E SDL_GAMECONTROLLER_IGNORE_DEVICES=0x054c/0x0ce6 presentes, rc=0."
+          }
+        ],
+        "problemas": [
+          "Nenhuma falha funcional. Observação de latência: o pior caso teórico (processo escutando o socket mas mudo — ex.: daemon travado, não morto) adiciona 1,0s ao launch; é o comportamento desenhado (timeout curto) e só ocorre com daemon zumbi, mas vale saber que existe esse teto.",
+          "Observação (não é bug do wrapper): o default.env atual NÃO contém SDL_JOYSTICK_HIDAPI — a allowlist do wrapper a aceitaria se o daemon a gravasse; conferir se é a intenção do UHID-04 para a máscara dualsense/uhid.",
+          "Limpeza pós-teste feita: sockets órfãos/mudos de teste removidos, daemon religado (active) — estado da máquina restaurado."
+        ],
+        "precisa_da_vitoria": [
+          "Nada para ESTA frente — o wrapper foi validável 100% por máquina. Continua pendente da onda (fora desta frente): validação humana do layout PS sem duplicata dentro de um jogo real na Steam e o teste por Bluetooth (memória de 2026-07-16)."
+        ]
+      },
+      {
+        "frente": "LAUNCH_ENV + PERFIS POR CONTROLE (validação ao vivo via IPC na máquina da mantenedora)",
+        "veredito": "VALIDADO_AO_VIVO",
+        "provas": [
+          {
+            "afirmacao": "launch_env: os dois arquivos existem no diretório que launch_env.py define (state_dir()/launch_env = ~/.local/state/hefesto-dualsense4unix/launch_env/) e são regravados a cada transição (timestamps acompanharam o restart do daemon feito por um agente irmão às 22:35:56 e o launch_env.refresh às 22:39).",
+            "saida": "ls: default.env (356 B) + steam_app_1599660.env (400 B), ambos 2026-07-16 22:39. default.env: '# estado: native=False emulacao=True mascara=dualsense backends=[uhid]' + PROTON_ENABLE_HIDRAW=1 + SDL_GAMECONTROLLER_IGNORE_DEVICES=0x054c/0x0ce6 + __GL_SHADER_DISK_CACHE=1 + __GL_SHADER_DISK_CACHE_SKIP_CLEANUP=1"
+          },
+          {
+            "afirmacao": "Conteúdo bate com o estado: backend uhid + máscara dualsense + emulação ligada => IGNORE presente (dedup no layout PS). A cláusula 'perfil nativo fora da antecipação => IGNORE omitido' não dispara porque NENHUM perfil dela tem kind=native/desktop hoje (sackboy_nativo é kind=gamepad dualsense apesar do nome; os demais mode=null) — audit de todos os 13 JSONs em disco confirmou. O único perfil steam_app_* (sackboy_nativo, appid 1599660) gerou o env por-appid com '# estado: perfil gamepad dualsense (backends reais)' e o mesmo par hidraw+IGNORE — coerente com _env_for_profile.",
+            "saida": "grep dos perfis: sackboy_nativo.json -> mode: gamepad | match: ['steam_app_1599660']; nenhum kind native/desktop; daemon.state_full: gamepad_emulation={enabled: true, flavor: dualsense, backend: uhid, degraded: false, dedup_ok: true}"
+          },
+          {
+            "afirmacao": "Perfil por controle: uniq do DualSense USB descoberto via IPC daemon.state_full = a0fa9cc311f0 (físico 054C:0CE6 em input75; o vpad UHID Edge 0DF2 é input869 com uniq 02:fe:00:00:00:01). Criei vitoria-vali-perfil (cópia do schema do vitoria.json, sem tocar nos reais) com leds GLOBAIS vermelho/player-1 e controllers={a0fa9cc311f0: {leds: verde/player-2}}. profile.switch via IPC aplicou o OVERRIDE (não o global) exatamente ao físico: sysfs multi_intensity virou 0 255 0 e player-2/brightness=1 (player-1=0) — o mapa por-controle venceu para aquele controle.",
+            "saida": "profile.switch -> {\"active_profile\": \"vitoria-vali-perfil\"}; cat /sys/class/leds/input75:rgb:indicator/multi_intensity -> '0 255 0' (global era 255 0 0); input75:white:player-2/brightness -> 1"
+          },
+          {
+            "afirmacao": "Sobrevivência a reload: daemon.reload via IPC retornou ok, o sysfs do físico continuou 0 255 0 e o JSON relido do disco manteve o mapa controllers intacto (chave a0fa9cc311f0 com lightbar [0,255,0] e player_leds [false,true,false,false,false]) — o round-trip não dropou o campo.",
+            "saida": "daemon.reload -> {\"status\": \"ok\", ...}; pós-reload: multi_intensity '0 255 0'; JSON do disco: controllers.a0fa9cc311f0.leds.lightbar = [0, 255, 0]"
+          },
+          {
+            "afirmacao": "Autoload/semântica PERFIL-03 coerente: ANTES do teste os arquivos divergiam — session.json={\"last_profile\": \"Navegação\"} (lixo herdado da era em que o autoswitch clobberava) vs active_profile.txt='vitoria' (intenção manual) — exatamente o caso documentado em resolve_boot_profile onde o marker vence com log. A ativação MANUAL do perfil de teste via profile.switch gravou a intenção nos DOIS em paridade; ao restaurar, ambos convergiram para 'vitoria' (o session.json inclusive saiu do lixo 'Navegação' para a verdade manual).",
+            "saida": "antes: active_profile.txt='vitoria' / session.json={\"last_profile\": \"Navegação\"}; após switch de teste: ambos 'vitoria-vali-perfil'; após restauração: ambos 'vitoria'"
+          },
+          {
+            "afirmacao": "Limpeza confirmada: perfil vitoria restaurado via IPC (lightbar voltou ao roxo 129 61 156 dela), vitoria_vali_perfil.json apagado (nenhum *vali* restante em profiles/), launch_env.refresh re-materializado, daemon saudável ao final.",
+            "saida": "profile.switch -> {\"active_profile\": \"vitoria\"}; multi_intensity -> '129 61 156'; ls profiles/ | grep vali -> (nenhum); state_full final: active_profile: vitoria | connected: True | backend: uhid | dedup_ok: True"
+          },
+          {
+            "afirmacao": "scripts/doctor.sh integral rodou (exit 1 por 2 FAILs): daemon/udev/uinput/uhid/hid_playstation/applet/Steam-Input-PSSupport/dedup-por-jogador/USB todos OK. FAIL 1 = 'wrapper hefesto-launch ausente — rode ./install.sh' — ESPERADO conforme a tarefa (o install.sh ainda não instalou o wrapper); não é falha desta frente. FAIL 2 = mic (ver problemas). A materialização de launch aparece como viva no próprio doctor.",
+            "saida": "Resumo do doctor: 'Diagnóstico: 2 FALHA(s), 6 aviso(s)'. Linhas-chave: '[ OK ] materialização de launch viva (...launch_env/default.env)'; '[ OK ] dedup POR JOGADOR ok (todos os vpads Edge/uhid, ou máscara Xbox)'; '[FAIL] wrapper hefesto-launch ausente — rode ./install.sh (entra por default, sem flag)' (esperado); '[FAIL] DualSense é o microfone ATIVO com outra fonte disponível'; '[WARN] veneno estático persistido em .../localconfig.vdf'; '[WARN] veredito: DEGRADADO — só XWayland' (limitação do cosmic-comp, conhecida); 4x '[WARN] /dev/hidrawN está 0666'"
+          }
+        ],
+        "problemas": [
+          "doctor FAIL real (pré-existente, não causado pelo teste): o DualSense é o microfone padrão ATIVO com outra fonte disponível (pactl get-default-source = alsa_input.usb-Sony...DualSense...iec958-stereo; existe alsa_input.pci-0000_0c_00.4.analog-stereo). O fix WP-51 é default do install, mas o install.sh ainda não foi re-rodado nesta máquina — mesmo motivo do wrapper ausente.",
+          "doctor WARN: veneno estático (IGNORE_DEVICES persistido) em ~/.steam/steam/userdata/1300222895/config/localconfig.vdf — se o daemon cair/degradar, esse jogo abre com ZERO controles. As regras desta validação me proibiam de tocar na Steam; a cura é o botão 'Aplicar aos jogos da Steam' da GUI ou steam_launch_options.py --migrate com a Steam fechada.",
+          "doctor WARN: /dev/hidraw0/1/3/5 em 0666 (rw global) em vez de 0660+uaccess — provável resíduo de ajuste manual de debug ao vivo.",
+          "doctor WARN: detector de janela DEGRADADO — só XWayland via xlib (cosmic-comp sem zcosmic_toplevel_info_v1); apps Wayland nativos viram 'unknown' (é a armadilha conhecida do autoswitch desligar a emulação).",
+          "Interferência ambiental (não é bug): um agente irmão parou o daemon durante a validação (inactive às 22:34:55); voltou sozinho em ~1 min e a materialização do launch_env foi corretamente regravada no start — re-tentei conforme as regras.",
+          "Nota menor: o session.json guardava lixo herdado ('Navegação') até esta sessão; a semântica nova corrigiu por convergência no primeiro gesto manual — comportamento documentado e observado, não defeito."
+        ],
+        "precisa_da_vitoria": [
+          "Rodar ./install.sh (sem flags, com TTY real) para instalar o wrapper hefesto-launch e aplicar a simetria do mic (WP-51) — cura os 2 FAILs do doctor de uma vez.",
+          "Com a Steam FECHADA, migrar o veneno estático do localconfig.vdf (botão 'Aplicar aos jogos da Steam' na GUI ou o script --migrate) — eu não podia tocar na Steam real.",
+          "Decidir sobre os /dev/hidraw* em 0666: se foi ajuste manual de debug, um replug/trigger do udev restaura 0660+uaccess.",
+          "Pendência da onda (fora desta frente): validação humana do layout PS no jogo real + teste por Bluetooth."
+        ]
+      },
+      {
+        "frente": "Histerese do autoswitch (UX-01) + banner de degradação do vpad (UX-03/DEDUP-06) + saúde do applet — validação ao vivo com daemon rodando",
+        "veredito": "VALIDADO_AO_VIVO",
+        "provas": [
+          {
+            "afirmacao": "Comportamento ANTIGO (pré-fix) está documentado no journal de hoje: instâncias antigas caíam pro perfil padrão quando a janela virava unknown",
+            "saida": "jul 16 03:40:29 [51797] profile_autoswitch from_=sackboy_nativo to=vitoria wm_class=unknown | jul 16 13:07:18 [3061] profile_autoswitch from_=sackboy_nativo to=vitoria wm_class=unknown (exatamente os 2 eventos citados no docstring de src/hefesto_dualsense4unix/profiles/autoswitch.py como o bug provado)"
+          },
+          {
+            "afirmacao": "Comportamento NOVO: a instância atual loga o gap 1x por episódio e NÃO troca de perfil — ticks a 2 Hz com janela unknown (COSMIC Wayland, detector xlib cego) por ~70s geraram 1 único log e zero profile_autoswitch",
+            "saida": "jul 16 22:35:56 [167398] autoswitch_window_info_unavailable current= wm_class=unknown — e NENHUMA linha profile_autoswitch com wm_class=unknown na instância 167398 (grep no journal desde 22:35)"
+          },
+          {
+            "afirmacao": "Prova mais forte da retenção: ao fechar a GUI (janela XWayland morreu → detector cego de novo), o gap foi logado COM o perfil corrente preenchido e o perfil ficou retido — nenhuma troca depois",
+            "saida": "jul 16 22:38:35 [167398] autoswitch_window_info_unavailable current=vitoria wm_class=unknown — sem nenhum profile_autoswitch subsequente; daemon.status depois: active_profile mantido (não caiu pro MatchAny padrão)"
+          },
+          {
+            "afirmacao": "O detector NÃO foi lobotomizado: evidência positiva ainda troca perfil normalmente (a própria GUI, que roda XWayland, foi detectada e ativou o perfil dela)",
+            "saida": "jul 16 22:37:08 [167398] profile_autoswitch from_=None to=vitoria wm_class=Hefesto-Dualsense4Unix wm_name='Hefesto - Dualsense4Unix'"
+          },
+          {
+            "afirmacao": "state_full expõe dedup_ok e degradação, e com o vpad uhid saudável dedup_ok=true / degraded=false",
+            "saida": "IPC daemon.state_full → gamepad_emulation = {\"enabled\": true, \"flavor\": \"dualsense\", \"backend\": \"uhid\", \"ff_supported\": true, \"degraded\": false, \"dedup_ok\": true} | native_bt_fragil = False"
+          },
+          {
+            "afirmacao": "Banner AUSENTE com tudo saudável — provado duas vezes: (a) função pura da GUI alimentada com o estado ao vivo, (b) GUI real aberta + screenshot",
+            "saida": "(a) vpad_degradation_text(state_full ao vivo) = None (src/hefesto_dualsense4unix/app/actions/home_actions.py) | (b) run.sh --gui rodou ~15s, screenshot /tmp/Screenshot_2026-07-16_22-37-22.png mostra a aba Início com 'Conectado Via USB', máscara 'DualSense (botões PlayStation)' ativa e NENHUM banner de aviso; GUI fechada por SIGTERM no PID exato 168569, exit 0"
+          },
+          {
+            "afirmacao": "Applet da Vitória continua vivo e conectado — não foi derrubado por nada da fase",
+            "saida": "ps -p 3832 → PID 3832 STAT SNl+ ELAPSED 10:02:01 hefesto-dualsense4unix-applet | ss -xp → sockets unix ESTAB do pid=3832 (fd=59 IPC + conexão Wayland do cosmic-comp) | daemon.status via IPC responde: connected=True transport=usb battery_pct=100"
+          }
+        ],
+        "problemas": [
+          "O daemon foi parado (daemon_shutting_down limpo às 22:34:55) e reiniciado (22:35:55, PID 166222→167398) por algo EXTERNO à minha sessão — eu não emiti systemctl; provavelmente outro agente da fase rodando em paralelo. Causou 1 FileNotFoundError transitório no meu primeiro connect ao socket. Não invalidou nada: a instância nova reproduziu a histerese identicamente.",
+          "O perfil ativo virou 'vitoria-vali-perfil' no meio da validação — perfil de TESTE criado por outro agente (prefixo vitoria-vali-*). NÃO apaguei para não quebrar a validação paralela dele; quem criou precisa apagar no fim, senão vira lixo no seletor da Vitória.",
+          "Aviso pré-existente no boot do daemon (fora do escopo desta frente): system_check_warning 'WirePlumber fixou o DualSense como microfone padrão — rode: scripts/doctor.sh --fix' — aparece em TODA subida do daemon de hoje.",
+          "O caminho NEGATIVO do banner (aparecer quando dedup_ok=false / backend=uinput) não foi exercitado ao vivo — exigiria degradar de propósito o vpad uhid do daemon em uso dela, o que eu não fiz; está coberto pela lógica lida em home_actions.py e pelos testes do gate."
+        ],
+        "precisa_da_vitoria": [
+          "Nada desta frente exige validação humana — histerese e banner foram provados por journal + IPC + screenshot. Permanece a pendência global já conhecida (fora desta frente): sentir o layout PS + rumble num jogo real e o ciclo BT."
+        ]
+      }
+    ]
+  },
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Subir"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 2,
+      "title": "Validar"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 3,
+      "title": "Sintetizar"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "boot-daemon",
+      "phaseIndex": 1,
+      "phaseTitle": "Subir",
+      "agentId": "a0f791c3ae332cc5b",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1784251790965,
+      "queuedAt": 1784251790954,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Fase 1 — boot do daemon com o código novo + veredito do vpa…",
+      "promptPreview": "REGRAS (validacao AO VIVO na maquina da mantenedora):\n- Voce esta em /home/vitoriamaria/Desenvolvimento/hefesto-dualsense4unix, branch sprint/harmonia-uhid. Codigo instalado em modo editavel (pip -e): o daemon roda o codigo do repo.\n- PODE: iniciar/parar o servico systemd --user do daemon, falar IPC com ele, ler /sys e journal, rodar o wrapper com comando inocuo, criar perfis DE TESTE com nomes pr…",
+      "lastProgressAt": 1784252053224,
+      "tokens": 47144,
+      "toolCalls": 24,
+      "durationMs": 262259,
+      "resultPreview": "{\"frente\":\"Fase 1 — boot do daemon com o código novo + veredito do vpad Edge/UHID (validação ao vivo, máquina da mantenedora)\",\"veredito\":\"PARCIAL\",\"provas\":[{\"afirmacao\":\"Daemon subiu e ficou ativo com o código do repo (pip -e), sem erro, traceback ou critical no journal\",\"saida\":\"systemctl --user is-active → active | grep -icE 'traceback|error|critical' no journal dos últimos 4 min → 0 | boot: s…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "sonda-wrapper",
+      "phaseIndex": 2,
+      "phaseTitle": "Validar",
+      "agentId": "aab52f1e066efe0df",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1784252053233,
+      "queuedAt": 1784252053231,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Wrapper hefesto-launch (DEDUP-04) — validação ao vivo nos 3…",
+      "promptPreview": "REGRAS (validacao AO VIVO na maquina da mantenedora):\n- Voce esta em /home/vitoriamaria/Desenvolvimento/hefesto-dualsense4unix, branch sprint/harmonia-uhid. Codigo instalado em modo editavel (pip -e): o daemon roda o codigo do repo.\n- PODE: iniciar/parar o servico systemd --user do daemon, falar IPC com ele, ler /sys e journal, rodar o wrapper com comando inocuo, criar perfis DE TESTE com nomes pr…",
+      "lastProgressAt": 1784252204758,
+      "tokens": 33766,
+      "toolCalls": 16,
+      "durationMs": 151525,
+      "resultPreview": "{\"frente\":\"Wrapper hefesto-launch (DEDUP-04) — validação ao vivo nos 3 estados + latência + fail-safe do exec\",\"veredito\":\"VALIDADO_AO_VIVO\",\"provas\":[{\"afirmacao\":\"Estado VIVO+SteamAppId=99999: o wrapper exporta exatamente as envs de dedup do default.env materializado (fallback correto: não existe steam_app_99999.env, caiu em default.env)\",\"saida\":\"SDL_GAMECONTROLLER_IGNORE_DEVICES=0x054c/0x0ce6 …"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "sonda-perfil-launchenv",
+      "phaseIndex": 2,
+      "phaseTitle": "Validar",
+      "agentId": "ad1964098a8bca131",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1784252053234,
+      "queuedAt": 1784252053231,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "LAUNCH_ENV + PERFIS POR CONTROLE (validação ao vivo via IPC…",
+      "promptPreview": "REGRAS (validacao AO VIVO na maquina da mantenedora):\n- Voce esta em /home/vitoriamaria/Desenvolvimento/hefesto-dualsense4unix, branch sprint/harmonia-uhid. Codigo instalado em modo editavel (pip -e): o daemon roda o codigo do repo.\n- PODE: iniciar/parar o servico systemd --user do daemon, falar IPC com ele, ler /sys e journal, rodar o wrapper com comando inocuo, criar perfis DE TESTE com nomes pr…",
+      "lastProgressAt": 1784252495791,
+      "tokens": 74703,
+      "toolCalls": 47,
+      "durationMs": 442557,
+      "resultPreview": "{\"frente\":\"LAUNCH_ENV + PERFIS POR CONTROLE (validação ao vivo via IPC na máquina da mantenedora)\",\"veredito\":\"VALIDADO_AO_VIVO\",\"provas\":[{\"afirmacao\":\"launch_env: os dois arquivos existem no diretório que launch_env.py define (state_dir()/launch_env = ~/.local/state/hefesto-dualsense4unix/launch_env/) e são regravados a cada transição (timestamps acompanharam o restart do daemon feito por um age…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 4,
+      "label": "sonda-histerese-banner",
+      "phaseIndex": 2,
+      "phaseTitle": "Validar",
+      "agentId": "acd06c52e69d58754",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1784252053235,
+      "queuedAt": 1784252053231,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "Histerese do autoswitch (UX-01) + banner de degradação do v…",
+      "promptPreview": "REGRAS (validacao AO VIVO na maquina da mantenedora):\n- Voce esta em /home/vitoriamaria/Desenvolvimento/hefesto-dualsense4unix, branch sprint/harmonia-uhid. Codigo instalado em modo editavel (pip -e): o daemon roda o codigo do repo.\n- PODE: iniciar/parar o servico systemd --user do daemon, falar IPC com ele, ler /sys e journal, rodar o wrapper com comando inocuo, criar perfis DE TESTE com nomes pr…",
+      "lastProgressAt": 1784252415600,
+      "tokens": 72733,
+      "toolCalls": 35,
+      "durationMs": 362365,
+      "resultPreview": "{\"frente\":\"Histerese do autoswitch (UX-01) + banner de degradação do vpad (UX-03/DEDUP-06) + saúde do applet — validação ao vivo com daemon rodando\",\"veredito\":\"VALIDADO_AO_VIVO\",\"provas\":[{\"afirmacao\":\"Comportamento ANTIGO (pré-fix) está documentado no journal de hoje: instâncias antigas caíam pro perfil padrão quando a janela virava unknown\",\"saida\":\"jul 16 03:40:29 [51797] profile_autoswitch fr…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 5,
+      "label": "sintese-validacao",
+      "phaseIndex": 3,
+      "phaseTitle": "Sintetizar",
+      "agentId": "af3a908d4ec1367ce",
+      "model": "claude-opus-4-8[1m]",
+      "state": "done",
+      "startedAt": 1784252495803,
+      "queuedAt": 1784252495791,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "VALIDADO_COM_RESSALVAS",
+      "promptPreview": "Sintetize a validacao ao vivo das Fases 1-3 em portugues, honesto. Dados:\n{\n  \"boot\": {\n    \"frente\": \"Fase 1 — boot do daemon com o código novo + veredito do vpad Edge/UHID (validação ao vivo, máquina da mantenedora)\",\n    \"veredito\": \"PARCIAL\",\n    \"provas\": [\n      {\n        \"afirmacao\": \"Daemon subiu e ficou ativo com o código do repo (pip -e), sem erro, traceback ou critical no journal\",\n    …",
+      "lastProgressAt": 1784252562973,
+      "tokens": 32123,
+      "toolCalls": 1,
+      "durationMs": 67170,
+      "resultPreview": "{\"veredito_geral\":\"VALIDADO_COM_RESSALVAS\",\"por_frente\":[{\"frente\":\"Fase 1 — boot do daemon + vpad Edge/UHID\",\"veredito\":\"PARCIAL (núcleo VALIDADO AO VIVO, critério literal do boot não cumprido como-encontrado)\",\"resumo\":\"Daemon subiu limpo com o código do repo (active, zero traceback/error/critical no journal, IPC no ar, controle físico bound, perfil vitoria ativo). PORÉM no boot como-encontrado …"
+    }
+  ],
+  "totalTokens": 260469,
+  "totalToolCalls": 123
+}
