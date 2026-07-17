@@ -1,8 +1,11 @@
 # Sprint 2026-07-16 — Perfis por controle (fundação 4P-01/4P-02): identidade por MAC, estado por controle, mapa no perfil e autoload do perfil da usuária
 
-**STATUS: PLANO. Nada desta frente foi construído.** Este doc é o desenho, já corrigido por
-três revisões adversariais independentes (lentes técnica, regressão e escopo). Branch
-`sprint/harmonia-uhid`.
+**STATUS (2026-07-17): CONSTRUÍDO — PERFIL-01/02/03/04 (P0) no commit `8e59601`, gateados
+(suíte 2712/0/0) e com validação viva parcial (ver §Registro da validação ao vivo, no fim).
+PERFIL-06 (P2) construído nesta sessão (revert do co-op por-uniq + CHANGELOG). Pendente: a
+metade humana do PERFIL-05 (2 DualSense, cenários a/c/d).** O texto abaixo é o desenho
+original, já corrigido por três revisões adversariais independentes (lentes técnica,
+regressão e escopo). Branch `sprint/harmonia-uhid`.
 
 Pedido da Vitória (2026-07-16, palavras dela): *"cliquei no 1 - BT para mexer no lightbar
 dele, mas se eu configurar todas as settings específicas pra ele, ele deveria funcionar
@@ -510,3 +513,37 @@ passthrough do draft, atômico com o 01) → PERFIL-04 (GUI — fecha a unidade 
 visível) → PERFIL-03 (autoload; independente das camadas 1-2, pode andar em paralelo) →
 PERFIL-05 (validação humana — portão de fechamento dos P0) → PERFIL-06 (precedência +
 compat).
+
+## Registro da validação ao vivo (PERFIL-05 parcial)
+
+### 2026-07-16 (noite) — validação da Fase 3 pós-construção
+
+Retorno completo em `../estudos/2026-07-16-validacao-ao-vivo-fases-1-3.json`. Em resumo:
+override por uniq venceu o global no sysfs, sobreviveu a reload do daemon, e o mapa
+`controllers` persistiu no JSON do perfil.
+
+### 2026-07-17 (madrugada) — físico SÓ em Bluetooth, boot frio real
+
+Cenário: máquina reiniciada com a máscara `dualsense` persistida e o DualSense conectado
+por BT (nenhum cabo). Verificado via IPC (`daemon.state_full`) + sysfs, sem reiniciar nada:
+
+1. **Boot frio com flag dualsense → Edge direto (ressalva 1 do checkpoint CURADA AO
+   VIVO).** O vpad nasceu `uhid`/Edge `054C:0DF2` já no boot (antes coberto só por teste):
+   `backend=uhid`, `degraded=false`, `dedup_ok=true`, físico `0CE6` (bus 0005/BT) e vpad
+   `0DF2` coexistindo. O caso venenoso (uinput/`0ce6`) não ocorreu.
+2. **Autoload vivo (PERFIL-03).** `active_profile="vitoria"` restaurado no boot sem gesto
+   manual; `session.json` = `{"last_profile": "vitoria"}`.
+3. **Override por-uniq aplicado AO VIVO no transporte BT.** Mapa `controllers` com
+   `lightbar [0,255,0]` keyed pelo MAC do físico → a ativação pintou SÓ o físico
+   (`multi_intensity` do nó dele = `0 255 0`), com o nó do vpad intocado. A rota sysfs
+   por-uniq funciona em BT com o daemon quente.
+4. **Reset do mapa na ativação (aceite 3 do PERFIL-01) AO VIVO.** Reativar o perfil SEM o
+   mapa devolveu o global `129 61 156` — nenhum override ressuscitou.
+5. **Robustez do loader.** Perfil com override inválido (`player_leds: null`) foi
+   rejeitado com erro de validação SEM meia-aplicação (a cor vigente não mudou).
+
+**Segue pendente (precisa da Vitória + 2º DualSense no cabo):** (a) replug do cabo mantém
+a cor de cada um; (c) desligar/religar o BT re-aplica o override quando ele volta (religar
+exige o botão PS — ação física); (d) trocar o mesmo controle de cabo para BT preserva
+identidade e settings. O cenário (b) — restart restaura `vitoria` — está coberto ao vivo
+pelo boot desta madrugada (item 2 acima).

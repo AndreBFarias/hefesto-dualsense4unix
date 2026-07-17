@@ -1,9 +1,23 @@
 # Sprint SPRINT-8BITDO-01 — 8BitDo SN30 Pro e os outros controles: ver, entender, não interferir
 
 Frente da onda 2026-07-16 (Estudo 1, 117 agentes + relato ao vivo da Vitória). Branch
-`sprint/harmonia-uhid`. **Este documento é um PLANO — nada daqui foi construído.** Passou por
-revisão adversarial em 3 lentes (técnica, regressão, escopo); as refutações e ressalvas estão
-incorporadas no texto — onde a revisão derrubou algo do estudo original, o doc diz.
+`sprint/harmonia-uhid`. Passou por revisão adversarial em 3 lentes (técnica, regressão,
+escopo); as refutações e ressalvas estão incorporadas no texto.
+
+**Status (2026-07-17): 8BIT-03 construído (doctor detecta a CASCATA via journal, zero
+falso-positivo — a morte real de 2026-07-16, 70 timeouts na `.0014`, dispara; a
+não-terminal `.0008` não); 8BIT-06 construído (`docs/usage/troubleshooting-8bitdo.md`);
+8BIT-01 construído (inventário read-only opt-in no `controller.list`, exclusões do
+vpad/DualSense provadas ao vivo — a validação POSITIVA ficou pendente porque o Pro
+Controller BT morreu às 23:52 desta madrugada com a assinatura curta do estudo: 3×
+`exceeded max attempts` + re-probe `-110`; NOTA honesta: assinatura curta fica ABAIXO
+do threshold de 10 timeouts do 8BIT-03 — viés anti-falso-positivo deliberado; pode ter
+sido idle-off, não dá para cravar morte-por-cascata). 8BIT-02 NÃO construído — aguarda
+o OK de produto da mantenedora (controles externos 100% read-only na aba
+multi-controle). 8BIT-04: o item 1 ficou SEM OBJETO nesta onda (não existe regra udev
+de dedup — o mecanismo vencedor foi o wrapper `hefesto-launch`); os requisitos do item
+2 seguem registrados abaixo e valem para qualquer onda futura que reviva a regra.
+8BIT-05 (decisão de modo) segue com a Vitória — custo zero de código.**
 
 Pedido da mantenedora (escopo, nas palavras dela): *"Eu NÃO quero que vire uma central completa
 das marcas e afins. [...] Só uma aba pra conectar os controles e ver como eles aparecem com o

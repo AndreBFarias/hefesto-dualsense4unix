@@ -2,9 +2,16 @@
 
 Pedido da mantenedora (2026-07-16, ao vivo): *"na aba Status, a cor dos inputs deve ser a
 MESMA cor do lightbar daquele controle, e deve aparecer para TODOS os players"* (pedido 1
-da onda). Este doc é um **PLANO** — nada daqui foi construído ainda. Branch
-`sprint/harmonia-uhid`. O desenho abaixo já incorpora a revisão adversarial (3 lentes:
-técnica, regressão, escopo) — incluindo duas refutações que **mudaram** o plano original.
+da onda). Branch `sprint/harmonia-uhid`. O desenho abaixo já incorpora a revisão
+adversarial (3 lentes) — incluindo duas refutações que **mudaram** o plano original.
+
+**Status (2026-07-17): CONSTRUÍDO — STATUS-01 (state_full por controle com priming,
+rastreio "escrito por nós" e dono da escrita), STATUS-02 (1 card por controle, keyed
+`(index, uniq)`, zero timers novos), STATUS-03 (contraste ≥ 3.0 com matiz preservado,
+tinting cacheado de glyphs/sticks/barras) e STATUS-07 (doctor). STATUS-04 (P2) NÃO
+construído por decisão do próprio doc (só se a validação sentir falta). Pendente:
+STATUS-05 (validação humana — roteiro no CHECKLIST_MANUAL.md, inclui o aceite explícito
+do compromisso da cor).**
 
 ## TL;DR
 

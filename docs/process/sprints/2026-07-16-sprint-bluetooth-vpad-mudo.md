@@ -1,8 +1,15 @@
 # Sprint 2026-07-16 — Bluetooth: o vpad mudo (blueprint sintético mata a dependência do físico)
 
-**Status: PLANO. Nada daqui foi construído.** Frente do Estudo 1 (117 agentes) + relato ao vivo da
-Vitória ("em BT nada funciona"), com revisão adversarial em 3 lentes (técnica, regressão, escopo)
-já incorporada — inclusive as partes que a revisão REFUTOU. Branch `sprint/harmonia-uhid`.
+**Status (2026-07-17): BT-01/BT-02 construídos na Fase 1 (`bc68718` — blueprint
+sintético, uinput 0df2); BT-04 (a)+(b) implementados na Fase 1 e (c) SUPERADO pela nota
+de resolução abaixo; BT-03 construído em 2026-07-17 (vpad_backend+vpad_motivo por
+controle no state_full, badge no card da aba Status, evento `vpad.degraded` no bus).
+BT-06 SEGUE GATEADO de propósito: a remoção automática da option NÃO foi ligada (o
+caminho suportado virou o wrapper `hefesto-launch` da Fase 2 + migração do vdf no
+install/GUI; doctor e compose_launch já não recomendam o veneno). Pendente: BT-07
+(gate humano — Sackboy/RDR2 por BT, matriz com máscara Xbox).** Frente do Estudo 1
+(117 agentes) + relato ao vivo da Vitória ("em BT nada funciona"), com revisão
+adversarial em 3 lentes já incorporada. Branch `sprint/harmonia-uhid`.
 
 ## TL;DR
 

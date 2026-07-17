@@ -4,12 +4,15 @@ Pedido da mantenedora (2026-07-16, escopo item 3): *"Para cada DualSense conecta
 automaticamente uma COR de coluna diferente no lightbar + o LED indicador do número
 do player."* Branch `sprint/harmonia-uhid`.
 
-**Status: PLANO. Nada desta frente foi construído.** Este doc consolida a investigação
-original (117 agentes do Estudo 1 + investigação COR desta manhã) e a **revisão
-adversarial em 3 lentes** (técnica, regressão, escopo). A causa-raiz e a solução
-**sobreviveram** às três lentes, mas **duas partes do desenho original foram REFUTADAS**
-e estão corrigidas aqui (ver §Refutações) — quem for codar deve seguir ESTE doc, não o
-rascunho da investigação.
+**Status (2026-07-17): CONSTRUÍDO — COR-01 (identity.py, slot de sessão + rotulagem
+CLI/applet), COR-03 (paleta automática como camada do meio no merge por campo:
+explícita > auto > global, provider injetado, D1-D12 honradas), COR-04 (toggle na GUI
+com a semântica D4 completa), COR-05 (player_slot + lightbar_* no state_full — D8 com
+divergência fundamentada: uma cor efetiva + contraste garantido na borda da GUI),
+COR-06 (doctor: 7 regras + probe de gravabilidade) e COR-08 (notas). O caminho (4) do
+COR-02 fechou via PERFIL-06 (revert do co-op por-uniq); os caminhos (1)(2)(3) já
+resolviam por `_merged_desired_for_key` desde a Fase 3. Pendente: COR-07 (validação
+humana — roteiro no CHECKLIST_MANUAL.md).** Texto original do plano abaixo.
 
 ## TL;DR
 
