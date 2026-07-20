@@ -1,17 +1,18 @@
 """Protocolo + lease + SO_PEERCRED do broker hide-hidraw (BROKER-01) — hermético.
 
 Sem tocar /dev real: as operações de fs são um dublê que só grava chamadas, o
-validador é injetado, e as conexões são `socketpair` (a forma sancionada pela
-missão de simular o daemon). Prova:
-- JSON-por-linha: hide/restore/restore_all/status/ping; comando desconhecido,
-  JSON malformado, linha gigante (`reject_oversize`);
-- validador aplicado no hide E no restore (caminho ruim vs. não-físico);
-- refcount por nó com DUAS conexões (takeover de daemon) e restore no EOF —
-  o coração do fail-safe "duplicado > zero controles";
-- SO_PEERCRED: uid errado é recusado ANTES de qualquer comando.
+validador é injetado, e as conexões são `socketpair`. Prova o herdado do
+parkado (JSON-por-linha, refcount, EOF, peercred, blob ACL) MAIS as lições
+2-3 da auditoria que parkou a 1ª implementação:
+- hide re-APLICA o fs mesmo para nó já rastreado (nó recriado com o mesmo
+  hidrawN nasce exposto; idempotência só em memória mentiria);
+- restore só destrackea DEPOIS do fs OK (retry com backoff + verificação);
+  falha mantém o nó na lease e no `hidden` — nunca "esquecer" um nó 0600;
+- falha num nó NUNCA aborta o restore dos demais (EOF/restore_all parciais).
 """
 from __future__ import annotations
 
+import errno
 import json
 import os
 import socket
@@ -31,25 +32,52 @@ UID = 1000
 
 
 class FakeOps:
-    """Dublê das operações de fs: grava chamadas, nunca toca /dev."""
+    """Dublê das operações de fs: grava chamadas, nunca toca /dev.
 
-    def __init__(self, *, fail_hide: bool = False, fail_restore: Exception | None = None):
+    Assinaturas espelham `FsAclOps` novo (pinado por base): hide(node, base),
+    restore(node, base, uid), is_exposed_to(node, uid), open_node(node, base).
+    `restore_script` injeta uma exceção POR CHAMADA (None = sucesso) para os
+    testes de retry/parcial; esgotado o script, sucesso.
+    """
+
+    def __init__(
+        self,
+        *,
+        fail_hide: bool = False,
+        hide_gone: bool = False,
+        fail_restore: Exception | None = None,
+        restore_script: list[Exception | None] | None = None,
+        exposed: bool = True,
+    ) -> None:
         self.calls: list[tuple[Any, ...]] = []
+        self.sleeps: list[float] = []
         self.fail_hide = fail_hide
+        self.hide_gone = hide_gone
         self.fail_restore = fail_restore
+        self.restore_script = list(restore_script or [])
+        self.exposed = exposed
 
-    def hide(self, node: str) -> None:
+    def hide(self, node: str, base: str) -> None:
+        if self.hide_gone:
+            raise FileNotFoundError(node)
         if self.fail_hide:
-            raise OSError("EPERM")
-        self.calls.append(("hide", node))
+            raise OSError(errno.EPERM, "EPERM")
+        self.calls.append(("hide", node, base))
 
-    def restore(self, node: str, uid: int) -> None:
-        if self.fail_restore is not None:
+    def restore(self, node: str, base: str, uid: int) -> None:
+        if self.restore_script:
+            exc = self.restore_script.pop(0)
+            if exc is not None:
+                raise exc
+        elif self.fail_restore is not None:
             raise self.fail_restore
-        self.calls.append(("restore", node, uid))
+        self.calls.append(("restore", node, base, uid))
 
     def is_exposed_to(self, node: str, uid: int) -> bool:
-        return True
+        return self.exposed
+
+    def open_node(self, node: str, base: str) -> int:  # pragma: no cover - open_fd
+        raise AssertionError("open_node não pertence a esta suíte")
 
 
 def _validator(node: str) -> str | None:
@@ -61,14 +89,21 @@ def _validator(node: str) -> str | None:
 def make_state(**kw: Any) -> tuple[BrokerState, FakeOps]:
     ops = kw.pop("ops", FakeOps())
     state = BrokerState(
-        allowed_uid=UID, ops=ops, validator=_validator, log=lambda *a, **k: None, **kw
+        allowed_uid=UID,
+        ops=ops,
+        validator=_validator,
+        log=lambda *a, **k: None,
+        sleep_fn=ops.sleeps.append,  # backoff vira registro (teste rápido)
+        **kw,
     )
     return state, ops
 
 
 def req(state: BrokerState, conn: int, payload: Any, uid: int = UID) -> dict[str, Any]:
     line = payload if isinstance(payload, bytes) else json.dumps(payload).encode()
-    return dict(state.handle_line(conn, uid, line))
+    response, fd = state.handle_line(conn, uid, line)
+    assert fd is None  # só o cmd `open` (suíte própria) devolve fd
+    return dict(response)
 
 
 class TestProtocolo:
@@ -86,15 +121,24 @@ class TestProtocolo:
         state, ops = make_state()
         resposta = req(state, 1, {"cmd": "hide", "node": "/dev/hidraw3"})
         assert resposta == {"ok": True, "cmd": "hide", "node": "/dev/hidraw3", "state": "hidden"}
-        assert ops.calls == [("hide", "/dev/hidraw3")]
+        assert ops.calls == [("hide", "/dev/hidraw3", "hidraw3")]
 
-    def test_hide_idempotente_na_mesma_conexao(self) -> None:
-        # O re-hide do hotplug repete o hide a cada tick: 1 só operação de fs.
+    def test_hide_repetido_reaplica_o_fs(self) -> None:
+        # LIÇÃO 2: o re-hide do hotplug SEMPRE toca o fs — nó recriado com o
+        # mesmo hidrawN nasceu exposto e o estado em memória não é prova.
+        # (Inverte o teste do parkado, que exigia UMA operação só.)
         state, ops = make_state()
         req(state, 1, {"cmd": "hide", "node": "/dev/hidraw3"})
         resposta = req(state, 1, {"cmd": "hide", "node": "/dev/hidraw3"})
         assert resposta["ok"] is True and resposta["state"] == "hidden"
-        assert ops.calls == [("hide", "/dev/hidraw3")]
+        assert ops.calls == [
+            ("hide", "/dev/hidraw3", "hidraw3"),
+            ("hide", "/dev/hidraw3", "hidraw3"),
+        ]
+        # E o refcount NÃO infla na mesma conexão: um restore expõe.
+        assert state.hidden["/dev/hidraw3"].refcount == 1
+        assert req(state, 1, {"cmd": "restore", "node": "/dev/hidraw3"})["state"] == "exposed"
+        assert state.hidden == {}
 
     def test_hide_caminho_ruim(self) -> None:
         state, ops = make_state()
@@ -117,12 +161,20 @@ class TestProtocolo:
         assert resposta["ok"] is False and resposta["error"] == "hide_failed"
         assert state.hidden == {} and ops.calls == []
 
+    def test_hide_no_sumiu_nao_rastreia(self) -> None:
+        # Nó reciclado/unplug entre validar e pinar: FileNotFoundError do
+        # O_PATH vira "gone" — nunca rastrear um nó que não foi escondido.
+        state, ops = make_state(ops=FakeOps(hide_gone=True))
+        resposta = req(state, 1, {"cmd": "hide", "node": "/dev/hidraw3"})
+        assert resposta["ok"] is False and resposta["error"] == "hide_node_gone"
+        assert state.hidden == {} and ops.calls == []
+
     def test_restore_devolve_com_uid_do_hide(self) -> None:
         state, ops = make_state()
         req(state, 1, {"cmd": "hide", "node": "/dev/hidraw3"}, uid=UID)
         resposta = req(state, 1, {"cmd": "restore", "node": "/dev/hidraw3"})
         assert resposta["state"] == "exposed"
-        assert ("restore", "/dev/hidraw3", UID) in ops.calls
+        assert ("restore", "/dev/hidraw3", "hidraw3", UID) in ops.calls
         assert state.hidden == {}
 
     def test_restore_nao_rastreado_valida_identidade(self) -> None:
@@ -131,7 +183,7 @@ class TestProtocolo:
         assert ok["ok"] is True and ok["state"] == "exposed"  # best-effort idempotente
         ruim = req(state, 1, {"cmd": "restore", "node": "/dev/hidraw6"})
         assert ruim["ok"] is False and ruim["error"] == "reject_not_physical_dualsense"
-        assert ops.calls == [("restore", "/dev/hidraw7", UID)]
+        assert ops.calls == [("restore", "/dev/hidraw7", "hidraw7", UID)]
 
     def test_restore_node_sumiu_enoent(self) -> None:
         # Unplug: FileNotFoundError no restore NÃO é erro (estado "gone").
@@ -148,6 +200,7 @@ class TestProtocolo:
         resposta = req(state, 1, {"cmd": "restore_all"})
         assert resposta["ok"] is True
         assert resposta["restored"] == ["/dev/hidraw3", "/dev/hidraw7"]
+        assert resposta["failed"] == []
         assert state.hidden == {}
         restores = [c for c in ops.calls if c[0] == "restore"]
         assert len(restores) == 2
@@ -169,6 +222,63 @@ class TestProtocolo:
         assert req(state, 1, gigante)["error"] == "reject_oversize"
 
 
+class TestRestoreResiliente:
+    """Lição 2: retry + verificação; nó só sai do rastreio com fs OK."""
+
+    def test_restore_falho_mantem_rastreado_e_retry_posterior_cura(self) -> None:
+        ops = FakeOps(restore_script=[OSError(errno.EIO, "EIO")] * 3)
+        state, _ = make_state(ops=ops)
+        req(state, 1, {"cmd": "hide", "node": "/dev/hidraw3"})
+        resposta = req(state, 1, {"cmd": "restore", "node": "/dev/hidraw3"})
+        assert resposta["ok"] is False and resposta["error"] == "restore_failed"
+        # NUNCA "esquecer" um nó 0600: segue no hidden E na lease.
+        assert "/dev/hidraw3" in state.hidden
+        assert "/dev/hidraw3" in state.by_conn[1]
+        # O retry natural (script esgotado ⇒ fs curou) destrackea.
+        resposta = req(state, 1, {"cmd": "restore", "node": "/dev/hidraw3"})
+        assert resposta["ok"] is True and resposta["state"] == "exposed"
+        assert state.hidden == {} and state.by_conn[1] == set()
+
+    def test_retry_com_backoff_dentro_do_mesmo_restore(self) -> None:
+        # Falha 2x e cura na 3ª tentativa DENTRO do mesmo comando.
+        ops = FakeOps(restore_script=[OSError(errno.EIO, "1"), OSError(errno.EIO, "2"), None])
+        state, _ = make_state(ops=ops)
+        req(state, 1, {"cmd": "hide", "node": "/dev/hidraw3"})
+        resposta = req(state, 1, {"cmd": "restore", "node": "/dev/hidraw3"})
+        assert resposta["ok"] is True and resposta["state"] == "exposed"
+        assert state.hidden == {}
+        assert ops.sleeps == [0.05, 0.2]  # backoff curto entre as tentativas
+
+    def test_restore_verify_failed_mantem_rastreado(self) -> None:
+        # ops.restore "funciona" mas o nó NÃO fica exposto (fs esquisito):
+        # sinal restore_verify_failed para o doctor + nó segue rastreado.
+        ops = FakeOps(exposed=False)
+        state, _ = make_state(ops=ops)
+        req(state, 1, {"cmd": "hide", "node": "/dev/hidraw3"})
+        resposta = req(state, 1, {"cmd": "restore", "node": "/dev/hidraw3"})
+        assert resposta["ok"] is False and resposta["error"] == "restore_verify_failed"
+        assert "/dev/hidraw3" in state.hidden
+
+    def test_restore_all_parcial_nao_aborta_o_loop(self) -> None:
+        # LIÇÃO 3: hidraw3 falha (3 tentativas), hidraw7 restaura mesmo assim.
+        class OpsParcial(FakeOps):
+            def restore(self, node: str, base: str, uid: int) -> None:
+                if base == "hidraw3":
+                    raise OSError(errno.EIO, "EIO")
+                super().restore(node, base, uid)
+
+        ops = OpsParcial()
+        state, _ = make_state(ops=ops)
+        req(state, 1, {"cmd": "hide", "node": "/dev/hidraw3"})
+        req(state, 1, {"cmd": "hide", "node": "/dev/hidraw7"})
+        resposta = req(state, 1, {"cmd": "restore_all"})
+        assert resposta["ok"] is True
+        assert resposta["restored"] == ["/dev/hidraw7"]
+        assert resposta["failed"] == ["/dev/hidraw3"]
+        assert "/dev/hidraw3" in state.hidden and "/dev/hidraw7" not in state.hidden
+        assert state.by_conn[1] == {"/dev/hidraw3"}
+
+
 class TestLeaseRefcount:
     def test_eof_restaura_tudo_da_conexao(self) -> None:
         state, ops = make_state()
@@ -177,16 +287,35 @@ class TestLeaseRefcount:
         restaurados = state.on_conn_closed(1)
         assert restaurados == ["/dev/hidraw3", "/dev/hidraw7"]
         assert state.hidden == {} and state.by_conn == {}
-        assert ("restore", "/dev/hidraw3", UID) in ops.calls
-        assert ("restore", "/dev/hidraw7", UID) in ops.calls
+        assert ("restore", "/dev/hidraw3", "hidraw3", UID) in ops.calls
+        assert ("restore", "/dev/hidraw7", "hidraw7", UID) in ops.calls
+
+    def test_eof_parcial_nao_aborta_nem_destrackea_o_falho(self) -> None:
+        # LIÇÃO 3: OSError num nó não derruba a lease inteira; o falho fica
+        # rastreado no hidden (belts cobrem), os demais restauram.
+        class OpsParcial(FakeOps):
+            def restore(self, node: str, base: str, uid: int) -> None:
+                if base == "hidraw3":
+                    raise OSError(errno.EIO, "EIO")
+                super().restore(node, base, uid)
+
+        ops = OpsParcial()
+        state, _ = make_state(ops=ops)
+        req(state, 1, {"cmd": "hide", "node": "/dev/hidraw3"})
+        req(state, 1, {"cmd": "hide", "node": "/dev/hidraw7"})
+        assert state.on_conn_closed(1) == ["/dev/hidraw7"]
+        assert "/dev/hidraw3" in state.hidden  # rastreado; belts cobrem
+        assert state.by_conn == {}
 
     def test_refcount_duas_conexoes_takeover(self) -> None:
         # Takeover: daemon novo (conn 2) re-esconde o nó da lease velha (conn
         # 1). A morte da velha NÃO expõe; só a última lease restaura.
+        # LIÇÃO 2: o hide da conn 2 TAMBÉM toca o fs (re-aplica).
         state, ops = make_state()
         req(state, 1, {"cmd": "hide", "node": "/dev/hidraw3"})
         req(state, 2, {"cmd": "hide", "node": "/dev/hidraw3"})
-        assert len([c for c in ops.calls if c[0] == "hide"]) == 1  # fs 1x
+        assert len([c for c in ops.calls if c[0] == "hide"]) == 2  # fs 2x (lição 2)
+        assert state.hidden["/dev/hidraw3"].refcount == 2
         assert state.on_conn_closed(1) == []  # conn 2 ainda segura
         assert "/dev/hidraw3" in state.hidden
         assert state.on_conn_closed(2) == ["/dev/hidraw3"]
@@ -206,6 +335,65 @@ class TestLeaseRefcount:
         assert state.restore_everything() == ["/dev/hidraw3", "/dev/hidraw7"]
         assert state.hidden == {} and state.by_conn == {}
         assert len([c for c in ops.calls if c[0] == "restore"]) == 2
+
+
+class TestLeaseOrfa:
+    """Achado Onda S #3: nó órfão de lease fechada com restore de fs falho.
+
+    `on_conn_closed` mantém o nó em `hidden` (correto — nunca esquecer um
+    0600), mas o `by_conn.pop` incondicional apagava o único vínculo. A
+    conexão NOVA que re-escondia o nó o "adotava" somando refcount (+1
+    fantasma que ninguém descontava) — `restore_all` parava em refcount 1
+    para sempre e o nó ficava 0600 root até reiniciar o SERVIÇO do broker.
+    """
+
+    def _estado_com_orfao(self) -> tuple[BrokerState, FakeOps]:
+        # Conn 1 esconde; o EOF da lease falha o restore 3x (EIO transitório)
+        # ⇒ nó fica em `hidden` sem NENHUMA conexão o referenciando (órfão).
+        ops = FakeOps(restore_script=[OSError(errno.EIO, "EIO")] * 3)
+        state, _ = make_state(ops=ops)
+        req(state, 1, {"cmd": "hide", "node": "/dev/hidraw3"})
+        assert state.on_conn_closed(1) == []
+        assert "/dev/hidraw3" in state.hidden
+        assert all("/dev/hidraw3" not in held for held in state.by_conn.values())
+        return state, ops
+
+    def test_adocao_por_conexao_nova_nao_infla_o_refcount(self) -> None:
+        state, _ops = self._estado_com_orfao()
+        # O daemon reinicia (conn 2) e o rehide chama hide no mesmo nó: a
+        # adoção do órfão NÃO pode somar refcount — só existe UMA lease viva.
+        req(state, 2, {"cmd": "hide", "node": "/dev/hidraw3"})
+        assert state.hidden["/dev/hidraw3"].refcount == 1
+
+    def test_restore_all_da_conexao_nova_restaura_o_orfao_adotado(self) -> None:
+        # O cenário reproduzido ao vivo no achado: Modo Nativo chama
+        # restore_all e recebia {'ok': True, 'restored': []} com o nó PRESO.
+        state, ops = self._estado_com_orfao()
+        req(state, 2, {"cmd": "hide", "node": "/dev/hidraw3"})
+        resposta = req(state, 2, {"cmd": "restore_all"})
+        assert resposta["restored"] == ["/dev/hidraw3"]
+        assert state.hidden == {}
+        assert any(c[0] == "restore" for c in ops.calls)  # fs tocado de verdade
+
+    def test_restore_explicito_de_orfao_toca_o_fs(self) -> None:
+        # Sem re-hide nenhum: um `restore` explícito de conexão nova sobre o
+        # órfão tem de restaurar o fs (antes respondia "hidden" para sempre).
+        state, ops = self._estado_com_orfao()
+        resposta = req(state, 2, {"cmd": "restore", "node": "/dev/hidraw3"})
+        assert resposta["ok"] is True and resposta["state"] == "exposed"
+        assert state.hidden == {}
+        assert any(c[0] == "restore" for c in ops.calls)
+
+    def test_no_seguro_por_lease_viva_segue_intocado(self) -> None:
+        # Contraprova: com uma lease VIVA segurando o nó, nada muda — restore
+        # de terceiro responde "hidden" e hide de terceiro soma refcount.
+        state, ops = make_state()
+        req(state, 1, {"cmd": "hide", "node": "/dev/hidraw3"})
+        resposta = req(state, 2, {"cmd": "restore", "node": "/dev/hidraw3"})
+        assert resposta["state"] == "hidden"
+        assert not any(c[0] == "restore" for c in ops.calls)
+        req(state, 2, {"cmd": "hide", "node": "/dev/hidraw3"})
+        assert state.hidden["/dev/hidraw3"].refcount == 2
 
 
 class TestPeerCred:
@@ -273,7 +461,7 @@ class TestBrokerLoopEOF:
         cliente.close()  # SIGKILL do daemon = kernel fecha o fd = EOF
         broker.step(timeout=2.0)
         assert state.hidden == {}
-        assert ("restore", "/dev/hidraw3", os.getuid()) in ops.calls
+        assert ("restore", "/dev/hidraw3", "hidraw3", os.getuid()) in ops.calls
 
     def test_linha_gigante_fecha_e_restaura(self) -> None:
         broker, state, ops, cliente = self._wired()
@@ -344,4 +532,30 @@ class TestRestoreAllPhysical:
             log=lambda *a, **k: None,
         )
         assert restaurados == ["/dev/hidraw3"]
-        assert ops.calls == [("restore", "/dev/hidraw3", UID)]
+        assert ops.calls == [("restore", "/dev/hidraw3", "hidraw3", UID)]
+
+    def test_baseline_falha_num_no_segue_para_os_demais(self, tmp_path: Any) -> None:
+        sys_hidraw = tmp_path / "sys"
+        for base in ("hidraw3", "hidraw7"):
+            (sys_hidraw / base).mkdir(parents=True)
+
+        class Ops(FakeOps):
+            def is_exposed_to(self, node: str, uid: int) -> bool:
+                return False
+
+            def restore(self, node: str, base: str, uid: int) -> None:
+                if base == "hidraw3":
+                    raise OSError(errno.EIO, "EIO")
+                super().restore(node, base, uid)
+
+        ops = Ops()
+        restaurados = restore_all_physical(
+            uid=UID,
+            ops=ops,
+            dev_root="/dev",
+            sys_class_hidraw=str(sys_hidraw),
+            validator=_validator,
+            log=lambda *a, **k: None,
+        )
+        assert restaurados == ["/dev/hidraw7"]
+        assert ops.calls == [("restore", "/dev/hidraw7", "hidraw7", UID)]

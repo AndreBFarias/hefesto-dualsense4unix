@@ -1,11 +1,19 @@
-"""Assets do broker root hide-hidraw (BROKER-01) — units, install e uninstall.
+"""Units systemd do broker root hide-hidraw (BROKER-01) — desenho 2026-07-20 §5.
 
-Guarda de regressão da spec §1 do estudo 2026-07-18-estudo-broker-hide-hidraw:
-o hardening da unit é a diferença entre "hardened" e "não funciona" — três
-diretivas NÃO PODEM entrar (PrivateDevices, DeviceAllow, udevadm no restore) e
-as demais têm valores exatos. Também prova a simetria install/uninstall (o
-primeiro serviço de SISTEMA do projeto) e o executável standalone do broker
-(stdlib pura, roda no python3 do sistema).
+Guarda de regressão das DUAS mudanças estruturais vs o parkado + o hardening:
+- `RuntimeDirectory` NÃO PODE voltar ao .service (lição 4/#10: é apagado em
+  TODO stop/crash e levava o broker.sock junto — a lease nunca renascia); a
+  DONA do diretório/socket é a SOCKET UNIT;
+- `DeviceAllow=char-hidraw rw` PRECISA existir (o cmd open faz open(2) O_RDWR
+  real; `char-hidraw` resolve o major dinâmico pelo nome em /proc/devices);
+- `PrivateDevices` e `udevadm` seguem proibidos; o resto do hardening é exato.
+
+Também prova o executável standalone (stdlib pura, roda no python3 do sistema,
+falha explícita sem uid autorizado E com uid 0 — lição 6) e os placeholders
+que o install renderiza (uid no .service, grupo no .socket, nunca cruzados).
+
+Os checks de install.sh/uninstall.sh/doctor (simetria) pertencem ao lote B3 —
+aqui só o que o lote B1 entrega (broker core + units).
 """
 from __future__ import annotations
 
@@ -64,25 +72,40 @@ class TestSocketUnit:
         assert d["SocketGroup"] == ["__SESSION_GROUP__"]  # renderizado no install
         assert d["DirectoryMode"] == ["0755"]
 
+    def test_socket_unit_e_a_dona_do_diretorio(self, socket_text: str) -> None:
+        # Lição 4/#10: quem cria /run/hefesto-hidraw-broker é a SOCKET unit
+        # (DirectoryMode do ListenStream) — o comentário documenta a posse e
+        # nenhuma diretiva delega o diretório ao serviço.
+        assert "DONA do diretório" in socket_text
+        d = _directives(socket_text)
+        assert "RuntimeDirectory" not in d
+
     def test_wantedby_sockets_target(self, socket_text: str) -> None:
         assert _directives(socket_text)["WantedBy"] == ["sockets.target"]
 
 
 class TestServiceHardening:
     def test_diretivas_proibidas_nao_entram(self, service_text: str) -> None:
-        # §1.3: PrivateDevices=yes daria um /dev SEM hidraw (chmod → ENOENT);
-        # DeviceAllow é desnecessário (broker não ABRE device — só metadata) e
-        # a presença dele afrouxaria o DevicePolicy=closed; udevadm escreveria
-        # em /sys (conflita com ProtectKernelTunables).
+        # PrivateDevices=yes daria um /dev SEM hidraw (chmod/open → ENOENT);
+        # RuntimeDirectory apagaria o broker.sock em todo stop/crash do
+        # serviço (lição 4/#10 — a socket unit é a dona do caminho);
+        # udevadm escreveria em /sys (conflita com ProtectKernelTunables).
         d = _directives(service_text)
-        assert "PrivateDevices" not in d, "PrivateDevices quebraria o chmod em /dev/hidraw*"
-        assert "DeviceAllow" not in d, "o mínimo correto é NENHUM DeviceAllow"
-        # Nenhuma diretiva pode invocar udevadm (escreveria em /sys).
-        assert not any(
-            "udevadm" in valor for valores in d.values() for valor in valores
-        )
+        assert "PrivateDevices" not in d, "PrivateDevices quebraria chmod/open em /dev/hidraw*"
+        assert "RuntimeDirectory" not in d, "RuntimeDirectory apaga o socket da lease (lição 4)"
+        assert "RuntimeDirectoryMode" not in d
+        assert not any("udevadm" in valor for valores in d.values() for valor in valores)
 
-    def test_hardening_exato_da_spec(self, service_text: str) -> None:
+    def test_device_allow_do_cmd_open(self, service_text: str) -> None:
+        # O delta estrutural vs 2026-07-18: o broker AGORA abre device (cmd
+        # open). closed + allow SÓ char-hidraw, rw (o fd servido é O_RDWR —
+        # `r` faria o open falhar com EPERM); pelo NOME do grupo (major do
+        # hidraw é dinâmico — um numérico quebraria em kernel novo).
+        d = _directives(service_text)
+        assert d["DevicePolicy"] == ["closed"]
+        assert d["DeviceAllow"] == ["char-hidraw rw"]
+
+    def test_hardening_exato_do_desenho(self, service_text: str) -> None:
         d = _directives(service_text)
         esperado = {
             "User": ["root"],
@@ -99,7 +122,7 @@ class TestServiceHardening:
             "ProtectClock": ["yes"],
             "ProtectHostname": ["yes"],
             "ProtectProc": ["invisible"],
-            "ProcSubset": ["pid"],
+            "ProcSubset": ["pid"],  # mantém /proc/self/fd (operações pinadas)
             "RestrictNamespaces": ["yes"],
             "RestrictRealtime": ["yes"],
             "RestrictSUIDSGID": ["yes"],
@@ -110,13 +133,13 @@ class TestServiceHardening:
             "SystemCallArchitectures": ["native"],
             "DevicePolicy": ["closed"],
             "AmbientCapabilities": [""],
-            "RuntimeDirectory": ["hefesto-hidraw-broker"],
-            "RuntimeDirectoryMode": ["0755"],
         }
         for chave, valor in esperado.items():
             assert d.get(chave) == valor, f"{chave}: esperado {valor}, veio {d.get(chave)}"
 
     def test_syscall_filter_e_capabilities(self, service_text: str) -> None:
+        # sendmsg com SCM_RIGHTS é @network-io ∈ @system-service — nenhum
+        # filtro extra é necessário para ancillary (verificado no desenho §5.3).
         d = _directives(service_text)
         negados = (
             "~@privileged @resources @mount @debug @cpu-emulation "
@@ -142,6 +165,14 @@ class TestServiceHardening:
         assert d["Environment"] == ["HEFESTO_BROKER_ALLOWED_UID=__SESSION_UID__"]
         assert d["Restart"] == ["on-failure"]
 
+    def test_header_de_posse_para_o_uninstall(
+        self, service_text: str, socket_text: str
+    ) -> None:
+        # Registro de posse (§7): o uninstall só remove unit que carrega o
+        # nosso header — nunca toca unit de terceiros.
+        for texto in (service_text, socket_text):
+            assert "instalado por hefesto-dualsense4unix (install.sh)" in texto
+
 
 class TestBrokerStandalone:
     def test_stdlib_pura_sem_import_do_pacote(self) -> None:
@@ -165,6 +196,20 @@ class TestBrokerStandalone:
         assert resultado.returncode == 1
         assert "allowed_uid_missing" in resultado.stdout
 
+    def test_recusa_uid_zero(self, tmp_path: Path) -> None:
+        # Lição 6: ALLOWED_UID nunca pode ser root — render errado (install
+        # sem sessão) tem de falhar explícito, nunca virar broker de uid 0.
+        resultado = subprocess.run(
+            [sys.executable, str(BROKER_PY), "--restore-all-and-exit"],
+            capture_output=True,
+            text=True,
+            cwd=str(tmp_path),
+            env={"PATH": "/usr/bin:/bin", "HEFESTO_BROKER_ALLOWED_UID": "0"},
+            timeout=30,
+        )
+        assert resultado.returncode == 1
+        assert "allowed_uid_root_recusado" in resultado.stdout
+
     def test_help_funciona(self, tmp_path: Path) -> None:
         resultado = subprocess.run(
             [sys.executable, str(BROKER_PY), "--help"],
@@ -178,29 +223,8 @@ class TestBrokerStandalone:
         assert "--restore-all-and-exit" in resultado.stdout
 
 
-class TestInstalacaoSimetrica:
-    def test_install_cobre_o_broker(self) -> None:
-        texto = (REPO_ROOT / "install.sh").read_text(encoding="utf-8")
-        assert "src/hefesto_dualsense4unix/broker/hidraw_broker.py" in texto
-        assert "assets/systemd/hefesto-hidraw-broker.service" in texto
-        assert "assets/systemd/hefesto-hidraw-broker.socket" in texto
-        assert "__SESSION_UID__" in texto and "__SESSION_GROUP__" in texto
-        # Só o SOCKET é habilitado (socket-activated) — nunca o .service direto.
-        assert "systemctl enable --now hefesto-hidraw-broker.socket" in texto
-        assert "enable --now hefesto-hidraw-broker.service" not in texto
-
-    def test_uninstall_simetrico(self) -> None:
-        texto = (REPO_ROOT / "uninstall.sh").read_text(encoding="utf-8")
-        assert "hefesto-hidraw-broker.socket" in texto
-        assert "hefesto-hidraw-broker.service" in texto
-        assert "/usr/local/lib/hefesto-dualsense4unix/hefesto-hidraw-broker" in texto
-
-    def test_doctor_reporta_o_broker(self) -> None:
-        texto = (REPO_ROOT / "scripts" / "doctor.sh").read_text(encoding="utf-8")
-        assert "check_hidraw_broker" in texto
-        assert '{"cmd": "status"}' in texto
-
-    def test_placeholders_casam_install_e_units(
+class TestPlaceholders:
+    def test_placeholders_por_arquivo_nunca_cruzados(
         self, service_text: str, socket_text: str
     ) -> None:
         # O sed do install renderiza EXATAMENTE estes placeholders (por

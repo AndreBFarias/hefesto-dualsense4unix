@@ -1,4 +1,4 @@
-"""Broker root hide-hidraw (BROKER-01).
+"""Broker root hide-hidraw com fd-injection (BROKER-01 / Onda S).
 
 O módulo `hidraw_broker` é AUTOCONTIDO (stdlib pura): o install copia só o
 arquivo para /usr/local/lib/hefesto-dualsense4unix/hefesto-hidraw-broker e ele
