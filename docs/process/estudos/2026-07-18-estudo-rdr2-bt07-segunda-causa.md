@@ -1,8 +1,8 @@
 # Estudo 2026-07-18 — RDR2 nativo+BT: a 2ª causa (BT-07 / FUT-03)
 
 > Diagnóstico AO VIVO read-only (2026-07-18 ~21h50) da sessão real de gameplay: DualSense **branco
-> USB** (físico do vpad P1, `HID_UNIQ 14:3a:9a:00:00:04`, hidraw3), DualSense **roxo BT** (player 2,
-> `HID_UNIQ a0:fa:9c:00:00:01`, hidraw7), 2 vpads uhid (`02:fe:00:00:00:01/02`, hidraw6/8), Pro
+> USB** (físico do vpad P1, `HID_UNIQ aa:bb:cc:00:00:01`, hidraw3), DualSense **roxo BT** (player 2,
+> `HID_UNIQ aa:bb:cc:00:00:02`, hidraw7), 2 vpads uhid (`02:fe:00:00:00:01/02`, hidraw6/8), Pro
 > Controller Nintendo USB + 8BitDo no cabo (2× 057e:2009). Daemon PID 2469 vivo, controles em uso.
 > **Cenário perfeito:** branco (054c:0ce6) em USB e roxo (054c:0ce6) em BT — MESMO VID/PID em
 > transportes diferentes — para testar a hipótese do "gêmeo colapsado no SDL". MACs neste doc são os
@@ -36,7 +36,7 @@ inteira, confirmando FATO 1 do estudo-guerra. Não é dedup, é MULTIDÃO.
 
 ### Serials distintos — a hipótese do "gêmeo" está REFUTADA
 
-`HID_UNIQ`: branco USB `14:3a:9a:00:00:04` · roxo BT `a0:fa:9c:00:00:01` · vpad P1
+`HID_UNIQ`: branco USB `aa:bb:cc:00:00:01` · roxo BT `aa:bb:cc:00:00:02` · vpad P1
 `02:fe:00:00:00:01` · vpad P2 `02:fe:00:00:00:02`. **Quatro serials diferentes.** Os nomes de
 produto também diferem (USB = "Sony Interactive Entertainment DualSense Wireless Controller"; BT =
 "DualSense Wireless Controller"). O combine wiredwireless do SDL casa por **serial**; dois físicos
@@ -52,10 +52,10 @@ ganha slot — `identity.py:79,206`).
   `0005:054C:0CE6.000A`). O kernel `hid-playstation` descarta o report ruim em silêncio — não vira
   input travado.
 - `hciconfig hci0`: **errors 0** em RX e TX (RX 635 MB / TX 2,6 MB, 0 sco errors).
-- Link roxo: `ACL a0:fa:9c:00:00:01 state 1 CENTRAL AUTH ENCRYPT`, **RSSI -72**, `Connected: yes`,
+- Link roxo: `ACL aa:bb:cc:00:00:02 state 1 CENTRAL AUTH ENCRYPT`, **RSSI -72**, `Connected: yes`,
   `Modalias usb:v054Cp0CE6d0100`. Encriptado e saudável.
 - **Nenhum clone DS4 `05C4` pareado nesta sessão** (só DualSense + 8BitDo `Pro Controller`
-  `e4:17:d8:00:00:02`). O candidato (c) do sprint (clone stormando o adaptador) simplesmente não
+  `e4:17:d8:00:00:03`). O candidato (c) do sprint (clone stormando o adaptador) simplesmente não
   está presente — era o gatilho, e ele não está em campo. Candidato (c) **descartado** para BT-07.
 
 ### Sem -EIO/timeout no handshake BT agora

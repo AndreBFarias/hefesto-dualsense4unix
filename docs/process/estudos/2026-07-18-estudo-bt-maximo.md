@@ -19,7 +19,7 @@
 | btusb | `enable_autosuspend=Y` (default do módulo — o FURO da sprint) | `/sys/module/btusb/parameters/enable_autosuspend` |
 | USB do dongle (3-1) | `power/control=on`, `autosuspend_delay_ms=-1000`, `runtime_status=active`, 12 Mbps | sysfs `/sys/bus/usb/devices/3-1/power/*` |
 | Quem garante o "on" hoje | `usbcore.autosuspend=-1` no cmdline (**Aurora**, terceiro) | `/proc/cmdline` |
-| Pareados | SÓ 2: DualSense `a0:fa:9c:00:00:01` (conectado, **Trusted: no**, RSSI −72) e "Pro Controller" `e4:17:d8:00:00:02` (Trusted: yes, desconectado, OUI E4:17:D8 = 8BitDo → é o 8BitDo em modo Switch) | `bluetoothctl devices Paired` + `info` |
+| Pareados | SÓ 2: DualSense `aa:bb:cc:00:00:02` (conectado, **Trusted: no**, RSSI −72) e "Pro Controller" `e4:17:d8:00:00:03` (Trusted: yes, desconectado, OUI E4:17:D8 = 8BitDo → é o 8BitDo em modo Switch) | `bluetoothctl devices Paired` + `info` |
 | **Clone DS4 054C:05C4** | **NÃO está mais pareado** (sobrou só rastro no cache, §4) | `bluetoothctl devices` (2 entradas) |
 | Discovering | **yes AO VIVO** — causa: `cosmic-settings bluetooth` aberto (pid 4015) | `bluetoothctl show` + `pgrep -af` |
 | debugfs hci0 | `idle_timeout=0`, sniff 80–800 slots; `supervision_timeout=42`/`conn_*_interval 24/40` são os defaults **LE** (não se aplicam a gamepads BR/EDR) | `/sys/kernel/debug/bluetooth/hci0/*` |
@@ -53,7 +53,7 @@ Boot −1 (17/07 15:45 → 18/07 01:42):
 
 - 2 ocorrências de `DualSense input CRC's check failed` (nível de fundo aceitável), zero
   l2cap error, zero supervision timeout, zero erro HCI (`hciconfig errors:0`).
-- bluetoothd: `connect to e4:17:d8:00:00:02: Connection refused (111)` às 21:34 e 21:40 +
+- bluetoothd: `connect to e4:17:d8:00:00:03: Connection refused (111)` às 21:34 e 21:40 +
   `Can't get HIDP connection info` — o 8BitDo (agora NO CABO por decisão da mantenedora)
   tentando/negando reconexão BT; consistente com o muro do hid-nintendo BT (§PLAT-04 item 4).
   Nada a curar aqui via BlueZ.
@@ -120,7 +120,7 @@ Mas ele já voltou uma vez no mesmo boot (§2.1) e pode voltar — o doctor prec
 (`/var/lib/bluetooth/d8:44:89:00:00:05/cache/`) guarda
 `e4:17:d8:00:00:03 → Name=Wireless Controller` ("Wireless Controller" é o nome exato do
 DS4) com **OUI E4:17:D8 = 8BitDo** — o mesmo OUI do "Pro Controller" pareado
-(`e4:17:d8:00:00:02`). Ou seja: o "clone DS4" é quase certamente **um 8BitDo em modo
+(`e4:17:d8:00:00:03`). Ou seja: o "clone DS4" é quase certamente **um 8BitDo em modo
 D-input/DS4** (esse modo se apresenta como 054C:05C4), não um controle pirata avulso.
 Plausível (OUI + nome; o cache não guarda Modalias) — muda o TOM do texto: não é "jogue
 fora", é "troque o modo do controle".
