@@ -7,7 +7,8 @@
 > ACL/chmod continua válida) e código parkado `docs/process/future-broker/` (read-only, referência).
 > Evidência viva desta máquina (2026-07-20): DualSense BT reais em
 > `/sys/devices/virtual/misc/uhid/0005:054C:0CE6.0006` e `.0007`, ambos com
-> `HID_ID=0005:0000054C:00000CE6`, `HID_PHYS=d8:44:89:00:00:05` (MAC do adaptador) e
+> `HID_ID=0005:0000054C:00000CE6`, `HID_PHYS=d8:44:89:00:00:05` (MAC do adaptador,
+> últimos 3 octetos mascarados — convenção de anonimato dos estudos) e
 > `HID_UNIQ=<MAC do controle>` — físicos REAIS apesar de "virtual" no caminho.
 
 Invariante sagrado em toda decisão abaixo: **"duplicado > zero controles"** — nenhuma falha do
@@ -457,7 +458,7 @@ padrão fstat-pós-open cobre o cmd `open` (§1.2). `encode_access_acl`/`decode_
 | Caso (uevent do pai HID imediato) | Onde mora | Veredito | Barreira |
 |---|---|---|---|
 | USB físico `HID_ID=0003:0000054C:00000CE6` | `/devices/pci.../usb3/...` | **ACEITA** | identidade |
-| BT físico BlueZ 5.85 `0005:...:00000CE6`, `HID_UNIQ=a0:fa:9c:00:00:01`, `HID_PHYS=d8:44:89:00:00:05` | `/devices/virtual/misc/uhid/` | **ACEITA** | BLUEZ-UHID-01 (D1-D4) — evidência viva `.0006`/`.0007` |
+| BT físico BlueZ 5.85 `0005:...:00000CE6`, `HID_UNIQ=a0:fa:9c:00:00:01`, `HID_PHYS=d8:44:89:00:00:05` (MACs mascarados) | `/devices/virtual/misc/uhid/` | **ACEITA** | BLUEZ-UHID-01 (D1-D4) — evidência viva `.0006`/`.0007` |
 | vpad nosso `0003:...:00000DF2` | uhid | rejeita | product 0DF2 explícito |
 | vpad hipotético anunciando 0CE6 (`HID_PHYS=hefesto-vpad*` ou `HID_UNIQ=02:fe:*`) | uhid | rejeita | D2 (identidade do vpad) |
 | Nintendo/8BitDo `...:0000057E:...` | qualquer | rejeita | vendor ≠ 054C |

@@ -118,7 +118,8 @@ Mas ele já voltou uma vez no mesmo boot (§2.1) e pode voltar — o doctor prec
 
 **Identidade provável do clone (achado novo):** o cache do adaptador
 (`/var/lib/bluetooth/d8:44:89:00:00:05/cache/`) guarda
-`e4:17:d8:00:00:03 → Name=Wireless Controller` ("Wireless Controller" é o nome exato do
+`E4:17:D8:00:00:07 → Name=Wireless Controller` (MAC mascarado, distinto do Pro
+Controller pareado; "Wireless Controller" é o nome exato do
 DS4) com **OUI E4:17:D8 = 8BitDo** — o mesmo OUI do "Pro Controller" pareado
 (`e4:17:d8:00:00:03`). Ou seja: o "clone DS4" é quase certamente **um 8BitDo em modo
 D-input/DS4** (esse modo se apresenta como 054C:05C4), não um controle pirata avulso.
