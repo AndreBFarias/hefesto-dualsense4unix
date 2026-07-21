@@ -215,13 +215,28 @@ gi/GTK); markers `requires_gtk`/`requires_display` mortos; 134 violações de ac
 
 Praticamente zero — único TODO é citação de bug da pydualsense (`backend_pydualsense.py:9`).
 
-## 3. Ordem sugerida de ataque
+## 3. Ordem sugerida de ataque — STATUS (21/07 tarde)
 
-1. **S-1** (5 linhas, segurança de caminho empacotado) + **S-2** (invariante sagrado) + belts
-   **S-3** — lote "broker bordas".
-2. **U-F1/F2** (trava por categoria) + **U-F3** — lote "GUI/autoswitch" (a mantenedora já
-   esbarrou nesse tema ao vivo hoje).
-3. **L-01/L-02/L-03** — instrumentar reclaim, rodar o gate humano de suspend, decidir gatilho.
-4. **T-1 + W-3 + PKG-1/2/3** — lote "DKMS release-ready" (pré-requisito de release público).
-5. Gates humanos do checklist (com os fixes acima aplicados, para não validar 2×).
-6. LOWs em lote oportunista.
+1.  **FEITO — Lote 1 (broker bordas)** commit `4184f79`: S-1 (mktemp -d no comando elevado),
+   S-2 (`_broker_restore_for_recovery` no reconnect + probe), S-3 (belt com uid em cascata:
+   env → `--allowed-uid` → parse da unit), S-6 (snapshot da iteração), `Documentation=` das units.
+2.  **FEITO — Lote 2 (GUI/autoswitch)** commit `3c887f5`: U-F1/F2 (trava manual por categoria
+   {trigger,led,rumble}; passthrough limpa só "rumble"; autoswitch cede ao perfil de jogo),
+   U-F3 (renumber re-checa autoridade dentro dos locks, `_RenumberAuthorityChangedError`).
+3.  **PARCIAL — Lote 3 (lightbar)** commit `57fb185`: L-01 = instrumentação DEBUG do reclaim
+   (`lightbar_reclaim_avaliado`) ENTREGUE. L-02/L-03 (trocar o gatilho para detector de suspend /
+   nó recriado em handle BT) ADIADOS de propósito para DEPOIS do gate humano de suspend/wake —
+   a decisão de design depende do que o DEBUG mostrar ao vivo.
+4.  **FEITO — Lote 4 (DKMS release-ready)** commit `d65ded9`: T-1 (.c+patch+BASELINE vanilla),
+   W-3 (receita do BASELINE), T-2 (doctor: drift de kernel), PKG-1 (doctor+install: Secure Boot),
+   PKG-2 (uninstall: dkms ausente com órfão), PKG-3 (versão do dkms.conf, não literal).
+5.  **PENDENTE (humano) — gates do checklist** `CHECKLIST-VALIDACAO-5-ONDAS.md`, agora com os
+   fixes 1/2/4 aplicados (uninstall→install rodado nesta sessão). Inclui o gate de suspend/wake
+   que fecha a decisão do L-02/L-03 com o DEBUG do item 3.
+6.  **ABERTO — não atacados nesta leva**: S-4 (TOCTOU minor-reuse — HIGH-ish de segurança, exige
+   `ioctl HIDIOCGRAWINFO` no fd; fica para lote dedicado), S-5 (calibração fura o broker),
+   W-1 (ratificar `hang_reset=Y` no gate W1), e os LOWs U-F4..F8/S-7..S-11/DOC-1.
+
+**NÃO commitado/pushado ainda:** os 6 commits desta sessão (`4184f79`..`57fb185`) estão LOCAIS —
+push é decisão da mantenedora (a branch da fork já foi force-pushada na purga de MAC; ver
+[[purga-mac-historico-20260720]]).

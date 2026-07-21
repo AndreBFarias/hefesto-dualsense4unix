@@ -25,6 +25,12 @@
       paleta automática). Brightness default do perfil `meu_perfil` = 100%. (U9)
 - [ ] Aba **Rumble**: "Testar motores" e "Devolver ao jogo" funcionam e NÃO prendem o autoswitch
       (após testar, um novo foco de janela ainda reaplica o perfil ativo normalmente). (U-fix HIGH)
+- [ ] **Trava por categoria (auditoria 21/07, F1)**: aplicar uma COR manual na aba Lightbar e
+      DEPOIS usar "Testar motores" na aba Rumble → ao fim do teste, a cor manual PERMANECE (não é
+      reescrita na próxima troca de foco). Antes, o fim do teste apagava a trava inteira.
+- [ ] **Perfil de jogo vence a trava (F2)**: com uma cor/gatilho manual aplicado, abrir um jogo
+      que tenha perfil próprio (`steam_app_*`) → o perfil do jogo ENTRA (não fica bloqueado para
+      sempre pela edição manual). Ao fechar o jogo, o comportamento normal volta.
 - [ ] Aba **Perfis**: duplo-clique acidental na lista NÃO troca o perfil ativo por engano. (U3-B)
 - [ ] Config sobrevive à troca de aba (se ainda sumir, capturar journal — U4 era hipótese Causa A).
 
