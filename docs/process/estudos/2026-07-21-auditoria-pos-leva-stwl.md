@@ -240,8 +240,17 @@ Praticamente zero — único TODO é citação de bug da pydualsense (`backend_p
 7.   **FEITO — INSTALL-HEADLESS-01** commit `c99250b`: `./install.sh` SEM FLAGS funciona sem TTY —
    `ask_yn` sem terminal usa o default (não mata o `set -e` no EOF do `read`, que matava o passo 4);
    `acquire_sudo` (install+uninstall) tenta `sudo -A -v` com `SUDO_ASKPASS`.
-8.   **ABERTO**: S-5 (calibração fura o broker), W-1 (ratificar `hang_reset=Y` no gate W1), LOWs
-   U-F4..F8/S-7..S-11/DOC-1.
+8.   **FEITO — S-5 (drift do gyro)**: `read_calibration` aceita opener injetável
+    (`set_feature_opener`); o daemon injeta `make_broker_opener` em `_wire_feature_opener` — a
+    feature 0x05 é lida por fd root do broker (funciona com o nó escondido), fim do EACCES →
+    canônico → drift. Cobre promoção do vpad E respawn de coop. LIVE (`feature_opener_wired`).
+9.   **GATED NA VALIDAÇÃO HUMANA (não fechar por código sem o dado ao vivo):** L-02/L-03/L-04
+    (gatilho do wake da lightbar — instrumentar 1º com L-01, decidir DEPOIS do gate suspend/wake;
+    mexer agora arriscaria a Onda L não-validada); W-1 (ratificar `hang_reset=Y` — precisa da
+    medição W2/W3, gate humano).
+10.  **BACKLOG LOW deferido (valor marginal; melhor num pass focado, não empilhado antes da
+    validação):** U-F4 (o `wait_for` seria parcial, não previne o pile-up real), U-F5/F6/F7/F8,
+    S-7 (nicho single-user), S-8/S-9/S-10/S-11, DOC-1. Nenhum HIGH/MED; dívida rastreada.
 
 **Descoberta 21/07 tarde — o "Pro some da GUI" NÃO é bug de serialização.** O
 `discover_external_gamepads` volta vazio porque o Pro **não tem evdev** (meio-ligado: HID/`nintendo`

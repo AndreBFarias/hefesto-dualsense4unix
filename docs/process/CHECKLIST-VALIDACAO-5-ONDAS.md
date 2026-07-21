@@ -4,6 +4,26 @@
 > (4) reboot recomendado (aplica udev novas + cmdline) → (5) este checklist.
 > Cada item aponta a onda e o sintoma original da mantenedora.
 
+## Rodada de fixes da auditoria 21/07 (S-1..S-5, lotes 1/2/4, INSTALL-HEADLESS, L-01)
+
+> Install→reinstall JÁ rodado nesta sessão; daemon+broker+DKMS live. **O REBOOT é o gate
+> principal**: ativa a Onda T (`bt_probe_retries=3` + `.ko` novo) e cura o Pro Controller BT que
+> hoje fica meio-ligado (HID ativo mas SEM evdev → some da GUI). Depois do reboot:
+
+- [ ] **Pro Controller BT aparece na GUI** (seletor "Nintendo N" + card) e o LED de player fixa —
+      antes do reboot ele não tinha evdev (probe frágil, cura da Onda T OFF). Se ainda sumir pós-
+      reboot, capturar `journalctl -k | grep -iE 'nintendo|joycon'` na conexão.
+- [ ] **`hid_nintendo` autocarrega no boot** (Pro BT já entra no driver `nintendo`, sem precisar de
+      `modprobe` à mão) — o incidente 10:19 foi a janela do update do PackageKit; conferir que
+      passou.
+- [ ] **Gyro sem drift (S-5)**: com o vpad promovido a uhid e o broker escondendo o físico, o
+      giroscópio no jogo NÃO drifta — a calibração 0x05 da unidade é lida pelo fd do broker (antes
+      dava EACCES no nó escondido e caía no canônico). Vale USB e BT.
+- [ ] **Broker íntegro (S-4)**: `scripts/doctor.sh` seção broker verde ("cmd open serviu fd real"),
+      o giroscópio segue chegando ao jogo (o fix de identidade não recusa o DualSense real).
+- [ ] **Trava por categoria (F1/F2)**: cor manual na aba Lightbar + "Testar motores" na Rumble → a
+      cor PERMANECE; abrir jogo com perfil próprio → o perfil do jogo ENTRA (ver seção GUI abaixo).
+
 ## Pré-condições
 - [ ] `scripts/doctor.sh` roda 100% verde (inclui a nova seção "Rádio e pareamento").
 - [ ] `hefesto-bt-agent.service` ativo (`systemctl is-active hefesto-bt-agent.service`).
