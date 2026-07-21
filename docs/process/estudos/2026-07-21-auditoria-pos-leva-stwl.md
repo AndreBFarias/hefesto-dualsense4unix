@@ -233,10 +233,24 @@ Praticamente zero — único TODO é citação de bug da pydualsense (`backend_p
 5.  **PENDENTE (humano) — gates do checklist** `CHECKLIST-VALIDACAO-5-ONDAS.md`, agora com os
    fixes 1/2/4 aplicados (uninstall→install rodado nesta sessão). Inclui o gate de suspend/wake
    que fecha a decisão do L-02/L-03 com o DEBUG do item 3.
-6.  **ABERTO — não atacados nesta leva**: S-4 (TOCTOU minor-reuse — HIGH-ish de segurança, exige
-   `ioctl HIDIOCGRAWINFO` no fd; fica para lote dedicado), S-5 (calibração fura o broker),
-   W-1 (ratificar `hang_reset=Y` no gate W1), e os LOWs U-F4..F8/S-7..S-11/DOC-1.
+6.   **FEITO — S-4 (segurança)** commit `37b977c`: `open_node` valida a identidade pelo
+   `HIDIOCGRAWINFO` no próprio fd (à prova de corrida; ioctl 0x80084803 validado ao vivo contra o
+   kernel, vpad 0df2→False); `_pin` re-lê o HID_ID do uevent no hide/restore (ilegível→prossegue,
+   só root o esconde). Fecha a primitiva de keylogger do minor-reuse.
+7.   **FEITO — INSTALL-HEADLESS-01** commit `c99250b`: `./install.sh` SEM FLAGS funciona sem TTY —
+   `ask_yn` sem terminal usa o default (não mata o `set -e` no EOF do `read`, que matava o passo 4);
+   `acquire_sudo` (install+uninstall) tenta `sudo -A -v` com `SUDO_ASKPASS`.
+8.   **ABERTO**: S-5 (calibração fura o broker), W-1 (ratificar `hang_reset=Y` no gate W1), LOWs
+   U-F4..F8/S-7..S-11/DOC-1.
 
-**NÃO commitado/pushado ainda:** os 6 commits desta sessão (`4184f79`..`57fb185`) estão LOCAIS —
+**Descoberta 21/07 tarde — o "Pro some da GUI" NÃO é bug de serialização.** O
+`discover_external_gamepads` volta vazio porque o Pro **não tem evdev** (meio-ligado: HID/`nintendo`
+ativo, IMU chegando, mas o probe BT não registrou o input). A cura da Onda T (`bt_probe_retries=3`)
+está DESLIGADA até o reboot (params 0/N — o uninstall zerou e o módulo carregado ainda é o de safra
+anterior). O daemon escreve o LED (via hidraw/OUI) mas a GUI (via evdev) não vê nada porque não há
+evdev. **Raiz = probe frágil sem a cura ativa; o REBOOT (ativa a Onda T + o `.ko` novo) é a cura** —
+não é patch de daemon.
+
+**NÃO commitado/pushado ainda:** os commits desta sessão (`4184f79`..`37b977c`) estão LOCAIS —
 push é decisão da mantenedora (a branch da fork já foi force-pushada na purga de MAC; ver
 [[purga-mac-historico-20260720]]).
