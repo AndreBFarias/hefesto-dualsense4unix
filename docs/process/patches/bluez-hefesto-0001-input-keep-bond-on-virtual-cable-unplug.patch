@@ -1,0 +1,52 @@
+From: Hefesto DualSense4Unix Project <hefesto-dualsense4unix@users.noreply.github.com>
+Date: Wed, 22 Jul 2026 21:00:00 -0300
+Subject: [PATCH] input: keep the bond on Virtual Cable Unplug (HID power-off)
+
+Since 5.85 moved BR/EDR HID input to the userspace HID (uhid) path, the HID
+control-channel message VIRTUAL_CABLE_UNPLUG now reaches bluetoothd's input
+profile and triggers device_remove_bonding(), deleting the on-disk bond from
+/var/lib/bluetooth. Under the in-kernel hidp path (<= 5.72) the kernel absorbed
+this message and the bond was never removed.
+
+Some HID game controllers send Virtual Cable Unplug simply when they power off
+or lose the radio link -- measured live on a Nintendo Switch Pro Controller
+(bus 0005:057E:2009) and an 8BitDo in Switch mode: every power-off or
+under-load disconnect evaporates the on-disk bond, forcing a full re-pair
+before the controller can connect again. Devices that do not emit the message
+(e.g. Sony DualSense) keep their bond and reconnect fine, which is why the
+failure is controller-specific.
+
+Keep the bond by default; set BLUEZ_HID_UNPLUG_REMOVES_BOND=1 in the service
+environment to restore the historical (stock) behaviour. Everything else about
+the unplug path (tearing down the uhid node, clearing the flag) is unchanged.
+
+Signed-off-by: Hefesto DualSense4Unix Project <hefesto-dualsense4unix@users.noreply.github.com>
+---
+ profiles/input/device.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
+
+--- a/profiles/input/device.c
++++ b/profiles/input/device.c
+@@ -172,8 +172,21 @@ static void input_device_free(struct input_device *idev)
+
+ static void virtual_cable_unplug(struct input_device *idev)
+ {
+-	device_remove_bonding(idev->device,
++	/*
++	 * HEFESTO BOND-KEEP-01: a HID device that emits Virtual Cable Unplug
++	 * on power-off / link loss (measured: Nintendo Switch Pro Controller
++	 * and 8BitDo in Switch mode) would otherwise have its persistent bond
++	 * deleted here -- a uhid-path regression since 5.85 that forces a full
++	 * re-pair after every power-off. Keep the bond by default; set
++	 * BLUEZ_HID_UNPLUG_REMOVES_BOND=1 to restore the stock behaviour.
++	 */
++	const char *env = getenv("BLUEZ_HID_UNPLUG_REMOVES_BOND");
++
++	if (env && env[0] == '1')
++		device_remove_bonding(idev->device,
+ 				btd_device_get_bdaddr_type(idev->device));
++	else
++		DBG("keeping bond on virtual cable unplug (HEFESTO BOND-KEEP-01)");
+
+ 	idev->virtual_cable_unplug = false;
+ }

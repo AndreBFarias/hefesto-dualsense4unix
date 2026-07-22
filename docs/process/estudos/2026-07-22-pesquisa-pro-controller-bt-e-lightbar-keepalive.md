@@ -104,6 +104,36 @@ do Pro; procurar frame ACL no canal de controle com byte `0x15`
   no linux-firmware (mai/2023; não há firmware novo para esperar; o dongle local
   já está nela).
 
+## ⭐ ENTREGA 22/07 noite — validação ao vivo + patch BOND-KEEP-01
+
+**Teste ao vivo do nome (cura nº 1):** com o adaptador anunciando "Nintendo
+MeowSystem" (alias via `busctl`, persistido em `settings`), o Pro ficou MUITO
+mais tempo conectado do que em qualquer sessão anterior — o nome tira o
+controle do sniff mais frágil (parcialmente validado). Mas sob carga pesada
+(jogo + 2 DualSense no mesmo adaptador) ele ainda caiu. Não é cura completa
+sozinho.
+
+**Cura nº 2 CONFIRMADA empiricamente:** no exato momento da queda, os bonds dos
+DOIS Nintendo (E0:F6:B5 e E4:17:D8) EVAPORARAM do disco; os DualSense mantiveram
+os deles. Razões de disconnect na captura: `0x13 Remote User Terminated` (o
+controle encerrou) + `0x16 Local Host`. O journal mostrou o 8BitDo tentando
+voltar e sendo recusado como "unknown device" (bond apagado). É o Virtual Cable
+Unplug previsto. Explica os 3 sintomas de uma vez: Pro cai e não volta, "8BitDo
+conecta e desliga", "autoconnect regrediu".
+
+**Patch entregue:** `bluez-hefesto-0001-input-keep-bond-on-virtual-cable-unplug`
+(BOND-KEEP-01) no backport, versão `5.86-0ubuntu0.1~hefesto24.04.2`. Mantém o
+bond por default; reversível por `BLUEZ_HID_UNPLUG_REMOVES_BOND=1`. Build
+verificado no binário (`strings … | grep BOND-KEEP`). Instalado via install
+passo 3f (o postinst reinicia o bluetoothd). Patch versionado em
+`docs/process/patches/`.
+
+**Ainda gated (próxima sessão):** com o bond preservado, uma queda do Pro sob
+carga passa a ser RECUPERÁVEL (reconecta sozinho) em vez de catastrófica — mas
+o Pro AINDA pode cair sob carga pesada; se cair, a alavanca nº 4 (forçar modo
+ativo por-conexão via `hcitool lp <MAC>` sem SNIFF, no hook de conexão do
+VPAD-09) é o próximo passo. Testar após o reboot.
+
 ## 5. Descartado por evidência (não repetir)
 
 - Novos knobs no hid-nintendo (o DKMS local já tem tudo upstream até out/2025).
