@@ -122,3 +122,46 @@ reverte mais.
 - `lightbar_rgb=[252,128,0]` no slot 1 com `lightbar_source="sysfs"` = escritor
   estrangeiro (cliente Steam) no nó de LED — família conhecida (Onda N, cache
   GUERRA-01 não re-lê sysfs). Sem mudança nesta leva.
+
+## Adendo 22/07 15h — sessão ao vivo: 2 regressões/incidentes a mais, medidos
+
+### LIGHTBAR-BT-RESET-03 — lightbar BT apagada = regressão do 0x08 por SEQUÊNCIA
+
+Relato dela: "só no cabo fica laranja; em BT apaga — já resolvemos isso". Journal
+14:55:05: `lightbar_reset_enviado` + cor escrita logo depois E barra escura →
+escrita não colando = claim NÃO devolvido = o 0x08 não está fazendo efeito.
+
+Arqueologia fecha a causa: a cura do 0x08 foi provada em 17/07, quando TODOS os
+nossos reports 0x31 saíam com `seq=0`. Em 18/07 o BTREPORT-02 introduziu o nibble
+de sequência POR-HANDLE (`writeReport` carimba seq+CRC e incrementa) para
+keepalive/réplica — mas o reset continuou escrevendo DIRETO no device com
+`seq=0` fixo. Depois que o keepalive avança o contador, o firmware descarta o
+reset como fora de sequência → claim preso → todas as escritas de cor ignoradas
+(sintoma pré-cura de volta). **Fix**: `send_release_leds` agora recebe o HANDLE
+e envia pelo MESMO `writeReport` (seq/CRC na ordem real do fluxo; device cru
+segue como fallback) + o cache do nó sysfs é INVALIDADO após cada 0x08
+(RESET-01 adoção e RESET-02 wake) — reset enviado ⇒ a reescrita seguinte é real,
+nunca `skip_cache`. Validação ao vivo: reconectar o roxo BT após restart do
+daemon (jogo fechado!) e ver a barra na cor do slot.
+
+### Incidente Steam Input no Sackboy (15h) — duplicatas + rumble "invertido"
+
+Ela ativou "entrada steam" mirando o MMJ e o opt-in caiu no SACKBOY
+(`apps/1599660/UseSteamControllerConfig=2` no vdf). Consequência imediata na
+sessão: a Steam criou pads virtuais por cima de cada controle → Nintendo como
+P1+P4, Sony (vpad) como P2+P3, e vibração "invertida" (constante em repouso,
+para nos eventos = dois escritores de rumble brigando). O daemon estava limpo
+(`rumble_active=None`, wrapper_used=True). Cura: fechar o jogo e a Steam — o
+guard reverte o Sackboy sozinho (fora da allowlist); o Steam Input do MMJ é a
+única exceção. **Follow-up entregue**: os 3 avisos de Steam Input (storm_doctor
+da GUI, aba Emulação, doctor.sh via --status do script) agora são
+allowlist-aware — opt-in deliberado não acusa mais "conflita!"; o veredito usa
+`needs_real_fix` (a transformação mudaria o arquivo?).
+
+### Pro Controller BT às 15:06 (observação do monitor)
+
+Reconectou sem bond do lado PC (JustWorks), probe completou COM LEDs e evdev
+(patches agindo), e o link morreu em ~1 min sob cascata de `timeout waiting for
+input report` com Sackboy + roxo BT no ar (dois streams no mesmo adaptador).
+Reforça: perda de rádio sustentada específica do Pro; cabo é a rota estável;
+próximo passo de medição é btmon numa reconexão controlada.
