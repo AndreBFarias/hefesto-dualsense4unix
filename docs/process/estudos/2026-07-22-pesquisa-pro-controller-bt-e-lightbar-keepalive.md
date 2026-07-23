@@ -129,10 +129,36 @@ passo 3f (o postinst reinicia o bluetoothd). Patch versionado em
 `docs/process/patches/`.
 
 **Ainda gated (próxima sessão):** com o bond preservado, uma queda do Pro sob
-carga passa a ser RECUPERÁVEL (reconecta sozinho) em vez de catastrófica — mas
-o Pro AINDA pode cair sob carga pesada; se cair, a alavanca nº 4 (forçar modo
-ativo por-conexão via `hcitool lp <MAC>` sem SNIFF, no hook de conexão do
-VPAD-09) é o próximo passo. Testar após o reboot.
+carga passa a ser RECUPERÁVEL (reconecta sozinho) em vez de catastrófica.
+
+### 2ª entrega (22/07 noite, cont.) — BT-NINTENDO-ACTIVE-01: nome + no-sniff PERMANENTES
+
+Confirmação ao vivo do estado: os bonds dos DOIS Nintendo AGORA PERSISTEM em
+disco mesmo desligados (BOND-KEEP no ar) — antes evaporavam; por isso "seguem
+autoconectando". A queda restante era o SNIFF: `hciconfig hci0 lp` mostrava
+`RSWITCH HOLD SNIFF PARK`. Provado ao vivo: `hciconfig hci0 lp rswitch` (sem
+SNIFF) — os DualSense seguem conectados normalmente. Tornado PERMANENTE:
+
+- **`scripts/bt_active_mode.sh`** (root, idempotente): prefixa "Nintendo" no
+  Alias do adaptador (o Pro checa o nome do host) + seta link policy default
+  sem SNIFF (`hciconfig lp rswitch`; LM recusa `LMP_sniff_req`) + reforça
+  por-conexão nos já conectados. Reversível.
+- **Fiação**: `ExecStartPost` no drop-in `10-hefesto-resilience.conf` (aplica a
+  cada start do bluetoothd/boot — novas conexões já herdam o no-sniff, sem
+  precisar caçar a borda da conexão); vigia 0 no `bt_health_watchdog.sh`
+  (reafirma a cada 2 min — cobre adaptador resetado por rfkill/suspend);
+  `install.sh` aplica já; `uninstall.sh` reverte (volta SNIFF + tira o
+  prefixo); `doctor.sh` check dedicado. Testes em `test_bt_resilience_assets.py`.
+
+Doctor ao vivo: "modo ativo p/ Nintendo (nome 'Nintendo MeowSystem' + link
+policy sem SNIFF)" + "bonds BT persistidos em disco: 4". A queda do Pro sob
+carga passa a ter as DUAS defesas (nome desde t=0 + no-sniff no LM). Gate final:
+teste humano de gameplay com os Nintendo por BT após o reboot.
+
+O default `gamepad_flavor` e o DKMS `skip_tx_on_rate_exceeded=1` seguem como
+estão (não mexidos sem evidência nova). Nota: `skip_tx` pode dropar um pacote
+de rumble STOP sob rádio ruim (rumble "invertido") — vigiar; se confirmar,
+nunca dropar rumble neutro.
 
 ## 5. Descartado por evidência (não repetir)
 
