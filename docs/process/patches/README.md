@@ -22,6 +22,16 @@ O patch mantém o bond por DEFAULT; `BLUEZ_HID_UNPLUG_REMOVES_BOND=1` no ambient
 do serviço restaura o comportamento stock. Só a remoção do bond muda — o
 teardown do nó uhid e a limpeza da flag seguem idênticos.
 
+**BOND-KEEP-02** (23/07, `~hefesto24.04.3`, mesmo arquivo de patch): manter o
+bond não bastava — o caminho do unplug ainda deixava o device BONDED marcado
+como TEMPORÁRIO, e o TemporaryTimeout coletava o device **e o bond em disco**
+~30 s após o disconnect (medido ao vivo 23/07: controle bonded foi pro cabo
+USB, emitiu o unplug, e o diretório do bond evaporou meio minuto depois, com o
+bluetoothd vivo e nenhum RemoveDevice). O patch agora reafirma não-temporário
+no unplug quando o device é bonded. Sem string nova no binário (é um
+`set_temporary(false)` silencioso) — a validação é comportamental: bond em
+`/var/lib/bluetooth` sobrevive a power-off/troca pra cabo.
+
 ## Receita do build (para o próximo bump)
 
 Árvore-fonte: `~/.cache/hefesto-dualsense4unix/bluez-src-586/bluez-5.86/`
