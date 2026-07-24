@@ -169,21 +169,38 @@ Suíte completa: **4505 testes verdes**.
    (6123d2e) — o doc de 22/07 vazou dois MACs reais sem máscara, incluindo um
    BSSID. Mascarados na convenção `OUI:00:00:NN`.
 
-## 7. Achado colateral fora do BT
+## 7. Achado colateral fora do BT — e a correção da minha própria conclusão
 
 O perfil **FPS** (ativo) tem `window_title_regex` com `|Control)` e `|Metro)`
-**sem âncora**. Teste feito contra títulos reais:
+**sem âncora**. O regex isolado casa com muita coisa em pt-BR:
 
-| título | casa? |
+| título | o regex casa? |
 |---|---|
-| `Pro Controller` |  (grupo `Control`) |
-| `Painel de Controle` |  |
-| `Controle de Volume` |  |
-| `Steam - Controller Settings` |  |
-| `Metrônomo` / `Metrologia` |  (grupo `Metro`) |
-| `Sackboy: A Big Adventure` |  |
-| `Mullet Mad Jack` |  |
+| `Pro Controller` | sim (grupo `Control`) |
+| `Painel de Controle` | sim |
+| `Controle de Volume` | sim |
+| `Steam - Controller Settings` | sim |
+| `Metrônomo` / `Metrologia` | sim (grupo `Metro`) |
+| `Sackboy: A Big Adventure` | não |
+| `Mullet Mad Jack` | não |
 
-Em pt-BR isso é uma mina: qualquer janela com "Controle" no título ativa o
-perfil de FPS. Tratado na auditoria da GUI
+**Numa primeira leitura chamei isso de "mina". Estava exagerado.**
+`MatchCriteria.matches` (`schema.py:42-54`) faz **AND** entre os campos
+preenchidos, e o `fps.json` preenche `window_title_regex` **e** `process_name`.
+Medido depois, com o predicado inteiro em vez do campo isolado:
+
+| título | processo | FPS ativa? |
+|---|---|---|
+| `Painel de Controle` | `cosmic-settings` | não |
+| `Pro Controller` | `steam` | não |
+| `Counter-Strike 2` | `cs2` | **sim** |
+| qualquer coisa | `cs2` | não |
+
+Ou seja: **não é bug ativo na configuração dela hoje**. É perigo *latente* —
+qualquer perfil que fique só com o regex (porque o campo de processo foi limpo,
+ou porque o editor simples criou assim) volta a casar com "Painel de Controle".
+Ancorar os grupos `Control` e `Metro` vale como higiene, não como urgência.
+
+Fica o lembrete metodológico: **testar o predicado inteiro, não o campo
+isolado**. Tratado na auditoria da GUI
 (`2026-07-23-auditoria-gui-perfis-4-controles.md`).
