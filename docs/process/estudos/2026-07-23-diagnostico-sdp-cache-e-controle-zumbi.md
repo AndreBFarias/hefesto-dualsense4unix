@@ -204,3 +204,73 @@ Ancorar os grupos `Control` e `Metro` vale como higiene, não como urgência.
 Fica o lembrete metodológico: **testar o predicado inteiro, não o campo
 isolado**. Tratado na auditoria da GUI
 (`2026-07-23-auditoria-gui-perfis-4-controles.md`).
+
+
+---
+
+## 8. Desfecho da noite (23/07, 23h30) — os 4 de pé
+
+| controle | via | como voltou |
+|---|---|---|
+| DualSense roxo | BT | **reset de hardware** + re-pareamento |
+| DualSense branco | BT | reset de hardware + re-pareamento |
+| Pro Nintendo | BT | curado pelo `WATCHDOG-TRUST-DEADLOCK-01` |
+| 8BitDo | **cabo** (modo Switch) | decisão da mantenedora — o modo provado estável |
+
+### 8.1 O reset de hardware era mesmo a resposta para o roxo
+
+A §3(b) previa: controle que aceita ACL/auth/cripto e não responde SDP não tem
+cura por software. Confirmado — o reset (furinho atrás) o trouxe de volta, e o
+re-pareamento gravou um bond novo. **Nenhuma linha de código teria resolvido.**
+
+### 8.2 Um deadlock NOVO, achado no mesmo ciclo (`WATCHDOG-TRUST-DEADLOCK-01`)
+
+Depois do uninstall, 8BitDo e Pro Nintendo ficaram com `Bonded=true` e
+`Trusted=FALSE`, e o bluetoothd passou a martelar:
+
+```
+profiles/input/server.c:confirm_event_cb()
+    Refusing connection from <MAC>: unknown device
+```
+
+Sem trust, o BlueZ **recusa a reconexão entrante** — a única que um controle
+sabe fazer. A mantenedora descreveu como *"aperto o conectar mas
+automaticamente conecta e recusa"* e *"assim ele nunca conecta"*.
+
+A vigia 2b existia desde 22/07 exatamente para isso, mas vivia **dentro do laço
+da vigia 2**, atrás do gate `Connected == true` — inalcançável para quem mais
+precisa dela. Deadlock fechado:
+
+```
+sem trust      ->  BlueZ recusa a reconexão entrante
+recusado       ->  nunca fica Connected
+não conectado  ->  a vigia nunca o alcança  ->  segue sem trust
+```
+
+Nenhum tick do watchdog resolvia, **por construção**. Curado: o trust virou laço
+próprio, sobre todo device com bond, conectado ou não. Validado ao vivo — aplicou
+sozinho no 8BitDo, e o Pro voltou a conectar pelo botão.
+
+### 8.3 O 8BitDo caiu no zumbi SDP também
+
+Cache com **30 bytes**, zero `[ServiceRecords]`, e o log mostrando o link caindo
+DURANTE o browse (`error updating services: Host is down (112)`). A cadeia fecha:
+
+```
+link cai no meio do SDP  ->  BlueZ grava cache truncado (só o nome)
+   ->  sem [ServiceRecords]  ->  o perfil input não registra
+   ->  connect_event_cb dá ENOENT ("Refusing input device connect")
+   ->  confirm_event_cb diz "unknown device"
+```
+
+Aqui o cache podre é **consequência**, e a causa é a queda pré-HID que a
+arqueologia do 8BitDo já cataloga como não resolvida por BT. Cache limpo; ele
+foi para o cabo, que é o modo provado.
+
+### 8.4 Pendências reais
+
+1. **8BitDo por BT** segue sem cura — o `BT-SNIFF-PER-OUI-01` destravou a probe
+   (54 s, 1ª tentativa), mas ele ainda cai depois. Cabo é a via confiável hoje.
+2. **Gate humano do R-16 BT**: confirmar que o Pro aguenta 4 jogadores sob carga
+   com o no-sniff aplicado **por-conexão** em vez de global.
+3. **Vigia 3 (SDP) nunca validada no caminho (a)** — só o caso (b) apareceu.
