@@ -69,3 +69,65 @@ Total ~1h20. Registrar reason codes + snoop aqui nos estudos.
 - SDL: `SDL_hidapi_switch.c` RUMBLE_WRITE_FREQUENCY_MS=30 ("mais frequente desliga o controle em BT") — filosofia: mínimo de subcmd sobre BT.
 - Firmware: Pro real 4.33; 8BitDo emula 3.72 — "a diferença não é idade de firmware, é o comportamento de rádio de cada chip".
 - lore/lkml/git.kernel.org bloqueados por Anubis nesta rede — usar API do GitHub.
+
+
+---
+
+## ⭐⭐⭐ RESOLVIDO 23/07 noite — A/B feito, hipótese CONFIRMADA
+
+A mantenedora levantou: *"acho que já resolvemos isso no passado e isso é uma
+regressão"*. Estava certa. O A/B que este doc planejava foi executado.
+
+**Protocolo** (o do §plano, 7 passos): `hefesto-bt-health-watchdog.timer`
+PARADO (senão a vigia 0 reaplica o modo ativo a cada 2 min e contamina), alias
+"Nintendo MeowSystem" MANTIDO, e só o SNIFF devolvido ao adaptador
+(`hciconfig hci0 lp rswitch,hold,sniff,park`).
+
+**Resultado:**
+
+| | no-sniff global (desde `fb5e3ad`) | SNIFF devolvido |
+|---|---|---|
+| probes do 8BitDo | **4 falhas, 0 sucessos** | **sucesso em 54 s, 1ª tentativa** |
+| erro | `Failed to get joycon info; ret=-110` | — |
+| estabilidade | — | 60 s de pé sem cair |
+
+**A hipótese "nome Nintendo" fica REFUTADA como culpada** — o alias esteve
+aplicado o teste inteiro e o clone probou mesmo assim. A culpada era a outra
+metade do `fb5e3ad`: o **no-sniff**. As duas medidas entraram juntas e por isso
+ficaram acopladas até aqui.
+
+**Mecanismo:** `hciconfig lp rswitch` faz o LM local **recusar**
+`LMP_sniff_req`. O Pro genuíno lida com a recusa; o firmware clone trata como
+erro e não completa o handshake de subcomando — e o `get joycon info` é
+justamente um passo da probe do `hid-nintendo`, daí o `-110` (ETIMEDOUT).
+
+**Requisitos incompatíveis, medidos:**
+
+| | Pro genuíno (`e0:f6:b5`) | 8BitDo clone (`e4:17:d8`) |
+|---|---|---|
+| SNIFF permitido | cai sob carga (medido 22/07) | **funciona** |
+| SNIFF recusado | **estável** (medido 22/07) | probe morre (`-110`) |
+
+Nenhum ajuste **global** satisfaz os dois. O defeito não era o valor escolhido —
+era aplicar um requisito **por-dispositivo** como configuração **de adaptador**.
+
+**Cura entregue (`BT-SNIFF-PER-OUI-01`):** default do adaptador volta a permitir
+SNIFF (o que o clone precisa para probar); o `RSWITCH` sem sniff passa a ser
+aplicado **por conexão**, filtrado pela OUI do Pro genuíno. O alias segue global.
+Reaplicado pela vigia 0 a cada 2 min, o que cobre reconexão sem caçar a borda.
+
+**Por que aplicar depois do connect basta para o Pro:** ele proba bem com sniff
+(era o comportamento antes do `fb5e3ad`); o que ele não aguenta é a operação
+SUSTENTADA sob carga. O clone precisa do sniff justamente na janela da probe.
+
+**Bug colateral achado no mesmo teste:** `hciconfig lp` exige a lista separada
+por **vírgula**. Com espaços ele lê só o primeiro token e o comando vira no-op
+silencioso — era exatamente a sintaxe do `uninstall.sh:606`, que portanto
+**nunca revertia o no-sniff**: quem desinstalasse ficava com o adaptador
+alterado para sempre. Corrigido, com teste travando a sintaxe.
+
+**Fica em aberto (gate humano):** confirmar que o Pro aguenta uma sessão de 4
+jogadores sob carga real com o no-sniff aplicado **por-conexão** em vez de
+global — o mesmo padrão de prova que a cura original teve. Se ele cair, o
+aprendizado é que ele precisa do no-sniff já *durante* o connect, e a resposta
+passa a ser a sprint `2026-07-24-sprint-pesquisa-sniff-parametrizado.md`.
