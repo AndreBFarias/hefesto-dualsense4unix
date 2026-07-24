@@ -23,7 +23,7 @@ COMPAT BLUEZ-586-CTL-01).
   o snapshot do ExecStopPost FALHA: `install: não foi possível mudar as
   permissões de .../bt-bonds/20260722-224313: Arquivo ou diretório
   inexistente` (DOIS processos de snapshot no mesmo segundo — PIDs 7169/7184).
-- 22:43–22:45 — 8BitDo E4:17:D8:1C:66:1A órfão (bond comido no crash #6 de
+- 22:43–22:45 — 8BitDo E4:17:D8:00:00:02 órfão (bond comido no crash #6 de
   21/07; re-pair explícito estava pendente) martela reconexão: `Refusing
   connection ... unknown device` a cada ~20s. Watchdog segue contando
   "doente" (11→13→14 recusas) mas o rate-limit segura novos restarts.
@@ -110,7 +110,7 @@ COMPAT BLUEZ-586-CTL-01).
 1. Religar o 8BitDo: LIBERADO (watchdog não pune mais órfão; bond+trust em
    disco). Se pedir pareamento do zero, fazer com jogo fechado.
 2. BSSID lock da Beholder + desligar background scan do NM — **conferir o
-   BSSID real na hora** (docs divergem: 48:B2:5D:42:24:58 × 48:b2:5d:00:00:06);
+   BSSID real na hora** (docs divergem: 48:B2:5D:00:00:07 × 48:b2:5d:00:00:06);
    aplicar só com rede/jogo ociosos.
 3. Física RF (decisão dela): extensor USB2 ≥20 cm pro dongle BT fora da
    sombra do painel USB3/T3U; ou T3U fora durante co-op; ou voltar o cabo.
