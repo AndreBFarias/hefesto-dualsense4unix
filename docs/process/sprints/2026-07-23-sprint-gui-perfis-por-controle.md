@@ -28,11 +28,24 @@ Frente Bluetooth da mesma noite:
 
 ## Progresso
 
-| Raiz | Estado | Commit / nota |
+| Raiz | Estado | Nota |
 |---|---|---|
-| **R-23** SIG do snapshot com cache + `FMT=2` |  **FEITO** | o fix do SDP-CACHE-01 nascia **inerte**: a assinatura só hasheava os `info`, então o cache novo caía no no-op. Medido ao vivo e travado em teste (mudança só no cache TEM de gerar snapshot). |
-| **R-24** watchdog `hciN` derivado da árvore D-Bus |  **FEITO** (parte `hci0`) | `hci0` concatenado virava no-op **mudo** em `hci1` — e `hci1` já apareceu nesta máquina (journal 23/07 09:22). Falta a parte "zumbi não conta como sessão viva". |
-| demais | ⬜ a fazer | ordem em §2 |
+| **R-01** especificidade de match + "regra de jogo" | OK FEITO | `7c937f0`. Catch-all deixa de ser tratado como perfil do jogo; `select_for_window` ordena por (especificidade, prioridade). |
+| **R-02** `mode=None` não reverte + C6 | OK FEITO | `19bc7e9`. Duas guardas: catch-all nunca reverte; janela de jogo em foco congela reversão. Gesto manual toma posse do eixo. |
+| **R-07** persistir só com origin manual | OK FEITO | `19bc7e9`. Testes olham o ARQUIVO (a suíte antiga monkeypatchava e não veria). |
+| **R-08** reconciliação de draft/perfil ativo | OK FEITO | `83e0a0f`. Com gate de edição pendente + guard de reentrância + alvo em campo separado. Inclui C9 (Restaurar Padrão). |
+| **R-09** salvar sem densificar + perfil novo limpo | OK FEITO | `ecc2eb4`. Fonte = draft; instâncias reinjetadas; flag `_new_profile`. |
+| **R-11** `to_profile` com `source_name` | OK FEITO | `ecc2eb4`. Regra só é reemitida para o MESMO perfil; `controllers` fica fora do gate (é config, não regra). |
+| **R-16** alvo de edição por gesto | OK FEITO | `705b16f`. UI do SELETOR-UNO-01 preservada; muda só o índice que a linha carrega. |
+| **R-19** botão de soltar a trava | PARCIAL | `705b16f` (item 2: "Desligar" usa `trigger.reset`). Faltam itens 1, 3, 4 e 5. |
+| **R-13** numeração de jogador | PARCIAL | `a54af15` (itens 2 e 4). Item 1 (escritor único) depende do R-20. |
+| **R-17** `uniq` em todo output | PARCIAL | `28cb252` ("Apagar" da Lightbar). Falta o rumble com dono. |
+| **R-18** resultado honesto da escrita | OK FEITO | `28cb252`. `applied` passou a ser lido; `status:"ok"` mantido de propósito. |
+| **R-23** SIG do snapshot com cache | OK FEITO | `2475df1`. O fix do SDP-CACHE-01 nascia INERTE sem isto. |
+| **R-24** watchdog `hciN` derivado | PARCIAL | `2475df1` (parte `hci0`). Falta "zumbi não conta como sessão viva". |
+| R-03, R-04, R-05, R-06, R-10, R-12, R-14, R-15, R-20, R-21, R-22 | a fazer | ordem em §2 |
+
+**Todas as levas acima: suíte completa verde (4553 testes) e `ruff` limpo a cada commit.**
 
 ## Requisito (o que "resolvido" significa)
 
