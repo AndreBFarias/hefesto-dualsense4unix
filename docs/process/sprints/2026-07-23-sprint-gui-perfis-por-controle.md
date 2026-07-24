@@ -45,6 +45,35 @@ Frente Bluetooth da mesma noite:
 | **R-24** watchdog `hciN` derivado | PARCIAL | `2475df1` (parte `hci0`). Falta "zumbi não conta como sessão viva". |
 | R-03, R-04, R-05, R-06, R-10, R-12, R-14, R-15, R-20, R-21, R-22 | a fazer | ordem em §2 |
 
+### Conclusão — 24/07 madrugada: TODAS as 24 causas-raiz atacadas
+
+As 11 restantes (R-03, R-04, R-05, R-06, R-10, R-12, R-14, R-15, R-20, R-21,
+R-22) foram implementadas: R-05 direto, as outras por 4 ondas de agentes com
+arquivos disjuntos + verificação adversarial. Cada uma com testes que pegam a
+regressão (revert/restore verificado). O par de maior risco — R-20 (camadas de
+saída com dono) + R-13 item 1 (co-op vira camada) — foi entregue com o
+invariante PERFIL-01/04/05 (merge por campo no hotplug) verificado de pé.
+
+**Dois extras, do diálogo ao vivo com a mantenedora:**
+
+- **PERFIL-MANUAL-VENCE-01** — o perfil do jogo (Sackboy) aplica o MODO mas
+  RESPEITA as categorias que ela travou na mão (cor/gatilho/rumble sobrevivem à
+  ativação). Rede de segurança por-categoria.
+- **FEAT-AUTOSWITCH-LOCK-01** — o que ela realmente queria: um cadeado explícito
+  ("Não trocar de perfil sozinho ao abrir um jogo") na aba Início. Vale para
+  Sackboy, Mullet Mad Jack ou qualquer jogo. IPC + persistência + botão na GUI,
+  validado ao vivo (toggle pelo IPC → checkbox reflete no tick seguinte).
+
+**Estado final: 4719 testes verdes, ruff e mypy limpos.** Instalado e a GUI
+validada ao vivo (10 abas, comutador de modo, 4 controles identificados no
+seletor, o cadeado novo funcional nos dois sentidos).
+
+**Pendência conhecida** (relatada pelo agente do R-12): a migração one-shot do
+`coop_local.json` em `~/.config` mora em `profiles/loader.py` (fora do escopo do
+agente) — o arquivo local dela segue com o `match` antigo até uma migração
+dedicada. Spec pronta no relatório. Não bloqueia nada: o preset novo já vale
+para instalações limpas.
+
 **Todas as levas acima: suíte completa verde (4553 testes) e `ruff` limpo a cada commit.**
 
 ## Requisito (o que "resolvido" significa)
