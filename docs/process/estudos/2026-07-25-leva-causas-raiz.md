@@ -185,6 +185,18 @@ de `git add` dá verde cego em arquivo novo — foi assim que uma violação num
 arquivo criado na própria sessão passou local e só apareceu no CI. Regra: gates
 **depois** do `git add -A`.
 
+## O que foi VALIDADO na máquina (não só em teste)
+
+Depois do ciclo `uninstall --keep-bluez` → `install`, com o daemon rodando:
+
+| item | medição |
+|---|---|
+| laço de 1 Hz | `motion_reader_silencio_reabrindo` = **0 em 3 min** (antes: ~180) |
+| ruído no journal | de ~107 para ~30 linhas/min |
+| numeração | `controller list` → **Controle 1** e **Controle 2** (antes: 2 e 3) |
+| giroscópio | chegando aos dois vpads (73 Hz e 56 Hz) |
+| áudio por BT | 2 s decodificados e **WAV de 3 s gravado** dos dois controles |
+
 ## Pendências declaradas
 
 - **DKMS do 8BitDo**: código pronto, build limpo, paridade de patch validada nos
@@ -197,3 +209,23 @@ arquivo criado na própria sessão passou local e só apareceu no CI. Regra: gat
 - **Migração dos testes de texto**: não feita.
 - **Validação visual da interface**: as mudanças de layout foram validadas por
   teste, não por inspeção da janela aberta.
+- **Microfone por BT ligado por padrão**: a ponte existe e funciona, mas nasce
+  **opt-in** (`HEFESTO_DUALSENSE4UNIX_BT_MIC=1`) e não está ligada ao
+  `lifecycle`. Falta também o defeito aberto **BT-MIC-GATING-01**: com o mic no
+  ar, o firmware declara `MicMuted` em 55-75% dos quadros e eles vêm
+  silenciosos. Três hipóteses já foram refutadas por medição; a suspeita
+  restante é o poll de 60 Hz do próprio daemon, e o A/B decisivo exige pará-lo.
+- **Rodar a interface no `lint-test`**: revertido (ver "recuo consciente").
+
+## O primeiro passo de amanhã
+
+1. **Reboot** — é o que ativa o DKMS novo. Só depois disso o 8BitDo tem chance
+   de existir para o sistema.
+2. Plugar o 8BitDo e ler o `dmesg`: se o padding de 64 bytes resolveu, some o
+   `Failed to get joycon info; ret=-110` e o device ganha `hidraw`/`input`/`leds`.
+   Se não resolver, o log novo diz **qual** dos passos falhou (o vanilla era mudo
+   nesse ponto — o aviso foi acrescentado justamente para isso).
+3. Conferir os três parâmetros: `grep . /sys/module/hid_nintendo/parameters/usb_*`
+   (esperado: os três em `Y`).
+4. Reverter é barato: desligar os três pelo `/sys` vale no próximo *plug*, sem
+   reload de módulo. As quatro rotas estão no `README.md` do DKMS.
