@@ -76,10 +76,37 @@ comportamento que efetivamente compromete um projeto. Corrigir à vista, não.
 ## Ordem de execução
 
 As sprints em `docs/process/sprints/` estão numeradas e são **sequenciais**.
-CR-01 e CR-02 fecham a posição jurídica e precisam estar concluídas antes de
-qualquer medição; CR-03 constrói a ferramenta; CR-04 é o trabalho de fato.
+
+| Sprint | O que fecha | Depende de |
+|---|---|---|
+| **CR-01** | posição jurídica registrada, com data | — |
+| **CR-02** | formato que recusa valor sem proveniência | CR-01 |
+| **CR-03** | a bancada de medição | CR-02 |
+| **CR-04** | os efeitos da casa | CR-03 |
+| **CR-05** | `NOTICE` declara toda a proveniência de terceiros | CR-01 |
+| **CR-06** | curvas publicadas como material livre | CR-04 |
 
 Nenhum valor de curva entra no repositório antes de CR-01 e CR-02 concluídas.
+A CR-05 corre em paralelo às demais — é higiene documental, não bloqueia
+medição.
+
+## Sobre reescrever o histórico
+
+**Não se apaga histórico por causa deste assunto.** A tentação existe e é
+compreensível: parece que sumir com os commits afasta o risco. Faz o contrário.
+
+Reescrever histórico onde **não houve** infração cria a aparência de que houve.
+O force-push fica registrado nos forks, nos clones já baixados, no cache da
+plataforma e nas execuções de CI — e a pergunta que sobra para quem olhar é "o
+que foi apagado?", sem que exista mais o histórico para responder.
+
+O histórico é a defesa: ele mostra a decisão de recusa sendo tomada, com data,
+no momento em que o material foi encontrado. Isso é prova de independência.
+
+`filter-repo` é a ferramenta certa para **vazamento de dado sensível** — senha,
+chave privada, endereço de hardware de uma pessoa. Ali a exposição é o dano, e
+o dado precisa sumir. Decisão técnica documentada é o oposto: a exposição é a
+proteção.
 
 ## O que este processo NÃO é
 
