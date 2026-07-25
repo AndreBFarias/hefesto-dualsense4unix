@@ -162,6 +162,22 @@ reprovou por coisas **reais** que estavam escondidas havia muito tempo.
 3. **`PyGObject` recente exige `girepository-2.0`**, que o runner não tem
    (`libgirepository1.0-dev`). Pinado na série compatível.
 
+### Um recuo consciente
+
+A tentativa de fazer os ~210 testes de interface **rodarem** no CI (instalando
+`PyGObject` pelo pip junto das typelibs do sistema) foi **revertida**: ela
+derrubava o interpretador no meio da suíte — morte silenciosa aos ~40%, sem
+traceback, job abortado. Trocar um gate que mente por um gate instável é pior.
+
+O que fica: os testes de interface voltam a **pular** no `lint-test` e no build
+do release, mas agora isso aparece como `skipped` no relatório, em vez de ficar
+mascarado pelo `|| echo "::warning::"`. Quem exercita a interface de verdade é o
+smoke multi-distro, onde o GTK é o do sistema e um Xvfb resolve o display.
+
+**Fica como pendência:** rodar a interface no `lint-test` exigiria usar o
+`python3-gi` do sistema em vez do pip (o `setup-python` isola o ambiente e não
+enxerga o `dist-packages`), ou um container próprio para esse job.
+
 ### Armadilha de método (registrada para não repetir)
 
 `validar-acentuacao.py --all` varre **o que está no git**. Rodar os gates antes
