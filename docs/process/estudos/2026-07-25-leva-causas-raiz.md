@@ -142,6 +142,33 @@ foram corrigidos na raiz:
 fixture (`aa:bb:cc:…`) que já estavam no repositório. Ele **não é executado por
 nenhum workflow**, então não bloqueia release; fica registrado como dívida.
 
+### O que o CI honesto revelou assim que parou de engolir falha
+
+Tirar o `|| echo "::warning::"` teve efeito imediato: o release reprovou, e
+reprovou por coisas **reais** que estavam escondidas havia muito tempo.
+
+1. **`importorskip("gi")` não protege nada** quando o `gi` existe *pela metade*.
+   No runner, `import gi` e `from gi.repository import Gtk` funcionam, mas
+   `GdkPixbuf` e `Pango` estouram `ImportError: unknown location`. Como isso
+   acontece na **coleta** do pytest, não vira skip — derruba a suíte inteira com
+   "errors during collection". A pergunta certa não é "existe gi?", é "existe
+   TUDO o que o módulo sob teste importa?". Reproduzido localmente com um `gi`
+   parcial sintético.
+2. **Segfault de GTK sem display.** As imagens do smoke multi-distro *têm* GTK de
+   verdade, então lá os testes de interface não pulam: rodam e abortam (exit
+   139/133). Era exatamente isso que o aviso vinha varrendo para baixo do tapete.
+   Curado com `xvfb-run` — a alternativa seria voltar a pular os testes de
+   interface, isto é, não testá-los.
+3. **`PyGObject` recente exige `girepository-2.0`**, que o runner não tem
+   (`libgirepository1.0-dev`). Pinado na série compatível.
+
+### Armadilha de método (registrada para não repetir)
+
+`validar-acentuacao.py --all` varre **o que está no git**. Rodar os gates antes
+de `git add` dá verde cego em arquivo novo — foi assim que uma violação num
+arquivo criado na própria sessão passou local e só apareceu no CI. Regra: gates
+**depois** do `git add -A`.
+
 ## Pendências declaradas
 
 - **DKMS do 8BitDo**: código pronto, build limpo, paridade de patch validada nos
