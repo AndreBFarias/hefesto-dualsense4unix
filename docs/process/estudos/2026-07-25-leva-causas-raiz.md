@@ -217,6 +217,23 @@ Depois do ciclo `uninstall --keep-bluez` → `install`, com o daemon rodando:
   restante é o poll de 60 Hz do próprio daemon, e o A/B decisivo exige pará-lo.
 - **Rodar a interface no `lint-test`**: revertido (ver "recuo consciente").
 
+## Estado da publicação
+
+**Release v0.1.1: PUBLICADO e VERDE.** Todos os jobs passaram — AppImage,
+Flatpak, os dois `.deb` (py310 e py312, cada um com seu smoke de instalação),
+wheel e sdist. Os artefatos estão no GitHub.
+
+**CI: 16 de 16 jobs verdes** (run 30146517578) — `anonymity`, `acentuacao`,
+`version-check`, `version-sync`, `mypy`, `build-wheel`, `lint-test` nas três
+versões de Python, os três smokes multi-distro e as quatro combinações de
+`runtime-smoke`.
+
+Levou seis rodadas para chegar aqui, e cada reprovação foi informação real: o
+gate tinha parado de mentir e estava, uma camada por vez, mostrando o que
+escondia. **Nada foi mascarado para forçar verde** — a única concessão está
+declarada como "recuo consciente" logo acima, e é uma reversão explícita, não um
+aviso engolindo falha.
+
 ## O primeiro passo de amanhã
 
 1. **Reboot** — é o que ativa o DKMS novo. Só depois disso o 8BitDo tem chance
