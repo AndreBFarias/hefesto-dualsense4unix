@@ -107,5 +107,19 @@ A decisão é da mantenedora.
 3. **Reduzir a perda quando acontecer**: hoje o snapshot roda a cada 30 min. Um
    snapshot na BORDA de cada bond novo custaria pouco e transformaria "perdi os
    bonds do dia" em "perdi os últimos segundos".
-4. O `hefesto-bt-crash-capture` já existe — verificar se está armando o
-   `coredumpctl` (o dump de hoje não ficou retido).
+4. **A captura forense NÃO está armada** — e é por isso que o dump de hoje não
+   ficou retido. Verificado: `/proc/sys/kernel/core_pattern` aponta para o
+   `apport` do Pop!_OS, que descarta crash de pacote fora da distro — e o
+   `bluetoothd` daqui é justamente o backport. O `bt_crash_capture.sh --on`
+   existe para isso (troca o `core_pattern` para o `systemd-coredump` via
+   `/etc/sysctl.d/99-hefesto-bt-coredump.conf`), mas está desligado.
+   **Armar antes da próxima sessão de caça**, ciente de que `core_pattern` é
+   global do kernel — o script documenta o custo e tem `--off`.
+
+## O que já foi mitigado (24/07)
+
+- **Snapshot de bond na borda da conexão** (`83-hefesto-bond-snapshot.rules`):
+  o snapshot deixou de depender só do timer de 15 min. Um pareamento feito logo
+  depois de uma foto não some mais sem cópia no crash seguinte — foi exatamente
+  o que aconteceu com o Pro (re-pareado 21:24, sumido 21:54, com a foto das
+  21:24 como única cópia).
