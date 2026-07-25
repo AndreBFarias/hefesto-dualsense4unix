@@ -6,7 +6,8 @@ labels: ["type:feature", "ai-task", "status:ready"]
 
 ## Contexto
 Sprint: **W?.?**
-Referência: `HEFESTO_PROJECT.md` + `docs/process/HEFESTO_DECISIONS_V2.md` + `V3.md`
+Referência: specs e decisões consolidadas no arquivo de processo
+(`git show arquivo/processo-pre-1.0:docs/process/HEFESTO_DECISIONS_V3.md`)
 
 ## Critérios de aceite
 - [ ] ...
@@ -19,7 +20,7 @@ Referência: `HEFESTO_PROJECT.md` + `docs/process/HEFESTO_DECISIONS_V2.md` + `V3
 ## Runtime (se sprint toca runtime)
 - [ ] `./run.sh --smoke` (FakeController USB) passa
 - [ ] `./run.sh --smoke --bt` (FakeController BT) passa
-- [ ] Itens correspondentes em `CHECKLIST_MANUAL.md` preenchidos por revisor com device
+- [ ] Smoke com hardware real, conduzido pelo revisor com device (gatilho, vibração, LEDs, reconexão)
 
 ## UI (se sprint toca `src/hefesto_dualsense4unix/tui/**`)
 - [ ] Screenshot `/tmp/hefesto_<area>_<ts>.png` anexado no PR
