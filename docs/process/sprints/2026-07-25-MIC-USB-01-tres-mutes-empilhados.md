@@ -45,6 +45,34 @@ grep -o 'DualSense[^}]*mute":[a-z]*' ~/.local/state/wireplumber/default-routes
 
 ### Camada 2 — o perfil da placa apontava para uma entrada sem sinal
 
+> ** REFUTADO POR MEDIÇÃO EM 26/07/2026 — leia antes de agir sobre esta seção.**
+>
+> O que está escrito abaixo — que `input:analog-stereo` é "onde o microfone
+> realmente vive" e que `input:iec958-stereo` é "sem sinal" — **não se sustentou
+> quando foi medido de novo**, no mesmo controle, pelo cabo:
+>
+> - com `output:analog-surround-40+input:analog-stereo` (a cura que esta sprint
+>   prescreve, e que o `scripts/doctor.sh --fix-mic` aplica), a source aparece
+>   **sem nenhuma porta de captura** (`active_port` nulo, lista de portas vazia)
+>   e entrega **327.680 bytes com pico 0 e RMS 0** — silêncio digital perfeito;
+> - com `output:analog-surround-40+input:iec958-stereo`, o mesmo controle
+>   gravou **pico 4606 e RMS 374**, com envelope de voz ao longo do tempo.
+>
+> Ou seja: nesta máquina, **o perfil que esta sprint manda evitar é o que
+> capta**, e o que ela manda aplicar produz um nó sem porta. A tabela abaixo
+> continua descrevendo corretamente o que o ALSA *reporta* sobre
+> disponibilidade — o que caiu foi a conclusão de qual entrada carrega o áudio.
+>
+> **O critério confiável não é o nome do perfil, é a porta de captura.** Uma
+> source sem porta ativa não entrega áudio, em qualquer perfil. É esse o teste
+> que a faixa de microfone da aba Status passou a usar, e por isso nenhuma cura
+> dela aponta para o `--fix-mic`.
+>
+> **Fica em aberto**, e não é honesto fingir que não: por que a medição de 25/07
+> (pico 596 no perfil analógico) e a de 26/07 discordam. As hipóteses não
+> testadas são estado da detecção de jack e o replug entre as duas — o perfil
+> **reverte a cada reconexão do cabo**, o que também foi reproduzido.
+
 Perfil ativo medido: `output:analog-surround-40+input:iec958-stereo`.
 
 O DualSense expõe duas entradas possíveis:
