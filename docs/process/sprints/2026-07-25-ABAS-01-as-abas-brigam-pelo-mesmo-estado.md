@@ -1,6 +1,6 @@
 # ABAS-01 — as abas brigam pelo mesmo estado
 
-- **Status:** ABERTA
+- **Status:** ENTREGUE em 25/07/2026 pelo commit `d92b544`
 - **Prioridade:** ALTA — há perda silenciosa de dados
 - **Aberta em:** 25/07/2026
 

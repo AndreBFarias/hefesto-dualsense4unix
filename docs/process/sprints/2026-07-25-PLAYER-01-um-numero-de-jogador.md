@@ -1,6 +1,6 @@
 # PLAYER-01 — um número de jogador, e ele é editável
 
-- **Status:** ABERTA
+- **Status:** ENTREGUE em 25/07/2026 pelo commit `14cd31b`
 - **Prioridade:** MÉDIA
 - **Aberta em:** 25/07/2026
 - **Absorve:** UI-SELETOR-01 (ordem dos chips), aberta mais cedo em 25/07

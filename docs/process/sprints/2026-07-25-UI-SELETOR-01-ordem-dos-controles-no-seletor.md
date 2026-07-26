@@ -1,8 +1,9 @@
 # UI-SELETOR-01 — Os chips do topo aparecem fora de ordem
 
-**Status:** ABERTA
-**Prioridade:** média — não quebra nada, mas confunde justamente quem tem vários
-controles, que é o público do co-op.
+- **Status:** ENTREGUE em 25/07/2026 pelo commit `14cd31b` — dentro de
+  PLAYER-01, por absorção
+- **Prioridade:** média — não quebra nada, mas confunde justamente quem tem
+  vários controles, que é o público do co-op.
 
 ## O sintoma
 
@@ -39,6 +40,11 @@ não é, os dois divergem sempre que alguém liga os controles fora de ordem —
 - [ ] Ordenar as linhas do seletor por `_display_slot`, mantendo "Todos" na
       posição 0. Controle sem slot conhecido vai para o fim, preservando a
       ordem relativa atual (`sorted` é estável).
+
+> **Fechamento (25/07/2026):** entregue por **absorção** em PLAYER-01
+> (`14cd31b`), não por trabalho próprio desta sprint — a ordem passou a vir de
+> `_por_numero_de_identidade` e o índice de cada linha continua sendo o `index`
+> da enumeração, como a ressalva acima exigia.
 
 ## O que NÃO pode quebrar
 

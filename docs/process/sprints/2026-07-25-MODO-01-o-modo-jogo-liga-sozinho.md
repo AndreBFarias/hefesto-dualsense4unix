@@ -1,6 +1,6 @@
 # MODO-01 — o modo jogo liga sozinho
 
-- **Status:** ABERTA
+- **Status:** ENTREGUE em 25/07/2026 pelo commit `54f1f3b` — confirmado ao vivo
 - **Prioridade:** ALTA
 - **Aberta em:** 25/07/2026
 

@@ -1,6 +1,6 @@
 # LEGIBILIDADE-01 — texto legível, alvo clicável, coisas no lugar certo
 
-- **Status:** ABERTA
+- **Status:** ENTREGUE em 25/07/2026 pelo commit `a343ff6`
 - **Prioridade:** MÉDIA (alta em impacto de uso diário)
 - **Aberta em:** 25/07/2026
 

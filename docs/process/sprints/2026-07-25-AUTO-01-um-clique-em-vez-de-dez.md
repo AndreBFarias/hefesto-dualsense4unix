@@ -1,6 +1,6 @@
 # AUTO-01 — um clique em vez de dez
 
-- **Status:** ABERTA
+- **Status:** ENTREGUE em 25/07/2026 pelo commit `8fe735d`
 - **Prioridade:** ALTA
 - **Aberta em:** 25/07/2026
 

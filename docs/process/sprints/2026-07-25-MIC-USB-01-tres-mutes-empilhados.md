@@ -1,6 +1,6 @@
 # MIC-USB-01 — três mutes empilhados, e nenhum deles se resolve pela janela
 
-- **Status:** ABERTA
+- **Status:** ENTREGUE em 25/07/2026 pelo commit `8f83897`
 - **Prioridade:** ALTA
 - **Aberta em:** 25/07/2026, com diagnóstico completo ao vivo
 

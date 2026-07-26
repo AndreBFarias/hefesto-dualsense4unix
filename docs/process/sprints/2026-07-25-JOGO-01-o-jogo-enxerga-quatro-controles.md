@@ -1,6 +1,6 @@
 # JOGO-01 — o jogo enxerga quatro controles onde existe um
 
-- **Status:** ABERTA
+- **Status:** ENTREGUE em 25/07/2026 pelo commit `a343ff6`
 - **Prioridade:** MÁXIMA — impede jogar, que é o propósito do projeto
 - **Aberta em:** 25/07/2026, a partir de relato com o jogo em execução
 

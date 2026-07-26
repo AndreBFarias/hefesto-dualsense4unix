@@ -1,6 +1,6 @@
 # NUM-01 — quem está na mesa é 1..N
 
-- **Status:** ABERTA
+- **Status:** ENTREGUE em 25/07/2026 pelo commit `a343ff6`
 - **Prioridade:** ALTA
 - **Aberta em:** 25/07/2026
 
