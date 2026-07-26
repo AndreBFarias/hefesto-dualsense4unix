@@ -45,7 +45,8 @@ grep -o 'DualSense[^}]*mute":[a-z]*' ~/.local/state/wireplumber/default-routes
 
 ### Camada 2 — o perfil da placa apontava para uma entrada sem sinal
 
-> ** REFUTADO POR MEDIÇÃO EM 26/07/2026 — leia antes de agir sobre esta seção.**
+> **ATENÇÃO — REFUTADO POR MEDIÇÃO EM 26/07/2026. Leia antes de agir sobre esta
+> seção.**
 >
 > O que está escrito abaixo — que `input:analog-stereo` é "onde o microfone
 > realmente vive" e que `input:iec958-stereo` é "sem sinal" — **não se sustentou
