@@ -123,3 +123,22 @@ Dois defeitos novos apareceram justamente por ter chegado até aqui:
 - **O 8BitDo em modo PS4 não sobe pelo cabo.** Causa medida no kernel: ele
   responde ao pedido de endereço com 9 bytes em vez de 16. Patch escrito
   (`8b379ae`), **nunca carregado** — depende do próximo reinício.
+
+## As sprints que a validação abriu
+
+Nenhuma delas existiria sem ter chegado aos quatro controles jogando. Três vieram
+da partida, uma da primeira inspeção visual da janela.
+
+| sprint | de onde veio | prioridade |
+|---|---|---|
+| **PLAYER-LED-01** — o número do jogo chega ao controle | a numeração dessincronizada que ela viu na partida | alta |
+| **CONTAGEM-01** — a janela mostra 2, 4 e 8 ao mesmo tempo | inspeção visual da interface | alta |
+| **IDENT-01** — um controle, duas identidades | a pergunta dela: *"o 8BitDo sempre vai ser o 4?"* | média |
+| **MÁSCARA-01** — como este controle aparece nos jogos | desenho proposto por ela | média |
+
+Duas observações dela viraram entrega dentro de sprints já abertas: o instalador
+não chama a cura do microfone *(MIC-USB-01)*, e o vão vertical que sobrou na tela
+ganha dono — botões maiores e a faixa do microfone *(CONTAGEM-01)*.
+
+**A ordem de ataque**, quando voltar: PLAYER-LED-01 e CONTAGEM-01 são
+independentes e entregam valor sozinhas. MÁSCARA-01 depende de IDENT-01.
