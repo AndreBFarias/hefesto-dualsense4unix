@@ -104,8 +104,23 @@ se desfaz: o clique prepara para dois.
   PLACEHOLDER-04; a inspeção confirma que está visível na tela.
 - **Sobra muito espaço vertical vazio** em Gatilhos e Emulação depois da
   legibilidade. O conteúdo ficou no topo e os botões de aplicar no rodapé, com um
-  vão no meio. Não é defeito — é oportunidade de respiro para o que hoje está
-  espremido noutras abas.
+  vão no meio.
+
+  Não é defeito, e ela apontou o uso certo para ele:
+
+  > *"essa parte vazia poderia ser os botões aparecendo maiores e mais
+  > distribuídos, e no final a parte do mic"*
+
+  Duas coisas de uma vez. Os presets de gatilho ganham área de clique maior — o
+  piso subiu para 32 px na LEGIBILIDADE-01, mas com esse espaço dá para ir além
+  do mínimo, e são dezenove botões numa grade apertada. E o microfone, que hoje
+  **não tem lugar nenhum na aba Status**, ganha um: o rodapé da aba, onde o vão
+  já existe.
+
+  Isso resolve o buraco que MIC-USB-01 e MIC-BT-01 apontam por outro caminho —
+  em vez de espremer o medidor dentro do cartão do controle, ele vira uma faixa
+  própria, com espaço para dizer **qual das três camadas** está segurando o
+  microfone quando ele estiver mudo.
 
 ## Como validar
 

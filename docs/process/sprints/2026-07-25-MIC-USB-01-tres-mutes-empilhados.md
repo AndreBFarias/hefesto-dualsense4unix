@@ -137,6 +137,47 @@ parecord --device=alsa_input.usb-…-00.analog-stereo -d 4 /tmp/mic.wav
 da aba Status se mexe quando ela fala. E quando estiver mudo, a tela diz qual das
 três camadas está segurando — e oferece o botão que resolve aquela.
 
+## O que a validação de 25/07 à noite acrescentou
+
+Duas coisas, ambas levantadas por ela e ambas confirmadas por medição.
+
+### A cura funciona — e a camada 2 VOLTA sozinha
+
+Depois de um `uninstall` + `install` completos, o perfil da placa **voltou
+sozinho** para a entrada digital sem sinal. O `doctor --fix-mic` entregue nesta
+sprint detectou e curou:
+
+```
+[ OK ] perfil da placa do DualSense trocado para …input:analog-stereo (camada 2)
+[ OK ] source do DualSense não está muda (camada 1)
+```
+
+Gravação logo depois: **pico 596** — captando. Isso confirma o que a sprint
+supunha e agora está medido: **a camada 2 reaparece**, e sem cura automática ela
+precisaria ser refeita à mão toda vez.
+
+###  O instalador NÃO chama a cura — e devia
+
+> *"isso não deveria estar por default no install sem rodar doctor?"*
+
+Está certo, e é falha do que entregamos. Medido: **zero** ocorrências de
+`--fix-mic` no `install.sh`.
+
+O passo 10 do instalador existe e faz outra coisa — impede o DualSense de virar
+o microfone **padrão** do sistema, o que é correto e deliberado. Mas ele não
+toca no perfil da placa nem no mute persistido. O resultado é que **uma
+instalação limpa deixa o microfone mudo**, com a cura pronta no repositório e
+ninguém a chamando.
+
+**Entrega adicional (7):** o instalador chama a cura das camadas 1 e 2 no passo
+de áudio, depois de instalar o drop-in. As duas ações são complementares e não
+conflitam: uma decide *quem é o microfone padrão*, a outra garante que *o
+microfone funciona quando escolhido*.
+
+Cuidado a respeitar: a cura precisa ser silenciosa quando não há DualSense
+presente na hora da instalação, e nunca pode abortar o passo — vale a mesma regra
+best-effort do resto do instalador.
+
 ## Relação com MIC-BT-01
 
 A sprint MIC-BT-01 (aberta em 25/07) trata do medidor por Bluetooth, onde o áudio
