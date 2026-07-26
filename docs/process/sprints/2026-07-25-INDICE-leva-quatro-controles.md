@@ -95,14 +95,31 @@ fecha, com o commit que a fechou.
 
 | sprint | prioridade | estado |
 |---|---|---|
-| **JOGO-01** — o jogo enxerga quatro controles onde existe um | **máxima** | ABERTA |
-| AUTO-01 — um clique em vez de dez | alta | ABERTA |
-| NUM-01 — quem está na mesa é 1..N | alta | ABERTA |
-| MODO-01 — o modo jogo liga sozinho | alta | ABERTA |
-| MIC-USB-01 — três mutes empilhados | alta | ABERTA |
-| ABAS-01 — as abas brigam pelo mesmo estado | alta | ABERTA |
-| PLAYER-01 — um número de jogador, editável | média | ABERTA |
-| LEGIBILIDADE-01 — texto legível, alvo clicável | média | ABERTA |
+| **JOGO-01** — o jogo enxerga quatro controles onde existe um | máxima | **ENTREGUE** `a343ff6` |
+| AUTO-01 — um clique em vez de dez | alta | **ENTREGUE** `8fe735d` |
+| NUM-01 — quem está na mesa é 1..N | alta | **ENTREGUE** `a343ff6` |
+| MODO-01 — o modo jogo liga sozinho | alta | **ENTREGUE** `54f1f3b` — confirmado ao vivo |
+| MIC-USB-01 — três mutes empilhados | alta | **ENTREGUE** `8f83897` |
+| ABAS-01 — as abas brigam pelo mesmo estado | alta | **ENTREGUE** `d92b544` |
+| PLAYER-01 — um número de jogador, editável | média | **ENTREGUE** `14cd31b` |
+| LEGIBILIDADE-01 — texto legível, alvo clicável | média | **ENTREGUE** `a343ff6` |
+| RUMBLE-PRESO-01 — o motor girava para sempre | *(nasceu no meio da leva)* | **ENTREGUE** `603608d` + `c733176` |
+| IDENT-01 — um controle, duas identidades | média | ABERTA |
 
-JOGO-01 subiu para máxima depois de aberta: ela é a única que impede **jogar**,
-que é o propósito do projeto. As demais degradam a experiência; essa a impede.
+## O que a validação em hardware provou, e o que ela abriu
+
+Em 25/07 à noite, com os quatro controles na mesa e um jogo real: **os quatro
+funcionaram**. A numeração saiu 1, 2, 3, 4, sem pular nem repetir, e sobreviveu a
+reinício do daemon.
+
+Dois defeitos novos apareceram justamente por ter chegado até aqui:
+
+- **A numeração do jogo não é a nossa.** Medido pelos LEDs: os quatro controles
+  físicos mostravam 1-2-3-4 (nosso número), e o gamepad virtual do jogador 2
+  mostrava o padrão do jogador 4 — o número que o **jogo** atribuiu. O jogo
+  numera pela ordem em que descobre os dispositivos, e não temos como impor a
+  nossa. O caminho é o inverso: deixar o número do jogo chegar ao controle
+  físico. O mecanismo existe para o jogador 1 e não alcança os do co-op.
+- **O 8BitDo em modo PS4 não sobe pelo cabo.** Causa medida no kernel: ele
+  responde ao pedido de endereço com 9 bytes em vez de 16. Patch escrito
+  (`8b379ae`), **nunca carregado** — depende do próximo reinício.
