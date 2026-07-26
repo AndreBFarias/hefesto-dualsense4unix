@@ -18,7 +18,7 @@ A resposta medida é **não**, e só para um dos quatro.
 | DualSense (branco) | `14:3a:9a:00:00:01` | **sim** — visto por rádio às 15:39 e por cabo às 21:00, mesmo endereço |
 | DualSense (segundo) | `a0:fa:9c:00:00:02` | **sim** |
 | Nintendo Pro | `e0:f6:b5:00:00:03` | **sim** — endereço único em todo o período |
-| **8BitDo Pro** | `e4:17:d8:1c:00:04` e `e4:17:d8:1c:00:05` | **não** |
+| **8BitDo Pro** | `e4:17:d8:00:00:04` e `e4:17:d8:00:00:05` | **não** |
 
 O DualSense usa o endereço de rádio como identidade mesmo no cabo — por isso
 trocar de via não muda nada para ele. **O que muda a identidade do 8BitDo não é a
@@ -44,8 +44,8 @@ diferença importa:
 
 | | caso registrado (MODO-01) | caso medido em 25/07 à noite |
 |---|---|---|
-| modo Switch | endereço **sintetizado** (`02` + fabricante + produto + barramento) | endereço **real** `e4:17:d8:1c:00:04` |
-| modo PS4 | endereço real | endereço real `e4:17:d8:1c:00:05` |
+| modo Switch | endereço **sintetizado** (`02` + fabricante + produto + barramento) | endereço **real** `e4:17:d8:00:00:04` |
+| modo PS4 | endereço real | endereço real `e4:17:d8:00:00:05` |
 | em comum | nada | os quatro primeiros octetos |
 
 Naquele episódio o controle não respondia ao pedido de identificação no cabo e o
@@ -59,8 +59,9 @@ reais do mesmo plástico**.
 
 ## Por que o palpite automático é recusado
 
-O prefixo `e4:17:d8:1c` agrupa os dois endereços do 8BitDo e não colide com
-nenhum outro controle da casa. É tentador usá-lo, e é errado:
+Os quatro primeiros octetos coincidem nos dois endereços do 8BitDo, e não
+coincidem com os de nenhum outro controle da casa. É tentador usar isso como
+regra, e é errado:
 
 **Endereços dentro de um fabricante são alocados em sequência.** Dois 8BitDo do
 mesmo modelo, comprados juntos, muito provavelmente também compartilham os quatro
