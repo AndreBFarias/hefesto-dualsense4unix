@@ -68,7 +68,9 @@ Falta:
 - [ ] Fechar o jogo → volta ao modo anterior, e o controle segue funcionando no
       desktop *(é o caso que a trava `ligou_gamepad` protege)*
 - [ ] Criar perfil pelo fluxo "Jogo da Steam" → nasce com modo de jogo já
-      escolhido
+      escolhido *(medido no código em 25/07: **já funciona** — o pré-preenchimento
+      grava `kind="gamepad"`, e o AppID também é preenchido sozinho com o jogo
+      aberto. O que falta aqui é só confirmar na mão. Detalhe em AUTO-03.)*
 
 ## 4. A vibração não trava (RUMBLE-PRESO-01)
 
@@ -106,9 +108,15 @@ Quatro caminhos que perdiam configuração **sem aviso**:
 Eram três mutes empilhados. Os dois primeiros agora têm cura automática:
 
 ```bash
-hefesto-dualsense4unix doctor --fix-mic
+bash scripts/doctor.sh --fix-mic
 hefesto-dualsense4unix mic unmute
 ```
+
+> **Correção de 25/07 à noite:** este checklist mandava rodar
+> `hefesto-dualsense4unix doctor --fix-mic`, e **esse comando não existe** — a
+> CLI responde `No such option: --fix-mic`. São dois doctors com o mesmo nome: o
+> da CLI repassa só `--fix` e `--quiet` ao script, e a cura do microfone mora no
+> doctor de shell, que não está no PATH. Medido e registrado em AUTO-04.
 
 - [ ] `doctor` acusa e cura o mute do WirePlumber e o perfil sem sinal
 - [ ] `mic unmute` desmuta pelo terminal, **sem apertar o botão do controle**
@@ -137,6 +145,40 @@ hefesto-dualsense4unix mic unmute
       cartões das abas Status e Início acompanham
 - [ ] Os chips saem em ordem crescente, e clicar em cada um edita o controle
       certo
+
+## 10. O número do jogo chega ao controle (PLAYER-LED-01)
+
+Entregue em 25/07 à noite, **sem nenhuma validação em hardware**.
+
+- [ ] Jogo de co-op com quatro controles → as luzes batem com os números que o
+      **jogo** mostra na tela
+- [ ] Alt-tab e volta → os números **não piscam** nem trocam de dono
+- [ ] O journal **não** mostra retenção de número:
+
+```bash
+journalctl --user -u hefesto-dualsense4unix --since today \
+  | grep -E "game_output_retido.*player_leds"
+```
+
+**Nada aqui é falha:** retenção de `campos=['led']` continua possível e é o gate
+protegendo a cor. O que não pode aparecer é `player_leds`.
+
+- [ ] O par honesto aparece no journal: `uhid_replica_ativa` (o jogo pediu) e
+      `game_output_aplicado` (o controle recebeu)
+- [ ] `hefesto-dualsense4unix controller numbers` mostra, por controle, o nosso
+      número × o do jogo × o padrão aceso × o do kernel
+
+## 11. Uma contagem só (CONTAGEM-01)
+
+Também entregue sem validação em hardware.
+
+- [ ] Quatro controles — dois DualSense, um Nintendo, um 8BitDo
+- [ ] Cabeçalho diz **4 controles**
+- [ ] Botão diz **"Preparar co-op (4 jogadores)"**
+- [ ] Seção Controles mostra **quatro** cartões
+- [ ] O externo mostra **travessão** no jogador, com a explicação visível
+- [ ] Desligar um → tudo cai para três **junto**, sem parte da tela ficar para trás
+- [ ] Aba Emulação não chama mais nó de controle (diz físicos × virtuais nossos)
 
 ## O teste que vale por todos
 

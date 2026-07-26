@@ -1,6 +1,7 @@
 # PLAYER-LED-01 — o número do jogo chega ao controle
 
-- **Status:** ABERTA
+- **Status:** ENTREGUE em 25/07/2026 pelo commit `d1177c2` — com duas ressalvas
+  medidas, na seção de fechamento
 - **Prioridade:** ALTA
 - **Aberta em:** 25/07/2026, depois da primeira partida com quatro controles
 
@@ -107,3 +108,37 @@ não ficar escrito onde se lê o LED.
 **Critério que resume:** o número na luz, o número na tela do jogo e o número na
 interface dizem a mesma coisa — e quando não puderem dizer, a interface admite
 em vez de inventar.
+
+## Fechamento (25/07/2026, commit `d1177c2`)
+
+A decisão que a sprint exigia foi tomada: **o gate passou a ser por campo**. A
+cor continua gateada (o gate nasceu de um incidente medido, e o dano ali é
+persistente); o número saiu; os gatilhos passaram a consultar o mesmo ponto, em
+vez de escrever sempre por omissão. O argumento está escrito no código, ao lado
+da constante que define a política.
+
+**Duas coisas que esta sprint pedia mudaram depois da medição, e ficam
+registradas em vez de silenciadas:**
+
+1. **A entrega 3, ao pé da letra, virou condição impossível.** Ela pedia que a
+   repintura parasse de tocar no número *"quando existe camada de jogo retida"* —
+   mas, com o número fora do gate, **não existe mais retenção de número**.
+   Cumprir a letra exigiria manter o número gateado, que é exatamente a causa do
+   flip-flop. Entregue a garantia mais forte: o número do jogo nunca sai do
+   merge, e a repintura passou a **defendê-lo** contra escritor estrangeiro.
+2. **O passo 2 do "Como validar" acima está desatualizado.** "Nenhuma retenção"
+   não vale mais: retenção de `campos=['led']` continua possível e é **benigna** —
+   é o gate fazendo o trabalho dele quando o sinal erra. O critério afiado é
+   **retenção de `player_leds`**, que passou a ser impossível. E o par a procurar
+   no journal é `uhid_replica_ativa` (o jogo pediu) + `game_output_aplicado` (o
+   controle recebeu) — este segundo evento nasceu nesta sprint justamente porque
+   o primeiro, sozinho, não testemunhava autoria nenhuma.
+
+**Fica em aberto, declarado:** a primeira metade da entrega 4 — fechar o buraco
+do sinal de jogo, que mora em `daemon/subsystems/game_signal.py`. Só a telemetria
+foi entregue. O atenuante é medido: depois da decisão do gate, esse buraco
+**deixou de custar o número** e afeta apenas a cor.
+
+**Validação em hardware ainda pendente.** Nada aqui foi visto com quatro
+controles e um jogo real — a prova são 15 mutações que derrubaram teste, e
+mutação não substitui partida.

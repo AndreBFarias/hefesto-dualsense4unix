@@ -102,9 +102,16 @@ fecha, com o commit que a fechou.
 | MIC-USB-01 — três mutes empilhados | alta | **ENTREGUE** `8f83897` |
 | ABAS-01 — as abas brigam pelo mesmo estado | alta | **ENTREGUE** `d92b544` |
 | PLAYER-01 — um número de jogador, editável | média | **ENTREGUE** `14cd31b` |
+| UI-SELETOR-01 — ordem dos controles no seletor | média | **ENTREGUE** `14cd31b` — por absorção em PLAYER-01 |
 | LEGIBILIDADE-01 — texto legível, alvo clicável | média | **ENTREGUE** `a343ff6` |
 | RUMBLE-PRESO-01 — o motor girava para sempre | *(nasceu no meio da leva)* | **ENTREGUE** `603608d` + `c733176` |
 | IDENT-01 — um controle, duas identidades | média | ABERTA |
+
+> **Duas correções de registro, feitas em 25/07 à noite.** UI-SELETOR-01 não
+> aparecia nesta tabela: ela havia sido entregue dentro de PLAYER-01 e continuava
+> marcada como aberta no próprio arquivo. E **RUMBLE-PRESO-01 não tem documento
+> de sprint** — existe só como esta linha e como os dois commits; nasceu no meio
+> da leva e nunca foi escrita. Fica registrado em vez de parecer perdido.
 
 ## O que a validação em hardware provou, e o que ela abriu
 
@@ -129,16 +136,45 @@ Dois defeitos novos apareceram justamente por ter chegado até aqui:
 Nenhuma delas existiria sem ter chegado aos quatro controles jogando. Três vieram
 da partida, uma da primeira inspeção visual da janela.
 
-| sprint | de onde veio | prioridade |
+| sprint | de onde veio | estado |
 |---|---|---|
-| **PLAYER-LED-01** — o número do jogo chega ao controle | a numeração dessincronizada que ela viu na partida | alta |
-| **CONTAGEM-01** — a janela mostra 2, 4 e 8 ao mesmo tempo | inspeção visual da interface | alta |
-| **IDENT-01** — um controle, duas identidades | a pergunta dela: *"o 8BitDo sempre vai ser o 4?"* | média |
-| **MÁSCARA-01** — como este controle aparece nos jogos | desenho proposto por ela | média |
+| **PLAYER-LED-01** — o número do jogo chega ao controle | a numeração dessincronizada que ela viu na partida | **ENTREGUE** `d1177c2` |
+| **CONTAGEM-01** — a janela mostra 2, 4 e 8 ao mesmo tempo | inspeção visual da interface | **ENTREGUE** `0c08e77` |
+| **IDENT-01** — um controle, duas identidades | a pergunta dela: *"o 8BitDo sempre vai ser o 4?"* | ABERTA (média) |
+| **MÁSCARA-01** — como este controle aparece nos jogos | desenho proposto por ela | ABERTA (média) — depende de IDENT-01 |
+
+## As três sprints que só existiam como referência
+
+O AUTO-01 mandava os pontos de fricção restantes para AUTO-02, AUTO-03 e AUTO-04,
+e as três nunca ganharam documento. Foram escritas em 25/07 à noite, a partir de
+**medição nova** — o mapeamento original dos "29 pontos de fricção" nunca foi
+escrito em lugar nenhum, e só o número sobreviveu.
+
+| sprint | o que mede | estado |
+|---|---|---|
+| **AUTO-02** — uma janela de Steam, não três | o instalador fecha a Steam duas vezes e o terceiro passo vira uma corrida contra ela subindo | ABERTA (alta) |
+| **AUTO-03** — configurar um jogo em um clique | sete das nove abas para um jogo só, e dois pontos que descartam configuração em silêncio | ABERTA (alta) |
+| **AUTO-04** — o que só existe no terminal | 53 capacidades da linha de comando classificadas contra a janela | ABERTA (alta) |
+
+**O AUTO-02 corrige um erro do AUTO-01**, e a correção fica à vista: a explicação
+de que a recusa do pin do Proton vinha do download de 450 MB do passo anterior
+está errada em três pontos — o download é do próprio passo, e na maioria das
+vezes não acontece. O defeito real é uma corrida, que é pior.
 
 Duas observações dela viraram entrega dentro de sprints já abertas: o instalador
 não chama a cura do microfone *(MIC-USB-01)*, e o vão vertical que sobrou na tela
 ganha dono — botões maiores e a faixa do microfone *(CONTAGEM-01)*.
 
-**A ordem de ataque**, quando voltar: PLAYER-LED-01 e CONTAGEM-01 são
-independentes e entregam valor sozinhas. MÁSCARA-01 depende de IDENT-01.
+**A ordem de ataque, atualizada em 25/07 à noite.** PLAYER-LED-01 e CONTAGEM-01
+eram as duas independentes e **foram entregues**. O que sobra, em ordem:
+
+1. **IDENT-01** — é pré-requisito duro de MÁSCARA-01, e sem ela trocar o modo do
+   8BitDo continua criando um controle novo que empurra alguém para o slot 5.
+2. **MÁSCARA-01** — logo depois, e só depois.
+3. **AUTO-02, AUTO-03 e AUTO-04** — independentes entre si e das anteriores.
+   AUTO-02 é a que tem defeito com perda silenciosa de dado, então vai na frente.
+4. **MIC-BT-01** — independente de todas.
+
+**Nada desta leva noturna foi visto em hardware.** As duas entregas passaram por
+39 mutações que derrubaram teste, e mutação não substitui partida — a validação
+com os quatro controles continua pendente, e está no CHECKLIST.

@@ -1,6 +1,7 @@
 # CONTAGEM-01 — a tela diz "2 jogadores" com quatro controles na mesa
 
-- **Status:** ABERTA
+- **Status:** ENTREGUE em 25/07/2026 pelo commit `0c08e77` — uma entrega ficou de
+  fora por decisão, na seção de fechamento
 - **Prioridade:** ALTA — atinge diretamente o objetivo dos quatro jogadores
 - **Aberta em:** 25/07/2026, por inspeção visual da janela
 
@@ -143,3 +144,36 @@ pergunta que o seu código faz; o erro só existe quando os dois aparecem juntos
 mesma tela, e só é visível **olhando a janela**. Foi encontrado na primeira
 inspeção visual depois de LEGIBILIDADE-01 — e é o argumento de que ver a
 interface é parte da validação, não acabamento.
+
+## Fechamento (25/07/2026, commit `0c08e77`)
+
+A fonte única existe: todos os pontos da janela leem a mesma lista, montada a
+partir do `state_full`, e `coop.externals` deixou de ser medido em paralelo —
+virou o tamanho da lista, então os dois não podem divergir nem por um tick. A
+segunda rota de dados dos chips foi **removida**, não corrigida: enquanto ela
+existisse, voltaria a divergir.
+
+**O que a medição acrescentou ao que a sprint sabia:**
+
+- **O "oito" tinha duas causas, não uma.** Além de contar gamepads virtuais,
+  ele contava **cada controle duas vezes** — todo controle classe DualSense abre
+  dois nós de joystick (gamepad e sensores de movimento). E o critério intuitivo
+  para separar "o que é nosso" pelo caminho no sysfs **classificaria um DualSense
+  Bluetooth como nosso**, porque desde BLUEZ-UHID-01 o BlueZ cria o HID dos
+  físicos por rádio no mesmo lugar onde mora o nosso gamepad virtual. Por isso o
+  campo **ficou**, passando a dizer a verdade: um diagnóstico que revela essas
+  duas coisas vale mais que um campo a menos.
+- **Havia um quarto lugar contando errado**, além dos três que a sprint listou:
+  com externos na mesa e nenhum DualSense, o cabeçalho afirmava *"Controle
+  Desconectado"* com controle ligado na frente dela.
+
+**Ficou de fora, por decisão:** cartão de externo na **grade da aba Status**, com
+sticks, bateria e sensores ao vivo. Não lemos input, bateria nem sensores desses
+controles, e preencher aquelas áreas seria inventar dado — a mesma regra que esta
+sprint aplica no travessão. A entrega 3 foi cumprida na seção "Controles" da aba
+Início, que é onde a sprint mostra os cartões. Um cartão só-identidade na Status
+merece sprint própria.
+
+**Validação em hardware pendente:** o passo 5 do "Como validar" (desligar um
+controle e tudo cair junto) é gate humano — a contagem já é única por construção,
+mas a queda simultânea só se prova com os quatro na mesa.
