@@ -24,17 +24,30 @@ Não são sprints. São invariantes: qualquer entrega desta fila que as viole
 reprova, mesmo entregando o que prometeu. Elas saíram das causas medidas, não de
 preferência.
 
-### R-A. Conceito de implementação não aparece na tela
+### R-A. A tela mostra a consequência, não só o parâmetro
 
-Prioridade numérica é o caso flagrante. Ela existe no arquivo e no schema, e não
-tem por que existir como escolha livre de quem só quer jogar. A pessoa responde
-*"aplica a: este jogo / uma categoria / tudo"*; a ordem sai daí.
+**Esta regra foi reescrita em 27/07, e o motivo importa mais que o texto.**
+
+A primeira versão dizia *"conceito de implementação não aparece na tela"* e
+propunha tirar a prioridade numérica dos perfis. Ela corrigiu:
+
+> *"depois que vc explicou entendi como usar e vi que funcionam bem, talvez só
+> deixar intuitiva, não precisamos desativar ela"*
+
+A proposta estava errada, e o erro é instrutivo: eu tinha medido um defeito real
+e concluído que o **mecanismo** era o problema. Não era. O mecanismo funciona e
+ela o usa. O problema é que **o número não diz o que provoca** — mover o controle
+para 5 ou para 110 tem a mesma aparência na tela, e só a consequência difere.
+
+A regra correta, portanto, não é esconder o parâmetro. É: **todo controle que
+aceita um valor mostra, ali, o que aquele valor faz.**
 
 **A prova de que a regra é necessária:** a escala da janela trava em 100
-(`profiles_actions.py:1111`), e o catch-all dela estava exatamente em 100. Não
+(`profiles_actions.py:1111`), e o catch-all dela está exatamente em 100. Não
 existia número escolhível pela interface que fizesse o perfil de um jogo vencer.
-Consertar exigiu escrever `110` num arquivo JSON à mão. Não foi erro de uso — foi
-um beco sem saída construído por nós.
+Consertar exigiu escrever `110` num JSON à mão. Não foi erro de uso — foi um beco
+sem saída construído por nós, e invisível justamente porque a tela não mostrava a
+disputa. O teto sobe para 200; o número fica.
 
 ### R-B. Nada age em silêncio
 
@@ -96,6 +109,15 @@ tinha feito, no meio da noite de jogo.
 ## Notas de arquitetura sobre as sprints existentes
 
 Revisão feita depois de **olhar as capturas das nove abas**, não só o código.
+
+> **Decisão de processo, 27/07 — layout se decide a dois.**
+>
+> Tudo nesta seção é **observação, não proposta aprovada**. Nenhuma decisão de
+> layout entra em código sem ela decidir junto. Isso não é formalidade: a leva
+> que causou o rollback foi exatamente uma sequência de decisões visuais tomadas
+> sozinho, cada uma defensável, e o conjunto reprovado em dois minutos de olho.
+>
+> Medir o layout é trabalho meu. Escolher o layout é trabalho dela.
 
 ### Sobre STATUS-SIMETRIA-01: o vazio é o material, não o estorvo
 

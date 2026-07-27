@@ -128,20 +128,44 @@ Não precisa de diálogo, nem de radio, nem de campo a preencher:
 Se não houver janela de jogo em foco, o comportamento atual (catch-all) continua
 — aí ele está certo, porque é um perfil de desktop mesmo.
 
-### 2. A prioridade sai da tela como número
+### 2. A lista de perfis fica — o que muda é ela deixar de ser adivinhação
 
-O controle deslizante 0–100 é substituído pela pergunta que ela realmente
-responde, e a ordem sai dela:
+**Decisão dela, 27/07, corrigindo a proposta anterior desta sprint:**
 
-```
-Aplica a:  ( ) Este jogo — Pragmata          <- mais específico, vence
-           ( ) Uma categoria de jogos
-           ( ) Tudo (desktop)                <- catch-all, perde para os de cima
-```
+> *"o lance da lista de perfis, depois que vc explicou entendi como usar e vi que
+> funcionam bem, talvez só deixar intuitiva, não precisamos desativar ela"*
 
-O número continua existindo no arquivo e no schema. Só deixa de ser uma decisão
-que ela precisa tomar sem informação. O editor Avançado mantém o campo cru, com
-o teto subindo para 200 para que sempre exista folga de desempate.
+A versão anterior propunha tirar a prioridade numérica da tela e substituí-la por
+um seletor. **Está descartado.** O mecanismo funciona, ela usa, e o problema
+nunca foi o controle existir — foi ele não dizer o que faz. Tirar teria custado
+poder de expressão para resolver um defeito de comunicação.
+
+O que muda:
+
+1. **O teto sobe de 100 para 200.** É o conserto mínimo e obrigatório: com o teto
+   em 100 e um catch-all em 100, não existe número que desempate. Hoje ela tem
+   um perfil exatamente no teto — a folga não é luxo, é a diferença entre haver
+   e não haver saída.
+2. **A tela mostra a consequência, ao lado da escolha.** Enquanto ela move o
+   controle, uma linha diz o que aquele número significa naquele momento:
+   > *prioridade 110 — vence "vitoria" (100) e todos os presets*
+
+   e, se o número não bastar:
+   > *prioridade 5 — **perde para "vitoria" (100)**, que vale em tudo*
+3. **A lista de perfis ganha a coluna que falta: quem vence onde.** Ela já mostra
+   nome, prioridade e regra. Falta a leitura que ninguém consegue fazer de
+   cabeça com treze perfis — qual deles vale na janela que está aberta agora.
+4. O editor Simples continua oferecendo "Este jogo / categoria / tudo" como
+   atalho, e o Avançado continua com o campo cru. **Os dois caminhos ficam.**
+
+O princípio: o número não é o problema; **o número sem consequência visível é.**
+
+### 2b. Nascer certo continua valendo
+
+A entrega 1 (o perfil nasce com a regra do jogo em foco e prioridade calculada
+acima dos catch-all) **não** é afetada por esta correção. Ela resolve o caso de
+quem não quer pensar em prioridade nenhuma; a entrega 2 resolve o caso de quem
+quer — e hoje nenhum dos dois funciona.
 
 ### 3. A janela diz qual perfil vai valer — antes de abrir o jogo
 
