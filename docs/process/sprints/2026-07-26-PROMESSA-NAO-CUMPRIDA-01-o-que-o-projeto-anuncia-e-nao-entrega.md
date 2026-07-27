@@ -76,9 +76,17 @@ ambiente de trabalho, não do repositório. E o que ele fez, medido no diff:
 > propósito: escritos como caractere, o higienizador apagaria a própria tabela
 > que documenta o que ele faz de errado. Este parágrafo é a segunda prova.
 
-O `U+2194` estava em "contradições doccódigo", numa tabela do índice desta
-leva, e virou `doccódigo` — uma palavra que não existe, dentro de um documento
-sobre coisas que o projeto afirma e não confere. Foi preciso reparar à mão.
+O `U+2194` estava numa tabela do índice desta leva, ligando as palavras `doc` e
+`código` para dizer "contradições entre os dois". Com a seta apagada, as duas
+palavras se colaram e a célula passou a dizer `doccódigo` — que não é palavra
+nenhuma, dentro de um documento sobre coisas que o projeto afirma e não confere.
+Foi preciso reparar à mão.
+
+E houve uma **terceira** mordida: a frase acima, na sua primeira versão, citava a
+seta pelo desenho para mostrar o antes e o depois. O higienizador a apagou também
+— transformando a narração do apagamento numa frase circular, que dizia que
+`doccódigo` havia virado `doccódigo`. Está reescrita sem nenhum glifo literal.
+Três passes, três remoções, zero avisos.
 
 Isso fecha o argumento melhor do que qualquer análise:
 
