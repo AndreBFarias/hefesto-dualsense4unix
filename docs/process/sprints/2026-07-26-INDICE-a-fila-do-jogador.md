@@ -88,7 +88,7 @@ tinha feito, no meio da noite de jogo.
 
 | # | Sprint | Estado |
 |---|---|---|
-| 9 | [**DOC-VERDADE-01**](2026-07-26-DOC-VERDADE-01-a-documentacao-descreve-outro-programa.md) | ABERTA — contradições doccódigo |
+| 9 | [**DOC-VERDADE-01**](2026-07-26-DOC-VERDADE-01-a-documentacao-descreve-outro-programa.md) | ABERTA — contradições entre documento e código |
 | 10 | [**PROMESSA-NAO-CUMPRIDA-01**](2026-07-26-PROMESSA-NAO-CUMPRIDA-01-o-que-o-projeto-anuncia-e-nao-entrega.md) | ABERTA — dois itens ALTOS: as fontes nunca instaladas e o gate de emoji que nunca existiu |
 | 11 | [PLAYER-LED-01](2026-07-25-PLAYER-LED-01-o-numero-do-jogo-chega-ao-controle.md) · [IDENT-01](2026-07-25-IDENT-01-um-controle-duas-identidades.md) · [MÁSCARA-01](2026-07-25-MASCARA-01-como-este-controle-aparece-nos-jogos.md) · [MIC-BT-01](2026-07-25-MIC-BT-01-o-medidor-do-microfone-por-bluetooth.md) | ABERTAS, da leva de 25/07 |
 | 12 | CR-01 a CR-06 — sala limpa | Fora de escopo por decisão dela; CR-02 segue bloqueando qualquer curva própria |

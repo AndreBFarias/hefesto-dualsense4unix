@@ -22,7 +22,7 @@ E a irmã dela, do mesmo commit: um gate que ninguém roda não é gate, é arqu
 
 ## Bloco A — gates que não veem o que prometem ver
 
-### A1. O gate de emoji nunca foi construído   ALTO
+### A1. O gate de emoji nunca foi construído — ALTO
 
 Não é que ele falhe. **Ele não existe.**
 
@@ -54,6 +54,45 @@ higienizador leu "zero emojis" como "zero não-ASCII", apagou os glifos de estad
 do código **e adaptou o teste à regressão**. A casa construiu a defesa contra
 aquele erro específico e **anunciou** a defesa contra o erro oposto sem
 construí-la. Quem lê o CONTRIBUTING acredita estar protegido nas duas direções.
+
+#### O flagrante — este documento foi vítima do defeito que descreve
+
+No commit que criou este arquivo, a saída do `git commit` trouxe:
+
+```
+[sanitizer] 2 arquivos: 3 emojis removidos
+```
+
+Existe, portanto, um higienizador no fluxo de commit. Ele **não** está no
+`.pre-commit-config.yaml` e **não** está em `.git/hooks/` (vazio) — vem do
+ambiente de trabalho, não do repositório. E o que ele fez, medido no diff:
+
+| Codepoint | Nome | Bloco Unicode | ADR-011 diz | O higienizador fez |
+|---|---|---|---|---|
+| `U+26A0` | WARNING SIGN | Miscellaneous Symbols | proibido | removeu — **correto** |
+| `U+2194` | LEFT RIGHT ARROW | **Arrows** | **permitido** | removeu — **errado** |
+
+> Os dois glifos estão citados aqui **por codepoint, não por desenho**, de
+> propósito: escritos como caractere, o higienizador apagaria a própria tabela
+> que documenta o que ele faz de errado. Este parágrafo é a segunda prova.
+
+O `U+2194` estava em "contradições doccódigo", numa tabela do índice desta
+leva, e virou `doccódigo` — uma palavra que não existe, dentro de um documento
+sobre coisas que o projeto afirma e não confere. Foi preciso reparar à mão.
+
+Isso fecha o argumento melhor do que qualquer análise:
+
+1. **O que o projeto promete (bloquear emoji) não existe** — nada no pre-commit
+   varre isso, e há um U+2B50 commitado provando.
+2. **O que existe no lugar (remover em silêncio) faz demais** — apaga glifo que
+   o ADR-011 protege explicitamente, sem avisar, dentro do commit.
+3. E as duas coisas juntas produzem o pior desfecho possível: quem escreve
+   confia no gate que não existe, e tem o texto alterado por um higienizador que
+   não deveria ter tocado ali.
+
+Um **gate** reprova e diz o que está errado, e a pessoa corrige. Um
+**higienizador** altera e segue, e ninguém fica sabendo. Para conteúdo escrito,
+a diferença entre os dois é a diferença entre revisar e ser reescrito.
 
 ### A2. Duas convenções de commit em vigor, contraditórias
 
@@ -88,7 +127,7 @@ quebrou sem nenhum teste reclamar.
 
 ## Bloco B — o instalador anuncia o que não faz
 
-### B1. As fontes da identidade visual nunca são instaladas   ALTO
+### B1. As fontes da identidade visual nunca são instaladas — ALTO
 
 `scripts/install_fonts.sh` existe, foi escrito em `fc9a9f6` justamente porque as
 duas fontes não estavam na máquina (0 de 797; o `fc-match` caía em Noto Sans). E
