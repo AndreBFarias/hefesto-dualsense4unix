@@ -154,7 +154,7 @@ documentação de usuário é incidental, em
 pode ligar de volta pela Steam. O sistema desfaz.
 
 Além disso, as duas units instaladas apontam na linha 2 para
-`docs/process/sprints/FEAT-STEAM-INPUT-SELF-HEAL-01.md`. **O arquivo não existe.**
+`docs/process/sprints/FEAT-STEAM-INPUT-SELF-HEAL-01.md`. **O arquivo não existe.** <!-- ref-externa: a ausência deste arquivo é o achado do parágrafo; as units instaladas apontam para ele -->
 
 ### 8. A contagem não nomeia jogo nenhum
 
