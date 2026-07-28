@@ -127,9 +127,18 @@ um pedido que a próxima leva vai extrapolar de novo.
 |---|---|---|
 | 7 | **A janela usa três denominadores diferentes para contar controles.** | `app/actions/status_actions.py:1391` e `:1504` usam `len(conectados)` (só DualSense); `:1063` usa `len(conectados) + len(externals)`; `app/actions/home_actions.py:325-331` usa `len(controllers)` com `len(players)`. Com 2 DualSense e 2 externos, os três dão números diferentes na mesma tela. Sobreviveu ao rollback — conferido nesta árvore |
 | 8 | **Entrar na exceção de Steam Input de um jogo derruba o co-op sem avisar.** | `daemon/subsystems/gamepad.py:473-475` e `:423-427`. No Mullet Mad Jack o jogador 1 passa a jogar pelo controle físico e os outros três somem |
-| 9 | **AUTO-03.1 e AUTO-03.2** — o perfil do jogo nasce em prioridade 0 e perde para os presets de fábrica; o que você acabou de ajustar não entra no perfil novo | [`2026-07-25-AUTO-03`](2026-07-25-AUTO-03-configurar-um-jogo-em-um-clique.md):164 e :193; a própria sprint chama isso de "o defeito histórico desta casa" (:7-10) |
+| 9 | **AUTO-03.1 e AUTO-03.2** — o perfil do jogo nasce em prioridade 0 e perde para os presets de fábrica; o que você acabou de ajustar não entra no perfil novo | `2026-07-25-AUTO-03-configurar-um-jogo-em-um-clique.md`:164 e :193 (ver nota abaixo); a própria sprint chama isso de "o defeito histórico desta casa" (:7-10) <!-- ref-externa: sprint que vive em main, não nesta árvore restaurada; ver a nota logo abaixo da tabela --> |
 | 10 | **AUTO-03.5 e AUTO-03.6** — cinco botões para o lado Steam e nenhum é "este jogo"; três portas para o mesmo interruptor | `2026-07-25-AUTO-03`:271 e :295; complemento em `2026-07-25-AUTO-02`:250 |
-| 11 | **AUTO-02 e AUTO-04** — o instalador fecha a Steam duas vezes e o terceiro passo vira uma corrida; 53 capacidades que só existem no terminal | [`AUTO-02`](2026-07-25-AUTO-02-uma-janela-de-steam-nao-tres.md), [`AUTO-04`](2026-07-25-AUTO-04-o-que-so-existe-no-terminal.md) |
+| 11 | **AUTO-02 e AUTO-04** — o instalador fecha a Steam duas vezes e o terceiro passo vira uma corrida; 53 capacidades que só existem no terminal | `2026-07-25-AUTO-02-uma-janela-de-steam-nao-tres.md` e `2026-07-25-AUTO-04-o-que-so-existe-no-terminal.md` (ver nota abaixo) <!-- ref-externa: sprints que vivem em main, não nesta árvore restaurada; ver a nota logo abaixo da tabela --> |
+
+> **Nota sobre os três arquivos AUTO-02, AUTO-03 e AUTO-04.** Eles **existem**, mas
+> em `main`, escritos no commit `10739bd`, cujo assunto fala das três sprints que só
+> existiam como referência — e foi gravado **sem acento nenhum**, porque na
+> época o higienizador do fluxo de commit os removia. O rollback devolveu esta árvore ao ponto `4dd4652`, anterior a
+> eles — por isso as três citações acima apontam para arquivo que não está aqui,
+> e por isso deixaram de ser link. Para lê-las sem mexer nesta árvore:
+> `git show main:docs/process/sprints/2026-07-25-AUTO-03-configurar-um-jogo-em-um-clique.md`.
+> Nada foi perdido; só não foi trazido de volta.
 
 ### Médio — abertas, sem urgência
 

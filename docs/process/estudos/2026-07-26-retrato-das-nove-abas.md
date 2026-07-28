@@ -77,8 +77,10 @@ assets/2026-07-26-abas/
 
 **Aviso**: esse diretório é volátil (scratchpad de sessão). Os PNGs não foram
 copiados para dentro do repositório porque a tarefa autorizava escrever apenas
-este arquivo. Para refazê-los basta rodar `retrato_abas.py` apontando para a
-mesma árvore restaurada.
+este arquivo. O mesmo vale para o `retrato_abas.py` que os gerou: ele nasceu e <!-- ref-externa: script de scratchpad de sessão, nunca versionado; a ausência é o assunto do parágrafo -->
+morreu no scratchpad da sessão e **não está versionado aqui**. Para refazer os
+retratos é preciso reescrevê-lo a partir da receita descrita acima, apontando
+para a mesma árvore restaurada.
 
 ### O que o retrato offscreen NÃO reproduz
 
@@ -540,7 +542,8 @@ Emulação"*), que é o tipo de ligação entre abas que ela pediu.
 
 ## Transversal — a barra de abas
 
-Medido com `medir_barra_abas.py`, na mesma janela de 1900x1040:
+Medido com `medir_barra_abas.py` (também do scratchpad da sessão, também não <!-- ref-externa: script de scratchpad de sessão, nunca versionado; a ausência é o assunto da frase -->
+versionado aqui), na mesma janela de 1900x1040:
 
 | Aba | x | largura |
 |---|---|---|
