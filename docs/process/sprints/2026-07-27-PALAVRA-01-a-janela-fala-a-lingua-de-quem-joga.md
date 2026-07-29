@@ -84,7 +84,7 @@ válido, e a cor do `<span>` não muda.
 
 ### E2. A aba perde o nome de produto de terceiros
 
-`Navegação DSX` passa a dizer o que a aba faz. Ela aprovou **"Usar como mouse"**.
+`Navegação DSX` passa a dizer o que a aba faz. Entrou como **"Usar como mouse"** e, em 28/07, ela pediu o nome curto: **"Navegação"**.
 
 O `DSX` é o nome de um programa de outra casa. Ele descreve de onde a ideia veio,
 não o que o botão faz — e é a única aba cujo nome ela mandou trocar.
