@@ -179,11 +179,20 @@ tela: **"o detector não vê janela Wayland nativa"**.
 
 ### `integrations/xlib_window.py` — 111 linhas de código morto com mina armada
 
-Nenhum código de produção o importa (só o `tests/unit/test_xlib_window.py` e
-menções em docstrings). Ele lê o `_NET_ACTIVE_WINDOW` **sem gate de foco** — ou
-seja, é exatamente o defeito que o UX-02 e o FOCO-01 curaram, preservado inteiro
-num arquivo que ainda importa limpo. **Mina armada para quem importar.** Ou vira
-um `raise ImportError` explícito, ou some.
+> **RESOLVIDO em 29/07/2026 pela CODIGO-MORTO-01.** O arquivo virou lápide: um
+> `raise ImportError` que aponta o substituto
+> (`integrations/window_detect.build_window_reader()`), e as 104 linhas que liam
+> `_NET_ACTIVE_WINDOW` sem gate de foco saíram. O único importador era um teste
+> do próprio módulo, retirado junto; a lápide é coberta por
+> `tests/unit/test_xlib_window_nao_importavel.py`, que também afirma que nenhum
+> módulo de produção volta a importá-lo. O parágrafo abaixo fica como registro
+> do diagnóstico.
+
+Nenhum código de produção o importava — só o teste do próprio módulo (retirado
+na cura) e menções em docstrings. Ele lia o `_NET_ACTIVE_WINDOW` **sem gate de
+foco** — ou seja, era exatamente o defeito que o UX-02 e o FOCO-01 curaram,
+preservado inteiro num arquivo que ainda importava limpo. **Mina armada para
+quem importasse.** Ou virava um `raise ImportError` explícito, ou sumia.
 
 ### A linha na aba Sistema
 
