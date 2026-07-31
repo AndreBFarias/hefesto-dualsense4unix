@@ -140,6 +140,53 @@ conferir com o olho, o arquivo é o citado acima e o texto é legível.
 
 ## E2. O `[REDACTED]` literal no README publicado — decisão dela
 
+> **MEDIDO EM 31/07, 09h45, e isto muda a entrega inteira: o `[REDACTED]` não é
+> erro de ninguém. É produzido por um hook global, a cada commit.**
+>
+> Ela decidiu nesta madrugada pela URL real do fork. A cura foi escrita, o
+> `README.md` passou a trazer `github.com/[REDACTED]/...` nas três
+> ocorrências — e o primeiro commit da leva devolveu tudo para `[REDACTED]`,
+> com o aviso `[sanitizer] 4 arquivos: 7 identidade redactada`.
+>
+> A causa, lida no código: `~/.config/git/hooks/pre-commit` chama
+> `~/.config/zsh/scripts/universal-sanitizer.py`, que em `:316-321` troca cada
+> termo de identidade por `[REDACTED]` **em todo arquivo cuja extensão não
+> esteja em `safe_config_ext`** (`.cfg`, `.ini`, `.toml`, `.yaml`, `.yml`,
+> `.json`) **e cujo nome não esteja em `safe_names`** (`LICENSE`, `AUTHORS`,
+> `CONTRIBUTORS`, `pyproject.toml`, `setup.cfg`). O `README.md` é `.md`: entra
+> na peneira.
+>
+> **Prova executada, sem tocar no repositório:** copiei o `README.md` para o
+> scratchpad e rodei o sanitizador nele. Saída: `1 arquivos: 4 identidade
+> redactada`; `grep -c [REDACTED]` devolveu **0**, e as três URLs voltaram
+> a `[REDACTED]`.
+>
+> **Consequência para esta entrega:** ela é **inexecutável dentro do
+> repositório**. Editar o `README.md` é trabalho que o próximo commit desfaz em
+> silêncio — e "silêncio" é a parte grave, porque a árvore fica dizendo uma
+> coisa e o commit outra.
+>
+> **E editar o hook não resolve sozinho:** o self-heal do Ritual da Aurora
+> reinstala os hooks globais de hora em hora (achado de 27/07, registrado como
+> *"o autosync do `~/.config/zsh` mutila arquivos a cada 10 minutos"*). O hook
+> tem dono, e o dono não é este projeto.
+>
+> **Os três caminhos reais, e a escolha é dela:**
+>
+> 1. **Acrescentar `README.md` ao `safe_names` do sanitizador** — é uma linha,
+>    mas mexe em ferramenta de outra casa, e precisa sobreviver ao self-heal.
+> 2. **Aceitar o marcador e parar de chamá-lo de defeito** — o `[REDACTED]` vira
+>    comportamento declarado, com uma nota no README explicando que o dono real
+>    aparece na própria página do repositório, e a entrega vira "documentar",
+>    não "corrigir".
+> 3. **Tirar a URL do caminho do sanitizador** — mover badge e comando de clone
+>    para um arquivo `.yml`/`.json` incluído, ou usar link relativo onde o
+>    GitHub permitir. Custa desenho e não cobre o badge.
+>
+> Enquanto ela não escolher, **o `README.md` fica como está**, e este bloco é a
+> explicação de por quê. Fingir a cura seria a janela que mente, na versão
+> repositório.
+
 Sete ocorrências do literal `[REDACTED]` dentro de URL, em quatro arquivos:
 
 | Arquivo:linha | O que quebra |
