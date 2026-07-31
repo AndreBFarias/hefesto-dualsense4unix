@@ -1,6 +1,12 @@
 # JOGO-01 — o jogo enxerga quatro controles onde existe um
 
-- **Status:** ABERTA
+- **Status:** **ENTREGUE em `a343ff6`, exceto a E2, que continua ABERTA** — e a
+  E2 estava fora de **todas** as faixas dos índices de 29 e 30/07 até a auditoria
+  de 31/07 a resgatar. Ela é pendência declarada **dentro do código**:
+  `daemon/subsystems/gamepad.py:318` e `daemon/ipc_handlers.py:1450` dizem, por
+  extenso, *"Superfície pendente (Entrega 2 da sprint JOGO-01...)"*. Passou a ser
+  rastreada em
+  [CONTAGEM-E-COOP-01](2026-07-31-CONTAGEM-E-COOP-01-o-aviso-antes-de-derrubar-tres-jogadores.md)
 - **Prioridade:** MÁXIMA — impede jogar, que é o propósito do projeto
 - **Aberta em:** 25/07/2026, a partir de relato com o jogo em execução
 

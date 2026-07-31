@@ -1,6 +1,8 @@
 # CR-01 — Fechar a posição jurídica antes de medir qualquer coisa
 
-**Status:** EM ANDAMENTO (aberta em 2026-07-25)
+**Status:** EM ANDAMENTO (aberta em 2026-07-25). Em 2026-07-31 a varredura foi
+**fechada** pela CR-05; sobra **uma** caixa, e ela é decisão da mantenedora, não
+trabalho pendente
 **Bloqueia:** CR-02, CR-03, CR-04 — nenhum valor de curva entra no repositório
 antes desta sprint e da CR-02 estarem concluídas.
 **Processo:** [CLEAN-ROOM.md](../CLEAN-ROOM.md)
@@ -27,19 +29,43 @@ necessariamente vir antes, porque é o que datará a intenção.
 - [x] Distinção explícita, no mesmo texto, entre o que o projeto **usa** do
       ecossistema DSX (ordinais do enum = fato de interoperabilidade; formato do
       report = hardware da Sony) e o que **não usa** (as curvas).
-- [ ] Auditoria do repositório inteiro atrás de material de terceiro não
-      declarado. **Parcial:** varredura de 2026-07-25 encontrou 243 menções a
-      DSX e projetos derivados, todas em `daemon/udp_server.py` e
-      `docs/protocol/udp-schema.md`, e **nenhuma é código copiado** — são
-      ordinais de protocolo citados de quatro fontes para dirimir divergência.
-      Falta estender a varredura a `assets/dkms/**` (código de kernel derivado
-      do Linux, GPL-2.0) e confirmar que o `NOTICE` declara essa proveniência.
+- [x] Auditoria do repositório inteiro atrás de material de terceiro não
+      declarado. **Fechada em 2026-07-31 pela
+      [CR-05](2026-07-25-CR-05-proveniencia-completa-do-notice.md).** A
+      varredura de 2026-07-25 já tinha coberto as 243 menções a DSX (todas em
+      `daemon/udp_server.py` e `docs/protocol/udp-schema.md`, **nenhuma** código
+      copiado — são ordinais de protocolo citados de quatro fontes para dirimir
+      divergência). O que faltava era `assets/dkms/**`, e está feito: os três
+      módulos de kernel, os oito `.patch`, as dependências Python, as fontes
+      tipográficas, os glifos e o crate do applet estão declarados no `NOTICE`,
+      cada um com origem e licença medidas arquivo a arquivo.
+
+      Achado da varredura que vale registrar aqui, porque muda a leitura desta
+      sprint: os fontes GPL **viajam em cinco dos sete artefatos publicados**
+      (sdist, tarball de fonte, `.deb`, `.flatpak`, Arch e Fedora), o que é
+      lícito e é o que a GPL-2.0 autoriza — mas foi feito com `LICENSE` e
+      `README` dizendo "MIT" sem ressalva até a v0.4.0. Os dois foram corrigidos
+      em 31/07. A tabela alvo por alvo, e a hipótese que isso refutou, estão na
+      CR-05.
 - [ ] Decisão sobre a licença do projeto (MIT hoje). **Não é pré-requisito das
       demais sprints** — a licença do Hefesto governa o que terceiros fazem com
       o nosso código, não o que podemos fazer com o dos outros. Fica registrada
       aqui porque a mantenedora levantou, e porque o momento de decidir é agora:
       com um contribuidor só, mudar é barato; com o projeto crescido, exige
       concordância de todos.
+
+      **Estado em 31/07:** a decisão continua dela e continua aberta. O que
+      mudou é que o `LICENSE` já não afirma MIT sobre a árvore inteira — ele
+      declara MIT para o código próprio e nomeia a exceção de `assets/dkms/*`,
+      com as licenças que estão nos cabeçalhos SPDX. Isso não decide nada: só
+      para de dizer uma coisa que não era verdade enquanto a decisão não vem.
+
+      Custo colateral registrado para ela pesar: o bloco de escopo entrou **no
+      topo** do `LICENSE`, antes do texto MIT, porque uma ressalva depois do
+      juridiquês é ressalva que ninguém lê. O preço possível é a detecção
+      automática de licença do GitHub deixar de rotular o repositório como
+      "MIT" e passar a "View license". Se ela preferir o rótulo, o bloco desce
+      para o rodapé — é uma linha de edição.
 
 ## Achado que motivou a sprint
 

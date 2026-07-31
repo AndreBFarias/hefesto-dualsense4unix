@@ -1,0 +1,17 @@
+SINAL-DE-JOGO-01 — a mordida, provada arrancando a cura (31/07/2026, 06h30)
+===========================================================================
+
+Com a cura no lugar:
+..........                                                               [100%]
+10 passed in 0.20s
+
+--- E o probe REAL contra os 15 perfis do disco dela (so leitura) ---
+janela                            so wm_class   +titulo  +titulo+exe  perfil eleito (janela inteira)
+------------------------------------------------------------------------------------------------------------
+PRAGMATA (o jogo dela)                  False     False        False  Pragmata2 / mode=None
+Sackboy (steam_app + titulo)             True      True         True  sackboy_nativo / mode=gamepad
+Cuphead fora da Steam                   False      True         True  coop_local / mode=gamepad
+Cyberpunk fora da Steam                 False     False         True  FPS / mode=gamepad
+Elden Ring fora da Steam                False     False         True  Aventura / mode=gamepad
+Firefox no YouTube 'Portal 2'           False      True         True  coop_local / mode=gamepad
+Terminal                                False     False        False  Navegação / mode=None

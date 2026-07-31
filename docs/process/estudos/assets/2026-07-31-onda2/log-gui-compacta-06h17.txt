@@ -1,0 +1,712 @@
+2026-07-31T06:17:51.439927 [info     ] gdk_backend_x11_forcado_cosmic
+2026-07-31T06:17:51.440497 [info     ] i18n_initialized               domain=hefesto-dualsense4unix locale=pt_BR locale_dir=/home/vitoriamaria/.local/share/locale
+2026-07-31T06:17:52.034833 [info     ] previous_instances_killed      own_pid=209999
+2026-07-31T06:17:52.035272 [info     ] single_instance_adquirido      name=gui pid=209999
+2026-07-31T06:17:52.105687 [info     ] theme_aplicado                 css=/home/vitoriamaria/Desenvolvimento/hefesto-dualsense4unix/src/hefesto_dualsense4unix/gui/theme.css escala=3
+2026-07-31T06:17:52.120344 [info     ] hefesto_app_starting
+2026-07-31T06:17:52.120514 [info     ] apptray_deferred_for_cosmic    delay_ms=1500 hint='cosmic-applet-status-area registra o watcher D-Bus alguns ms apos o login; criar o Indicator imediato perde a primeira fase.'
+2026-07-31T06:17:52.141471 [info     ] compact_window_started         size=320x90
+2026-07-31T06:17:52.141517 [info     ] compact_window_active          reason=opt_in
+2026-07-31T06:17:52.147109 [info     ] notify_action_listener_started
+2026-07-31T06:17:52.340765 [info     ] draft_carregado_do_perfil_ativo perfil=Pragmata2
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:52.733: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:52.764: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:52.787: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:52.814: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:52.836: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:52.866: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:52.892: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:52.934: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:52.976: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:53.003: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:53.020: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:53.187: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+2026-07-31T06:17:53.632070 [info     ] apptray_started                icon=hefesto-dualsense4unix
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:53.671: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:54.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:54.150: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:54.171: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:54.672: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:55.173: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:55.673: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:56.045: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:56.151: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:56.174: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:56.675: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:57.176: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:57.676: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:58.047: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:58.151: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:58.176: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:58.677: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:59.178: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:17:59.679: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:00.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:00.152: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:00.179: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:00.679: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:01.181: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:01.680: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:02.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:02.153: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:02.181: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:02.682: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:03.183: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:03.683: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:04.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:04.154: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:04.183: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:04.685: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:05.186: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:05.687: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:06.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:06.154: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:06.187: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:06.688: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:07.189: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:07.690: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:08.045: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:08.155: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:08.190: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:08.691: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:09.191: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:09.692: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:10.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:10.156: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:10.192: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:10.693: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:11.194: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:11.695: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:12.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:12.156: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:12.196: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:12.697: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:13.198: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:13.698: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:14.045: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:14.156: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:14.199: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:14.700: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:15.201: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:15.701: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:16.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:16.158: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:16.202: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:16.703: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:17.204: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:17.704: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:18.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:18.159: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:18.205: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:18.705: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:19.206: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:19.707: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:20.045: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:20.159: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:20.207: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:20.708: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:21.209: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:21.710: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:22.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:22.160: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:22.210: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:22.710: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:23.211: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:23.712: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:24.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:24.161: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:24.213: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:24.714: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:25.215: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:25.715: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:26.045: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:26.162: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:26.216: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:26.717: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:27.218: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:27.719: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:28.047: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:28.163: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:28.219: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:28.720: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:29.221: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:29.722: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:30.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:30.164: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:30.223: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:30.723: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:31.224: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:31.725: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:32.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:32.165: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:32.226: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:32.727: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:33.228: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:33.729: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:34.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:34.165: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:34.230: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:34.730: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:35.231: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:35.732: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:36.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:36.166: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:36.232: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:36.733: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:37.234: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:37.735: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:38.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:38.167: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:38.236: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:38.737: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:39.237: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:39.738: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:40.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:40.167: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:40.238: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:40.739: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:41.240: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:41.741: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:42.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:42.168: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:42.241: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:42.742: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:43.243: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:43.743: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:44.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:44.168: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:44.244: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:44.744: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:45.245: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:45.745: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:46.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:46.169: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:46.246: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:46.747: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:47.248: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:47.749: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:48.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:48.170: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:48.249: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:48.750: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:49.251: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:49.752: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:50.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:50.170: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:50.253: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:50.753: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:51.254: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:51.755: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:52.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:52.170: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:52.256: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:52.757: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:53.258: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:53.759: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:54.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:54.172: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:54.259: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:54.760: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:55.261: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:55.761: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:56.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:56.172: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:56.262: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:56.762: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:57.263: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:57.763: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:58.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:58.173: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:58.263: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:58.764: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:59.265: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:18:59.766: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:00.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:00.173: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:00.266: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:00.767: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:01.268: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:01.769: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:02.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:02.173: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:02.269: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:02.771: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:03.271: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:03.772: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:04.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:04.174: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:04.273: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:04.774: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:05.275: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:05.775: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:06.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:06.176: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:06.277: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:06.777: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:07.278: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:07.779: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:08.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:08.176: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:08.279: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:08.780: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:09.280: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:09.780: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:10.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:10.177: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:10.281: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:10.781: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:11.282: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:11.781: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:12.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:12.178: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:12.282: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:12.783: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:13.284: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:13.785: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:14.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:14.179: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:14.286: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:14.787: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:15.288: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:15.788: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:16.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:16.180: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:16.290: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:16.791: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:17.291: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:17.792: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:18.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:18.181: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:18.293: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:18.794: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:19.294: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:19.795: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:20.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:20.181: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:20.295: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:20.795: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:21.296: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:21.797: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:22.047: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:22.182: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:22.297: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:22.798: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:23.299: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:23.800: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:24.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:24.184: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:24.301: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:24.802: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:25.303: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:25.804: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:26.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:26.184: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:26.304: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:26.805: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:27.306: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:27.806: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:28.047: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:28.185: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:28.306: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:28.807: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:29.308: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:29.808: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:30.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:30.186: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:30.309: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:30.810: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:31.311: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:31.811: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:32.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:32.186: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:32.312: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:32.813: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:33.314: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:33.814: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:34.047: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:34.188: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:34.315: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:34.816: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:35.317: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:35.817: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:36.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:36.189: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:36.318: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:36.819: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:37.321: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:37.821: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:38.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:38.189: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:38.322: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:38.823: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:39.324: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:39.825: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:40.047: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:40.189: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:40.325: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:40.826: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:41.327: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:41.827: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:42.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:42.190: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:42.328: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:42.828: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:43.330: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:43.830: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:44.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:44.191: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:44.331: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:44.832: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:45.333: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:45.834: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook
+
+(hefesto-dualsense4unix:209999): Gtk-CRITICAL **: 06:19:46.046: gtk_box_gadget_distribute: assertion 'size >= 0' failed in GtkNotebook

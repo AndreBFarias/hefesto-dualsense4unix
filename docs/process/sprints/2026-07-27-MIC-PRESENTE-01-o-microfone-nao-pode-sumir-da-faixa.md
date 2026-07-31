@@ -1,6 +1,9 @@
 # MIC-PRESENTE-01 — o microfone não pode sumir da faixa
 
-- **Status:** ABERTA
+- **Status:** **ENTREGUE** (conferido em 31/07: `MIC-PRESENTE-01` aparece **sete
+  vezes** em `app/widgets/controller_card.py`; os dois `hide()` viraram estado
+  apagado com o motivo em palavras, e a largura do bloco é reservada por campo
+  fixo — `_MIC_ESTADO_CHARS`, `:369`)
 - **Prioridade:** MÉDIA
 - **Aberta em:** 27/07/2026, olhando a aba Status
 - **Frase dela, literal:** *"na aba status falta a presença permanente do

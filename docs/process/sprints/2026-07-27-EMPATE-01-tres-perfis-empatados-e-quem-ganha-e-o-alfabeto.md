@@ -1,6 +1,9 @@
 # EMPATE-01 — três perfis empatados, e quem ganha é o alfabeto
 
-- **Status:** ABERTA
+- **Status:** **PARCIAL — o desempate por incumbente entrou em `8d7fd45`; a E2
+  continua ABERTA** (conferido em 31/07: `app/actions/profiles_actions.py:139`
+  traduz `"any"` para `"Sempre"` e a coluna *Quando usar* termina aí — a aba não
+  mostra que há disputa, com cinco perfis catch-all dela empatando)
 - **Prioridade:** **CRÍTICA** — subiu de volta em 27/07 às 21h45, quando ela
   olhou o controle e disse *"o controle no bt tá sem cor. deve ter algo a ver com
   os perfis e prioridades deles"*. Estava certa
