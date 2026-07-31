@@ -1,6 +1,10 @@
 # PALAVRA-01 — a janela fala a língua de quem joga
 
-- **Status:** ABERTA
+- **Status:** **PARCIAL — as palavras entraram; a E5 continua ABERTA**
+  (conferido em 31/07: `.pre-commit-config.yaml` declara quatro hooks —
+  `acentuacao-strict`, `glifos`, `anonimato` e `ruff-check` — e **nenhum** olha
+  capitalização ou jargão de texto de tela; é o portão que impediria a próxima
+  leva de desfazer a janela em português)
 - **Prioridade:** ALTA — melhor retorno por risco da fila: texto não quebra
   funcionalidade e é reversível linha a linha
 - **Aberta em:** 27/07/2026, a pedido dela: *"em termos de texto, nomes de botões

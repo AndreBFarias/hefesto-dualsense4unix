@@ -1,6 +1,15 @@
 # STATUS-SIMETRIA-02 — distanciar não é organizar
 
-- **Status:** ABERTA
+- **Status:** **ENTREGUE — o teto elástico e a repartição da sobra entraram em
+  `8d7fd45`** (conferido em 31/07: `STATUS-SIMETRIA-02` está citada em
+  `app/widgets/controller_card.py` e em `gui/main.glade`; o aceite dos 200px de
+  vão é cobrado por `test_status_faixa_blocos.py:251`, com
+  `VAO_MAXIMO_ENTRE_BLOCOS = 200` em `:59`). **Duas heranças continuam abertas em
+  outras sprints, e não aqui:** o miolo do frame Estado (E2 da
+  [LARGURA-01](2026-07-29-LARGURA-01-a-mesma-largura-em-todas-as-abas.md)) e os
+  desenhos que não cresceram junto com o teto
+  ([CARD-OCUPA-01](2026-07-31-CARD-OCUPA-01-o-desenho-ocupa-o-vao-que-o-teto-devolveu.md),
+  pedido dela em 31/07)
 - **Prioridade:** ALTA — é a avaliação dela, de olho, sobre a entrega da
   STATUS-SIMETRIA-01
 - **Aberta em:** 27/07/2026, 22h18, com a janela maximizada e um controle por

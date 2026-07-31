@@ -1,6 +1,10 @@
 # PORTÃO-VIVO-01 — os gates que ninguém roda
 
-- **Status:** ABERTA
+- **Status:** **ENTREGUE — os gates rodam no CI desde `f319c6f`** (medido em
+  31/07: os sete portões executados direto pelos scripts saem **exit 0**, e o job
+  `pre-commit` do `ci.yml` os roda a cada push). Ressalva registrada, não defeito:
+  `core.hooksPath` global desta máquina aponta para `~/.config/git/hooks`, então
+  **commit local nunca é barrado por portão** — quem barra é o CI
 - **Prioridade:** ALTA
 - **Aberta em:** 27/07/2026, a pedido dela: *"quero que vc melhore as sprints de
   tal forma que seja impossível o projeto quebrar novamente"*
