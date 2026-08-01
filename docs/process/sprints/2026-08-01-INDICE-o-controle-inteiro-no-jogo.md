@@ -9,6 +9,24 @@
   entrada.** Quem retomar o trabalho lê ele primeiro e não precisa de mais nada
   da conversa que o originou
 
+## LEIA ISTO PRIMEIRO
+
+**A base técnica desta leva inteira é o documento
+[`docs/protocol/dualsense-referencia-canonica.md`](../../protocol/dualsense-referencia-canonica.md)** —
+o que a Sony, a Valve e o kernel documentam sobre o DualSense, com o **grau de
+confiança de cada linha**. Nenhuma sprint daqui se executa sem ele aberto ao
+lado.
+
+E três lições de método, do
+[estudo de 01/08](../estudos/2026-08-01-o-que-a-sony-a-valve-e-o-kernel-documentam.md),
+que valem mais que os achados:
+
+1. **medir contra a ferramenta errada produz alarme convincente e falso** — todo
+   instrumento tem de declarar qual biblioteca está usando;
+2. **struct incompleta em `ctypes` corrompe o resultado sem erro nenhum**;
+3. **o instrumento pode estar brigando com o produto** — `test trigger --raw`
+   disputa o hidraw com o daemon e imprime "aplicado" sem ter aplicado.
+
 ## A pergunta que abriu tudo
 
 Ela perguntou, olhando a aba Status:
@@ -80,14 +98,17 @@ comunidade, não fato: o kernel os declara `reserved`. Por isso a
 PARIDADE-SONY-01 começa por um portão de medição, e pode terminar como
 cicatriz.
 
-## As cinco sprints, na ordem de execução
+## As sete sprints, na ordem de execução
 
 Cada uma é auto-suficiente. A ordem importa: a 1 é acabamento e não depende de
 nada; a 2 e a 3-bis mexem no mesmo arquivo (`controller_card.py`) e é melhor
 não cruzá-las; a 3 pode virar cicatriz no próprio portão; a 4 é independente.
 
-**Se for executar uma só, execute a 3-bis** — ela carrega os dois interruptores
-que ela mandou entrar no install, que é o furo mais concreto medido hoje.
+**Se for executar uma só, execute a 5 (TRIGGER-CANON-01)** — é a única com
+medição CONFIRMADA pela mão dela, e sete presets que ela usa não fazem nada.
+
+**A segunda mais concreta é a 3-bis**, que carrega os dois interruptores que ela
+mandou entrar no install sem flag.
 
 ### 1. [CARD-ÚNICO-01](2026-08-01-CARD-UNICO-01-o-estado-entra-no-card-e-o-l3-vira-marca-dagua.md) — o Estado entra no card
 
@@ -146,6 +167,36 @@ tem.
 *Risco:* médio. Esta casa tem histórico registrado de *"a config que eu deixo
 nunca é respeitada"* — três escritores do perfil sem dono. A sprint começa por
 mapear a precedência real.
+
+### 5. [TRIGGER-CANON-01](2026-08-01-TRIGGER-CANON-01-os-modos-de-gatilho-contra-a-enum-da-sony.md) — os gatilhos contra a enum da Sony
+
+**MEDIDA E CONFIRMADA por ela em 01/08.** Sete dos dezenove presets não fazem
+absolutamente nada — ela confirmou pelo tato: *"rígido e desligado sem
+diferença"*, *"resistência nada também"*. E os cinco que funcionam produzem
+efeitos que **não correspondem ao nome** (corrigi-los vai mudar a sensação, e
+ela precisa saber antes).
+
+*Risco:* médio. Muitos testes-muralha travam texto e valores dos presets.
+
+### 6. [SOM-ROTA-01](2026-08-01-SOM-ROTA-01-a-rota-o-preamp-e-o-canal-do-controle.md) — a rota, o pré-amp e o canal do controle
+
+Destrava os 60% do controle deslizante que hoje são inertes (o kernel escreve
+**três** campos, nós escrevemos um) e entrega o efeito que ela descreveu com o
+Zelda: `OUTPUT_PATH_SEL = 2`, um byte.
+
+*Risco:* médio. Mexe na posse do áudio, que tem regras já pagas.
+
+### 7. [BT-E-VPAD-01](2026-08-01-BT-E-VPAD-01-o-que-so-existe-no-cabo-e-os-seis-furos.md) — o que só existe no cabo
+
+Os dois defeitos que ela encontrou usando o controle no Bluetooth (o botão do
+mic alternando o microfone da placa-mãe; a lightbar apagada com a tela dizendo
+que aplicou) mais os seis furos do gamepad virtual.
+
+Confirma a hipótese dela: *"cada uma das features esteja setada pra funcionar
+só via cabo, o que é um erro de design nosso"* — é a "premissa USB-é-o-mundo",
+já registrada nesta casa como bug recorrente.
+
+*Risco:* ALTO se mexer nas curas de lightbar por BT sem lê-las antes.
 
 ## O que NÃO entra em nenhuma delas
 

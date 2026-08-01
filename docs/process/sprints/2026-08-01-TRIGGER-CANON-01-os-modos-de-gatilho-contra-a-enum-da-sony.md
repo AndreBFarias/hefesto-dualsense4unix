@@ -1,9 +1,9 @@
 # TRIGGER-CANON-01 — os modos de gatilho contra a enum da Sony
 
-- **Status:** PROPOSTA **com portão de medição na frente**, escrita em
-  01/08/2026 para sobreviver à queda da sessão
-- **Prioridade:** **ALTA se a E0 confirmar** — a suspeita é que 3 dos 19
-  presets não fazem nada e vários fazem coisa diferente do nome
+- **Status:** **E0 MEDIDA E CONFIRMADA em 01/08/2026, pela mão dela.** A
+  suspeita virou fato. As entregas E1 em diante estão liberadas
+- **Prioridade:** **ALTA** — sete dos dezenove presets não fazem absolutamente
+  nada, e ela conviveu com isso sem saber
 - **Fonte:** [a referência canônica do protocolo](../../protocol/dualsense-referencia-canonica.md),
   seções 1 e 4
 - **Índice:** [O controle inteiro no jogo](2026-08-01-INDICE-o-controle-inteiro-no-jogo.md)
@@ -52,7 +52,78 @@ real é 7 e a força 8 satura"*. A codificação real é `(strength − 1) & 0x0
 `strength` em 1..8, e `strength == 0` significa **zona inativa**. **Os 8 níveis
 são expressáveis.**
 
-## E0 (PORTÃO) — medir antes de tocar em uma linha
+## A MEDIÇÃO — feita por ela na GUI, em 01/08/2026
+
+Ela testou pela aba Gatilhos (que passa pelo daemon) e relatou, literal:
+
+> *"rígido e desligado sem diferença"*
+> *"resistência nada também"*
+> *"arco, galope e pulso e metralhadora funcionam"*
+
+**Cruzando com a tabela de modos:**
+
+| preset | modo | resultado MEDIDO | previsão |
+|---|---|---|---|
+| `rigid` (Rígido) | `0x05` OFF | **nada** | acertou |
+| `feedback`, `simple_rigid` | `0x05` OFF | (mesmo modo) | — |
+| `resistance` (Resistência) | `0x25` Weapon | **nada** | **errou — previa que funcionaria** |
+| `slope_feedback`, `multi_position_feedback` | `0x25` | (mesmo modo) | — |
+| `bow` (Arco) | `0x26` | **funciona** | acertou |
+| `galloping` (Galope) | `0x26` | **funciona** | acertou |
+| `machine` (Metralhadora) | `0x26` | **funciona** | acertou |
+| `pulse` (Pulso) | `0x02` Simple_Weapon | **funciona** | acertou |
+
+**Duas conclusões, e a segunda é mais forte que a hipótese original:**
+
+1. **O byte de modo estava decodificado certo.** `0x05` é OFF, e os presets que
+   o mandam não fazem nada — confirmado pelo tato.
+2. **O empacotamento dos parâmetros também está errado, e isso é
+   independente.** O `0x25` (Weapon **oficial**) não fez nada. Se fosse só o
+   modo, ele funcionaria. Ele não funciona porque os modos oficiais exigem
+   **bitmask de zonas ativas** e **forças de 3 bits com valor `força − 1`** — e
+   sem o bitmask o firmware vê **nenhuma zona ativa**, exatamente como a
+   pesquisa previu.
+
+**Correção dela, no mesmo teste, e ela refina tudo:** perguntada se Arco,
+Galope, Metralhadora e as Armas automáticas eram iguais entre si — todos mandam
+`0x26` —, ela respondeu: *"eles são bem diferentes viu"*.
+
+**A previsão de que seriam idênticos ERROU, e o motivo é instrutivo.** Se o
+modo é o mesmo e o efeito é diferente, quem os diferencia são os
+**parâmetros** — e isso prova que, para o `0x26`, os parâmetros desta árvore
+CHEGAM e SURTEM efeito.
+
+O mecanismo, e ele fecha a conta: no `0x26` (Vibration oficial) os bytes 1-2 do
+bloco são o **bitmask de zonas** e os 3-6 as **amplitudes**. Esta árvore escreve
+`forces[0..5] → param[0..5]`, e `param[0]`/`param[1]` caem exatamente em cima do
+bitmask. Cada preset manda `forces` diferentes, então cada um **acidentalmente**
+produz um bitmask de zonas diferente — e o firmware responde a cada um de um
+jeito. A frequência também chega: `forces[6] → param[8]`, que é onde ela mora.
+
+**Logo o quadro real é este, e é pior e melhor ao mesmo tempo:**
+
+- os cinco presets de `0x26` **funcionam e são distinguíveis** — mas o que se
+  sente **não corresponde ao nome**. "Arco" não é o modo Bow (que é `0x22`); é
+  o Vibration com um bitmask acidental;
+- os de `0x25` **não fazem nada** porque o acidente não os favorece: o Weapon
+  espera `(1<<início)|(1<<fim)` e uma força `−1`, e os valores que chegam não
+  formam nada válido;
+- os de `0x05` não fazem nada porque `0x05` **é** OFF.
+
+**O que isso muda na sprint:** a E2 (empacotamento) deixa de ser "arrumar o que
+não funciona" e passa a ser **"fazer cada nome corresponder ao efeito"**. Os
+cinco que funcionam hoje vão MUDAR de sensação ao serem corrigidos — e isso
+tem de ser dito a ela antes, porque ela já se acostumou com o que sente.
+
+**Por que os `0x05` e `0x25` caem e os outros não:** os modos **oficiais**
+validam os parâmetros; os legados e os não oficiais não validam. Por isso só os
+oficiais somem quando o empacotamento está errado.
+
+**O saldo:** dos 19 presets, **sete não fazem nada** (`rigid`, `simple_rigid`,
+`feedback`, `resistance`, `slope_feedback`, `multi_position_feedback`, e o
+`multi_position_vibration` que compartilha o problema de zonas).
+
+## E0 (PORTÃO) — CUMPRIDA. O registro do método fica abaixo
 
 **Nada abaixo se executa antes desta entrega.** A decodificação é triangulação
 de três fontes com a enum da Sony — **não foi medida no hardware desta casa**.
