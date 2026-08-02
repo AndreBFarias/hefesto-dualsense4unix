@@ -1,7 +1,9 @@
 # TRIGGER-CANON-01 — os modos de gatilho contra a enum da Sony
 
-- **Status:** **E0 MEDIDA E CONFIRMADA em 01/08/2026, pela mão dela.** A
-  suspeita virou fato. As entregas E1 em diante estão liberadas
+- **Status:** **ENTREGUE em 01/08/2026 (noite)** — E0-bis, E1, E2, E3 e E4.
+  A E5 (ler o estado do gatilho) ficou, e a razão está no fim
+- **Status anterior:** E0 MEDIDA E CONFIRMADA pela mão dela; E1 em diante
+  liberadas
 - **Prioridade:** **ALTA** — sete dos dezenove presets não fazem absolutamente
   nada, e ela conviveu com isso sem saber
 - **Fonte:** [a referência canônica do protocolo](../../protocol/dualsense-referencia-canonica.md),
@@ -288,3 +290,96 @@ caracteres) e `test_trigger_presets.py`.
 - **Não trocar o `name` dos presets** — é contrato com os perfis dela.
 - **Não expor os modos `0xFC`-`0xFE`** — corrompem o estado do gatilho.
 - **Não copiar o header da Sony** para dentro do repositório. Citar a URL.
+
+---
+
+## O que foi entregue — 01/08/2026, noite
+
+Suíte 6678 -> **6721 verdes**. Oito mordidas provadas
+(`test_trigger_canon_01.py`, 45 testes).
+
+### E0-bis — a sensação dela virou dado, e está travada byte a byte
+
+`SENSACAO_APROVADA` guarda os bytes EXATOS dos seis presets que ela aprovou
+pelo tato, capturados ANTES de qualquer refatoração. **Nenhum deles mudou.**
+
+| preset | modo | forces |
+|---|---|---|
+| Arco (Bow) | 0x26 | `(1, 7, 192, 224, 0, 0, 0)` |
+| Galope | 0x26 | `(0, 9, 7, 7, 10, 0, 0)` |
+| Metralhadora | 0x26 | `(0, 9, 3, 3, 50, 8, 0)` |
+| Arma semi-automática | 0x26 | `(3, 6, 160, 0, 0, 0, 0)` |
+| Arma automática | 0x26 | `(2, 192, 60, 0, 0, 0, 0)` |
+| Pulso | 0x02 | `(0, 0, 0, 0, 0, 0, 0)` |
+
+### E1 — a enum honesta, sem quebrar nada
+
+Os nomes canônicos entraram (`FEEDBACK`, `WEAPON`, `VIBRATION`, `BOW`,
+`GALLOPING`, `MACHINE`, `DESLIGADO_OFICIAL`) e **os antigos ficaram como
+ALIAS** — num `IntEnum` os dois nomes resolvem para o mesmo membro, então os
+perfis no disco dela e o `trigger-modes.md` continuam válidos.
+
+O `CALIBRATION = 0xFC` **saiu**, e o `custom()` passou a recusar `0xFC`-`0xFE`
+com `ValueError`. Eram alcançáveis pelo preset "Personalizado (avançado)", que
+a própria docstring anunciava como "útil para experimentação" — e experimentar
+com eles deixa o gatilho num estado que só sai desligando o controle.
+
+### E2 — os sete que não faziam nada
+
+| preset | mandava | manda | por quê |
+|---|---|---|---|
+| Rígido, Rígido simples, Ponto duro | `0x05` = **OFF** | `0x21` Feedback | *"rígido e desligado sem diferença"* |
+| Resistência, Rampa de força, Curva de força | `0x25` Weapon, sem bitmask | `0x21` Feedback | *"resistência nada também"* |
+| Vibração por posição | `0x22` Bow, freq no slot errado | `0x26` Vibration | mesma causa |
+
+E entrou o que faltava: **o bitmask de zonas ativas**. Os modos oficiais não
+recebem posições cruas — recebem um `u16` de zonas (bytes 1-2) e forças de 3
+bits com valor `força - 1` (`u32`, bytes 3-6). Sem o bitmask o firmware vê
+"nenhuma zona ativa", que é por que o `0x25` — o Weapon **oficial** — não fez
+nada nas mãos dela mesmo com o número de modo certo.
+
+**Nenhuma mudança de protocolo foi necessária.** O `forces[6]` já caía no byte
+9 do bloco, que é onde a frequência do Vibration mora.
+
+### E3 — a refutação do `FORCA8-01`, sem apagar o registro
+
+O texto original ficou inteiro no `trigger_effects.py`, seguido de
+"---- REFUTADO em 01/08/2026 ----". **A observação estava certa e a conclusão
+errada:** o campo tem mesmo três bits, mas a codificação é `(força - 1)`, com
+força em 1..8. Os oito níveis SÃO expressáveis; o que não cabe é o zero — e
+zero não é força, é zona inativa, e isso se diz no bitmask.
+
+O aviso `multi_position_strength_saturada` saiu junto: ele anunciava uma perda
+que não acontece mais, e um teste trava que ele NÃO volta.
+
+### E4 — o `--raw` para de mentir
+
+Escolhida a saída **mínima** da sprint, não a recomendada: o `--raw` detecta o
+daemon vivo e **recusa**, dizendo por quê e listando três saídas. O IPC não
+ganhou contrato para modo cru porque o `--raw` é bancada de depuração, e uma
+bancada que exige o produto parado é honesta — o que não podia continuar era
+imprimir "trigger aplicado" sem ter aplicado.
+
+## Três achados que a leva encontrou pelo caminho
+
+1. **O `AutoGun` quebrava pelo caminho NOMEADO.** O `trigger_specs` declarava
+   o primeiro parâmetro como `position` e a factory `auto_gun` o recebe como
+   `start` — pelo posicional ninguém notava, pelo nomeado era `TypeError`.
+   `Custom` e os dois `MultiPosition*` tinham a mesma classe de defeito. Há um
+   teste que varre **todos** os presets pelos dois caminhos;
+2. **`MultiPositionFeedback` e `MultiPositionVibration` nasciam com dez
+   ZEROS** de default. Zero é zona inativa: escolher o preset na tela e
+   aplicar mandava "nenhuma zona ativa". Agora nascem com a rampa `0..8`;
+3. **O detector de MAC das fixtures confundia literal BINÁRIO com endereço.**
+   `0b1111100000` tem doze caracteres que são todos hex válidos, e a regex de
+   "12 hex seguidos" casava o literal inteiro — o portão acusou identidade
+   real em dez linhas de bitmask de gatilho. Ganhou `(?!0[bBxX])`.
+
+## O que ficou: a E5
+
+Ler o **nibble alto** do byte de status do gatilho (sem carga, carga aplicada,
+arma pronta, disparando, disparada, vibrando) tornaria a validação desta
+sprint verificável **sem a mão dela**. Ela não entrou porque é uma entrega de
+LEITURA que não muda nada do que ela sente, e a leva já mexeu no que ela
+toca — o próximo passo honesto é ela sentir os sete presets curados e dizer se
+os nomes ainda descrevem a sensação. **Este é o aceite que falta.**
