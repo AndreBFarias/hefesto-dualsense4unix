@@ -1,6 +1,8 @@
 # PAINEL-DA-VERDADE-01 — a aba Status diz o que chega ao jogo
 
-- **Status:** PROPOSTA, escrita em 01/08/2026 **para sobreviver à queda da
+- **Status:** ENTREGUE em 01/08/2026 (noite) — E1, E2 e a base das E3/E4/E5.
+  Ver "O que foi entregue", no fim
+- **Status anterior:** PROPOSTA, escrita em 01/08/2026 **para sobreviver à queda da
   sessão**. Tudo o que é preciso para executar está aqui
 - **Prioridade:** ALTA — é o requisito dela: *"naquela aba de Status podemos ver
   o funcionamento de tudo, e o funcionamento de lá obviamente impacta o
@@ -159,3 +161,102 @@ Linha de base: `pytest tests/unit -k "status or card or largura or layout or som
 - **Não escrever um segundo texto de custo da máscara.** Reuse a função pura.
 - **Não encostar nos dois `Gtk.SizeGroup`** que alinham as duas linhas do card —
   são a entrega dela de 01/08.
+
+---
+
+## O que foi entregue — 01/08/2026, noite
+
+### E1 — o daemon ganha recência
+
+Cada vpad carimba `visto_ha_s` por categoria (`trigger`, `lightbar`,
+`player_leds`, `rumble`, `touchpad_click`, `output`) e o `state_full` publica
+a IDADE em segundos. **Categoria que nunca aconteceu fica AUSENTE** — "o jogo
+ainda não pediu" e "o jogo pediu e parou" levam a ações diferentes de quem lê.
+
+Três decisões que os testes travam:
+
+1. **carimbo, não taxa.** O molde citado na sprint (`emit_hz`) resolve fluxo
+   CONTÍNUO; estas categorias são eventos ESPARSOS, e uma taxa sobre evento
+   esparso mede o silêncio entre dois acertos, não o acerto. O giroscópio, que
+   é fluxo, continua no `motion_hz` — e é por isso que ele não tem carimbo:
+   dois jeitos de dizer "agora" no mesmo payload derivam;
+2. **o carimbo vem DEPOIS do guarda de sink.** Uma categoria sem sink termina
+   em `return` e não chegou a lugar nenhum;
+3. **a idade sai resolvida do vpad**, e não o instante cru: quem lê é a GUI,
+   noutro processo, e ela não tem o relógio monotônico do daemon.
+
+### E2 — uma linha, e não cinco selos
+
+**O desenho da sprint (um indicador por bloco) foi descartado por MEDIDA.** As
+colunas do Touchpad e da Lightbar têm ~180px na tela dela, e o próprio
+comentário do `_montar_touchpad` já registrava que um "sem toque" ao lado do
+título fazia a coluna pedir 105px para desenhar um painel de 76.
+
+O que entrou é uma linha só, na faixa larga do topo do card:
+
+```
+No jogo agora: giroscópio (~194 Hz), vibração, luz · sem pedido ainda: gatilho, clique do touchpad.
+```
+
+Ela responde a pergunta como ela a fez — sobre o CONJUNTO, não sobre cada peça.
+E ocupa o lugar ao lado da bateria, que é onde ela pediu o hertz do giroscópio:
+a linha da verdade **contém** o hertz, então o `_motion_label` saiu do card
+único para não dizer a mesma coisa duas vezes (ele continua sendo o dono do
+texto no card compacto).
+
+**Os dois estados que não existiam:**
+
+| situação | a frase |
+|---|---|
+| máscara Xbox | *"giroscópio e touchpad não chegam ao jogo — o controle de Xbox não tem esses dois. Vibração, luz e gatilho vão."* |
+| Modo Nativo | *"o jogo fala direto com o controle — tudo chega."* |
+
+O primeiro é o mais valioso: **seis dos oito perfis dela usam máscara Xbox**, e
+até aqui o card mostrava os dois sensores desenhados e sem tráfego —
+indistinguível de "quebrado".
+
+### O vocabulário, e por que ele tem teste próprio
+
+`test_a_frase_nunca_afirma_que_o_jogo_recebeu` reprova as frases "o jogo
+recebeu", "o jogo está recebendo" e "confirmado pelo jogo". O daemon sabe que
+o dado saiu daqui e que alguém escreveu de volta; ele **não** sabe se o jogo
+consumiu, porque isso depende de qual SDL o jogo carregou. Foi essa confusão
+que produziu o diagnóstico errado de 01/08.
+
+### O teto de altura: 467 caducou, e foi REMEDIDO (não afrouxado)
+
+O card estourou o literal de 467px. A sprint proíbe afrouxar o teste — então
+mediu-se, com a janela em 1180x830 e a escala de fonte da sessão:
+
+| condição | faixa que a aba dá |
+|---|---|
+| frame "Estado" visível | **550px** |
+| frame "Estado" escondido (um controle) | **708px** |
+
+**467 já estava defasado ANTES desta leva** — é anterior à
+ESTADO-TRES-LINHAS-01, que levou o frame de cinco linhas para três e devolveu
+essa altura aos cards sem que ninguém remedisse. Os três arquivos que
+repetiam o número foram atualizados para 550 (o pior caso, com o frame na
+tela) e cada um carrega a nota datada.
+
+## Uma armadilha NOVA do método, medida aqui
+
+**Uma mordida que troca a ORDEM de duas linhas envenena o `__pycache__`.** O
+arquivo mutado tem o MESMO tamanho do original; se a mutação, o teste e a
+restauração couberem no mesmo segundo, o par `(mtime, size)` não muda e o
+Python considera o `.pyc` **mutado** válido. Os testes seguintes rodam contra
+código que já não está no disco — e reprovam sem defeito nenhum.
+
+Custou uma investigação de dez minutos, com um `traceback` mostrando um
+`if ...:` chamando uma função que não estava naquela linha. **O laço de
+mordidas passou a apagar `__pycache__` ao restaurar.**
+
+## O que ficou de fora, e por quê
+
+- **E3 (a camada do PipeWire no alto-falante)** e **E4 (o mic mudo)** dependem
+  da decisão de arquitetura que a própria sprint levanta — se o dado da rota
+  sobe ao IPC ou se a linha é lida pela GUI direto do PipeWire. A E1 desta
+  entrega é a fundação dos dois, e a SOM-ROTA-01 é onde a posse do áudio já
+  vai ser mexida: fazer as duas juntas evita mexer duas vezes na mesma regra;
+- **E5 (o `doctor`)** é compartilhada com a JOGO-COMPLETO-01, e a sprint manda
+  fazer as duas juntas — está lá.

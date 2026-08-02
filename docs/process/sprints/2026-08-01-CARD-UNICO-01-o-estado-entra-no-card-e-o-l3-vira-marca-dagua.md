@@ -1,6 +1,8 @@
 # CARD-ÚNICO-01 — o Estado entra no card, e o L3 vira marca d'água
 
-- **Status:** PROPOSTA, pronta para executar. Escrita em 01/08/2026 **para
+- **Status:** ENTREGUE em 01/08/2026 (noite). As três entregas estão na tela e
+  a suíte foi de 6645 para 6664 verdes. Ver "O que foi entregue", no fim
+- **Status anterior:** PROPOSTA, pronta para executar. Escrita em 01/08/2026 **para
   sobreviver à queda da sessão**: ela pediu, literal, *"primeiro eu quero que
   você planeje e materialize as sprints pra caso mesmo que nossa sessão caia,
   depois você vai saber o que fazer e somente executar ela sem precisar do
@@ -216,3 +218,98 @@ olho dela.
 - **Não aproveitar a leva para "limpar" o glade.** Os ids são contrato: há
   testes que os buscam pelo nome, e o `tab_navegacao_dsx` é o caso registrado
   de id que sobrevive à mudança de rótulo.
+
+---
+
+## O que foi entregue — 01/08/2026, noite
+
+**As três entregas, na tela.** A foto do depois está em
+`docs/usage/assets/readme_status.png` (regerada por
+`scripts/gui-captura/retratar_abas.py`). Suíte: **6645 → 6664 verdes**.
+
+### E1 — o frame Estado apagou
+
+O frame **não foi apagado do glade**, e a decisão é medida, não preguiça: sem
+controle nenhum não existe card, e a aba Status ficaria **muda** — sem dizer
+que o daemon está parado e sem o botão da rota de som. Ele virou o que sempre
+foi na prática, e agora só isso: o **fallback**.
+
+A regra tem três casos, e `test_o_frame_estado_some_com_um_controle_e_volta_sem_card_unico`
+trava os três:
+
+| controles | quem fala |
+|---|---|
+| **1** | só o card — o frame some inteiro (o pedido dela) |
+| **0** | só o frame — não há card para falar |
+| **2+** | o frame — perfil e daemon são fatos GLOBAIS e num card por controle apareceriam repetidos |
+
+**A opção escolhida foi a (a) da sprint, não a (b) recomendada**, e por um
+motivo que a sprint não tinha: com a (b), o caso de zero controles perde a
+única voz da aba. O que a (b) trazia de bom — um escritor só — foi obtido de
+outro jeito: `status_actions._set_estado_global` é o **ponto único** que
+escreve o par nos dois lugares, e as oito chamadas de `_set_label` para
+`status_active_profile`/`status_daemon` passaram por ele.
+
+`Conexão:` e `Transporte:` continuam existindo no frame de fallback, e não
+entraram no card: cada um já é dito noutro lugar da mesma tela (a conexão no
+cabeçalho, o transporte no título do card).
+
+### E2 — o `· não ajustado` saiu
+
+Escolhida a **primeira** opção da sprint, a literal: o sufixo some no estado
+sem dado (`Alto-falante`) e continua quando há valor (`Alto-falante · 71 %`).
+A segunda opção obrigaria o valor a achar um terceiro lugar, e os três
+candidatos já foram medidos na ALINHA-DUAS-LINHAS-01 — todos cobram pixel.
+
+### E3 — L3 e R3 viraram marca d'água
+
+O rótulo **já chegava** ao `StickPreviewGtk` pelo construtor e nunca era
+desenhado. Agora é pintado ANTES da borda, da cruz e do ponto (ela é fundo), com
+alpha `0,3` — a "transparência 70%" que ela pediu — e corpo derivado do **raio
+alocado** (`MARCA_DAGUA_FRACAO_DO_RAIO`), nunca um literal em px: o desenho tem
+dois tamanhos e o card obedece à escala de fonte dela.
+
+O `_markup_xy` perdeu o prefixo e o `pad` de espaços que só existia para
+alinhar o `Y` sob o `X`.
+
+**O teste renderiza.** `test_a_marca_dagua_e_realmente_pintada_dentro_do_circulo`
+pinta o widget numa `cairo.ImageSurface` e conta a tinta do miolo com e sem
+rótulo. Perguntar ao widget se ele guardou o rótulo provaria só que o
+construtor funciona — e o construtor já funcionava antes desta sprint.
+
+## O achado que a leva encontrou pelo caminho — ROTA-ÓRFÃ-01
+
+**Medido antes de curado**, com GTK 3.24 e o glade real: o botão da rota de som
+é reparentado para o bloco "Alto-falante" do card; plugar um **segundo**
+controle recria os cards, e o `child.destroy()` do card antigo deixava o botão
+**órfão** (`get_parent() is None`) — vivo, porque o Builder o referência, mas
+**fora da tela**.
+
+Para ela: a rota de som está LIGADA nesta máquina. Ao entrar no co-op ela
+perdia o botão que desfaz, e só o recuperava desplugando um controle.
+
+Cura: o ramo "sem destino" do `_alojar_botao_da_rota` agora **devolve o botão
+ao berço** (`status_grid`, coluna 4, altura 2 — o mesmo empacotamento do
+glade, para o grid não ganhar uma linha que ele não tem).
+
+## Uma armadilha nova, para a COMO-OLHAR-A-TELA
+
+**`scripts/gui-captura/retratar_abas.py` rodado pelo shebang (o Python do
+sistema) sai SEM O CARD** — ele avisa numa linha (`card não injetado (No module
+named 'structlog')`) e fotografa a aba Status vazia mesmo assim. É o comando
+que o `CLAUDE.md` manda rodar. **Rode-o com `.venv/bin/python`.**
+
+E o script deixou de **repetir** as regras de runtime da aba: ele agora
+CHAMA `_alojar_botao_da_rota` e `_set_frame_estado_visivel` da própria
+`status_actions`. Uma cópia delas ali seria um segundo dono, e a foto passaria
+a mentir no dia em que a aba mudasse — que é o defeito que este script existe
+para não deixar acontecer.
+
+## O que ficou para o olho dela
+
+O vão entre `Perfil ativo:` e `Hefesto:` é a largura do card (os dois pares
+ficam ancorados nas bordas, como o giroscópio e a bateria na linha de baixo).
+No desenho ASCII que ela aprovou eles estão mais próximos — mas aquele desenho
+tem 60 colunas e o card tem 1400px. **Se ela preferir os dois juntos à
+esquerda, é uma linha em `_montar_estado_global`** (mover o `vao` para depois
+do segundo par).
