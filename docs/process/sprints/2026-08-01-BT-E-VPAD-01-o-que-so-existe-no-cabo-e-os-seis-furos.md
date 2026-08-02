@@ -1,6 +1,8 @@
 # BT-E-VPAD-01 — o que só existe no cabo, e os seis furos do gamepad virtual
 
-- **Status:** PROPOSTA, escrita em 01/08/2026 para sobreviver à queda da sessão
+- **Status:** o defeito 1 e os furos 1, 2 e 6 ENTREGUES em 02/08/2026. Os
+  defeitos 2 e 3 (a lightbar no BT) e os furos 4 e 5 seguem ABERTOS — ver o fim
+- **Status anterior:** PROPOSTA, escrita em 01/08/2026
 - **Prioridade:** ALTA para os dois defeitos de Bluetooth (ela os encontrou
   usando); MÉDIA para os furos
 - **Índice:** [O controle inteiro no jogo](2026-08-01-INDICE-o-controle-inteiro-no-jogo.md)
@@ -184,3 +186,68 @@ provadas ao vivo e **não podem ser desfeitas** por esta leva.
 - **Não voltar o PID para `0x0CE6`** sem resolver a desduplicação.
 - **Não medir taxa de giroscópio contra a `libSDL2` do sistema.** Ver a lição
   de método no estudo de 01/08.
+
+---
+
+## O que foi entregue — 02/08/2026
+
+### Defeito 1 — o botão do mic parou de mutar o microfone errado
+
+Escolhida a saída **(a)**, a mais honesta e barata: `fonte_padrao_e_o_controle`
+pergunta ao PipeWire se o microfone padrão é o do DualSense, e o
+`mic_button_loop` **não age** quando não é.
+
+A **(b)** (mutar o `power_save_control` bit4, que existe nos dois transportes)
+foi recusada pelo motivo escrito na sprint: ela **toma a posse** e faz o botão
+físico parar de valer — o oposto do que se espera de um botão físico.
+
+Em caso de dúvida a resposta é `False` e o botão não mexe em nada: não fazer
+nada é sempre melhor que mutar o microfone errado.
+
+### Furo 1 — o nome do vpad
+
+`Hefesto Virtual DualSense P1` → **`DualSense Wireless Controller (Hefesto P1)`**.
+
+A distinção humana fica, e nada quebra: o discriminador do daemon nunca foi o
+nome — é o `phys` (`hefesto-vpad`) e o `uniq` (MAC forjado por jogador).
+
+### Furo 2 — o byte 53
+
+`forward_jack` espelha `HP_DETECT`, `MIC_DETECT` e `MIC_MUTE` do físico. Só os
+**três bits conhecidos** passam: repassar bit desconhecido é a mesma classe de
+erro que autorizar um campo de áudio sem escrever valor nele.
+
+### Furo 6 — a CURA do rumble preso
+
+O comentário do `uhid_gamepad.py` dizia, desde 25/07: *"isto é MITIGAÇÃO, não a
+cura. A cura seria descobrir por que o stop se perde"*. **Descobriu-se.**
+
+No `SDL_hidapi_ps5.c`, o SDL liga `ucEnableBits1 |= 0x02` só quando há rumble;
+ao PARAR, deixa os bits desligados para restaurar os haptics de áudio — e o
+report de parada sai com `valid_flag0 == 0`, `valid_flag1 == 0` e os motores
+zerados. **O gate de `_VIBRATION_FLAGS` descartava exatamente esse report.**
+
+O gate continua certo pelo motivo certo (report de gatilho traz motores
+zerados). O que faltava era o discriminador, e ele é limpo — três testes o
+travam, um por caso.
+
+**O teto de silêncio FICA**, e não é redundância: o log de 25/07 registrou 17
+disparos em 90 minutos de jogo, com valores presos que desenham um fade-out
+cujo último passo se perdeu. A cura tira a causa conhecida; a rede continua
+para as desconhecidas.
+
+## O que ficou ABERTO, e por quê
+
+- **Defeitos 2 e 3 (a lightbar apagada no BT, e a tela que mente sobre ela).**
+  A própria sprint diz que *"a primeira entrega é diagnóstica, não corretiva:
+  descobrir se o report de cor está sendo escrito no BT e sendo ignorado, ou
+  se não está sendo escrito — são duas causas diferentes com curas opostas"*.
+  **Isso exige o controle dela no Bluetooth, ao vivo.** E o risco é alto: há
+  quatro curas de BT provadas ao vivo em 17-22/07 (`LIGHTBAR-BT-ADOPT-01`,
+  `-RESET-01`, `-RESET-03`, `-KEEPALIVE-01`) que não podem ser desfeitas;
+- **Furo 4 (o PID do Edge).** É um limite conhecido, não um defeito — e a
+  sprint mesma diz que não é argumento para voltar ao `0x0CE6`. Falta
+  documentar e, idealmente, tornar configurável por perfil;
+- **Furo 5 (a taxa declarada do Edge).** **Não medido**, e a verificação
+  precisa da SDL3 que a Steam distribui — medir contra a `libSDL2` do sistema
+  é o erro de método que esta casa cometeu em 01/08.
