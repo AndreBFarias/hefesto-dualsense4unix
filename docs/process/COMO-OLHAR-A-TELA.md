@@ -34,6 +34,28 @@ Com um caminho como argumento, ele só olha:
 scripts/gui-captura/retratar_abas.py /tmp/olhar
 ```
 
+## O logo e os ícones
+
+Mesma ideia, outro comando:
+
+```bash
+scripts/gerar_icones.sh            # gera todos os PNGs a partir do SVG
+scripts/gerar_icones.sh --check    # só confere (é o que o teste roda)
+```
+
+**A fonte canônica é uma só: `assets/hefesto-logo.svg`.** Mexeu no desenho?
+Rode o gerador. Os PNGs do applet COSMIC e do AppImage nascem dele, e
+`tests/unit/test_icones_refletem_o_svg.py` reprova se alguém mudar o SVG sem
+regerar.
+
+**O que isso curou** (medido em 01/08): havia **dois** caminhos de ícone e o
+documentado era o quebrado. O `install.sh` copiava
+`assets/appimage/Hefesto-Dualsense4Unix.png`, que **não existia** — o `cp`
+falhava em silêncio — e o ícone que aparecia no sistema vinha, por acidente, do
+PNG do applet, versionado à mão. E o comentário do instalador afirmava que o
+SVG era um placeholder, o que **deixou de ser verdade** em algum momento sem
+ninguém atualizar o texto.
+
 ## Quando rodar
 
 | momento | por quê |
