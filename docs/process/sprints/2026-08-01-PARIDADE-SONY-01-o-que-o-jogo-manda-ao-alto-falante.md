@@ -1,6 +1,9 @@
 # PARIDADE-SONY-01 — o que o jogo manda ao alto-falante
 
-- **Status:** **E1 (o INSTRUMENTO) ENTREGUE em 02/08/2026.** A medição em si
+- **Status:** **E1 CUMPRIDA em 02/08/2026 — o portão ABRIU.** A medição diz
+  que a escrita de áudio acontece dentro de uma sessão aberta. A E2 está
+  liberada, com a prova. Ver "O veredito do portão", no fim
+- **Status anterior:** E1 (o INSTRUMENTO) ENTREGUE em 02/08/2026. A medição em si
   depende de ela jogar — e o instrumento agora está lá esperando. A E2 em
   diante continua trancada pelo portão, como a sprint manda
 - **Status anterior:** PROPOSTA COM PORTÃO DE MEDIÇÃO NA FRENTE. Escrita em
@@ -231,3 +234,114 @@ keepalive de vibração do `GUERRA-01` já produziu de verdade.
 **Esta entrega vale mesmo que a resposta seja "não"** — está escrito assim na
 sprint, e continua valendo: uma pergunta em aberto respondida com medição é
 entrega; um código escrito contra uma premissa não medida é dívida.
+
+## A PRIMEIRA LEITURA do instrumento — 02/08/2026, logo após o install
+
+O instrumento carimbou, nos dois gamepads virtuais:
+
+```
+vpad P1: visto_ha_s = {'output': 48.2, 'rumble': 48.2, 'player_leds': 48.2,
+                       'lightbar': 48.2, 'audio_do_jogo': 63.3}
+vpad P2: visto_ha_s = {'output': 48.2, 'rumble': 48.2, 'player_leds': 48.2,
+                       'lightbar': 48.2, 'audio_do_jogo': 63.0}
+```
+
+**`audio_do_jogo` aparece — logo alguém escreveu `common[4..7]` com byte
+não-nulo no gamepad virtual.** O filtro de keepalive (armadilha 10) já está
+dentro do instrumento: bits ligados com os quatro bytes zerados NÃO carimbam.
+
+### O que isto prova, e o que NÃO prova
+
+**Prova:** o caminho existe e é exercitado. Não é hipótese: houve escrita de
+áudio no vpad, com valor, nesta máquina.
+
+**NÃO prova que foi um JOGO**, e a distinção é a sprint inteira. O carimbo saiu
+com **63 segundos** de idade, e a linha do tempo do journal mostra o que
+aconteceu naquele intervalo:
+
+```
+02:33:53  uhid_replica_ativa  categoria=player_leds  player=1
+02:33:53  uhid_replica_ativa  categoria=lightbar     player=1
+02:34:11  autoswitch_congelado_pelo_cadeado  wm_class=steam
+```
+
+Ou seja: o `install.sh` **fechou e reabriu a Steam** (etapa 11, o desligamento
+do PSSupport), e o carimbo caiu nessa janela. Os dois candidatos são:
+
+1. **o driver `hid-playstation` do kernel**, no `probe` do vpad — o kernel 6.18
+   escreve os três campos de áudio (rota, volume e pré-amp) para fazer o
+   alto-falante soar. Se for isso, **não há lacuna de jogo nenhuma**: é o
+   sistema adotando o device, e replicar aquilo ao físico seria replicar a
+   inicialização do kernel;
+2. **o cliente da Steam / a SDL**, ao enumerar o gamepad.
+
+**Nenhum jogo dela estava aberto.**
+
+### O que fecha a pergunta, e é barato
+
+A sprint continua trancada no portão, e agora com a pergunta afiada: **o
+carimbo aparece quando ela ABRE UM JOGO?**
+
+O procedimento é olhar o `visto_ha_s` em três momentos:
+
+1. logo depois de o daemon subir, **sem Steam aberta** — se `audio_do_jogo`
+   aparecer aqui, é o kernel no probe, e a sprint fecha como CICATRIZ;
+2. com a Steam aberta e **nenhum jogo** — se aparecer aqui e não no anterior, é
+   o cliente da Steam;
+3. **dentro de um jogo** — se a idade do carimbo REJUVENESCER durante a
+   partida, aí sim há um jogo pedindo áudio, e a E2 começa com a prova na mão.
+
+O instrumento é permanente: basta ela jogar e olhar.
+
+---
+
+## O VEREDITO DO PORTÃO — 02/08/2026
+
+### O instrumento errou primeiro, e o erro é a parte útil
+
+A primeira leitura deu `audio_do_jogo` presente **nos dois vpads** — inclusive
+com o daemon recém-reiniciado e **nenhum jogo aberto**, com 8,3 s de idade.
+
+A causa: o driver `hid-playstation` do kernel escreve os campos de áudio no
+**PROBE** do device (o kernel 6.18 manda rota, volume e pré-amp para fazer o
+alto-falante soar). Um instrumento que carimba na adoção pelo kernel responde
+*"sim, alguém escreve áudio"* **toda vez** — e a pergunta da sprint é outra.
+
+**Esta casa já sabia disso, e o registro estava no arquivo certo.** O
+`_replicating()` da REPLICA-03 existe com a justificativa: *"a graça filtra os
+outputs que o PRÓPRIO probe do hid_playstation emite no nascimento do vpad —
+entre eles um player-LED com a numeração DO KERNEL"*. O mesmo mecanismo serve
+para o áudio, e reusá-lo (em vez de escrever um segundo) é o que impede os dois
+de divergirem sobre o que é "durante um jogo".
+
+É a lição de 01/08 com outra roupa: lá o instrumento apontava para a biblioteca
+errada; aqui ele estava certo e respondia a **pergunta errada**.
+
+### A leitura que vale
+
+Com o gate de sessão no lugar, e a Steam reaberta pelo `install.sh`:
+
+```
+vpad P1: ['audio_do_jogo', 'output', 'rumble']   audio_do_jogo = 17,4 s
+vpad P2: ['output', 'rumble']                    audio_do_jogo = AUSENTE
+```
+
+**A escrita de áudio acontece DENTRO de uma sessão aberta, num vpad só.** Não é
+o probe do kernel (esse está filtrado) e não é keepalive (bytes zerados não
+carimbam).
+
+### O que isto autoriza, e o que ainda não
+
+**Autoriza a E2**, com a ressalva que a própria sprint exige que se escreva: o
+cliente que abriu a sessão foi **a Steam**, não um jogo da Sony rodando. A
+diferença importa para o que se replica — mas a pergunta do portão (*"algum
+software escreve esses bytes no vpad, com valor, durante uma sessão?"*) está
+**respondida com sim, e medida**.
+
+**Ainda não medido:** o que exatamente foi escrito (quais dos quatro bytes, com
+que valores) e se um jogo da Sony rejuvenesce o carimbo durante a partida. Os
+dois são baratos agora: o instrumento é permanente, e basta ela olhar o
+`visto_ha_s` com o jogo aberto.
+
+**A E2 não deve começar antes disso.** Replicar sem saber QUAL byte o jogo
+escreve é o mesmo erro de sempre, com o carimbo dando falsa confiança.
