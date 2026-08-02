@@ -217,3 +217,63 @@ Por omissão, `rota` é `None` e o `common[7]` **não é tocado** — a posse de
 deve valer o curso inteiro. Se os 60% continuarem inertes, a hipótese está
 errada e a E1 precisa ser remedida antes de qualquer coisa — está escrito
 assim na sprint, e continua valendo.
+
+---
+
+## O PORTÃO DA E1 — MEDIDO E ABERTO em 02/08/2026, pela orelha dela
+
+Ela exigiu o portão antes do desenho: *"Meça se o OUTPUT_PATH_SEL surte efeito
+antes de seguir — se não surtir, o estado 'Sons do jogo' seria um botão morto
+na tela"*.
+
+### O instrumento automático FALHOU, e quase produziu um veredito falso
+
+A primeira bancada tocava um tom no sink do controle e capturava com `parec`
+no microfone dele (o método da curva de 01/08). As três rotas devolveram
+`RMS -1.0` — o valor sentinela de "não capturei nada" — e **a lógica do
+veredito dividiu `-1/-1`, deu "infinito" e anunciou "SURTE EFEITO, o portão
+ABRE"**.
+
+Duas causas, e as duas ficam registradas:
+
+1. **o `parec` lia zero bytes** porque a captura ia para um `PIPE` lido depois
+   do `terminate()`. O mesmo `parec` sozinho capturava 131072 bytes;
+2. **o source do controle é `iec958-stereo`** (a entrada digital), e não a
+   captura analógica — é o problema de perfil que esta casa já registrou
+   ("perfil analógico nasce SEM porta de captura"). Mesmo com o `parec`
+   corrigido, o microfone não entrega amostras nesta configuração.
+
+**A guarda que faltava entrou:** medida inválida não vira número, vira "não
+medido". Um instrumento que não mede não pode produzir veredito — é a lição de
+01/08 na forma mais crua que ela já apareceu aqui.
+
+### A medição que vale: a orelha dela
+
+Sinal estéreo com os canais DIFERENTES de propósito (o `OUTPUT_PATH_SEL`
+distribui canais, e um sinal mono não distinguiria as rotas):
+
+* canal **esquerdo** = tom grave contínuo, 440 Hz;
+* canal **direito** = bipe agudo pulsante, 1200 Hz.
+
+Primeira rodada, três rotas seguidas — ela relatou, sem saber o que esperar:
+
+> *"escutei 2 sequencias de bip bip bip"*
+
+**Duas de três, e só o BIPE — nunca o tom grave.** Isso já era a resposta: o
+canal esquerdo nunca chegou ao alto-falante, e o direito chegou nas duas rotas
+que o mandam para lá.
+
+Segunda rodada, dois toques anunciados com 3 s de pausa, para não fechar o
+portão numa inferência:
+
+| toque | rota | previsão | ela ouviu |
+|---|---|---|---|
+| **A** | 3 — canal R → alto-falante | ouvir o bipe | **ouviu** |
+| **B** | 0 — estéreo → fone (não plugado) | silêncio | **não ouviu** |
+
+### O veredito
+
+**O `OUTPUT_PATH_SEL` SURTE EFEITO.** A tabela da §3 da referência canônica
+(grau ALTA) está confirmada nesta máquina, neste firmware.
+
+O portão abre, e o estado "Sons do jogo" do seletor não é um botão morto.
