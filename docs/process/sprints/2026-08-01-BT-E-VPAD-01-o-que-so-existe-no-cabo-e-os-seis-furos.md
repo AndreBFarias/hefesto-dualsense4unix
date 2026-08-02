@@ -251,3 +251,102 @@ para as desconhecidas.
 - **Furo 5 (a taxa declarada do Edge).** **Não medido**, e a verificação
   precisa da SDL3 que a Steam distribui — medir contra a `libSDL2` do sistema
   é o erro de método que esta casa cometeu em 01/08.
+
+## A MEDIÇÃO do defeito 2 — feita em 02/08/2026, com o hardware dela
+
+Ela avisou: *"um controle tá no cabo e o outro tá no bt"*. Era exatamente a
+condição que faltava, e a primeira entrega desta sprint era **diagnóstica**.
+
+### O que foi medido
+
+Com o daemon vivo, os dois controles ligados, e a leitura direta do sysfs:
+
+| nó de LED | controle | `multi_intensity` | o que é |
+|---|---|---|---|
+| `input180:rgb:indicator` | `a0:fa:9c:00:00:f0` | **255 0 0** | o controle no **Bluetooth** |
+| `input832:rgb:indicator` | `14:3a:9a:00:00:ab` | **0 0 255** | o controle no **cabo** |
+| `input239:rgb:indicator` | `02:fe:00:00:00:01` | 0 0 0 | o gamepad **virtual** P1 |
+| `input836:rgb:indicator` | `02:fe:00:00:00:02` | o gamepad **virtual** P2 | |
+
+E o journal, no mesmo minuto:
+
+```
+sysfs_led_cobertura  cobertos=['a0:fa:9c:00:00:f0']  sem_no_sysfs=[]
+sysfs_led_cobertura  cobertos=['14:3a:9a:00:00:ab', 'a0:fa:9c:00:00:f0']  sem_no_sysfs=[]
+```
+
+### O veredito: **o defeito 2 NÃO se reproduz, e a premissa dele caducou**
+
+A sprint foi escrita sobre esta linha de log, de 01/08:
+
+```
+sysfs_led_cobertura  cobertos=[]  sem_no_sysfs=['a0:fa:9c:00:00:f0']
+```
+
+e concluía, com razão para aquele momento: *"no Bluetooth o LED não tem nó em
+sysfs"*.
+
+**Hoje ele tem** (`input180:rgb:indicator`), o `sem_no_sysfs` sai vazio, e a
+lightbar do controle no Bluetooth está **ACESA em vermelho** — o que bate com
+o print que ela mandou no mesmo dia, onde o card do Controle 2 (BT) mostra
+`#ff0000`.
+
+**Isto NÃO é uma cura**: nada foi mudado no caminho da lightbar por BT nesta
+leva, e as quatro curas de 17-22/07 seguem intactas. É uma medição que diz que
+o sintoma não está presente nesta configuração.
+
+### O que a medição deixa em aberto, e é a próxima pergunta
+
+O nó do BT **existe agora e não existia em 01/08**. As duas explicações
+possíveis levam a lugares diferentes, e nenhuma delas foi medida:
+
+1. **o nó demora a aparecer** depois do pareamento/conexão, e a captura de
+   01/08 pegou a janela em que ele ainda não existia. Se for isso, o defeito é
+   de CORRIDA e vai voltar — e a cura é o daemon reobservar o sysfs quando o
+   `sem_no_sysfs` não estiver vazio, em vez de decidir uma vez;
+2. **alguma coisa entre 01/08 e 02/08 mudou o caminho** (uma reconexão, um
+   ciclo do BlueZ, o próprio reinício do daemon).
+
+**Para fechar:** da próxima vez que ela vir a lightbar apagada no BT, a
+pergunta é uma só — `ls /sys/class/leds/ | grep rgb` e o `sem_no_sysfs` do
+journal. Se o nó não estiver lá, é a hipótese 1.
+
+### E um achado de brinde, não previsto na sprint
+
+**Os gamepads VIRTUAIS também têm nó de LED em sysfs** (`input239` e
+`input836`, com os MACs forjados `02:fe:...`), e os dois estão em `0 0 0`.
+
+Isso não é defeito — o vpad não tem lightbar física —, mas é uma superfície
+que ninguém tinha olhado: um jogo que leia a cor do controle pelo sysfs do
+device que ele abriu vai ler **preto** no vpad, e não a cor que o físico está
+mostrando. Fica registrado para quem for mexer na REPLICA-03.
+
+## A MEDIÇÃO da cura do defeito 1 — 02/08/2026, no hardware dela
+
+Com um controle no cabo e outro no Bluetooth, a cura foi exercitada contra o
+PipeWire real:
+
+```
+fonte padrão do sistema:
+  alsa_input.usb-Sony_Interactive_Entertainment_DualSense_Wireless_Controller-00.iec958-stereo
+
+placas de som com "dualsense":  1   (a do controle no CABO)
+backend detectado:              wpctl
+fonte_padrao_e_o_controle():    True
+```
+
+**Duas coisas ficam provadas:**
+
+1. **a cura não quebrou o caso que sempre funcionou.** Com a fonte padrão
+   sendo o controle, ela responde `True` e o botão age — que é o
+   comportamento de sempre no cabo;
+2. **a premissa do defeito se confirma no mesmo instante**: há UMA placa de
+   som de DualSense na máquina, e é a do controle no **cabo**. O controle no
+   Bluetooth não tem placa nenhuma — exatamente como a sprint mediu em 01/08.
+
+O caso negativo (fonte padrão sendo outro aparelho, com o botão recusando)
+**não foi exercitado no hardware de propósito**: provar isso exigiria trocar a
+fonte padrão de áudio dela, e mexer na configuração dela para validar código é
+o que esta casa já pagou caro uma vez. Ele está coberto por teste
+(`test_a_fonte_padrao_de_outro_dispositivo_nao_e_confundida`), com a mordida
+escrita.
