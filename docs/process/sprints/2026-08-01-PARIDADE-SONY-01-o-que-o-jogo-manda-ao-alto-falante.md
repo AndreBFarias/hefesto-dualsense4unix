@@ -1,6 +1,9 @@
 # PARIDADE-SONY-01 — o que o jogo manda ao alto-falante
 
-- **Status:** PROPOSTA **COM PORTÃO DE MEDIÇÃO NA FRENTE**. Escrita em
+- **Status:** **E1 (o INSTRUMENTO) ENTREGUE em 02/08/2026.** A medição em si
+  depende de ela jogar — e o instrumento agora está lá esperando. A E2 em
+  diante continua trancada pelo portão, como a sprint manda
+- **Status anterior:** PROPOSTA COM PORTÃO DE MEDIÇÃO NA FRENTE. Escrita em
   01/08/2026 para sobreviver à queda da sessão
 - **Prioridade:** BAIXA até a E1 passar; **a E1 é que decide se esta sprint
   tem razão de existir**
@@ -189,3 +192,42 @@ existe.
 - **Não é pré-requisito de nada.** Se a E1 disser que nenhum jogo escreve esses
   bytes, a paridade Sony × Hefesto já está completa e esta sprint vira uma
   cicatriz — o que é um bom resultado.
+
+---
+
+## O que foi entregue — 02/08/2026
+
+### E1 — o instrumento, e ele é PERMANENTE
+
+A sprint pedia *"um log temporário ali dentro"* do `_handle_output`. Entrou um
+**carimbo permanente** (`ATIVIDADE_AUDIO_DO_JOGO`, no mesmo mecanismo
+`visto_ha_s` que a PAINEL-DA-VERDADE-01 criou), e ele é melhor por dois
+motivos:
+
+1. **um log temporário depende de alguém lembrar de ligá-lo** antes de jogar, e
+   de ela jogar o jogo certo naquele dia. O carimbo já está lá quando ela joga;
+2. **ele responde as TRÊS saídas** que a sprint prevê, e não uma. Categoria
+   ausente do `visto_ha_s` = nenhum jogo pediu áudio nunca — que é a resposta
+   que fecha a sprint como cicatriz.
+
+E ele honra a **armadilha 10** por construção: bits de áudio ligados com os
+quatro bytes zerados **não** carimbam. Isso é keepalive, não intenção — contar
+como intenção levaria a replicar "volume zero" ao controle dela a 60 Hz, que é
+a classe de defeito que o `AUDIO-OWNER-01` curou noutro lugar e que o
+keepalive de vibração do `GUERRA-01` já produziu de verdade.
+
+**O carimbo NÃO replica nada.** Ele mede. Três testes travam isso.
+
+## O que falta, e é dela
+
+**A medição.** Basta ela jogar com o Hefesto → DualSense e depois olhar o
+`visto_ha_s` do vpad no `state_full`:
+
+- **a categoria `audio_do_jogo` NUNCA aparece** → não há lacuna. O índice
+  estava errado, a sprint fecha como CICATRIZ e o trabalho de paridade termina
+  aqui;
+- **ela aparece** → a lacuna existe, e a E2 começa com a prova na mão.
+
+**Esta entrega vale mesmo que a resposta seja "não"** — está escrito assim na
+sprint, e continua valendo: uma pergunta em aberto respondida com medição é
+entrega; um código escrito contra uma premissa não medida é dívida.

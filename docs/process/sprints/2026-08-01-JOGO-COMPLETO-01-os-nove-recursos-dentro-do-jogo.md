@@ -1,6 +1,10 @@
 # JOGO-COMPLETO-01 — os nove recursos dentro do jogo
 
-- **Status:** PROPOSTA, escrita em 01/08/2026 **para sobreviver à queda da
+- **Status (02/08/2026):** ABERTA. A E1 desta sprint foi absorvida pela
+  PAINEL-DA-VERDADE-01 e pela PARIDADE-SONY-01 (o `visto_ha_s` é o
+  instrumento que ela pedia). A **E4 — os dois interruptores no install —
+  NÃO foi feita**, e o motivo está no fim deste arquivo
+- **Status original:** PROPOSTA, escrita em 01/08/2026 **para sobreviver à queda da
   sessão**. Tudo o que é preciso para executar está aqui
 - **Prioridade:** ALTA — é o pedido dela: *"isso precisa funcionar na parte da
   Sony e também deve funcionar quando eu opto pelo Hefesto na opção
@@ -242,3 +246,43 @@ Rode antes: `pytest tests/unit -k "motion or vpad or replica or doctor or status
 - **Não tentar passar áudio pelo gamepad virtual.** Um dispositivo `uhid` não
   tem placa de som — medido: existe **uma** placa ALSA, a do controle físico.
   Microfone e alto-falante correm por fora, e é assim que tem de ser.
+
+---
+
+## Nota de 02/08/2026 — o que foi absorvido, e por que a E4 não entrou
+
+### O que já está entregue por outras sprints
+
+A **E1** (o instrumento que diz a verdade) foi entregue como o `visto_ha_s` da
+[PAINEL-DA-VERDADE-01](2026-08-01-PAINEL-DA-VERDADE-01-a-aba-status-diz-o-que-chega-ao-jogo.md),
+com uma categoria por recurso e morte por inatividade — e a categoria de áudio
+veio na [PARIDADE-SONY-01](2026-08-01-PARIDADE-SONY-01-o-que-o-jogo-manda-ao-alto-falante.md).
+
+A **E3** (a aba Status para de mentir) é a linha da verdade do card:
+
+```
+No jogo agora: giroscópio (~194 Hz), vibração, luz · sem pedido ainda: gatilho, clique do touchpad.
+```
+
+### Por que a E4 NÃO entrou — e ela é o pedido literal dela
+
+*"isso deveria estar no install sem flag"*. Os dois interruptores continuam
+desligados, e **todo jogo enxerga dois DualSense**.
+
+A entrega não foi feita porque ela mexe no `install.sh`, e as condições para
+fazê-la com segurança não existiam nesta leva:
+
+1. **a ordem importa e é irreversível na prática** — a própria sprint avisa que
+   ligar o broker antes de os jogos terem o wrapper *"tira a rede de segurança
+   que existe hoje sem pôr outra no lugar"*. Errar a ordem deixa ela sem
+   controle nenhum no jogo;
+2. **o install não pode ser validado aqui.** As regras desta casa são
+   explícitas: `install.sh` **nunca com `sudo`** (o `HOME` vira `/root`), e sem
+   TTY exige `--yes`. Um instalador que muda as opções de inicialização da
+   Steam dela precisa ser rodado de verdade antes de ser dado como pronto;
+3. **os requisitos dela são duros** — viável, **idempotente**, sem flag, e sem
+   derrubar a infraestrutura existente. Idempotência em cima do
+   `steam_launch_options` é o tipo de coisa que se prova rodando duas vezes.
+
+**A sprint fica aberta com a E4 inteira**, e é a próxima da fila quando houver
+uma sessão com a máquina dela para rodar o install e conferir o `doctor`.
