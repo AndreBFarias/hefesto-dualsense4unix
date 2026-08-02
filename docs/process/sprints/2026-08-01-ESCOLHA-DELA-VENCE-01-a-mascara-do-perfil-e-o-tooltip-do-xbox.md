@@ -1,6 +1,8 @@
 # ESCOLHA-DELA-VENCE-01 — a máscara do perfil, e o preço do Xbox onde ela escolhe
 
-- **Status:** PROPOSTA, pronta para executar. Escrita em 01/08/2026 **para
+- **Status:** E1 e E4 ENTREGUES em 01/08/2026 (noite). E2, E3 e E5 seguem
+  ABERTAS, e o motivo de cada uma está no fim
+- **Status anterior:** PROPOSTA, pronta para executar. Escrita em 01/08/2026 **para
   sobreviver à queda da sessão** — tudo o que é preciso para executar está
   neste arquivo
 - **Prioridade:** **ALTA.** O levantamento achou **três caminhos** pelos quais a
@@ -240,3 +242,53 @@ Rode antes: `pytest tests/unit -k "profile or mode or segmented or empate"`.
 - **Não misturar esta sprint com a PARIDADE-SONY-01** — ela mexe no mesmo
   subsistema de gamepad, e cruzar as duas torna impossível dizer qual quebrou o
   quê.
+
+---
+
+## O que foi entregue — 01/08/2026, noite
+
+### E1 — `null` voltou a ser `null` (o defeito 1)
+
+O `or "xbox"` saiu das **duas** pontas do editor. Ele era um defeito ativo e
+**nenhum teste o pegava**: ela abria um perfil sem opinião sobre máscara,
+salvava qualquer outra coisa nele (a cor, o gatilho, o nome), e o perfil
+passava a EXIGIR Xbox — apagando giroscópio e touchpad naquele jogo.
+
+Das duas saídas desenhadas, entrou a **recomendada**: com `gamepad_flavor:
+null` o seletor fica **sem nenhum botão marcado** (`limpar_ativo`), em vez de
+ganhar um terceiro item "— manter a atual". Mostrar um dos dois marcado seria
+a tela afirmando uma escolha que ninguém fez.
+
+O `limpar_ativo` **não emite "changed"**, e isso é a parte fácil de errar: é
+POPULATE, não gesto dela, e o `_modo_tocado` (armadilha 8 da sprint) separa as
+duas coisas. Um sinal ali levantaria a marca como se ela tivesse clicado.
+
+### E4 — o preço do Xbox onde ela escolhe
+
+O `SegmentedSelector` ganhou `set_tooltips({id: texto})` — dica por BOTÃO.
+
+**Ela NÃO entrou na tupla de `set_items`**, e a decisão é de risco: a sprint
+avisa que a forma `(id, label)` é load-bearing, e ela tem razão — o comparador
+de idempotência (`if items == self._items`) e o `_index_of` desempacotam dois
+elementos, e três arquivos de teste travam a tupla. Um método separado entrega
+o mesmo sem encostar em nada disso, e funciona nas duas ordens de montagem
+(dica antes dos itens e depois).
+
+O texto é o `texto_do_custo_da_mascara`, **reusado** da MASCARA-CUSTO-01. Ele
+vivia só na aba Início, que não é onde ela escolhe por jogo.
+
+## O que ficou ABERTO, e por quê
+
+- **E2 (a máscara sobrevive ao reboot).** A própria sprint diz que ela "não é
+  uma linha": o restore de boot desligou o applier **de propósito** em algum
+  momento, e o passo 1 do roteiro é achar o commit e ler a mensagem antes de
+  religar. Fazer isso no fim de uma leva longa, sem poder reiniciar o daemon
+  na máquina dela para conferir, é reabrir um defeito antigo às cegas;
+- **E3 (a recusa com jogo aberto deixa de ser silenciosa).** Ela toca
+  `gamepad.py`, `manager.py` e a tela, e a sprint manda reler a
+  APLICAR-VERDADE-01 antes de desenhar. É uma leva própria;
+- **E5 (o desempate pelo alfabeto).** Marcada como opcional na própria sprint.
+
+**As três continuam valendo, e o índice as carrega.** O que foi entregue é o
+que apagava a escolha dela HOJE, a cada salvamento — e o que ela pediu com
+todas as letras.
