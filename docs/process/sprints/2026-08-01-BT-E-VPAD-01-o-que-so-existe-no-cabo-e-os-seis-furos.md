@@ -68,8 +68,8 @@ no microfone do controle, ou não faz nada — nunca muta outro dispositivo.
 **Medido no mesmo log:**
 
 ```
-lightbar_reset_enviado    key=a0:fa:9c:c3:11:f0
-sysfs_led_cobertura       cobertos=[]  sem_no_sysfs=['a0:fa:9c:c3:11:f0']
+lightbar_reset_enviado    key=a0:fa:9c:00:00:f0
+sysfs_led_cobertura       cobertos=[]  sem_no_sysfs=['a0:fa:9c:00:00:f0']
 ```
 
 O daemon manda o reset de LED e **acredita ter aplicado** — o `state_full`

@@ -110,10 +110,41 @@ jeito. A frequência também chega: `forces[6] → param[8]`, que é onde ela mo
   formam nada válido;
 - os de `0x05` não fazem nada porque `0x05` **é** OFF.
 
-**O que isso muda na sprint:** a E2 (empacotamento) deixa de ser "arrumar o que
-não funciona" e passa a ser **"fazer cada nome corresponder ao efeito"**. Os
-cinco que funcionam hoje vão MUDAR de sensação ao serem corrigidos — e isso
-tem de ser dito a ela antes, porque ela já se acostumou com o que sente.
+### E ela respondeu isso — o que MUDA O OBJETIVO DA SPRINT
+
+Avisada de que corrigir o empacotamento mudaria a sensação dos cinco que
+funcionam, ela respondeu:
+
+> *"cara, as duas temos nomes perfeitos, pq essa é a sensação de usar ambas — e
+> ambas são diferentes em si e diferentes do desligar"*
+
+**Isto é o aceite de produto, e ele inverte metade da sprint.** Os parâmetros
+"acidentais" produzem, nesses cinco, sensações que **casam com o nome**: o Arco
+sente como um arco, o Galope sente como um galope, e os dois se distinguem
+entre si e do desligado. **Não há defeito a consertar ali.**
+
+**Portanto o objetivo NÃO é "fazer os nomes corresponderem à enum da Sony".** É:
+
+| grupo | o que fazer |
+|---|---|
+| os **cinco que funcionam** (`bow`, `galloping`, `machine`, `semi_auto_gun`, `auto_gun`) e o `pulse` | **NÃO TOCAR na sensação.** Se a refatoração mudar o que ela sente, a refatoração está errada, não a sensação |
+| os **sete que não fazem nada** | fazer funcionar — e ela deu liberdade: *"os outros botões eu quero personalizar (…) mas com outras configs e nomes que façam mais sentido, aí te deixo livre pra testar"* |
+
+**A consequência técnica disso é forte:** os `forces` dos cinco que funcionam
+são **valores medidos e aprovados pelo tato dela**. Eles passam a ser dado, não
+implementação — e a refatoração tem de os **preservar byte a byte**, mesmo que
+a enum interna mude de nome.
+
+**Como conciliar as duas coisas** (a enum honesta e a sensação preservada): a
+enum passa a nomear o que a Sony nomeia (o `modo` do fio), e o **preset** passa
+a ser `(modo, forces)` com os `forces` que ela aprovou. O nome do preset
+descreve **a sensação**, não o modo — que é como ela usa a tela, e é o que
+sempre esteve certo.
+
+**Uma prova de regressão que a sprint tem de criar:** capturar os bytes exatos
+que os cinco presets aprovados produzem hoje, e travar num teste. Qualquer
+refatoração que mude esses bytes reprova. É a única forma de garantir que a
+sensação sobrevive.
 
 **Por que os `0x05` e `0x25` caem e os outros não:** os modos **oficiais**
 validam os parâmetros; os legados e os não oficiais não validam. Por isso só os
@@ -159,6 +190,21 @@ inteira se justifica. Se qualquer uma falhar, **pare** e remeça a tabela.
 o `--raw` tem o hidraw só para ele.
 
 **Aceite:** o resultado das duas perguntas registrado neste documento.
+
+## E0-bis (NOVA, e vem ANTES de tudo) — travar a sensação aprovada
+
+Antes de refatorar uma linha: capturar os **bytes exatos** que os seis presets
+aprovados por ela produzem hoje (`bow`, `galloping`, `machine`,
+`semi_auto_gun`, `auto_gun`, `pulse`) e travá-los num teste.
+
+**Por quê:** esses `forces` são valores **medidos e aprovados pelo tato dela**.
+Deixaram de ser implementação e viraram dado. Qualquer refatoração que mude
+esses bytes muda o que ela sente — e reprova.
+
+**Como:** construir cada preset, serializar `(mode, forces)` e gravar como
+tabela de referência no próprio teste. Sem hardware, sem GTK.
+
+**Aceite:** o teste existe e passa ANTES da E1 começar.
 
 ## E1 — a enum passa a nomear o que a Sony nomeia
 
