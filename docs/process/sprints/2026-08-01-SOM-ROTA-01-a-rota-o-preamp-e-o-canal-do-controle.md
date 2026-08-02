@@ -1,6 +1,8 @@
 # SOM-ROTA-01 — a rota, o pré-amplificador e o canal do controle
 
-- **Status:** PROPOSTA, escrita em 01/08/2026 para sobreviver à queda da sessão
+- **Status:** E1 e E3 (o byte) ENTREGUES em 01/08/2026 (noite). A E2, a outra
+  metade da E3 e a E4/E5 dependem do hardware e da mão dela — ver o fim
+- **Status anterior:** PROPOSTA, escrita em 01/08/2026
 - **Prioridade:** ALTA — destrava 60% do controle deslizante que hoje é inerte,
   e entrega o efeito que ela descreveu com o Zelda
 - **Fonte:** [a referência canônica do protocolo](../../protocol/dualsense-referencia-canonica.md),
@@ -147,3 +149,71 @@ caso do alto-falante.
   controle, nunca o valor.
 - **Não esquecer que a camada 1 vence a camada 2.** Volume perfeito num sink
   mudo no PipeWire é trabalho invisível.
+
+---
+
+## O que foi entregue — 01/08/2026, noite
+
+### E1 — os campos que faltavam, com a posse intacta
+
+| campo | offset | antes | agora |
+|---|---|---|---|
+| `headphone_volume` | 4 | escrito, clamp 0-255 | clamp **0-0x7F** |
+| `speaker_volume` | 5 | escrito | igual |
+| `mic_volume` | 6 | porta existia | clamp **0-0x40** |
+| `audio_control` (rota) | 7 | porta existia, sem uso | **exposta, e só ela** |
+| `audio_control2` (pré-amp) | 37 | **não existia** | escrito com `0x2` |
+
+O `VALID_FLAG1_AUDIO_CONTROL2_ENABLE` (bit7 do flag1) entrou no
+`ds_output_report.py`. Ele **coincide numericamente** com o
+`VALID_FLAG0_AUDIO_PATH` — são bit7 de bytes diferentes —, e é por isso que o
+teste que os separa afere em QUAL flag o bit é ligado, e não o número.
+
+**O pré-amp vai junto do volume, na mesma posse.** Quem assume um assume o
+outro, e o `release` devolve os dois: metade devolvida seria pior que nada,
+porque o pré-amp é justamente o campo que muda o alcance do controle
+deslizante.
+
+E a disciplina da `AUDIO-OWNER-01` valeu inteira para ele: **sem dono, o bit
+de autorização sai APAGADO e o byte sai zerado**. Autorizar sem escrever é
+mandar "ganho zero" a 60 Hz com cara de keepalive — a mesma classe de defeito
+do keepalive de vibração do GUERRA-01.
+
+### E3 (o byte) — a rota, e o meio-byte que ela não pode apagar
+
+`speaker.set` aceita `rota` (0-3), validada e **nunca clampada**: os quatro
+valores significam coisas diferentes, e escolher um vizinho em silêncio
+mandaria o áudio para outro lugar que não o pedido.
+
+O caso do Zelda é o `2` (`SAIDA_L_FONE_R_ALTO_FALANTE`): canal esquerdo para o
+fone/TV, canal direito para o alto-falante do controle. Um byte.
+
+**A parte mais fácil de errar, e a mais silenciosa:** o `common[7]` carrega a
+rota nos bits 4-5 **e o caminho do microfone no resto**. Escrever o byte
+inteiro com o número da rota apagaria a configuração do mic sem erro nenhum, e
+o sintoma apareceria noutro lugar. O `_byte_da_rota` preserva o resto, e há
+teste que morde exatamente essa mutação.
+
+Por omissão, `rota` é `None` e o `common[7]` **não é tocado** — a posse dele só
+é assumida por quem pede a rota.
+
+## O que NÃO foi entregue, e por quê
+
+- **E2 (remedir a régua do volume).** A curva de `speaker_scale.py` foi medida
+  com só o volume, e a expectativa é que ela mude com o pré-amp escrito. **Não
+  dá para remedir sem o hardware e sem o ouvido dela**, e substituir uma curva
+  MEDIDA por uma estimada é exatamente o que esta casa não faz. A régua ficou
+  como está, e a remedição é o próximo passo — com a tela desligada, pelo
+  microfone do próprio controle, como em 01/08;
+- **a outra metade da E3 (a fonte do som).** O byte diz ao controle o que
+  fazer com o canal direito; mandar "só o efeito da espada" naquele canal é
+  roteamento de PipeWire, e a sprint já a classificava como a metade cara;
+- **E4 (o caminho do microfone) e E5 (a detecção de fone pelo byte 53).** As
+  duas dependem de medição no hardware. A E5 tem um caminho já aberto pela
+  PAINEL-DA-VERDADE-01 — o `visto_ha_s` mostrou como publicar fato novo sem
+  quebrar o `state_full`.
+
+**O aceite que falta é o dela:** com o pré-amp escrito, o controle deslizante
+deve valer o curso inteiro. Se os 60% continuarem inertes, a hipótese está
+errada e a E1 precisa ser remedida antes de qualquer coisa — está escrito
+assim na sprint, e continua valendo.
