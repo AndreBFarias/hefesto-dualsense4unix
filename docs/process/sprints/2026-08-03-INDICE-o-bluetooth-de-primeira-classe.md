@@ -338,3 +338,44 @@ trabalhar?* O que eles acharam, e que já está aplicado:
    estão, em destaque, com o que dá para fazer **sem ela** em cada caso — regra
    dela: *"as que precisam de testes manuais só podem ser executadas com os
    testes de eliminação"*.
+
+---
+
+## Adendo da MADRUGADA de 04/08 — a noite em que o Bluetooth caiu de verdade
+
+Ela jogou, os quatro controles caíram, o `bluetoothd` fez core dump **três
+vezes** e comeu **todos** os pareamentos. E o produto, que tinha o remédio na
+mão, não o deu.
+
+### O que foi CURADO na hora
+
+| defeito | mecanismo |
+|---|---|
+| o `bt-agent` ficava `failed` e **o BlueZ parava de aceitar conexão entrante** | o `SendSIGKILL=yes` da cura das 00:09 marcava a unit como falha; `SuccessExitStatus=SIGKILL` conserta. Regressão MINHA, e ela a apontou duas horas antes do meu diagnóstico |
+| o Pro Controller *"conectava, demorava e morria"* | estava com **`sniff`** — a cura de 23/07 desta casa, apagada pelos três reinícios do `bluetoothd`. Reaplicado o `bt_active_mode.sh` |
+
+### As quatro sprints novas
+
+| sprint | do que trata | quando executar |
+|---|---|---|
+| [RADIO-ABERTO-01](2026-08-04-RADIO-ABERTO-01-o-que-instalamos-por-padrao-anula-a-autenticacao.md) | **o `install.sh` instala, por padrão, a combinação que anula a autenticação do Bluetooth** — e o caminho termina em injeção de teclas | **PRIMEIRO, e sem discussão** |
+| [BONDS-QUE-SOBREVIVEM-01](2026-08-04-BONDS-QUE-SOBREVIVEM-01-o-salva-vidas-que-ninguem-aciona.md) | ninguém aciona a restauração; a poda apaga o snapshot bom; o restaurador sobrescreve chave nova com velha | logo depois |
+| [CURA-QUE-FERE-01](2026-08-04-CURA-QUE-FERE-01-toda-cura-de-systemd-tem-de-provar-o-ciclo-inteiro.md) | verificar que o campo entrou **não é** verificar que a cura funciona | em paralelo — é teste e portão |
+| [SUITE-QUE-SUJA-O-JORNAL-01](2026-08-04-SUITE-QUE-SUJA-O-JORNAL-01-os-testes-escrevem-no-journal-do-sistema.md) | a suíte cria uinput real e escreve no journal do sistema | antes de qualquer medição nova |
+
+### Por que a `RADIO-ABERTO-01` vem primeiro
+
+Ela é a única desta leva inteira cujo pior caso **não é um controle que não
+funciona** — é alguém ao alcance do rádio digitando na máquina de quem instalou
+isto. E ela saiu de uma auditoria que investigava **outra coisa**: nenhum dos
+sete agentes tinha segurança como tarefa; um deles tinha a **lente**.
+
+### A prova que fecha a BONDS-QUE-SOBREVIVEM-01
+
+Medido às 03:04 de 04/08: **o snapshot das 23:51 com os quatro controles — o
+mesmo de onde a restauração daquela noite saiu — já tinha sido podado.** Uma
+hora depois de salvar o Bluetooth dela, o registro que o salvou não existia
+mais. E seis dos doze lugares do acervo estavam ocupados por snapshots de 1 ou
+2 bonds.
+
+Não é hipótese. É o mecanismo destruindo a própria prova, com os dados dela.
