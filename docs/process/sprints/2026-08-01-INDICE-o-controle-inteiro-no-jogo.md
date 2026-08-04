@@ -9,6 +9,38 @@
   entrada.** Quem retomar o trabalho lê ele primeiro e não precisa de mais nada
   da conversa que o originou
 
+## O PLACAR — atualizado em 02/08/2026, à tarde
+
+Este índice ficou congelado no estado "tudo por fazer" enquanto sete das nove
+sprints eram executadas. **Quem lê o ponto de entrada tem de ver o que já foi
+feito** — sem isto, a próxima sessão refaz trabalho entregue. A verdade de cada
+uma continua no `Status:` do próprio arquivo; esta tabela é o resumo.
+
+| # | sprint | estado |
+|---|---|---|
+| 1 | CARD-ÚNICO-01 | **ENTREGUE** (01/08, noite) |
+| 2 | PAINEL-DA-VERDADE-01 | **ENTREGUE** — E1, E2 e a base de E3/E4/E5 |
+| 3 | PARIDADE-SONY-01 | **PORTÃO FECHADO DE NOVO** (02/08, tarde) — a E1 mediu, e a medição dos VALORES refutou o veredito que abrira a E2. Ver "A REFUTAÇÃO DO VEREDITO" |
+| 3-bis | JOGO-COMPLETO-01 | **ABERTA na E4** — E1 e E3 absorvidas por outras; a E4 (os dois interruptores no install) é o que resta, e é pedido literal dela |
+| 4 | ESCOLHA-DELA-VENCE-01 | **E1 e E4 ENTREGUES**; E2, E3 e E5 abertas |
+| 5 | TRIGGER-CANON-01 | **ENTREGUE** — E0-bis, E1, E2, E3 e E4 |
+| 6 | SOM-ROTA-01 | **E1 e E3 ENTREGUES**; E2 aberta |
+| 7 | BT-E-VPAD-01 | **defeito 1 e furos 1, 2 e 6 ENTREGUES**; o **defeito 2 REABRIU** em 02/08 (tarde) — ver `2026-08-02-LIGHTBAR-BT-CLAIM-01` |
+
+**Sprints que NASCERAM desta leva e não estavam previstas aqui:**
+
+- `2026-08-02-BT-SDP-VAZIO-01` — **CURADA**: o 8BitDo tinha bond sem registro
+  SDP, e o BlueZ recusava a reconexão dele como *"unknown device"*. Parecia
+  regressão nossa; não era. Rendeu o achado de método da leva: **um check que
+  filtra "só o que é sadio o bastante" fica cego na proporção da gravidade.**
+
+**Dívida documental conhecida** (levantada na auditoria de 02/08): os IDs
+`SOM-CANAL-01`, `EMPILHA-01`, `EMPILHA-02` e `STATUS-GRID-2COL-01` são citados
+dezenas de vezes em `src/`, `tests/` e no `main.glade` — e **não existe
+documento para nenhum**. O redesenho do bloco Alto-falante (`19acbeb`) vive só
+na mensagem de commit. O portão `validar-referencias-docs.py` é cego a isto:
+ele acha link morto, não ID órfão.
+
 ## LEIA ISTO PRIMEIRO
 
 **A base técnica desta leva inteira é o documento

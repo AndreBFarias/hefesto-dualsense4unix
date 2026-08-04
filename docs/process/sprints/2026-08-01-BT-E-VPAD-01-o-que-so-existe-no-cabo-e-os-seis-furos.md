@@ -277,6 +277,34 @@ sysfs_led_cobertura  cobertos=['14:3a:9a:00:00:ab', 'a0:fa:9c:00:00:f0']  sem_no
 
 ### O veredito: **o defeito 2 NÃO se reproduz, e a premissa dele caducou**
 
+> **CADUCOU NA MESMA TARDE — 02/08/2026.** O defeito 2 **SE REPRODUZ**. O
+> sintoma novo é pior que o descrito aqui: o nó sysfs **existe**, tem o valor
+> certo, o valor **persiste**, e a barra fica apagada. Nem mudar a cor cura — o
+> que **refuta** a previsão do comentário `LIGHTBAR-BT-RESET-03` (*"apagada até
+> a cor MUDAR"*). Ver a sprint própria: `2026-08-02-LIGHTBAR-BT-CLAIM-01`.
+>
+> **A primeira hipótese desta nota — "a condição que faltava eram os DOIS
+> DualSense no BT" — está REFUTADA, e o registro fica.** A linha do tempo do
+> journal mostra que o primeiro controle a apagar foi o `a0:fa:9c:00:00:f0` às
+> 14:13, **quando ele era o ÚNICO da máquina**. "Dois por BT" era coincidência
+> do instante em que se olhou.
+>
+> **O gatilho real é o REINÍCIO DO DAEMON**, e ele foi provocado pela própria
+> investigação: cada reinício fabrica handle NOVO para controle VELHO, dispara
+> o `0x08` (Reset LED state) num controle adotado horas antes, solta a lightbar
+> que o kernel tomara no probe — e **nada do lado do host volta a tomá-la**,
+> porque quem toma é o `lightbar_setup` (`valid_flag2` bit1), que o kernel manda
+> uma vez por conexão e que nós nunca mandamos.
+>
+> Lição de método, e é a terceira do dia: **o instrumento apagou a luz que
+> tinha ido medir.** Quatro reinícios do daemon foram feitos para instrumentar
+> o áudio e ler o DEBUG da própria lightbar.
+>
+> A previsão da seção "o que a medição deixa em aberto", logo abaixo, estava
+> **certa** no essencial — ela dizia *"se for isso, o defeito é de CORRIDA e
+> vai voltar"*. Voltou; só que a corrida é com o ciclo de vida do HANDLE, não
+> com o do nó sysfs.
+
 A sprint foi escrita sobre esta linha de log, de 01/08:
 
 ```
