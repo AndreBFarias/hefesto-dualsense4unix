@@ -53,6 +53,62 @@ corrupção é de remontagem **L2CAP**, acima do HCI.
 
 ---
 
+## F1 JÁ EXECUTADO (04/08) — e são DOIS fenômenos, não um
+
+A forense de comprimentos foi feita, e ela **reparte a tempestade em dois**:
+
+| forma | comprimento | quando | volume |
+|---|---|---|---|
+| `Unexpected start frame` | **len 17** | 00:18:18 → 00:27:52 | **42.763** (~4300/min, constante) |
+| `Unexpected start frame` | **len 83** | 00:00:48 → 00:18:23 | **1.954** — gotejamento de 1/min, e uma rajada de 1951 no minuto 00:18 |
+| `Frame is too long` | — | — | 255 (0,6% do total) |
+
+```bash
+journalctl -k -b --no-pager | grep -oE '\(len [0-9]+' | sort | uniq -c | sort -rn
+journalctl -k -b --no-pager -o short-iso | grep '(len 17' | awk '{print substr($1,12,5)}' | uniq -c
+```
+
+**Duas consequências, e as duas mexem no resto do documento:**
+
+1. **A tempestade de verdade é o `len 17`, e ela começou às 00:18:18** — não às
+   00:00:48, quando o DualSense high-speed entrou no cabo. São **18 minutos** de
+   intervalo entre a causa suposta e o efeito. Isso enfraquece muito a hipótese
+   2 na forma simples ("plugou, corrompeu") e **reforça a hipótese 3**: o que
+   importa não é o dispositivo estar lá, é alguma coisa começar a acontecer;
+2. **o `len 83` é outro bicho** e merece nome próprio. Gotejamento de 1 por
+   minuto durante 18 minutos não é congestionamento — é evento raro e
+   repetitivo. A rajada de 1951 no minuto 00:18 é o momento em que os dois se
+   cruzam, e é o único instante do boot em que isso acontece.
+
+### A pista de 00:18, e por que NÃO é conclusão
+
+No minuto da virada havia uma execução da suíte de testes em voo (teclados
+uinput nascendo em 00:17:56 e 00:18:28). E o `input-remapper` da máquina dela
+**reage a cada um deles enumerando TODOS os dispositivos de entrada** —
+incluindo os controles no rádio:
+
+    00:18:29 input-remapper-service: Request to autoload for "Hefesto - ... Virtual Keyboard"
+    00:18:29 input-remapper-service: Found "Pro Controller", "DualSense ... (Hefesto P2)",
+                                     "Sony Interactive Entertainment DualSense ...", ...
+
+Dezessete teclados por execução, cada um disparando uma varredura de todos os
+controles. É um mecanismo de amplificação plausível.
+
+**MAS a hipótese não fecha, e é honesto dizer por quê:** houve execuções da
+suíte às 22:29, 23:34 e 23:39, com controles no rádio, e elas produziram
+**zero** frames. Suíte sozinha não basta.
+
+**O experimento que discrimina** (dez minutos, e só precisa de um controle no
+rádio): rodar a suíte com um controle no Bluetooth e o cabo VAZIO, contar; depois
+com o cabo ocupado pelo DualSense high-speed, contar. Se só a segunda produzir
+frames, a suíte é o gatilho e a topologia é o meio — e as duas coisas viram uma
+só explicação.
+
+Ver [SUITE-QUE-SUJA-O-JORNAL-01](2026-08-04-SUITE-QUE-SUJA-O-JORNAL-01-os-testes-escrevem-no-journal-do-sistema.md),
+que sobe de "suja o diagnóstico" para "pode estar derrubando os controles dela".
+
+---
+
 ## Hipótese 1 — o clone DS4 bombardeia o rádio: **REFUTADA**
 
 O `doctor.sh` aponta *"DualShock4 com 26884 erros de CRC neste boot — clone DS4

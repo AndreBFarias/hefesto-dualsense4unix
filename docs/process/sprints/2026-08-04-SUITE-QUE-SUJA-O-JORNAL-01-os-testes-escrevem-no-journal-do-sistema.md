@@ -77,6 +77,55 @@ de "suja o diagnóstico" para "toca no teclado dela durante a suíte".
 
 ---
 
+## Duas coisas medidas em 04/08, que mudam o desenho da cura
+
+### 1. NÃO sobra resíduo — um script de limpeza no fim seria placebo
+
+Pergunta dela, direta: *"pq ao final da suíte não temos um script pra remover
+todas elas?"*
+
+**Porque não há o que remover.** Medido depois de três execuções seguidas:
+
+```bash
+for e in /dev/input/event*; do cat /sys/class/input/$(basename $e)/device/name; done \
+  | grep -c 'Hefesto - Dualsense4Unix Virtual Keyboard'    # -> 0
+```
+
+Dispositivo `uinput` morre quando o descritor que o criou fecha, e isso
+acontece quando o processo do `pytest` sai. O estrago é **durante** a execução,
+não depois: as linhas escritas no journal, e o dispositivo sendo **real**
+enquanto existe.
+
+Isto está registrado aqui para que ninguém gaste tempo escrevendo o limpador —
+que é a primeira ideia que ocorre, e a errada.
+
+### 2. O `input-remapper` AMPLIFICA cada dispositivo que criamos
+
+Cada teclado nosso dispara um `udev` que roda
+`input-remapper-control --command autoload`, e o serviço responde **enumerando
+todos os dispositivos de entrada da máquina** — inclusive os controles no
+Bluetooth:
+
+    00:18:29 input-remapper-service: Request to autoload for "Hefesto - ... Virtual Keyboard"
+    00:18:29 input-remapper-service: Found "Pro Controller", "DualSense ... (Hefesto P2)",
+                                     "Sony Interactive Entertainment DualSense ...", ...
+
+**Dezessete teclados por execução = dezessete varreduras de todos os controles
+dela.** E há uma correlação temporal com a tempestade de frames L2CAP de 04/08
+que **ainda não está resolvida** — ver a seção "A pista de 00:18" da
+[RADIO-BOMBARDEADO-01](2026-08-04-RADIO-BOMBARDEADO-01-quarenta-mil-frames-corrompidos-em-meia-hora.md).
+
+Se essa correlação se confirmar, esta sprint deixa de ser "suja o diagnóstico"
+e passa a ser **"a suíte derruba os controles dela"** — e sobe para o topo
+absoluto da fila. O experimento que decide está escrito lá, e custa dez
+minutos.
+
+**A consequência para a cura abaixo:** o critério de E2 fica mais duro. Não
+basta o dublê ser mais barato — **criar dispositivo de entrada real na máquina
+dela tem custo de sistema que não é nosso e que não controlamos.**
+
+---
+
 ## A cura, e por que ela não é "silenciar o log"
 
 Silenciar seria a gambiarra: o problema não é o log ser visível, é o teste
