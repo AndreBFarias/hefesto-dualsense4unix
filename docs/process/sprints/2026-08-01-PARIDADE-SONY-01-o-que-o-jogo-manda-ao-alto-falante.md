@@ -1,8 +1,13 @@
 # PARIDADE-SONY-01 — o que o jogo manda ao alto-falante
 
-- **Status:** **E1 CUMPRIDA em 02/08/2026 — o portão ABRIU.** A medição diz
-  que a escrita de áudio acontece dentro de uma sessão aberta. A E2 está
-  liberada, com a prova. Ver "O veredito do portão", no fim
+- **Status:** **O PORTÃO VOLTOU A FECHAR em 02/08/2026 (tarde).** A medição
+  dos VALORES refutou o veredito da manhã: o que escreve os bytes de áudio é o
+  **sistema**, não um jogo — dois reinícios do daemon, com a Steam FECHADA,
+  deram byte a byte o mesmo pedido. A E2 continua trancada. Ver "A REFUTAÇÃO
+  DO VEREDITO", no fim
+- **Status anterior (caducou na mesma tarde):** E1 CUMPRIDA em 02/08/2026 — o
+  portão ABRIU. A medição diz que a escrita de áudio acontece dentro de uma
+  sessão aberta. A E2 está liberada, com a prova. Ver "O veredito do portão"
 - **Status anterior:** E1 (o INSTRUMENTO) ENTREGUE em 02/08/2026. A medição em si
   depende de ela jogar — e o instrumento agora está lá esperando. A E2 em
   diante continua trancada pelo portão, como a sprint manda
@@ -345,3 +350,74 @@ dois são baratos agora: o instrumento é permanente, e basta ela olhar o
 
 **A E2 não deve começar antes disso.** Replicar sem saber QUAL byte o jogo
 escreve é o mesmo erro de sempre, com o carimbo dando falsa confiança.
+
+---
+
+## A REFUTAÇÃO DO VEREDITO — 02/08/2026, à tarde
+
+### O que se fez, e por quê
+
+O veredito acima terminava exigindo, como condição para a E2, saber *"o que
+exatamente foi escrito (quais dos quatro bytes, com que valores)"*. O carimbo
+ganhou então uma **amostra dos valores** (`audio_do_jogo_amostra`, publicada no
+`state_full` ao lado do `visto_ha_s`): `flag0` e os quatro bytes, sob as mesmas
+guardas do carimbo.
+
+Foi a primeira leitura dela que derrubou o veredito.
+
+### A medição
+
+Daemon reiniciado, **Steam FECHADA** (`pgrep steam` vazio), nenhum jogo aberto:
+
+```
+reinício 1:  audio_do_jogo = 24,2 s   amostra = flag0 0xA0, fone 0, alto-falante 100, mic 0, rota 0x30
+reinício 2:  audio_do_jogo = 23,3 s   amostra = flag0 0xA0, fone 0, alto-falante 100, mic 0, rota 0x30
+```
+
+**Byte a byte idêntico, nos dois.** E `flag0 = 0xA0` liga só dois dos quatro
+bits: alto-falante (`0x20`) e controle de áudio (`0x80`) — fone e microfone
+ficam de fora, com os bytes em zero.
+
+### O que isso prova
+
+**Não é jogo.** Um jogo não escreve o mesmo valor, no mesmo intervalo depois do
+bind, duas vezes seguidas, com a Steam fechada. Escrita determinística, de
+valor fixo, reproduzível a cada nascimento do vpad é assinatura de **software
+de sistema** — o driver `hid-playstation`, que adota o gamepad virtual e manda
+a inicialização de áudio.
+
+**E o gate de sessão NÃO o filtrava**, ao contrário do que o veredito da manhã
+afirmou. A razão é medível e específica: a graça `_GAME_REPLICA_GRACE_S` vale
+**0,5 segundo** após o bind, e foi dimensionada para o *player-LED* do probe,
+que chega imediato. A escrita de áudio do kernel chega **cerca de 10 segundos**
+depois do bind — passa folgada pela graça, e cai dentro da sessão aberta.
+
+### A lição, e ela é a mesma de sempre com roupa nova
+
+O veredito da manhã dizia, com todas as letras: *"Não é o probe do kernel (esse
+está filtrado)"*. **Estava errado**, e o erro não foi de raciocínio — foi de
+não ter medido o que o gate de fato cobre. Reusar o `_replicating()` continua
+sendo a decisão certa (dois gates divergiriam); o que faltou foi notar que
+aquele gate nunca prometeu cobrir uma escrita tardia.
+
+É a terceira vez que esta sprint tropeça na mesma pedra, e vale nomear a forma
+geral: **um instrumento que passa no teste não prova que a pergunta é a certa.**
+Da primeira vez, o carimbo mediu a adoção pelo kernel. Da segunda, o gate de
+sessão dava a impressão de filtrá-la. Só a leitura dos VALORES desfez as duas.
+
+### O que a sprint ganhou, apesar de tudo
+
+Uma **assinatura conhecida do sistema**: `flag0 0xA0 · alto-falante 100 ·
+rota 0x30`. Ela é o que faltava para a pergunta original ficar barata de
+responder de vez:
+
+- ela abre um jogo e a amostra **continua** `100 / 0x30` → é sempre o kernel, e
+  a sprint fecha como **CICATRIZ**;
+- a amostra **muda** (outro valor, ou os bits de fone/mic acendendo) → aí sim há
+  um jogo pedindo áudio, e a E2 começa com a prova na mão *e já sabendo qual
+  campo replicar*.
+
+**A E2 continua trancada, e agora com mais razão do que antes.** O que estava
+prestes a ser replicado ao controle dela era a inicialização de áudio do
+kernel — incluindo o `common[7]` de roteamento, que a armadilha 6 desta sprint
+proíbe tocar por não se saber o valor neutro.
