@@ -212,3 +212,50 @@ pytest tests/unit tests/core -k "identity or player_led or sysfs or defend or ga
 - **se o defeito 2 já se manifestou** — a queixa "dois no jogador 2" tem
   histórico nesta casa por outro caminho, e não há como distinguir os dois no
   journal de hoje.
+
+---
+
+## MEDIDO ao vivo em 04/08/2026, 02:49 — a colisão de Jogador 1
+
+Os quatro no rádio ao mesmo tempo, conectados e estáveis (foto da tela dela).
+A numeração que ela leu **nos controles**:
+
+| controle | jogador |
+|---|---|
+| 8BitDo | **1** |
+| Pro Controller | 3 |
+| DualSense roxo (BT) | 2 |
+| DualSense branco | **1** |
+
+**Dois controles como Jogador 1**, e o 2 e o 3 ocupados — ou seja, não é "o
+quarto não recebeu número", é **colisão** com o 4 livre.
+
+### O que o sysfs dizia no mesmo instante, e por que ele NÃO decide
+
+    0005:057E:2009.0037: player-1, player-2, player-3 ACESOS   (o Pro)
+    input443:            player-1..player-5, os CINCO acesos
+    input437:            player-2 e player-4 acesos
+    input276, input440:  player-3
+
+Três leituras diferentes, e nenhuma casa direto com o que ela vê. As razões já
+estão medidas nesta casa e **precisam ser honradas por quem executar esta
+sprint**:
+
+1. **`/sys/class/leds` mostra o número do KERNEL, não o nosso** (medido em
+   25/07) — ele não é instrumento para conferir a numeração do produto;
+2. **o Pro acende TRÊS LEDs para dizer "Jogador 3"** — a convenção Nintendo é
+   contar LEDs acesos, não acender o enésimo. A leitura dela (Jogador 3) está
+   certa e o sysfs também; quem confunde é quem lê um pelo outro;
+3. **o DualSense usa o padrão PS5** (medido em 22/07: *"player LEDs = padrão
+   PS5, não bug"*), em que o conjunto aceso codifica o jogador.
+
+**Consequência para a sprint:** o aceite não pode ser escrito contra o sysfs.
+Tem de ser contra o que o daemon AFIRMA (o `player_slot` por controle) e contra
+o que ela VÊ — e os dois têm de bater. Um teste que leia o sysfs vai passar com
+a colisão de pé.
+
+### O que ainda falta, e é dela
+
+Isto foi medido **fora de jogo**. A parte que decide — se a numeração muda
+sozinha durante a partida, e se o jogo enxerga os quatro — continua no item 4
+do [protocolo](../estudos/2026-08-03-PROTOCOLO-as-medicoes-que-decidem-a-leva.md).
