@@ -10,8 +10,102 @@
   [AUTOMATISMO-MORTO-01](2026-07-30-AUTOMATISMO-MORTO-01-o-perfil-do-jogo-nunca-entra.md)
   já nomeou (linha 647, citando `autoswitch.py:505-518`) e que ganhou um
   gatilho novo em 02/08
+- **Também no índice:** [A leva dos perfis que se reescreviam sozinhos](2026-08-05-INDICE-a-leva-dos-perfis-que-se-reescreviam-sozinhos.md)
+  — a E1 e a E2 são dívida declarada de **três** sprints daquela leva, e
+  nenhuma delas as toca
 
 ---
+
+## Nota datada — 05/08/2026: a E2 foi AGRAVADA, e a agravante mora noutro arquivo
+
+**Esta sprint continua PROPOSTA e nada dela foi tocado.** A nota existe porque a
+[TRAVA-QUE-SOLTA-TARDE-01](2026-08-05-TRAVA-QUE-SOLTA-TARDE-01-o-gesto-explicito-e-vitima-da-propria-trava.md)
+**declara que agrava a E2 desta sprint**, e essa afirmação vivia só no arquivo
+novo: a sprint agravada não sabia disso. A referência cruzada é o que esta nota
+paga. Nada abaixo foi apagado.
+
+### A frase, e de onde ela vem
+
+A `TRAVA-QUE-SOLTA-TARDE-01` mediu, com o daemon de produção dela, que os
+**dois** gestos explícitos de troca de perfil — `profile.switch` (janela e CLI)
+e o **PS + D-pad** — chamavam `clear_manual_trigger_active()` **depois** do
+`activate`. A trava era limpa **tarde demais para a ativação que a limpou**, e
+o perfil entrava pela metade. E escreve, textualmente:
+
+> *"E este agrava a E2 daquela: dar granularidade por categoria ao autoswitch,
+> como a E2 propõe, **não cura o caminho manual** — lá o problema não é
+> granularidade, é ordem."*
+
+### O que isso muda na leitura desta sprint
+
+**Grau: MEDIDO**, por leitura do código em 05/08.
+
+1. **A E2 nunca teria curado o caminho manual, e o texto acima não dizia isso.**
+   A E2 propõe que o autoswitch pergunte pelas categorias que **ele** vai
+   aplicar. Só que o gesto explícito dela **não passa pelo autoswitch** — passa
+   por `_handle_profile_switch` e por `subsystems/hotkey.py`. Quem lê a E2 hoje
+   pode concluir que ela cobre a queixa *"às vezes pega"*: **não cobre**. A
+   metade manual daquela queixa foi de outra causa e já foi curada;
+2. **a E2 encolheu de alcance e NÃO de importância.** Ela continua sendo a única
+   saída para *"um toque no volume mata a troca automática"*, que é o defeito 1
+   desta sprint visto pelo lado do autoswitch — e continua sendo a única coisa
+   que impede a **próxima** categoria de herdar o mesmo defeito. É a terceira vez
+   que a casa paga por isso, e o número não mudou;
+3. **o aceite da E2 precisa ser medido no tique, não no clique.** Com a cura da
+   `TRAVA` de pé, o gesto explícito **limpa as três categorias antes** de
+   ativar — então um teste que arme `audio`, troque de perfil pela janela e
+   observe o perfil entrar **passa mesmo sem a E2**. O aceite honesto é: armar
+   `audio`, deixar a **troca automática** decidir, e exigir que um perfil sem
+   seção de áudio entre. A frase original da E2 (*"com só `audio` armado, um
+   perfil que não tem seção de áudio entra normalmente"*) continua certa —
+   **falta dizer por qual porta**.
+
+### O que a cura da TRAVA NÃO fez, e continua aqui
+
+**Grau: MEDIDO** por `git grep` em 05/08:
+
+- **`clear_manual_trigger_active("audio")` continua não existindo** em `src/`
+  nem em `tests/`. O defeito 1 desta sprint está **intocado**, e a
+  `TRAVA-QUE-SOLTA-TARDE-01` o declara em aberto no próprio texto;
+- **`manual_trigger_active` continua booleano de tudo-ou-nada**
+  (`state_store.py:425-428`), e o autoswitch continua consultando **o booleano**
+  (`autoswitch.py:579` e `:624`). A E2 está exatamente onde estava;
+- **`_marcar_audio_manual` continua armando também na devolução da posse** — a
+  ação que significa *"não tenho mais opinião sobre o áudio"* continua sendo a
+  que tranca.
+
+### Os números de linha desta sprint envelheceram
+
+A tabela de clears do defeito 1 foi escrita em 03/08 e **as quatro linhas
+mudaram de lugar** com as curas da madrugada de 04-05/08. Conferido em 05/08, e
+registrado aqui em vez de reescrito acima:
+
+| clear | linha em 03/08 | linha em 05/08 |
+|---|---|---|
+| `clear_manual_trigger_active("trigger")` | `ipc_handlers.py:676` | `ipc_handlers.py:710` |
+| `clear_manual_trigger_active("rumble")` | `ipc_handlers.py:2671` | `ipc_handlers.py:2705` |
+| global, no `profile.switch` | `ipc_handlers.py:412` | **`ipc_handlers.py:430`, e agora ANTES do `activate`** |
+| global, na hotkey | `hotkey.py:163` | **`hotkey.py:168`, e agora ANTES do `activate`** |
+| global, no autoswitch | `autoswitch.py:508` | `autoswitch.py:627` |
+
+**A lista continua completa e continua sem `"audio"`.** O que mudou foi a
+**ordem** nos dois gestos explícitos, e os dois ganharam restauração das
+categorias no `except` — ativação que falhou não é gesto cumprido.
+
+### E há canal novo para ver isto acontecer
+
+A [PERFIL-REESCRITO-NA-PARTIDA-01](2026-08-05-PERFIL-REESCRITO-NA-PARTIDA-01-o-perfil-dela-era-reescrito-sozinho-no-meio-da-partida.md)
+(item 4) fez o `ProfileManager.apply` **relatar** as categorias que a trava
+silencia, com o estado `ignorado_trava_manual`, e a
+[ATIVAR-NÃO-MENTE-01](2026-08-05-ATIVAR-NAO-MENTE-01-o-botao-que-parecia-falhar-e-ativava-duas-vezes.md)
+fez a janela **ler** esse relatório.
+
+**Consequência prática para quem for executar a E1 e a E2:** o efeito do defeito
+1 desta sprint deixou de ser invisível. Ele agora aparece no relatório da
+ativação e no `secoes=` do `profile_autoswitch` — e, pela nota de parentesco
+daquela sprint, `trigger`/`led` com `ignorado_trava_manual` passam a ser
+**raros na rota manual** (a trava é limpa antes) e **frequentes** nas ativações
+do autoswitch e no restore de boot. **É por ali que a E2 se mede.**
 
 ## Defeito 1 — a categoria `audio` congela a troca automática de perfil INTEIRA
 

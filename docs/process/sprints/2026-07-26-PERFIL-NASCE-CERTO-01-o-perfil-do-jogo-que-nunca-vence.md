@@ -1,12 +1,96 @@
 # PERFIL-NASCE-CERTO-01 — o perfil do jogo nasce perdendo, e a janela não tem como consertar
 
-- **Status:** ABERTA
+- **Status:** **PARCIALMENTE PAGA** — reavaliado em 05/08/2026. Dizia **ABERTA**
+  até aqui, e o valor antigo fica registrado porque a mudança é datada, não uma
+  correção. **A E4 foi paga**; a E3 e o resto da E4 seguem abertos. Ver a
+  *"Nota datada"* logo abaixo
 - **Prioridade:** CRÍTICA — é a causa medida da queixa "o perfil do controle muda
   ao abrir o jogo", diagnosticada ao vivo em 26/07 com ela jogando
 - **Aberta em:** 26/07/2026, durante uma partida de Pragmata
+- **Índice:** [A leva dos perfis que se reescreviam sozinhos](2026-08-05-INDICE-a-leva-dos-perfis-que-se-reescreviam-sozinhos.md)
+  — esta sprint ficou **órfã de índice** entre 31/07 e 05/08, e isso é parte do
+  motivo de a E4 ter sido paga sem ninguém marcar
 - **Relação:** é a causa-raiz por trás de [PERFIL-JOGO-01](2026-07-26-PERFIL-JOGO-01-as-configs-somem-ao-abrir-o-jogo.md);
   aquela descreve o sintoma no daemon, esta descreve por que a configuração dela
   nunca chega lá. Absorve AUTO-03.1 e AUTO-03.2
+
+---
+
+## Nota datada — 05/08/2026: a entrega 4 foi paga (e o que dela NÃO foi)
+
+**Nada acima nem abaixo foi apagado.** O texto de 26/07 continua descrevendo o
+que foi medido naquele dia; esta nota registra o que mudou desde então.
+
+### O que existe hoje na árvore
+
+**Grau: MEDIDO**, por leitura dos três arquivos em 05/08.
+
+| peça | onde | o que faz |
+|---|---|---|
+| o detector | `src/hefesto_dualsense4unix/profiles/sanidade.py` | compara os perfis **entre si**, sem daemon e sem escrever: catch-all vencendo perfil específico, catch-all com cara de jogo, prioridades empatadas, prioridade fora da faixa, catch-all demais |
+| a superfície | `cli/cmd_doctor.py` — `doctor --perfis` (`:117`, `:135`) | bloco *"perfis (coerência entre eles)"*, **read-only**, e **sai com código 1** quando há achado grave — ou seja, **pode virar portão** |
+| o mesmo bloco no doctor completo | `cli/cmd_doctor.py:158` | quem só roda `doctor` uma vez por mês também ouve. **Não mexe no `rc`**, pela mesma política do bloco de storm |
+| a mordida | `tests/unit/test_profiles_sanidade.py` | **25 casos** |
+
+Isto é o **arranjo exato medido em 26/07** virado em detecção: o cenário
+`vitoria` any/100 + `pragmata` any/5 é o que o `_catch_all_vence_especifico`
+existe para acusar, e é o que a E5 desta sprint pedia.
+
+### O que da E4 continua ABERTO — e é a metade que o título dela nomeia
+
+A E4 diz *"um detector de armadilha, **rodando sozinho**"*, e detalha: *"na
+subida e ao salvar, e a avisar uma vez, com o botão que resolve"*.
+
+**Grau: MEDIDO** (`git grep`, 05/08):
+
+- **não roda na subida.** Nada no daemon chama `sanidade`. A função escrita
+  justamente para isso — `verificar_perfis_do_disco()` (`sanidade.py:353`), que
+  lê o disco sozinha — está exportada no `__all__` com **zero chamadores e zero
+  testes**. É a
+  [ENTREGA-QUE-NÃO-LIGOU-01](2026-08-03-ENTREGA-QUE-NAO-LIGOU-01-o-codigo-que-existe-e-ninguem-chama.md)
+  nascendo na mesma madrugada que a catalogou;
+- **não roda ao salvar.** O funil de gravação da janela
+  (`app/actions/profile_writer.py`) não consulta o detector;
+- **não tem superfície na janela.** A aba Perfis não mostra achado nenhum, e
+  **não existe o botão que resolve**;
+- **hoje o detector só existe para quem abre um terminal** — e a dona da máquina
+  não abre.
+
+**Leitura honesta:** o que foi entregue é a **regra** e o **instrumento**; o que
+falta é a **fiação**. É exatamente a forma de meia-entrega que esta casa passou
+a leva de 03/08 catalogando, e por isso o Status virou *parcialmente paga* e não
+*paga*.
+
+### O estado das outras quatro entregas, conferido no mesmo dia
+
+**Grau: MEDIDO no código; SEM PROVA de aceite em uso real** — nenhuma delas foi
+fechada com o olho dela.
+
+| entrega | estado | evidência |
+|---|---|---|
+| **E1** — nasce com a regra do jogo em foco | **existe** | `_aplicar_nascimento_com_jogo` (`profiles_actions.py:1108`) e `_prioridade_acima_dos_catch_all` (`:1844`) |
+| **E2** — o teto sobe de 100 para 200 | **existe** | `PRIORIDADE_MAXIMA = 200` (`:78`), consumido em `:1670` e `:1858` |
+| **E2/3** — a tela mostra a consequência | **existe** em parte | `vencedor_da_disputa` (`:221`) e `explicacao_da_disputa` (`:264`) |
+| **E3** — *"Neste jogo vai valer: X"* na aba Início | **ABERTA** | a frase não existe na árvore |
+| **E5** — teste que morde | **existe** para o detector | os 25 casos acima |
+
+### E duas armadilhas novas que esta sprint não previa
+
+As duas foram medidas na madrugada de 05/08 e vivem em sprints próprias. Estão
+aqui porque **mudam o valor prático da E1 e da E2**:
+
+1. **a escala satura no teto** (D-26): com qualquer catch-all ≥ 190, todo perfil
+   novo nasce exatamente em **200** e empata — e o desempate cai no incumbente ou
+   na **ordem alfabética do nome do arquivo**. O teto de 200 da E2 resolveu o
+   empate de 26/07 e **não** resolve o caso geral;
+2. **três números convivem** para o mesmo conceito *"nascer acima dos
+   catch-all"* — **15**, **`max(catch-all) + 10`** e os defaults **5 / 0**.
+   **Ninguém reconciliou os três** (DIV-7, aberta desde 25/07).
+
+**E o veto da casa continua valendo, e vale para esta sprint também:** os
+arquivos de perfil dela **não se tocam** sem a mão dela, inclusive *"só para
+normalizar"*. O detector **avisa e oferece** — nunca corrige sozinho, que é o
+que a entrega 4 já dizia em 26/07 e continua sendo a decisão certa.
 
 ## O relato dela
 
