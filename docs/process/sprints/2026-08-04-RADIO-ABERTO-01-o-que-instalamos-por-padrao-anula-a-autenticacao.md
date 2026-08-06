@@ -4,8 +4,44 @@
   agentes que investigava outra coisa
 - **Gravidade:** **MÁXIMA** — é o único item desta leva que pode terminar em
   execução de comando na máquina de quem instala
-- **Estado:** aberta
+- **Estado:** **PARCIALMENTE CURADA em 05/08/2026** — ver o quadro abaixo
 - **Pré-requisito:** nenhum
+
+> ## ESTADO DAS ENTREGAS — 05/08/2026
+>
+> | entrega | estado | onde |
+> |---|---|---|
+> | **E1** `JustWorksRepairing` deixa de ser `always` | **FEITA** — os três assets em `confirm` | `tests/unit/test_radio_aberto_01.py` |
+> | **E2** agente próprio, que autoriza por política | **ABERTA** — é o que de fato fecha o cenário | — |
+> | **E3** alarme de sobrescrita de LinkKey | **ABERTA** — depende do observador de `mgmt` | — |
+> | **E4-E6** blindagem do observador de `mgmt` | **N/A hoje** — *o observador não existe na árvore* (conferido por `grep`); as regras ficam para quem o escrever | política em `POLITICA-core-nunca-sai-da-maquina.md` |
+> | **E7** política do core escrita | **FEITA** | [a política](../POLITICA-core-nunca-sai-da-maquina.md) |
+> | **E8** o `--on` arma o próprio `--off` | **FEITA** — timer transitório de 8 h | `tests/unit/test_radio_aberto_e7_e9.py` |
+> | **E9** portão contra instrução de anexar core | **FEITA** | `tests/unit/test_radio_aberto_e7_e9.py` |
+> | **E10** restaurador recusa symlink e nome fora do conjunto | **FEITA** — validação + cópia por conteúdo | `tests/unit/test_radio_aberto_e10.py` |
+>
+> ### A honestidade sobre a E1, e ela importa
+>
+> **`confirm` sozinho NÃO fecha o buraco.** Ele devolve ao BlueZ a decisão de
+> perguntar — mas quem responde é o agente, e o agente padrão hoje é o
+> `bt-agent` genérico com `NoInputNoOutput`, que autoriza. A E1 remove o
+> *"sempre aceita, sem nem perguntar"*; **a E2 continua sendo a entrega que
+> fecha o cenário**, e segue aberta.
+>
+> ### O que a E10 ganhou de brinde
+>
+> A validação virou o modo **`bt_bonds_restore.sh --verificar <ts>`**, que
+> confere um snapshot **sem parar o `bluetooth.service`** — e roda antes do
+> `stop` no caminho de restauração. Um snapshot recusado deixou de custar a ela
+> os controles conectados.
+>
+> ### Falso positivo pago na primeira execução do portão E9
+>
+> O primeiro regex casava `post\w*` dentro de *"res**post**a"* e `core` dentro
+> do caminho `core/led_control.py`. **O portão reprovou um documento inocente
+> de julho.** Corrigido com fronteira de palavra, exclusão de `core/` e proibição
+> de atravessar ponto final — e o caso está registrado no próprio teste, porque
+> é a armadilha que qualquer varredura por palavra-chave nesta casa vai repetir.
 
 > ### PRECISÃO ANTES DE TUDO — o que está e o que NÃO está em vigor
 >

@@ -49,7 +49,7 @@ com o grau de confiança de cada linha.
 
 | medida | valor | o que quer dizer |
 |---|---|---|
-| testes | **6792**, 0 skips, 1 vermelho | o vermelho é o SVG do logo sem regerar ícones |
+| testes | **6829**, 1 skip, **0 vermelhos** (medido 05/08) | o vermelho do SVG do logo já não existe; era 6792/1 vermelho em 03/08 |
 | erros no journal da sessão | **zero** | nada levanta exceção |
 | avisos na sessão | **35** | é aqui que a noite dela está |
 
@@ -82,13 +82,13 @@ desta leva entregam **bancada de integração**, não só correção.
 
 | # | sprint | prioridade | causa-raiz | precisa dela? |
 |---|---|---|---|---|
-| 1 | [BT-SURDO-01](2026-08-03-BT-SURDO-01-o-controle-parado-no-radio-nao-recebe-ordem.md) | **MÁXIMA** | provada; a premissa exige a E0 | **sim** — 10 s de medição |
+| 1 | [BT-SURDO-01](2026-08-03-BT-SURDO-01-o-controle-parado-no-radio-nao-recebe-ordem.md) | ~~MÁXIMA~~ **MÉDIA** | premissa **refutada** (E0 medida); E2/E3/E4 seguem | **não** — já medida |
 | 2 | [COOP-QUE-NÃO-DESMONTA-01](2026-08-03-COOP-QUE-NAO-DESMONTA-01-o-jogador-2-que-dura-dois-segundos.md) | ALTA | **provada**, 3 elos | não |
 | 3 | [PS-TOQUE-CURTO-01](2026-08-03-PS-TOQUE-CURTO-01-o-gesto-de-religar-o-controle-abre-a-steam.md) | ALTA | **provada** | não |
 | 4 | [ÁUDIO-QUE-TRANCA-01](2026-08-03-AUDIO-QUE-TRANCA-01-um-toque-no-volume-congela-a-troca-de-perfil.md) | ALTA | **provada**, 3 defeitos | só a E5 (decisão) |
-| 5 | [BORDA-DE-QUEDA-01](2026-08-03-BORDA-DE-QUEDA-01-o-que-fica-para-tras-quando-um-controle-cai.md) | ALTA | 1 suspeita forte + 2 provados | confirmação em campo |
+| 5 | [BORDA-DE-QUEDA-01](2026-08-03-BORDA-DE-QUEDA-01-o-que-fica-para-tras-quando-um-controle-cai.md) | ALTA | **os 3 provados** — o rumble preso foi reproduzido | **não** — livre para executar |
 | 6 | [POSSE-POR-CONTROLE-01](2026-08-03-POSSE-POR-CONTROLE-01-a-trava-de-um-controle-congela-os-quatro.md) | ALTA | **provada**, 4 defeitos | só a E2 (decisão) |
-| 7 | [ENTREGA-QUE-NÃO-LIGOU-01](2026-08-03-ENTREGA-QUE-NAO-LIGOU-01-o-codigo-que-existe-e-ninguem-chama.md) | ALTA | **provada** por `grep` | a E2 (o tato) |
+| 7 | [ENTREGA-QUE-NÃO-LIGOU-01](2026-08-03-ENTREGA-QUE-NAO-LIGOU-01-o-codigo-que-existe-e-ninguem-chama.md) | ALTA | **provada** por `grep`; defeito 2 **refutado** em 05/08 | **não** — o tato foi pago |
 | 8 | [DOC-QUE-NÃO-MENTE-03](2026-08-03-DOC-QUE-NAO-MENTE-03-a-foto-vazia-a-env-negada-e-a-tag-velha.md) | MÉDIA (E5 ALTA) | **medida** | não |
 | 9 | [WRAPPER-EM-TODOS-01](2026-08-03-WRAPPER-EM-TODOS-01-a-invariante-duplicado-melhor-que-zero-com-quatro.md) | **ALTA e urgente** | **provada** | confirmação em campo |
 | 10 | [BT-FURO-FINO-01](2026-08-03-BT-FURO-FINO-01-os-sete-caminhos-que-so-degradam-no-radio.md) | ALTA (def. 1-2) | **provada**, 7 defeitos | não |
@@ -123,23 +123,36 @@ ligados**, e duas delas **curaram defeito de verdade na mesma noite**.
 
 ## A ordem de execução, e por que ela é essa
 
-### Antes de tudo: as três medições de dez segundos
+### Antes de tudo: as medições de dez segundos — TODAS PAGAS EM 05/08
 
-Elas destravam três sprints e **não exigem terminal** em dois dos casos. Se ela
-fizer só isto, a leva inteira ganha chão:
+> **NÃO PEÇA ESTAS MEDIÇÕES A ELA DE NOVO.** Esta seção mandava fazer quatro,
+> e em 05/08 a conferência contra as próprias sprints mostrou que **as quatro
+> já estavam respondidas** — três delas desde 03/08. Um planejamento por este
+> índice ia gastar o tempo dela refazendo o que já estava pago, que é o
+> mecanismo exato que a `DOC-QUE-NÃO-MENTE-03` catalogou, reincidindo **neste
+> arquivo**.
 
-1. **O rádio emudece?** (`BT-SURDO-01`/E0) — controle BT parado na mesa:
-   `sudo timeout 60 cat /dev/hidrawN | wc -c`. Zero bytes prova a sprint 1
-   inteira. *Precisa de `sudo`: o broker deixa o nó em `0600 root`.*
-2. **"Desligar" desfaz "Rígido"?** (`ENTREGA-QUE-NÃO-LIGOU-01`/E2) — aplicar
-   Rígido com força alta em L2, sentir, aplicar Desligado, sentir. **Só o tato.**
-3. **O rumble para quando o controle sai?** (`BORDA-DE-QUEDA-01`) — dois
-   controles no BT, jogo vibrando, **desligar** o Controle 2. Se o motor
-   continuar ~3 s, provado. **Só o tato.**
+| medição | resultado | onde está o registro |
+|---|---|---|
+| **O rádio emudece?** (`BT-SURDO-01`/E0) | **REFUTADA** — ~300 Hz com o controle parado; 1.402.128 bytes em 60 s | topo da `BT-SURDO-01` |
+| **"Desligar" desfaz "Rígido"?** (`ENTREGA-QUE-NÃO-LIGOU-01`/E2) | **REFUTADA** — `Rigid` *"duro"*, `Off` (`0x00`) *"soltou"* | defeito 2 da `ENTREGA-QUE-NÃO-LIGOU-01` |
+| **O rumble para quando o controle sai?** (`BORDA-DE-QUEDA-01`) | **CONFIRMADA** — *"desliga sozinho e o controle branco segue vibrando"* | topo da `BORDA-DE-QUEDA-01` |
+| **A lightbar por BT** (`LIGHTBAR-BT-CLAIM-01`) | **CADUCOU** — e a cura proposta lá **apaga** a barra: não execute | topo da `LIGHTBAR-BT-CLAIM-01` |
 
-E a que continua valendo da leva anterior: **o experimento de dez segundos da
-[LIGHTBAR-BT-CLAIM-01](2026-08-02-LIGHTBAR-BT-CLAIM-01-a-barra-apagada-com-o-sysfs-certo.md)**,
-que é o portão para qualquer cura de lightbar por Bluetooth.
+**O que cada refutação mudou:**
+
+- a `BT-SURDO-01` perdeu a prioridade máxima e a E1; sobraram E2, E3 e E4, que
+  são defeitos de código independentes da premissa;
+- a `ENTREGA-QUE-NÃO-LIGOU-01` teve o defeito 2 encolhido a símbolo órfão — e a
+  medição **pagou o aceite** que a `TRIGGER-CANON-01` deixou em aberto (os sete
+  presets curados foram sentidos);
+- a `BORDA-DE-QUEDA-01` está **livre para executar**, sem depender de mais nada.
+
+**A medição de 05/08 rendeu um defeito novo, achado fora do roteiro:** a
+[TRAVA-QUE-SOLTA-TARDE-01](2026-08-05-TRAVA-QUE-SOLTA-TARDE-01-o-gesto-explicito-e-vitima-da-propria-trava.md)
+— os dois gestos explícitos de troca de perfil limpavam a trava manual **depois**
+de aplicar o perfil, e por isso aplicavam o perfil pela metade. **Cura aplicada,
+com teste que morde.**
 
 ### Depois, na ordem
 
@@ -181,13 +194,16 @@ momento, e a E5 dela (o portão contra símbolo órfão) protege todas as outras
 
 ## Se for executar UMA só
 
-**`BT-SURDO-01`** — mas só depois da E0. É a única que pode explicar a classe
-inteira de *"mexi na janela e não aconteceu nada no Bluetooth"*, e a única cuja
-premissa ainda não foi medida com número.
+> **Atualizado em 05/08.** Esta seção mandava a `BT-SURDO-01` *"só depois da
+> E0"*. **A E0 foi feita e refutou a premissa** — então vale a instrução que a
+> própria seção já dava para esse caso, com uma anterior a ela.
 
-**Se a E0 refutar** (o rádio não emudece), então execute a
-**`COOP-QUE-NÃO-DESMONTA-01`**: ela tem causa-raiz provada em três elos, e o
-ciclo dela está inteiro no journal.
+**`RADIO-ABERTO-01`**, do adendo de 04/08, e sem discussão: é a única desta leva
+inteira cujo pior caso não é um controle que não funciona.
+
+**Depois dela, `COOP-QUE-NÃO-DESMONTA-01`** — que é o que esta seção já mandava
+fazer se a E0 refutasse: causa-raiz provada em três elos, e o ciclo inteiro no
+journal.
 
 ---
 

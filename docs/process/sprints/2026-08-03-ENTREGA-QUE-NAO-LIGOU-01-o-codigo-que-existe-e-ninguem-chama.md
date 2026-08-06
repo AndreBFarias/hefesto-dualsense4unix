@@ -79,6 +79,49 @@ report **saia**. É uma mordida na metade errada da cadeia.
 
 ## Defeito 2 — `DESLIGADO_OFICIAL` foi criado e nunca usado; "Desligar" pode não desfazer
 
+> ### MEDIDO EM 05/08/2026 — A PARTE GRAVE FOI REFUTADA
+>
+> **"Desligar" DESFAZ "Rígido".** A E2 fez o que devia: impediu que se
+> escrevesse código sobre uma suspeita que o fio não confirma.
+>
+> Medido com a mão dela, no controle por USB, com o daemon vivo e **tudo pelo
+> IPC** (`trigger.set`, nunca `--raw` — o instrumento que briga com o produto):
+>
+> | passo | o que foi ao fio | o tato dela |
+> |---|---|---|
+> | `Rigid` posição 0, força 255 | `0x21` + as dez zonas ativas | *"duro"* |
+> | `Off` | **`0x00`** | *"soltou"* |
+>
+> **O `0x00` é um OFF que o firmware honra.** O passo C (mandar `0x05` por
+> `Custom`, que o IPC aceita) ficou dispensado: não havia mais o que decidir.
+>
+> **O que CAI:** a suspeita de que "Desligar" não desfaz — e com ela a urgência
+> desta seção.
+>
+> **O que CONTINUA VÁLIDO:**
+>
+> - **`DESLIGADO_OFICIAL = 0x05` segue órfão** (definido, zero uso em `src/`).
+>   Vira dívida de símbolo morto — que é exatamente o que a **E5** desta sprint
+>   já propõe portar. A E5 não muda;
+> - **o agravante 1 é o que sobrou de grave:** não há reset de gatilho ao
+>   desconectar nem ao parar o daemon. Um controle que cai fica com o gatilho no
+>   estado em que estava, e por Bluetooth isso é rotina.
+>
+> **E a medição pagou uma dívida de OUTRA sprint:** o agravante 3 dizia que *"os
+> bytes novos nunca foram sentidos"*, e a `TRIGGER-CANON-01` fechou pedindo
+> justamente isso (*"o próximo passo honesto é ela sentir os sete presets
+> curados… este é o aceite que falta"*). **O `Rigid` curado endureceu no fio.
+> O aceite está pago.**
+>
+> **E rendeu um defeito novo, achado ao restaurar o perfil dela:**
+> [TRAVA-QUE-SOLTA-TARDE-01](2026-08-05-TRAVA-QUE-SOLTA-TARDE-01-o-gesto-explicito-e-vitima-da-propria-trava.md)
+> — e ele é da MESMA família desta sprint: mais uma entrega declarada
+> (`SOM-02/E4`) que a ordem do código impedia de acontecer.
+>
+> Nota de proveniência: a referência canônica lista `0x05 = Off (oficial)` e
+> **não listava o `0x00`**. Passou a listar, com grau **MEDIDO AQUI**
+> (`docs/protocol/dualsense-referencia-canonica.md` §4).
+
 **Nasceu no commit `36caa11`** (os sete presets de gatilho curados).
 
 `core/trigger_effects.py:109` acrescentou:
