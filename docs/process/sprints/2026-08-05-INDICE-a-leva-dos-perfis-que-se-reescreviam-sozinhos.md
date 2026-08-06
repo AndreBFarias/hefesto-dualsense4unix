@@ -26,6 +26,26 @@ seção, e **não herda** o grau das sprints que cita.
 
 ## ANTES DE TUDO: a leva inteira está SEM COMMIT
 
+> **NOTA DATADA — 05/08/2026, 22h. CADUCOU: a leva FOI COMMITADA.** Quatro
+> commits no `restauro/inicio-da-sessao`, nesta ordem: `c3829c7` (o código e os
+> testes), `2342743` (as sete sprints e este índice), `10f4818` (a unificação do
+> predicado `steam_app_`) e `bb98278` (a ferramenta de fotografar diálogo e as
+> cinco fotos). Árvore limpa, **7017 verdes / 1 skipped**, e os oito validadores
+> da casa em zero.
+>
+> O texto abaixo **não se apaga** porque a lição dele não caducou: a leva passou
+> horas a um `git reset --hard` de sumir, e só foi descoberta porque ela
+> perguntou *"tudo foi salvo?"*. Um `git status` com tudo em `A `/`M ` **parece**
+> trabalho salvo, e não é — é o índice, não a história.
+>
+> **O bloqueante nº 2 também caducou, e melhor do que o previsto:** o daemon foi
+> reiniciado em 05/08 às 22:39:45 (PID 298882), sem jogo em curso e com um
+> DualSense na mesa. O journal do primeiro segundo já traz
+> `profile_suppression_skipped motivo=catch_all_sem_opiniao` — o item 2 da
+> `PERFIL-REESCRITO-NA-PARTIDA-01` trabalhando na máquina dela, MEDIDO, não
+> inferido. **O que sobrou não é código, é DADO:** ver a seção nova
+> "O estrago que ficou no disco dela", ao fim deste índice.
+
 > **Grau: MEDIDO**, por `git diff --cached --shortstat` em 05/08, ao escrever
 > este arquivo.
 
@@ -559,3 +579,62 @@ acrescentaram. **Cada item foi pago com um defeito real, e mexer é regressão:*
 7. a regra de aceite de interface continua sendo a
    [PROVA-DE-TELA-01](2026-07-27-PROVA-DE-TELA-01-dez-minutos-de-olho-antes-de-qualquer-leva.md):
    foto antes e depois, e a palavra final é dela.
+
+---
+
+## O ESTRAGO QUE FICOU NO DISCO DELA — a cura não desfaz o passado
+
+> **Grau: MEDIDO**, por `hefesto-dualsense4unix doctor --perfis` rodado contra a
+> pasta de perfis real dela em 05/08/2026 às 22h40, com o daemon já reiniciado
+> no código curado. Saída **1**, como o comando promete quando há achado grave.
+
+Esta é a lição que a leva inteira quase deixou passar: **as sete curas impedem
+que o estrago volte a acontecer, e nenhuma delas conserta o estrago já feito.**
+O código está são; os arquivos dela, não.
+
+O que o verificador acusa hoje, na máquina dela:
+
+| grau | perfil | achado |
+|---|---|---|
+| **FAIL** | `sackboy_nativo` | vale para QUALQUER janela em prioridade **191** — igual ou acima de dez perfis que têm alvo próprio |
+| WARN | `sackboy_nativo` | catch-all que ainda pede modo de jogo — o retrato de um perfil que PERDEU a regra |
+| WARN | `vitoria` | idem |
+| WARN | `Pragmata` | catch-all com nome de programa — perdeu a regra |
+| WARN | — | **quatro** perfis casam com qualquer janela e disputam a mesma vaga: `Pragmata` (5), `meu_perfil` (1), `sackboy_nativo` (191), `vitoria` (0) |
+| WARN | — | três empates de prioridade: `fallback`/`vitoria` em 0, `Corrida`/`Esportes` em 55, `FPS`/`point_and_click` em 60 |
+
+O `sackboy_nativo` é o caso exemplar, e o asset de fábrica prova o que ele era:
+`assets/profiles_default/sackboy_nativo.json` é `criteria` com
+`window_class: ["steam_app_1599660"]` e prioridade 80. No disco dela virou
+`MatchAny` com 191. **É literalmente o inverso do que ela pediu:** perde dentro
+do Sackboy (o veto R-21 recusa catch-all em janela de jogo) e vence no desktop
+inteiro, carregando a supressão de emulação junto.
+
+### Por que não se conserta por script
+
+Três caminhos, e o terceiro é o único honesto:
+
+1. **Restaurar do asset de fábrica** — apagaria os ajustes que ela fez desde
+   então (gatilhos, lightbar, som). O perfil está corrompido na REGRA, não no
+   resto.
+2. **Adivinhar a regra pelo nome** — `sackboy_nativo` sugere o appid, mas
+   `vitoria` e `Pragmata` não sugerem nada verificável. Adivinhar aqui é
+   inventar configuração dela, que é a raiz da queixa original.
+3. **`profile historico`** — a cura certa, e ela existe desde a
+   `PERFIL-SEM-RASTRO-01` desta mesma leva. As versões anteriores de cada perfil
+   estão em `profiles/.historico/<slug>/`, e `profile restore --em <carimbo>`
+   devolve os bytes originais. **Mas o histórico só grava a partir de 05/08** —
+   as versões de antes da cura não existem. Para os perfis já corrompidos, o
+   histórico não alcança.
+
+**Então isto é trabalho DELA, com a janela aberta, e não trabalho de script.** A
+receita que o próprio verificador imprime já diz o que fazer perfil a perfil, em
+português: dar o alvo de volta na aba Perfis, ou declarar
+`"match": {"type": "manual"}` para quem ela só ativa na mão, ou baixar para a
+prioridade 0 quem é de desktop.
+
+**O que a casa deve a ela aqui, e ainda não pagou:** o verificador só existe no
+terminal. Nada no daemon o chama, nada na janela o mostra — é a entrega 4 da
+`PERFIL-NASCE-CERTO-01`, marcada como PARCIALMENTE PAGA justamente por isso. Uma
+pessoa que não abre terminal **não tem como descobrir** que quatro perfis dela
+perderam a regra.
