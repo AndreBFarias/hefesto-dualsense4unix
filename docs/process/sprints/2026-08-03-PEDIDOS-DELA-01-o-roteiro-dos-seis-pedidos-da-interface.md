@@ -27,6 +27,31 @@
 
 ## Pedido 1 — o co-op perde o interruptor
 
+> **CUMPRIDO em 06/08/2026** — as sete entregas abaixo estão de pé, **na ordem
+> escrita**, e a ordem foi a entrega: o gesto de recuperação ganhou dono
+> (entrega 5, o IPC novo `coop.sync` no botão **"Reconciliar jogadores"**)
+> **antes** de o botão sair (entrega 6). Onde cada uma mora:
+>
+> | # | entrega | onde |
+> |---|---------|------|
+> | 1 | o piso vira ligado | `daemon/lifecycle.py` (`DaemonConfig.coop_enabled = True`), e o boot **deixou de reler** o opt-out — o sósia da cura morreu junto |
+> | 2 | `coop.set {enabled:false}` recusa em voz alta | `daemon/ipc_handlers.py::_handle_coop_set` (`status: "recusado"`, `players` preservado) |
+> | 3 | a persistência vira lápide | `utils/session.py` — `save_coop_enabled` só APAGA, `load_coop_enabled` devolve `True` |
+> | 4 | perfil deixa de governar | `daemon/lifecycle.py` (o campo continua LIDO; `profiles/schema.py` ganhou a nota de "aceito e ignorado") |
+> | 5 | o gesto perdido ganha dono | IPC `coop.sync` + `app/actions/home_actions.py::_on_home_reconciliar_clicked` |
+> | 6 | o botão sai | `gui/main.glade` (lápide) — a aba Início é 100% código |
+> | 7 | a frase entra no lugar | `_format_players_hint`, contando do `state_full` |
+>
+> **Além do roteiro, e medido:** o botão "Reconciliar jogadores" **deixou de ser
+> desabilitado com jogo aberto**. O gate antigo estava certo enquanto o gesto só
+> renumerava (o daemon recusa renumerar em partida); deixou de estar quando o
+> botão herdou a reconciliação — o P2 cai DURANTE a partida, e esconder ali o
+> gesto seria escondê-lo na hora exata do defeito.
+>
+> **Ainda em aberto, e a prioridade continua alta:** isto NÃO cura o "P2 que
+> dura dois segundos" — só dá a ela um gesto para desfazê-lo. A dona segue sendo
+> a [COOP-QUE-NÃO-DESMONTA-01](2026-08-03-COOP-QUE-NAO-DESMONTA-01-o-jogador-2-que-dura-dois-segundos.md).
+
 **Melhora a `AUTO-01`** (`2026-07-25-AUTO-01-um-clique-em-vez-de-dez.md`), com o
 item **AUTO-01.2-b (03/08)**.
 
