@@ -60,6 +60,21 @@ Conserto: um botão **"Preparar co-op (N jogadores)"** na aba Início encadeando
 modo de jogo, ativação do co-op e renumeração. **Todo o IPC necessário já
 existe** — é ligação, não implementação.
 
+> **NOTA DATADA (06/08/2026) — o botão SAIU, e a entrega não foi desfeita: foi ao
+> limite.** Decisão dela, tomada mais de uma vez: *"todos e tudo no Hefesto tem
+> que tá com o permitir co-op ligado (…) se eu conecto 4 controles no PC eu
+> espero, com 4 pessoas jogando, que cada um controle o próprio personagem"*.
+> Preparar o co-op deixou de ser um gesto porque **o co-op deixou de ser uma
+> opção**: o piso do daemon nasce ligado, `coop.set {enabled:false}` recusa em
+> voz alta e o perfil parou de governar o campo.
+>
+> O que este item tinha de insubstituível — o **ciclo FORÇADO** do co-op, que o
+> botão alcançava de carona no `coop.set` — mudou de dono **antes** da remoção:
+> virou o IPC `coop.sync`, no botão **"Reconciliar jogadores"** da mesma aba.
+> Sem essa ordem, tirar o botão tiraria dela o gesto de recuperação do "P2 que
+> dura dois segundos". Roteiro:
+> [PEDIDOS-DELA-01, pedido 1](2026-08-03-PEDIDOS-DELA-01-o-roteiro-dos-seis-pedidos-da-interface.md).
+
 ### AUTO-01.3 — o preset de co-op perde para sete outros perfis
 
 Prioridades semeadas de fábrica:
