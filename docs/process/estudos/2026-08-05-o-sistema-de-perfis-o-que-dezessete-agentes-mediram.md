@@ -477,6 +477,14 @@ ligados, o `--apply` **fecha e reabre a Steam dela para não mudar nada** e emit
 `resultado=aplicado`, que a janela traduz para *"a Steam não sequestra mais o seu controle"*
 (`daemon_actions.py:319-320`). **Foi literalmente o que aconteceu às 02:13:13.** Correção de uma linha.
 
+> **CURADO em 05/08/2026.** O pré-voo passou a usar `needs_real_fix` — nos **dois** modos que
+> aplicam, não só no `--apply`: a medição refeita mostrou que a tag `resultado=aplicado` das
+> 02:13:13 saiu do **`--apply-quiet`** (é o modo do `hefesto-steam-input-guard.timer`, e o único
+> que emite `adiado-steam-aberta`, tag das 02:43 e 03:13). Corrigir só o `--apply` deixaria de pé
+> a metade que chega à janela pelo botão "Aplicar correções". Bancada e mordida em
+> `tests/unit/test_steam_input_honestidade.py::TestPreVooNaoFechaSteamAToa` (com a contraprova de
+> que um appid FORA da allowlist ainda fecha a Steam e ainda é zerado).
+
 #### D-33 — As três mensagens contam arquivos, não jogos
 
 - `integrations/storm_doctor.py:151-155`: *"Steam Input LIGADO em 1 perfil(is) fora da allowlist —
@@ -486,6 +494,23 @@ ligados, o `--apply` **fecha e reabre a Steam dela para não mudar nada** e emit
 
 Nenhuma sabe **de qual jogo** fala; todas chamam a escolha dela de *conflito*; e mandam clicar num
 botão que **apaga exatamente a escolha que ela tomou**. É a queixa dela, provada.
+
+> **CURADO em 05/08/2026.** As três nomeiam o jogo por appid, e pelo NOME quando a Steam tem o
+> `appmanifest_<appid>.acf` em disco — a tradução existia (`cli/cmd_steam.nome_do_appid`) mas
+> morava atrás do `import typer`, inalcançável para o doctor e para a janela; mudou para
+> `integrations/steam_launch_options` (`rotulo_do_jogo`, `lista_de_jogos`). Sem manifest, o appid
+> **cru** é a resposta — nome inventado, nunca. A palavra "conflito" saiu das três, e a mensagem do
+> doctor passou a apontar, para caso de JOGO, o botão que **preserva** a escolha dela ("Este jogo
+> não funciona"); o `'Aplicar correções'` continua sendo o ponteiro do ajuste **global** da Steam,
+> que não é escolha por jogo. Mordidas em `tests/unit/test_steam_input_d33_nomeia_o_jogo.py` e nos
+> dois testes de fio em `tests/unit/test_steam_modo_simples.py`.
+>
+> Duas coisas que a cura teve de respeitar e que não estavam neste estudo: (1) o toast do "Deixar
+> tudo pronto" não pode pronunciar o jargão *"Steam Input"* (FEAT-STEAM-SIMPLES-01), então a frase
+> nova fala em *"o controle de X voltou a ser entregue pelo Hefesto"*; (2) o script não relata
+> appid nenhum na saída — quem mede é a GUI, **antes** de rodar, porque depois o `vdf` já foi
+> zerado. Nota datada do que caducou: o `assert "não sequestra mais" in msg` de
+> `test_steam_modo_simples.py::test_aplicado_relata_o_que_mudou`.
 
 #### D-34 — Não existe critério técnico por jogo, e a lista tem um escritor só
 
