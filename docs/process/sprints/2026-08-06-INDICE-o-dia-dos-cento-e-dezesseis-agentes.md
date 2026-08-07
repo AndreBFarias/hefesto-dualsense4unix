@@ -166,6 +166,14 @@ isso é uma leva própria, e está registrado aqui para não se perder de novo.
 | [REGRA-NAO-REGISTRO-01](2026-08-06-REGRA-NAO-REGISTRO-01-o-8bitdo-e-um-so-e-o-defeito-e-de-todo-mundo.md) | a regra genérica da identidade dupla |
 | [JOGOS-QUE-ELA-TEM-01](2026-08-06-JOGOS-QUE-ELA-TEM-01-escolher-da-biblioteca-em-vez-de-adivinhar-o-numero.md) | escolher o jogo da biblioteca em vez de digitar o número |
 | [CONTROLE-SONY-MEDIDO-01](2026-08-06-CONTROLE-SONY-MEDIDO-01-o-experimento-que-decide-metade-da-doutrina.md) | a doutrina nova, propagada aos documentos que a contradiziam |
+| [APPLET-MONOCROMÁTICO-01](2026-08-07-APPLET-MONOCROMATICO-01-o-icone-que-destoa-do-painel.md) | **executada em 07/08**, menos duas escolhas dela: **qual desenho** (o aro com o martelo que ela propôs, ou a bigorna de 27/06) e **se o applet nativo volta à barra**. Falta também a prova de tela |
+
+> **NOTA DATADA — 07/08/2026.** A `APPLET-MONOCROMÁTICO-01` nasceu **depois**
+> deste índice, do olho dela na própria barra, e por isso não está em nenhuma
+> das listas acima. Fica pendurada aqui, como manda a casa. O que ela mediu
+> vale para quem mexer em ícone: **PNG nunca é recolorido pelo tema**, e
+> contorno feito com `stroke` + `fill="none"` **vira um disco chapado** quando
+> o GTK recolore — as duas coisas foram reproduzidas.
 
 ---
 

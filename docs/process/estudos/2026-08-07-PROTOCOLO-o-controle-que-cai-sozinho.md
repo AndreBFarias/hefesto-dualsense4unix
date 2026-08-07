@@ -168,8 +168,16 @@ E há uma consequência de produto embutida, que vale mesmo se a hipótese cair:
 **nada nesta máquina deixa o controle dormir** (seção 2), então ele fica ligado a
 noite inteira; a única pista que ela recebe é *"desligou sozinho"*.
 
-**O estado do instrumento, conferido agora.** Ninguém grava carga ao longo da
-sessão:
+> **NOTA DATADA — 07/08/2026, 15h45: o instrumento passou a existir.** O que
+> caduca aqui é **só** a frase *"ninguém grava carga ao longo da sessão"* — e
+> nada mais desta página. O daemon agora escreve a carga no journal
+> (`src/hefesto_dualsense4unix/daemon/battery_journal.py`); a leitura das duas
+> réguas, a cadência e a linha da queda estão na seção 8, escrita abaixo. A
+> lista de ausências que segue fica registrada porque é o **antes** desta
+> medição: sem ela, ninguém entende por que a Q-1 nasceu indecidível.
+
+**O estado do instrumento, conferido na escrita desta página (07/08, começo da
+tarde) — o ANTES.** Ninguém gravava carga ao longo da sessão:
 
 - o daemon **lê** a bateria por controle (`core/backend_pydualsense.py`, no
   handle do pydualsense) e publica `BATTERY_CHANGE` em `daemon/lifecycle.py:3744`
@@ -398,10 +406,14 @@ Três buracos, todos **MEDIDOS como ausência**, todos baratos. Ficam aqui como
 **pendência**, não como entrega: a regra da casa é *não entregue mudança que ela
 não pediu*, e ela relatou sem pedir conserto.
 
-1. **Nenhuma linha de bateria no journal.** `daemon/lifecycle.py:3744` e `:3825`
-   publicam `BATTERY_CHANGE` e incrementam `battery.change.emitted`, e **nada
-   loga**. GRAU: MEDIDO. É por isso que a hipótese mais forte deste documento não
-   pode ser nem fechada nem morta sem um amostrador externo.
+1. ~~**Nenhuma linha de bateria no journal.**~~ **ENTREGUE em 07/08/2026, 15h45
+   — ver a seção 8.** O texto original fica registrado porque é o diagnóstico
+   que gerou a entrega: *"`daemon/lifecycle.py:3744` e `:3825` publicam
+   `BATTERY_CHANGE` e incrementam `battery.change.emitted`, e nada loga. GRAU:
+   MEDIDO. É por isso que a hipótese mais forte deste documento não pode ser nem
+   fechada nem morta sem um amostrador externo."* O amostrador externo da Q-1
+   **continua valendo** — ele é a segunda leitura independente do mesmo nó, e
+   sobrevive a um reinício do daemon.
 2. **Um nome só para três fenômenos.** `daemon/connection.py:468` carimba
    `probe_offline` em cabo que saiu, `bluetoothd` que morreu e link que se perdeu.
    GRAU: MEDIDO. Separar os nomes é o que faria "três por dia" parar de parecer um
@@ -427,6 +439,18 @@ não pediu*, e ela relatou sem pedir conserto.
   está.
 - **O `upower` não é régua.** Quatro amostras para este controle, nenhuma no fim
   da sessão. GRAU: MEDIDO.
+- **E o `upower` tem um SÓSIA — a armadilha nova de 07/08.** O gamepad virtual do
+  Hefesto tem `power_supply` próprio, sob um endereço forjado que começa em
+  `02:fe`, e o `upower` guarda o histórico dele **ao lado** do histórico do
+  controle de verdade, com o nome `DualSense Wireless Controller (Hefesto P1)`.
+  A carga dele **não é a do controle**: nenhum ponto do daemon chama
+  `forward_battery`, e o padrão do vpad, escrito na docstring do método
+  (`integrations/uhid_gamepad.py`), é anunciar carga fixa. GRAU: MEDIDO para o
+  nó existir e para a ausência de caller; SEM PROVA para o que produziu cada
+  amostra daquele arquivo. Consequência prática: **quem ler o `upower` sem
+  conferir o endereço pode medir o vpad e concluir "bateria no fim" com o
+  controle cheio.** O diário da seção 8 não cai nisto — ele lê o nó pelo
+  endereço do controle FÍSICO que o backend reporta.
 - **O `bluetoothctl` está mudo nesta máquina** — `show`, `list` e `devices`
   devolvem vazio com saída 0 enquanto o D-Bus responde tudo. GRAU: MEDIDO para o
   sintoma, SEM PROVA para a causa. Nenhum passo pode depender dele; usar `busctl`.
@@ -449,7 +473,133 @@ não pediu*, e ela relatou sem pedir conserto.
 - **1** hipótese refutada e datada nesta página: o sono por inatividade.
 - **1** hipótese viva, com mecanismo e sem prova fechada: a bateria.
 - **3** medições nesta fila; **1** delas decide, e cabe numa noite.
+- **1** entrega de instrumento fechada no mesmo dia: o daemon grava a bateria
+  (seção 8). A Q-1 deixou de ser indecidível **por falta de instrumento**.
 
 E a regra que este documento serve para lembrar: **hipótese tem de explicar o que
 JÁ funcionava**. Duas sessões de mais de quinze horas são exatamente isso — o que
 já funcionava — e é por elas que a explicação mais cômoda morreu.
+
+---
+
+## 8. O diário da bateria — entrega 1, fechada em 07/08/2026
+
+**O que mudou.** O daemon passou a escrever a carga no journal. Código em
+`src/hefesto_dualsense4unix/daemon/battery_journal.py`, fiado no tique lento do
+poll loop (`daemon/lifecycle.py`) e nas **duas** bordas de desconexão
+(`daemon/connection.py`, `probe_offline`; e o caminho de erro de leitura do
+próprio poll loop). Testes em `tests/unit/test_bateria_no_journal.py`.
+
+### 8.1 As duas réguas, sempre na mesma linha
+
+Regra da casa: todo instrumento declara contra o que mede. Cada amostra sai com
+`pct_kernel` (o nó `capacity` do `hid-playstation`, com o `status` irmão) e
+`pct_handle` (a leitura própria do handle da pydualsense, a mesma que alimenta a
+janela), mais `fonte=kernel|handle` dizendo qual das duas mandou na faixa. Se as
+duas discordarem em mais de um degrau, **o resultado é sobre o instrumento** — a
+nota de instrumento da Q-1 continua valendo palavra por palavra, e agora ela é
+verificável sem ninguém na cadeira.
+
+### 8.2 A cadência, e por que ela é esta
+
+| opção | o que dá | por que não |
+|---|---|---|
+| a cada tique (60 Hz) | ~5,2 milhões de linhas/dia | a bateria some no ruído do journal |
+| no `BATTERY_CHANGE` que já existe | ~17 mil linhas/dia | o debounce dispara a cada 5 s **mesmo sem mudança** |
+| só na queda | 1 linha por queda | **perde a CURVA**, que é o que decide entre bateria e link |
+
+O que ficou: **sonda a cada 30 s** e **linha só quando há o que dizer** —
+`abertura` (a primeira leitura de cada controle), `faixa` (mudou de faixa, com
+`borda=queda` ou `borda=subida`), `status` (o `status` do kernel mudou: é a
+borda do cabo entrando ou saindo) e `ancora` (a cada 30 min mesmo parado, para
+que *"curva reta"* não se confunda com *"o daemon parou de olhar"*).
+
+As faixas são de 10 pontos no alto e de **5 embaixo** — os limiares que a Q-1
+usa para decidir são 10% e 40%, e é embaixo que a curva decide. O
+`hid-playstation` reporta o DualSense em degraus de 10 deslocados de 5 (5, 15,
+25 … 95): com estas faixas **todo** degrau do hardware cruza uma fronteira, e
+nenhum se perde. GRAU: MEDIDO (valores lidos do nó desta máquina).
+
+Volume medido em teste para uma descida inteira de 16 h: **menos de 60 linhas**,
+contra as 1.920 sondas do mesmo período. O evento mais frequente do journal dela
+tem 14.105 ocorrências em 7 dias — o diário é ~0,3% disso.
+
+### 8.3 A linha da queda, e o que ela enxerga a mais
+
+`bateria_na_queda` sai com a última capacidade conhecida e com `idade_s` — e
+`idade_s=0.0` quer dizer que o nó do kernel **ainda estava vivo** no instante da
+queda e foi lido ali mesmo (é a linha da tabela de LEITURA da Q-1 sobre o nó
+sumir antes do daemon: agora ela se responde sozinha).
+
+E há um caso que o `probe_offline` **nunca** viu: um controle sumir com outros
+ainda de pé. O `is_connected()` é um `any()` sobre os handles — por isso "18
+quedas" é **piso**, não total (seção 1). O diário registra esse sumiço com
+`motivo=sumiu_do_backend`, por controle.
+
+Uma queda de verdade passa pelas **duas** bordas: primeiro o `poll_read_failed`
+(o poll loop perdendo a leitura), segundos depois o `probe_offline` (o probe
+confirmando). Só a primeira tem a carga — a segunda encontra o cache já
+consumido, e escreveria *"ninguém tinha medido"* logo abaixo da linha que acabou
+de dizer 5%. Por isso, uma segunda queda **sem leitura nenhuma** cala dentro de
+60 s. Quem contar quedas pelo diário deve contar por episódio, não por linha.
+
+### 8.4 O endereço não vai cru
+
+Toda linha sai com a **máscara da casa** (octetos 4 e 5 zerados), a mesma
+convenção que o portão do repositório cobra. O journal dela publica `uniq=` cru
+hoje em outros eventos; este não. O teste que garante isso usa o **regex do
+próprio portão** e uma fixture com OUI real desta bancada montada em tempo de
+execução — sem OUI real, o portão não reconheceria o endereço e o teste passaria
+vazio. Mordida verificada: com a máscara arrancada, quatro testes reprovaram
+apontando o endereço inteiro.
+
+### 8.5 Como ler
+
+```bash
+journalctl --user -u hefesto-dualsense4unix.service \
+  --since "2026-08-07 00:00:00" --no-pager | grep -E 'bateria_(amostra|na_queda)'
+```
+
+Contadores no `daemon.state_full`: `battery.journal.sample` e
+`battery.journal.drop`.
+
+### 8.6 O PRIMEIRO DADO REAL — 07/08/2026
+
+Ela relatou *"o dualsense está desligando"*, pôs para carregar, e a leitura
+mostrou **cinco por cento**.
+
+| hora (07/08) | o que foi medido | GRAU |
+|---|---|---|
+| 13:30:12 | `controller_disconnected reason=probe_offline` — fim da sessão de 16h24m | MEDIDO (journal) |
+| 14:34:48 → 14:37:12 | retomada de **2m24s**, e cai | MEDIDO (journal) |
+| 14:38:08 → 14:38:30 | retomada de **22s**, e cai | MEDIDO (journal) |
+| 15:22:11 → 15:22:59 | retomada de **48s**, e cai | MEDIDO (journal) |
+| 15:23:29 → 15:23:39 | retomada de **10s**, e cai | MEDIDO (journal) |
+| 15:23:59 | conecta e **fica** — segue conectado desde então, `transport=bt` | MEDIDO (journal) |
+| 15:32:47 | o nó `capacity` do DualSense dela: **5**; `status`: **Charging** | MEDIDO (leitura direta do sysfs) |
+
+Duas ressalvas de instrumento, para ninguém ler a tabela como mais do que ela é:
+
+- **A hora exata em que o cabo entrou NÃO foi medida.** O que está medido é que
+  às 15:32:47 o nó dizia `Charging`, e que a estabilidade voltou às 15:23:59.
+  Que uma coisa seja causa da outra é SUSPEITA COM MECANISMO, apoiada no relato
+  dela de ter posto para carregar.
+- **`transport=bt` com o `status=Charging`** é o que o journal diz, e não foi
+  investigado aqui. GRAU: MEDIDO para os dois valores; SEM PROVA para a
+  explicação.
+
+Ainda assim é a curva que a Q-1 previu: **sessão longuíssima seguida de
+retomadas cada vez mais curtas** — 2m24s, 22s, 48s, 10s —, e a estabilidade só
+voltando depois. A hipótese da bateria sai de SUSPEITA COM MECANISMO para
+**quase fechada**.
+
+**E não fecha aqui, de propósito.** Falta o CONTRASTE da Q-1: a sessão **(c1)**,
+com carga cheia, para separar *"acabou a carga"* de *"cai de qualquer jeito"*.
+Sem ela, este dia mostra um controle que caiu com a bateria no fim — e não prova
+que foi a bateria que o derrubou. A previsão que mata a hipótese continua de pé
+e agora é barata de verificar: **uma** queda com a amostra imediatamente
+anterior acima de 40% refuta a bateria como explicação das nove.
+
+O que este dia **já** entregou para a próxima noite: quem for ler não precisa
+mais do amostrador em `tee`, nem de ninguém acordado. O `bateria_na_queda` da
+próxima queda responde à pergunta sozinho.

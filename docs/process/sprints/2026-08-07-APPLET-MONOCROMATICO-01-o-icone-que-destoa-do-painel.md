@@ -3,10 +3,16 @@
 - **Achado em:** 07/08/2026, por **ela**, olhando a própria barra. Não veio de
   auditoria, não veio de teste vermelho: veio do olho dela na tela que usa todo
   dia
-- **Estado:** **SPRINT DE FUTURO — ABERTA.** Em 07/08 **nenhuma linha de
-  código, ícone, instalador ou configuração foi tocada**. Este documento é
-  medição e roteiro. Quem executar não terá tido esta conversa, e é para essa
-  pessoa que ele está escrito
+- **Estado:** **EXECUTADA em 07/08/2026, MENOS a palavra final dela.** O texto
+  abaixo foi escrito antes da execução e **não foi reescrito** — é o roteiro
+  como estava. O que a execução mediu, contrariou e entregou está na seção
+  [O que a execução de 07/08 mediu e entregou](#o-que-a-execução-de-0708-mediu-e-entregou),
+  no fim. Quando este documento e aquela seção discordarem, **a seção vale**:
+  ela tem os comandos e os números de depois
+  - *(estado original, preservado: "SPRINT DE FUTURO — ABERTA. Em 07/08
+    nenhuma linha de código, ícone, instalador ou configuração foi tocada.
+    Este documento é medição e roteiro. Quem executar não terá tido esta
+    conversa, e é para essa pessoa que ele está escrito")*
 - **Gravidade:** **BAIXA** no funcionamento — nada quebra, nada deixa de
   responder. **ALTA** na coerência do que ela vê: entre os sete ícones da asa
   direita do painel dela, o do Hefesto é **o único cromático**, e isso está
@@ -855,3 +861,199 @@ cabeçalho do SVG novo é documentação como qualquer outra.
    medição**.
 8. **Esta sprint não entrou em índice nenhum.** Nasceu depois do índice de
    06/08. Quem executar deve pendurá-la no índice aberto do dia.
+
+---
+
+## O que a execução de 07/08 mediu e entregou
+
+Escrito **depois** de executar, no mesmo dia, com a máquina dela viva e em uso.
+Nada foi reiniciado: nem o daemon, nem a GUI dela, nem a barra. Os testes na
+tela foram feitos com **processos descartáveis**, que sobem, aparecem na barra
+e saem sozinhos — o processo dela (PID 792339) não foi tocado.
+
+**Grau de cada afirmação, como manda a casa.**
+
+### A condição que a sprint pôs foi cumprida: o "sumiço" de 27/06 foi REPRODUZIDO
+
+A regra da casa diz que hipótese tem de explicar o que já funcionava, e esta
+sprint proibia refazer o simbólico sem antes reproduzir o que fez 27/06
+desistir dele. Reproduzido, e **é o mecanismo (b)**, o "preto sobre preto":
+
+```
+$ rsvg-convert -w 20 -h 20 -o /tmp/bigorna.png \
+    <o simbólico de 27/06, com fill="currentColor">
+$ convert /tmp/bigorna.png -alpha off -format "%[pixel:p{10,4}]" info:
+srgb(0,0,0)
+```
+
+**MEDIDO.** `currentColor` sem contexto de cor resolve para **preto**, e preto
+sobre o `#2F2F3A` do painel escuro dela dá **1,59:1**. O glifo não "sumia" por
+bug de tema, nem por arquivo faltando: **ele era desenhado preto sobre preto.**
+A justificativa de 27/06 — *"não renderizava de forma confiável no tema"* —
+está agora com causa, e a causa é uma linha do arquivo, não uma
+imprevisibilidade da pilha.
+
+O mecanismo (a) da nota 1 (*"o disco chapado"*, o tema dela servindo uma cópia
+colorida de fundo opaco) **não foi o de 27/06** — a cópia dentro de
+`MeowSystem-Icons` é de **04/08**, cinco semanas depois. Mas o disco chapado
+**existe**, é real, e apareceu por outro caminho — o de baixo.
+
+### A armadilha nova, e ela ia estragar exatamente o desenho que ela pediu
+
+**Grau: MEDIDO**, com imagem renderizada e olhada.
+
+Ela pediu *"só o círculo com borda"* — ou seja, **contorno**. O jeito óbvio de
+desenhar contorno em SVG é `stroke` com `fill="none"`. **Não pode.**
+
+O GTK recolore ícone simbólico injetando CSS no arquivo:
+
+```
+rect,circle,path {fill: <cor do tema> !important;}
+```
+
+O `!important` **atropela** o `fill="none"`. Montado um tema de ícones de
+prova com dois arquivos — o mesmo aro em `stroke` e em preenchimento vazado —
+e carregados os dois por `Gtk.IconTheme.lookup_icon(...).load_symbolic(...)`:
+o de `stroke` saiu um **disco liso**, com o desenho inteiro sumido dentro dele;
+o de preenchimento saiu perfeito.
+
+**É o "disco chapado" da nota 1, por um caminho que a sprint não previu.** Uma
+execução que atendesse o pedido dela ao pé da letra — `stroke`, como qualquer
+um desenharia — teria entregue uma bolota branca na barra dela, e a causa
+levaria horas para achar. Por isso o arquivo entregue faz **todo contorno com
+`fill-rule="evenodd"`** e dois subcaminhos, e há teste que reprova o `stroke`.
+
+### As duas perguntas SEM PROVA da E1 foram fechadas, com a barra dela
+
+**1. O `cosmic-applet-status-area` recolore, ou só desenha o que acha?**
+**RECOLORE — MEDIDO.** Foi feito exatamente o teste que a E1 propunha: dois
+itens de bandeja de mentira, registrados por um processo descartável, pedindo
+dois arquivos com o **mesmo desenho** e nomes `-symbolic`, um em `#ff00ff`
+(magenta) e outro em `#bebebe`. Na foto da barra dela os dois saíram
+**idênticos e acromáticos**:
+
+| ícone na barra | saturação máxima (de 255) |
+|---|---|
+| Spotify (vizinho que já funciona) | 30,6 |
+| **prova em `#ff00ff`** | **30,6** |
+| **prova em `#bebebe`** | 34,2 |
+| Hefesto (o de verdade, colorido) | **255** |
+
+Os ~30 são o azulado do fundo do painel entrando no recorte, exatamente como a
+medição da manhã já dizia. **O magenta desapareceu por completo.**
+
+Consequência prática: **dentro do painel, a cor do arquivo não importa** — o
+que importa é o sufixo `-symbolic` no nome. A cor clara cravada continua sendo
+a escolha certa, mas pelo motivo de **fora** do painel (a bandeja GTK, o
+`rsvg-convert`, qualquer consumidor que não recolore), não pelo de dentro.
+
+**2. `~/.local/share/icons/hicolor/symbolic/apps/` é alcançado?**
+**SIM — MEDIDO, e por dois caminhos independentes.** A dúvida era boa: o
+`index.theme` do `hicolor` **do HOME dela** (que existe, é de 04/08 e **não é
+nosso** — nenhum script deste repositório o escreve) **não lista**
+`symbolic/apps` em `Directories=`. Mesmo assim:
+
+- `Gtk.IconTheme.get_default().lookup_icon()` acha um arquivo posto lá, com ou
+  sem `gtk-update-icon-cache` rodado;
+- e o **painel dela desenhou** os dois itens de prova acima, servidos desse
+  diretório.
+
+O destino da E3 fica sendo `symbolic/apps/`, como a sprint queria.
+
+### O que ela vai ver, medido na barra dela
+
+Foto tirada com um `AppTray` **de verdade** — o código de hoje, a classe de
+produção, `_preferred_icon()` incluído — num processo descartável ao lado do
+processo dela. Por isso a foto tem **os dois ao mesmo tempo**: o antigo
+(colorido, do processo dela, que ainda pede o nome velho) e o novo (simbólico),
+lado a lado, com os vizinhos.
+
+```
+nome pedido: hefesto-dualsense4unix-symbolic
+apptray_started  icon=hefesto-dualsense4unix-symbolic
+```
+
+| medida | antes | depois | critério |
+|---|---|---|---|
+| saturação máxima | **255** | **20,7** | faixa dos vizinhos (22 a 40) — **cumpre** |
+| pixels do desenho | seis matizes | acromáticos | **cumpre** |
+| tamanho | 32 px | 20 px | encolheu, como previsto |
+
+**As fotos são efêmeras** e não entram no repositório — o projeto não versiona
+imagem da área de trabalho dela. Para refazer, os comandos estão na seção *"O
+que a barra dela mostra hoje, em número"*; as coordenadas mudaram (a asa é
+ancorada à direita, então cada ícone a mais empurra tudo para a esquerda).
+
+### O que foi entregue
+
+| entrega | estado |
+|---|---|
+| **E0.1** o desenho | **PENDENTE — é dela.** As duas opções estão desenhadas e renderizadas a 20 px, lado a lado |
+| **E0.2** o applet volta à barra? | **PENDENTE — é dela.** O lado Rust foi consertado de qualquer forma |
+| **E1** medir o caminho | **FEITO**, acima |
+| **E2** desenhar o símbolo | **FEITO** — `assets/simbolico/hefesto-dualsense4unix-symbolic.svg` |
+| **E3** instalar sob o nome certo | **FEITO** — `install.sh`, `uninstall.sh`, `purge.sh`, o `justfile` do applet e os quatro alvos de empacotamento |
+| **E4** o código pede o nome novo | **FEITO** — `tray.py`, `app.rs` e o `.desktop` do applet. O `main.py` **não** foi tocado, de propósito: o ícone da janela continua a logo colorida |
+| **E5** os portões | **FEITO** — `tests/unit/test_simbolico_do_painel.py` (17 asserções) e duas guardas novas em `check_packaging_parity.sh` |
+| **E6** a prova de tela com ela | **PENDENTE — é o que fecha a sprint** |
+
+O desenho entregue é o **dela**: aro (círculo com borda) e a **borda** da
+cabeça do martelo ao centro, com o cabo cheio. O cabo é a única concessão, e
+tem número: vazado, a 20 px o furo teria **0,9 px** e viraria borrão.
+
+A bigorna de 27/06 **não foi apagada**: virou
+`assets/simbolico/opcao-b-bigorna-symbolic.svg`, com nota datada no cabeçalho
+explicando o que caducou (o `currentColor`) e o que continua valendo (a medição
+contra o martelo a 16 px). Se ela escolher a bigorna, **o encanamento já está
+pronto** — troca-se o desenho e nada mais.
+
+### O defeito que a própria execução criou, e que virou portão
+
+**Grau: MEDIDO.** O cabeçalho do SVG novo ganhou uma linha de traços de
+separação, como todo cabeçalho deste projeto. Em XML, `--` **fecha
+comentário**: o arquivo virou XML inválido e o `rsvg-convert` passou a recusá-lo
+inteiro. **O painel continuou desenhando** (o renderizador dele é mais
+tolerante), então o defeito era invisível na tela — e teria aparecido só na
+bandeja GTK, que usa librsvg, em alguma máquina que não a dela.
+
+Nenhum dos outros dezesseis testes pegava, porque **todos leem o SVG como
+texto**. Agora há `test_o_simbolico_e_xml_valido`, que faz o parse de verdade.
+
+### A mordida
+
+Dezesseis curas arrancadas, uma por vez, **dezesseis reprovas** —
+`currentColor` de volta, aro feito de `stroke`, cor escura, segunda cor,
+`viewBox` fora da grade, fundo opaco, desenhos divergentes entre bandeja e
+applet, `tray.py` voltando ao nome sem sufixo, a queda direto no joystick
+genérico, `app.rs` voltando ao PNG, o `.desktop` voltando ao colorido, o
+`install.sh` deixando de copiar, o `uninstall.sh` deixando de remover, o `rm`
+do `install.sh` virando curinga, o `--` no comentário, e um alvo de
+empacotamento sem o arquivo.
+
+Uma delas **não mordeu na primeira tentativa**, e está registrada no próprio
+teste: a asserção do `install.sh` procurava o **caminho do arquivo** no texto
+do script, e passava com a linha de cópia arrancada — o caminho continuava lá,
+na variável e na mensagem de aviso. Foi reescrita para asserir a **linha que
+copia**. Teste que passa com a cura arrancada não testa nada.
+
+### O que continua ABERTO
+
+1. **O desenho é dela** (E0.1). As duas opções estão prontas e renderizadas;
+2. **O applet nativo volta para a barra?** (E0.2) Continua compilado, instalado
+   e fora do painel. O binário **não foi recompilado** nesta execução: a
+   primeira build do libcosmic é longa e a máquina dela está em uso. Enquanto
+   não recompilar, `app.rs` está certo no fonte e velho no binário;
+3. **A prova de tela com ela** (E6) — foto, os dois temas, e a palavra final;
+4. **O tema CLARO só foi SIMULADO.** Renderizado com a cor que o tema claro
+   dela aplicaria (`#272727`, lida de `CosmicTheme.Light/v1/background`) sobre
+   fundo claro: legível, com folga. Mas ela não trocou de tema, e ninguém
+   olhou a barra clara de verdade — **SUSPEITA COM MECANISMO**;
+5. **A cópia da logo dentro do tema dela continua lá**, e continua não sendo
+   nossa. Pedir um nome com sufixo contorna o sombreamento; não o blinda. Se um
+   dia aparecer um `...-symbolic.svg` colorido dentro de `MeowSystem-Icons`, o
+   defeito volta e nenhum portão deste repositório vai ver;
+6. **O arquivo instalado na máquina dela foi posto à mão**, no mesmo caminho e
+   com o mesmo conteúdo que o `install.sh` instala
+   (`~/.local/share/icons/hicolor/symbolic/apps/hefesto-dualsense4unix-symbolic.svg`).
+   Ele fica **inerte** até a GUI dela reiniciar — o processo vivo pediu o nome
+   antigo quando subiu, e ícone de bandeja não se troca sozinho.

@@ -38,6 +38,25 @@ js5  Microsoft X-Box 360 pad 1                     <- Steam Virtual Gamepad
 Este é exatamente o quadro que a JOGO-01 fechou em 25/07 — e ele voltou por uma
 porta que aquela sprint não cobria.
 
+> **NOTA DATADA — 07/08/2026, sobre "sair da frente" nesta página.** Esta
+> sprint usa *"sair da frente"* / *"sair de cena"* em três pontos (na tabela
+> dos dois cadastros, no fim da seção do remendo e na entrega 1) como sinônimo
+> de **"a exceção do Steam Input está ativa"**.
+> A medição dela de 06/08/2026
+> ([CONTROLE-SONY-MEDIDO-01](2026-08-06-CONTROLE-SONY-MEDIDO-01-o-experimento-que-decide-metade-da-doutrina.md),
+> seção *A INVERSÃO*, **grau MEDIDO**) mostrou que a expressão descreve só
+> **metade** do mecanismo: o Hefesto entrega a **entrada** (solta o grab,
+> desfaz o esconde-esconde do hidraw e recolhe o vpad) e **mantém a saída
+> inteira** — os gatilhos dela seguraram e a cor dela ficou, com o jogo da
+> lista aberto. Leia cada uma daquelas três frases como *"decide se entrega a
+> entrada"*.
+>
+> **O diagnóstico desta sprint não caduca — ele foi CONFIRMADO.** O duplo
+> cadastro é real, os quatro joysticks foram medidos, e a própria
+> CONTROLE-SONY-MEDIDO-01 cita esta página como a prova de que o "controle
+> dobrado" que ela descreve é o mesmo que o `/proc/bus/input/devices` mostrou
+> em 26/07. O que mudou foi só a palavra que a casa usava para nomear a cura.
+
 ### A causa: dois cadastros do mesmo fato
 
 O fato é **"o Steam Input está ligado para o Pragmata"**. Ele está escrito em

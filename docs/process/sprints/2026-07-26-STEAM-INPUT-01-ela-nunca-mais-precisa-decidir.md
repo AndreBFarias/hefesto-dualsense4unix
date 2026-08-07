@@ -24,6 +24,21 @@ Antes de qualquer entrega, o que está escrito hoje, em uma frase:
 > clique **"Este jogo não funciona"**: o Hefesto liga o Steam Input só naquele
 > jogo e sai inteiro da frente dele.
 
+> **NOTA DATADA — 07/08/2026: "sai INTEIRO da frente dele" está refutado.**
+> A palavra é *inteiro*, e é justamente ela que a medição derruba. Em
+> 06/08/2026, das 19:34 às 19:56, com um DualSense físico e três jogos abertos
+> ([CONTROLE-SONY-MEDIDO-01](2026-08-06-CONTROLE-SONY-MEDIDO-01-o-experimento-que-decide-metade-da-doutrina.md),
+> seção *A INVERSÃO*, **grau MEDIDO**), o Hefesto **entregou a entrada** do
+> jogo da lista e **manteve a saída inteira**: os gatilhos dela seguraram
+> duros e o vermelho dela ficou na lightbar, com o jogo no menu. A frase certa
+> é *"o Hefesto entrega a entrada daquele jogo à Steam"* — a cor, os gatilhos
+> e a vibração continuam dele.
+>
+> O resto do bloco **não** caduca: o padrão desligado, o guarda, o global que
+> sempre morre e o per-app como exceção continuam como estão — e o M-04
+> (*"a exceção per-app pode ser decorativa"*) fechou **POSITIVO** na mesma
+> medição, o que **abre o portão zero declarado em `:244-250`** desta página.
+
 Cada pedaço tem endereço:
 
 - **Padrão desligado, sem perguntar.** `install.sh:2181` (passo 11/11) roda
@@ -225,6 +240,9 @@ Tudo olhando a tela, sem terminal.
    a tela avisa que só o controle 1 vai funcionar naquele jogo.
 6. Com um jogo da allowlist aberto, a aba Emulação **não** parece desligada
    sozinha: diz que saiu da frente de propósito, e por qual jogo.
+   *(**07/08/2026:** o texto desta linha 6 mudou — ver a NOTA DATADA no topo.
+   A aba diz que o **controle virtual foi recolhido** naquele jogo, e não que
+   o Hefesto saiu: cor e gatilhos continuam valendo lá dentro.)*
 7. Em nenhum ponto da interface aparece a instrução de ir na Steam mexer em
    Propriedades → Controle.
 

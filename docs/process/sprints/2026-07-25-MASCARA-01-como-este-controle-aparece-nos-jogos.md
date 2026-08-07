@@ -2,7 +2,10 @@
 
 - **Status:** ABERTA. **E1 ENTREGUE em 07/08/2026** — mas **não como estava
   escrita**: o *"bump de esquema"* foi medido como destrutivo e substituído por
-  arquivo próprio. Ver a nota datada no fim deste arquivo
+  arquivo próprio. Ver a nota datada no fim deste arquivo. Da **entrega 3** saiu,
+  no mesmo dia, só a **metade segura** — a função pura que compõe o valor a
+  partir de uma LISTA de pares, **não ligada**; a condição para ligá-la está na
+  última nota datada
 - **Prioridade:** **ALTA desde 07/08/2026** — deixou de ser sprint paralela e
   virou **pré-requisito** da `E3`/`E4` da
   [LUGAR-À-MESA-01](2026-08-06-LUGAR-A-MESA-01-tres-controles-ligados-e-um-jogador-so.md),
@@ -293,3 +296,115 @@ externo nenhum, e o `daemon/subsystems/coop.py` ficou **intocado** — há port�
 de texto que reprova se ele passar a enxergar a descoberta unificada. O veto de
 19/07 (*"externo não ganha controle virtual"*) foi **adiado com condição**, e a
 condição é esta sprint inteira, não a entrega 2 sozinha.
+
+---
+
+## NOTA DATADA — 07/08/2026: a METADE SEGURA da entrega 3, e o que falta para ligá-la
+
+**A entrega 3 continua BLOQUEADA**, e o motivo é o mesmo que a reavaliação de
+hoje mediu: *a função pura é escrevível hoje; LIGÁ-LA hoje tira controle do jogo
+dela.* O texto da entrega 3 acima **fica onde está**. O que saiu é a metade que
+não toca o jogo dela: **as duas variáveis deixaram de carregar um par cravado
+dentro da string e passaram a ser COMPOSTAS a partir de uma LISTA de pares —
+com a lista de hoje tendo um item só.**
+
+### O que foi entregue
+
+| onde | o que é |
+|---|---|
+| `daemon/launch_env.py:98` | `PAR_DUALSENSE_FISICO` — o par que estava cravado dentro das duas strings |
+| `daemon/launch_env.py:128` | `compor_lista_vidpid(pares, *, maiusculas)` — a função pura |
+| `daemon/launch_env.py:213` e `:222` | `valor_ignore_devices` / `valor_disable_hidraw` — a caixa de cada env, com o motivo |
+| `daemon/launch_env.py:232` e `:240` | `_IGNORE_VALUE`/`_DISABLE_HIDRAW_VALUE` passam a ser COMPOSTOS, com **um par só** |
+| `tests/unit/test_launch_env_lista_vidpid.py` | 13 testes: um par, três pares, zero pares, o formato, a agulha do consumidor, o lixo, e *"a lista não cresceu"* |
+
+**Nada foi ligado.** `compose_env` continua recebendo o par único do DualSense;
+nenhum externo, nenhuma máscara e nenhuma mesa alimentam a lista. Há teste que
+reprova se o valor emitido ganhar uma vírgula
+(`test_compose_env_continua_emitindo_um_par_so`).
+
+### A correção que BARATEOU esta entrega — GRAU: MEDIDO
+
+O aviso da entrega 3 acima (*"a lista de variáveis permitidas é espelhada no
+script de lançamento — mudar de um lado exige mudar do outro"*) **não caducou,
+mas foi delimitado**: ele vale para **NOME** novo de variável, e aqui não nasce
+nenhum.
+
+Lido no `assets/hefesto-launch.sh`:
+
+- `:85-91` — a allowlist do wrapper é um `case "$line" in
+  SDL_GAMECONTROLLER_IGNORE_DEVICES=*) ...`, isto é, filtra por **nome**, nunca
+  por valor;
+- `:309-313` — `while IFS= read -r kv; do set -- "$kv" "$@"` põe cada linha
+  **inteira** como **um** argumento do `env(1)`: o valor não sofre word-split.
+
+Logo, compor o VALOR a partir de uma lista exige **zero** mudança no wrapper. O
+que continuaria exigindo é uma variável nova.
+
+### O formato, e o grau de cada metade
+
+**`PROTON_DISABLE_HIDRAW` — GRAU: MEDIDO** (07/08/2026, no Proton 10 instalado
+na máquina dela). O `is_hidraw_enabled` de
+`files/lib/wine/x86_64-windows/winebus.sys` monta a agulha com o molde **wide**
+`0x%04X/0x%04X` e procura com **`wcscasestr`** — substring, sem caixa
+(`objdump -d --disassemble=is_hidraw_enabled`, mais `strings -el` para os
+moldes). Três consequências:
+
+1. o prefixo `0x` e os **quatro dígitos** são obrigatórios — fazem parte da
+   agulha, e um token curto (`0x1/0x2`) nunca casa;
+2. a **caixa é indiferente**;
+3. o **separador é livre** — a vírgula serve.
+
+E o próprio Proton escreve uma lista assim: `proton:1828` (contorno do God of
+War Ragnarok no Deck) grava
+`0x054C/0x05C4,0x054C/0x09CC,0x054C/0x0BA0,0x054C/0x0CE6,0x054C/0x0DF2`.
+
+**`SDL_GAMECONTROLLER_IGNORE_DEVICES` — GRAU: SUSPEITA COM MECANISMO** (forte;
+**nenhum parser do SDL foi executado**). Corroborações: o formato documentado
+do hint é lista separada por vírgula de `0xVID/0xPID`; a LaunchOptions **dela**
+já foi estendida por vírgula, e o repositório tem regra escrita para não
+quebrar isso (`integrations/steam_launch_options.py:147`); e o Proton usa
+exatamente esse formato na variável irmã. **Por que parou aqui:** medir o
+parser exigiria plantar um joystick falso em `/dev/input` na máquina dela, com
+três controles conectados e ela jogando. Recusado.
+
+**A caixa de cada valor não é enfeite — GRAU: MEDIDO.** O IGNORE sai em
+minúsculas porque `integrations/steam_launch_options.py:97` compara a
+LaunchOptions envenenada contra o token literal
+`SDL_GAMECONTROLLER_IGNORE_DEVICES=0x054c/0x0ce6`, byte a byte. Trocar a caixa
+faria o `has_poison` deixar de reconhecer o veneno que as versões antigas
+persistiram — e veneno com o vpad fora de cena é **zero controles**. Há teste
+amarrando as duas pontas.
+
+### A CONDIÇÃO para ligar, escrita — e ela não é hoje
+
+A lista só recebe um **segundo par** quando existir a **`E4` da
+[LUGAR-À-MESA-01](2026-08-06-LUGAR-A-MESA-01-tres-controles-ligados-e-um-jogador-so.md)**:
+a **cobertura POR PAR** — *"o par só sai no `IGNORE` se TODO aparelho daquele
+par na mesa tiver vpad vivo"*. E a `E4` vem **depois da `E3`** (a adoção dos
+externos), que ela **adiou** até a máscara existir.
+
+O que a condição protege, medido naquela sprint: `054c:05c4` é o par do 8BitDo
+em modo PS4 **e** o de um DualShock 4 Sony genuíno. Emitir esse par numa mesa
+onde o aparelho é um DS4 **sem** vpad some com o controle da pessoa. A mesma
+condição está escrita no código, no docstring da função — quem for ligar tropeça
+nela antes de conseguir.
+
+### A mordida
+
+A cura foi arrancada **seis** vezes, e as seis reprovaram:
+
+| o que foi arrancado | o que caiu |
+|---|---|
+| vírgula vira espaço no `join` | 4 testes |
+| o prefixo `0x` some do molde | 9 testes |
+| o zero à esquerda some (`%x` no lugar de `%04x`) | 9 testes |
+| a caixa do IGNORE invertida | 8 testes |
+| a faixa de 16 bits deixa de ser conferida | 1 teste |
+| o par repetido deixa de ser deduplicado | 1 teste |
+
+### O que esta nota NÃO faz
+
+Não liga a função, não adota externo, não cria vpad para ninguém, não desenha
+tela e **não começa a `E3`**. A adoção continua atrás da palavra dela, e o veto
+de 19/07 segue valendo enquanto a máscara não estiver inteira.

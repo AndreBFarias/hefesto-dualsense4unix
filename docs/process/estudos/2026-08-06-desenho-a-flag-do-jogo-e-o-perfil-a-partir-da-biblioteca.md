@@ -216,6 +216,24 @@ Hoje o mesmo arquivo tem outro nome e uma promessa contrária. Estado atual, **M
 
 Duas portas para o mesmo arquivo só param de confundir quando têm a **mesma placa**.
 
+> **NOTA DATADA — 07/08/2026: o bloco ANTES já não existe.** O tooltip da aba
+> Sistema foi reescrito nesta data, e as duas frases que este desenho cita
+> caíram por motivos diferentes:
+>
+> - *"o Hefesto sai da frente"* saiu porque está **refutada pela metade** pela
+>   medição dela de 06/08
+>   ([CONTROLE-SONY-MEDIDO-01](../sprints/2026-08-06-CONTROLE-SONY-MEDIDO-01-o-experimento-que-decide-metade-da-doutrina.md),
+>   seção *A INVERSÃO*, **grau MEDIDO**): o que a marca entrega é a **entrada**;
+>   a saída — cor, gatilhos, vibração — continua do Hefesto;
+> - *"ainda não existe um botão para desmarcar"* saiu porque **passou a
+>   existir**, por decisão dela (resposta 1 do painel de 07/08): a caixinha
+>   `profile_steam_input_check`, no editor do perfil da aba Perfis — que é
+>   exatamente onde este desenho a colocou.
+>
+> O **nome** do botão, porém, continua *"Este jogo não funciona"*: a
+> unificação em *"lista de exceções"* que a seção P1 recomenda **não foi
+> executada** e segue aberta. Este bloco fica como registro do estado de 06/08.
+
 ---
 
 ## 3. Cada rótulo, e de onde ele deriva
@@ -669,6 +687,12 @@ por jogo"** na aba Emulação (`emulation_actions.py:359`) e passaria a ser **"l
 exceções"** no perfil. O tooltip da Sistema ainda promete *"o Hefesto sai da frente"* e
 avisa que *"ainda não existe um botão para desmarcar"* — as duas frases ficam contraditórias
 no dia em que a caixinha existir (**MEDIDO**, `gui/main.glade:2430`).
+
+> **NOTA DATADA — 07/08/2026: o dia chegou, e as duas frases saíram.** A
+> caixinha existe (`profile_steam_input_check`, aba Perfis) e o tooltip da aba
+> Sistema foi reescrito — ver a nota da seção 2.4. **A pergunta P1 continua
+> aberta**: o que caiu foram as duas frases do tooltip, não o **nome** do
+> botão, que segue *"Este jogo não funciona"* nas duas telas.
 
 **Recomendação: sim, unificar em "lista de exceções", na mesma leva.** Duas portas para o
 mesmo arquivo só param de confundir quando têm a mesma placa; e deixar em pé um botão
