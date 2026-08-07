@@ -1,7 +1,8 @@
-# As onze respostas dela — 07/08/2026
+# As doze respostas dela — 07/08/2026
 
 Registro das decisões tomadas sobre o
-[painel das nove](2026-08-07-PAINEL-as-nove-decisoes-que-esperam-ela.md).
+[painel das nove](2026-08-07-PAINEL-as-nove-decisoes-que-esperam-ela.md), mais uma
+feita depois, que o painel tinha deixado passar.
 
 **Isto não é proposta.** É a palavra dela, e vale como a doutrina da casa: não se
 repropõe, e quem quiser mudar precisa de uma medição que derrube o motivo — não
@@ -28,8 +29,28 @@ delegação.
 | 9 | qual lista come a próxima sessão de hardware | **o protocolo de 06/08 primeiro** |
 | 10 | a janela fala inglês | **não — português é a língua do produto** |
 | 11 | até onde executar sem ela na cadeira | **tudo, inclusive a tela** |
+| 12 | a lâmpada dos externos, enquanto eles não são jogadores | **calar a luz até a entrega existir** |
 
 ---
+
+## A décima segunda, feita depois — e que fecha a E0
+
+A `LUGAR-A-MESA-01` tinha **duas** perguntas para ela, e só a primeira foi ao
+painel. A segunda foi feita em seguida, no mesmo dia:
+
+> *Enquanto os externos não forem jogadores de verdade, o Hefesto deve continuar
+> acendendo número de jogador neles?*
+
+**Resposta: calar a luz até a entrega existir.**
+
+É a escolha dura das quatro que lhe foram oferecidas, e ela sabia o preço — a
+casa tem registrado que *ela distingue os controles pela cor da luz e pelo LED
+de jogador* (`app/actions/home_actions.py:13`). Ela aceitou **perder o próprio
+instrumento** para que o produto pare de afirmar o que não cumpre.
+
+Isso desbloqueia a `E0` inteira, que estava presa entre calar e explicar. E o
+critério de volta é objetivo: **a luz volta quando a entrega existir**, não
+quando alguém achar que já dá.
 
 ## As três que mudam o plano, e por quê
 
