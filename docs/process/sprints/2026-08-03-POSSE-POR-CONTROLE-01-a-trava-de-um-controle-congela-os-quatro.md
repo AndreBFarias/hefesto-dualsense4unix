@@ -127,7 +127,7 @@ mente, num caso que ninguém previu.
 Com dois DualSense por Bluetooth e o co-op ativo, `led.player_set` respondeu:
 
 ```json
-{"status": "ok", "bits": [true,false,true,true,false], "aplicado_em": ["143a9a13ebab"]}
+{"status": "ok", "bits": [true,false,true,true,false], "aplicado_em": ["143a9a0000ab"]}
 ```
 
 E o sysfs **nem mudou**:
