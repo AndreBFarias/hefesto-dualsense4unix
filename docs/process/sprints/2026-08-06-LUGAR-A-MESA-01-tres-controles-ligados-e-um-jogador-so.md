@@ -510,6 +510,9 @@ o interruptor governa aparência).
 
 ### E2 — descoberta unificada, normalizador de eixo, e reencontro
 
+**EXECUTADA em 07/08/2026** — ver a nota datada *"a E2 entrou, e o Pro deixou de
+andar sozinho para o canto"*, no fim deste arquivo.
+
 Sem adoção nenhuma: o co-op continua não pegando ninguém. Prova inteira por
 dublê.
 
@@ -847,6 +850,121 @@ leva inteira em vez de uma linha.
   produto, e as duas convivem — com o `EXTERNAL_PLAYER_LED_ENABLED` em `False`,
   o `auto_numbers` deixa de ter efeito sobre os externos até a `E3`;
 - **não fecha a `E0a`** (a CLI dizendo os dois números nomeados).
+
+---
+
+## NOTA DATADA — 07/08/2026: a E2 entrou, e o Pro deixou de andar sozinho para o canto
+
+**GRAU: MEDIDO** (dublê, sem aparelho — é o que a própria `E2` prometia: *"prova
+inteira por dublê"*). Executada no mesmo dia da `E0`, e **sem adotar ninguém**.
+
+A `E2` é, palavra por palavra, a **entrega 2 da
+[MÁSCARA-01](2026-07-25-MASCARA-01-como-este-controle-aparece-nos-jogos.md)**
+— e é a versão **completa** dela. Ver a nota datada daquela sprint: como estava
+escrita lá, a entrega deixava um item BLOQUEANTE de fora e entregaria um
+controle injogável.
+
+### O que mudou no código
+
+| onde | o quê |
+|---|---|
+| `core/evdev_reader.py` (`EixoAbsoluto`, `normalizar_eixo`, `faixas_de_eixo`) | a faixa declarada pelo aparelho vira número, com aritmética inteira e arredondamento meio-para-cima |
+| `core/evdev_reader.py` (`GamepadDescoberto`, `discover_gamepads`) | a descoberta ÚNICA: um laço, uma abertura por node, as duas espécies e o `absinfo` de cada eixo |
+| `core/evdev_reader.py` (`discover_dualsense_evdevs`, `discover_external_gamepads`) | viraram **vistas** da descoberta única, com o contrato de retorno intacto |
+| `core/evdev_reader.py` (`localizar_node_por_identidade`, `EvdevReader._locate`) | o reencontro passa a enxergar externo — `eventN` é volátil, a identidade não |
+| `core/evdev_reader.py` (`EvdevReader._on_device_opened`, `_handle_abs`, `_sintetizar_gatilho`) | o normalizador nasce no open (um ioctl por conexão, nunca por evento) e o gatilho digital é sintetizado quando o eixo falta |
+
+### O item que decidia se a cura funciona na máquina de um desconhecido
+
+`EvdevReader._handle_abs` fazia `value & 0xFF` **seis vezes seguidas**, supondo
+"DualSense, 0..255". Com o Nintendo Pro (-32767..32767) o **centro** do
+analógico vira `0`, que em 0..255 significa **talo à esquerda e para cima**: o
+personagem anda sozinho para o canto e não para.
+
+A conversão é montada do **`absinfo` do node aberto**, nunca de uma tabela de
+VID/PID conhecidos — que seria a versão que funciona só nesta bancada.
+
+### A propriedade que a E2 tinha de comprar junto: o DualSense não muda
+
+Este é o **caminho quente de input de TODOS os controles**. Consertar quem não
+funcionava mudando o número de quem já funcionava seria o defeito, não a cura.
+
+Faixa `0..255` (e faixa ilegível/ausente) cai no **mesmo `& 0xFF` de sempre**,
+inclusive fora da faixa — onde `& 0xFF` e um `clamp` discordam (cru `256` vira
+`0`, não `255`). Há teste que varre os 256 valores nos seis eixos.
+
+### O que a E2 NÃO fez, e a recusa é declarada
+
+- **não adota ninguém.** O `daemon/subsystems/coop.py` está **intocado**: o
+  `want` continua vindo de `discover_dualsense_evdevs()`. O veto de 19/07
+  (*"externo não ganha controle virtual"*) foi **adiado com condição**, e a
+  condição é a máscara. Quem promove jogador é a `E3`, e ela é dela;
+- **não aplica zona morta.** O `flat` do aparelho (0 no DualSense, 500 no Pro)
+  viaja no `EixoAbsoluto` e **não é usado**: aplicar zona morta é decisão de
+  produto, não de leitura;
+- **não mexe na tela.** Nenhum arquivo de interface foi tocado;
+- **não põe o `eixos` no inventário do JSON-RPC.** O dict de
+  `discover_external_gamepads` segue com as MESMAS oito chaves — chave nova num
+  payload que a GUI já lê é mudança que ninguém pediu.
+
+### O custo declarado, e ele não está escondido
+
+**GRAU: SUSPEITA COM MECANISMO, não medido.** O caminho DualSense passou a
+chamar `capabilities()` também nos nodes de outro vendor (antes o filtro de
+vendor curto-circuitava antes) — alguns ioctls a mais por node. É um caminho
+gated pelo `InputDirWatch` (só roda em hotplug), e a mesma chamada já era paga
+pelo inventário de externos. Não foi medido com aparelho na mesa.
+
+### As mordidas, verificadas
+
+Bateria em `tests/unit/test_lugar_a_mesa_e2_descoberta_unificada.py` (13
+testes). Cada cura foi **arrancada** e a reprovação **vista**:
+
+| a cura arrancada | o que reprovou |
+|---|---|
+| normalizador arrancado (volta o `& 0xFF` no `_handle_abs`) | `test_o_centro_do_pro_controller_deixa_de_ser_talo_no_canto` |
+| atalho do DualSense arrancado (0..255 passa a grampear) | `test_o_dualsense_sai_bit_a_bit_identico_ao_de_hoje` |
+| fallback sem `absinfo` arrancado | os **dois** acima — é a prova de que a degradação é para o comportamento de hoje, não para outro |
+| síntese de gatilho arrancada | `test_gatilho_digital_sintetizado_quando_o_eixo_falta` e o do reset |
+| síntese passa a ser INCONDICIONAL | `test_o_dualsense_nao_sofre_sintese_de_gatilho` |
+| reset zera o gatilho SEMPRE (inclusive o analógico) | `test_a_queda_do_device_nao_deixa_gatilho_sintetizado_travado` |
+| descoberta volta a abrir cada node DUAS vezes | `test_descoberta_unica_classifica_os_dois_lados_num_laco_so` |
+| reencontro volta a olhar SÓ DualSense | `test_reencontro_acha_o_externo_depois_do_replug` |
+| sem alvo o reader passa a pegar o 1º gamepad qualquer | `test_reencontro_do_dualsense_segue_igual_e_sem_alvo_nao_adota_ninguem` |
+| `absinfo` deixa de viajar na descoberta | `test_o_absinfo_de_cada_eixo_viaja_na_descoberta` |
+| chave do inventário renomeada | `test_as_duas_portas_antigas_mantem_o_contrato` |
+
+**A décima segunda mordida foi verificada por SUBSTITUTO, e a ressalva fica
+escrita:** o portão anti-adoção
+(`test_a_e2_nao_adota_ninguem_o_coop_segue_fechado_em_dualsense`) lê o **texto**
+do `coop.py`. Arrancar a cura ali seria editar, na árvore viva, arquivo que não
+é desta entrega — com outros agentes trabalhando nela. O mesmo predicado foi
+rodado contra uma cópia em memória do `coop.py` **com a recaída**, e reprovou.
+**GRAU: MEDIDO sobre o predicado; SEM PROVA sobre o arquivo real.**
+
+### O achado de método desta entrega
+
+**Prova de comportamento não alcança recaída de arquitetura.** Nenhum dos doze
+testes de valor pegaria um `coop.py` que passasse a chamar a descoberta única —
+o co-op ganharia externos e todos os números continuariam certos. É o mesmo
+achado da `E0` (*"as provas de silêncio não distinguem calar de apagar o
+código"*), noutra forma: o portão que protege uma **decisão dela** tem de olhar
+para onde a decisão mora, não para o resultado.
+
+### O que fica ABERTO desta entrega
+
+1. **Ninguém leu um `absinfo` de verdade neste caminho.** Toda a prova é por
+   dublê; a forma dos eixos usada nos testes é a da segunda medição de 06/08,
+   que a própria sprint marca como *"deve ser reconfirmada quando os quatro
+   voltarem à mesa"*. **SEM PROVA** de que um Pro real, aberto por este reader,
+   entrega os números que a bateria supõe;
+2. **a zona morta do Pro (`flat=500`) não é aplicada.** Sobre 65534, são 0,76%
+   — desprezível para o defeito que a `E2` cura, e por isso não foi comprado.
+   Quando alguém quiser aplicá-la, o número já está no `EixoAbsoluto`;
+3. **o normalizador não tem consumidor externo ainda.** Ele só entra em ação
+   num `EvdevReader` apontado para um aparelho não-Sony, e hoje ninguém aponta:
+   quem apontaria é a `E3`. A `E2` entrega a **capacidade**, medida e viva —
+   como a `E0` deixou a capacidade de acender inteira em `core/external_leds.py`.
 
 ---
 
