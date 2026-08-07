@@ -334,7 +334,7 @@ Medido: `navegacao.json` tem `"steam"` e `"Steam"` em `window_class`,
 prioridade 50, `"mode": null`. Com o cadeado apagado, cada alt-tab para a
 Steam ativa **Navegação** — que reescreve gatilhos (`Pulse`/`Pulse`), lightbar
 (`[40, 80, 180]`, brilho 0.4), LEDs de jogador, e ainda carrega overrides
-por-MAC para dois controles dela (`143a9a13ebab` e `a0fa9cc311f0`). É
+por-MAC para dois controles dela (`143a9a0000ab` e `a0fa9c0000f0`). É
 literalmente "a config que eu deixo nunca é respeitada", agora automatizado.
 
 O journal mostra que isso aconteceria **18 vezes em três dias**, e a última

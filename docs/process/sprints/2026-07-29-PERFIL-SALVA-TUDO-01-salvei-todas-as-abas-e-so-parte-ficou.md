@@ -196,7 +196,7 @@ chamado em `:87`) — e ele nunca recebe a seção, porque `to_ipc_dict` a gatei
   "mic": null,
   "mode": null,
   "suppress_desktop_emulation": false,
-  "controllers": {"a0fa9cc311f0": {"leds": {"lightbar": [97, 53, 131]}}}  <-- PREENCHIDO
+  "controllers": {"a0fa9c0000f0": {"leds": {"lightbar": [97, 53, 131]}}}  <-- PREENCHIDO
 }
 ```
 
@@ -575,7 +575,7 @@ do `DraftConfig` sem escritor **nem** leitor.
 
 **Risco:** MÉDIO-BAIXO, com uma armadilha nomeada: **não logar caminho de perfil
 com MAC dentro**. O mapa `controllers` é indexado por MAC (o override dela é
-`a0fa9cc311f0`) e há purga de MAC no histórico deste repositório. O log da janela
+`a0fa9c0000f0`) e há purga de MAC no histórico deste repositório. O log da janela
 tem de nascer com o mesmo higienizador do resto.
 
 ### E6 — a janela passa a MOSTRAR o que está no arquivo
@@ -639,7 +639,7 @@ JSON e ressuscita "testei os motores e o jogo não vibra mais"
 
 `app/actions/profiles_actions.py:1597-1605` e `app/draft_config.py:500-510`
 avisam, os dois, que `model_dump` marca os defaults do esquema como explícitos e
-**apaga a lightbar do controle**. O override dela — `a0fa9cc311f0`, com **só**
+**apaga a lightbar do controle**. O override dela — `a0fa9c0000f0`, com **só**
 `leds.lightbar` — é exatamente uma entrada parcial em risco.
 
 ### NÃO tocar nos três perfis que dependem do que têm
