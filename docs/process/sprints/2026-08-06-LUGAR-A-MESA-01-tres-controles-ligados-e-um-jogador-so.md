@@ -690,6 +690,18 @@ sem intermediário.
 
 ### O achado novo: DOIS aparelhos no MESMO jogador 3
 
+> **REFUTADO em 07/08/2026 — o título desta seção está errado, e o erro é de
+> leitura, não de medição.** Os números brutos abaixo (qual nó estava com
+> `brightness=1`, em qual aparelho) continuam **MEDIDOS** e ficam onde estão. O
+> que caducou é a **decodificação**: cada nó aceso foi lido como *"este aparelho
+> é o jogador N"*, e no DualSense o número do jogador é o **padrão** das cinco
+> lâmpadas, não o nome de nenhuma delas. O nó do meio **chama-se** `player-3` e
+> **significa** jogador **1**. Refeita a leitura em 07/08, com os cinco nós de
+> cada aparelho: **vpad = jogador 1**, **físico = jogador 3** — nenhum número se
+> repetiu na mesa dela, e ela confirmou de olho. A correção inteira, com a tabela
+> canônica e a lição, está na nota datada de 07/08/2026 mais abaixo neste
+> arquivo: *"a colisão «dois no jogador 3» nunca existiu"*.
+
 Lido direto do `sysfs`, `brightness=1`:
 
 | LED aceso | dono | barramento |
@@ -704,13 +716,28 @@ Duas coisas, e as duas são novas:
    que o produto acende jogador em quem o co-op não conta; o que não estava
    registrado é que ele acende **o mesmo jogador em dois aparelhos ao mesmo
    tempo**. Quem olha o plástico vê dois "jogador 3" na mesa.
+
+   > **CADUCOU em 07/08/2026.** Nunca houve colisão. O vpad acende o padrão do
+   > jogador **1** (só a lâmpada do meio, que se chama `player-3`); o padrão do
+   > físico, relido em 07/08 com os cinco nós, é o do jogador **3**. Ver a nota
+   > datada de 07/08 no fim deste arquivo.
 2. **O vpad chama-se `Hefesto P1` e acende `player-3`.** O nome do dispositivo e
    o LED que ele acende **discordam entre si**, no mesmo objeto. Nenhuma das três
    contabilidades da seção anterior explica isso sozinha — é o par
    (nome fixado na criação do vpad) contra (slot atribuído depois).
+
+   > **CADUCOU em 07/08/2026, e cai por inteiro.** O vpad chama-se `P1` **e**
+   > acende o padrão do jogador **1** — ele concorda consigo mesmo. Quem discorda
+   > é outro par, e a nota datada de 07/08 o nomeia: o **físico** exibe 3 no
+   > plástico enquanto o mesmo jogador é lido pelo jogo como `Hefesto P1`.
 3. **O Pro Controller acende jogador 1 E 2 juntos.** É o padrão do `hid-nintendo`
    para "não numerado", e não uma atribuição nossa. Reforça o que a sprint já
    diz: sem adoção, o hardware escolhe sozinho o que exibir.
+
+   > **A atribuição ao kernel CADUCOU em 07/08/2026** — ver a seção *"Uma correção
+   > que esta execução obrigou"*, na nota da `E0`: aquele padrão era **nosso**
+   > (`write_player_number(inst, 2)`), e o journal das 21h08 registra `slot=2` no
+   > Pro. A leitura do `sysfs` (dois verdes acesos) continua MEDIDA.
 
 **Grau: MEDIDO** (leitura de `sysfs` e resposta do próprio produto, na máquina
 dela, com os três ligados). **SEM PROVA:** que o jogo veja os três como jogador
@@ -723,6 +750,12 @@ Nada é reordenado, mas a **`E0`** ganha um critério a mais: não basta parar d
 afirmar o que não se entrega — é preciso garantir que **dois aparelhos nunca
 acendam o mesmo número**, inclusive quando um deles é o nosso próprio vpad. Um
 teste que conte LEDs acesos por número fecha isso, e não existe hoje.
+
+> **Nota de 07/08/2026:** o critério **continua valendo** e o teste **já existe**
+> (`tests/unit/test_lugar_a_mesa_numero_de_jogador_nao_se_repete.py`). O que muda
+> é o motivo: não foi ele que quebrou nesta mesa. O invariante tem **duas
+> metades**, e a que quebrou é a segunda — *"a lâmpada no plástico contradiz o
+> nome que o jogo mostra"*. Ver a nota datada de 07/08 no fim deste arquivo.
 
 ---
 
@@ -965,6 +998,193 @@ para onde a decisão mora, não para o resultado.
    num `EvdevReader` apontado para um aparelho não-Sony, e hoje ninguém aponta:
    quem apontaria é a `E3`. A `E2` entrega a **capacidade**, medida e viva —
    como a `E0` deixou a capacidade de acender inteira em `core/external_leds.py`.
+
+---
+
+## NOTA DATADA — 07/08/2026: a colisão "dois no jogador 3" nunca existiu
+
+**GRAU: MEDIDO** — leitura dos cinco nós de cada aparelho feita **hoje, às
+19h00**, na máquina dela, com os controles ligados, e decodificada pela tabela
+canônica de
+[`core/led_control.py:105-119`](../../../src/hefesto_dualsense4unix/core/led_control.py).
+**E CONFIRMADO DE OLHO POR ELA**, em 07/08:
+
+> *"o dualsense branco dessa vez conectado como player 3"*
+
+**A pessoa que usa o produto leu certo antes de quem o escreve.** Ela olhou o
+plástico e disse "player 3"; o documento tinha registrado "player 3 em dois
+aparelhos" como defeito novo. Quem errou foi o documento.
+
+### O erro, em uma frase
+
+Cada nó `:white:player-N` aceso foi lido como *"este aparelho é o jogador N"*.
+**No DualSense isso está errado.** O número do jogador é o **padrão** das cinco
+lâmpadas — não o nome de nenhuma delas.
+
+### A tabela que fecha a questão (`core/led_control.py:105-119`)
+
+| jogador | padrão canônico (5 lâmpadas, da esquerda para a direita) | nós acesos no `sysfs` |
+|---|---|---|
+| **1** | `(F, F, V, F, F)` | **só** `player-3` — a do meio |
+| **2** | `(F, V, F, V, F)` | `player-2` + `player-4` |
+| **3** | `(V, F, V, F, V)` | `player-1` + `player-3` + `player-5` |
+| **4** | `(V, V, F, V, V)` | `player-1` + `player-2` + `player-4` + `player-5` |
+
+O nó do meio **chama-se** `player-3` e **significa** jogador **1**. Em nenhum
+lugar desta tabela "um nó aceso" é "o número daquele nó" — a tabela é do PS5, e
+`player_led_pattern()` a estende até 8 (R-25) com o mesmo princípio.
+
+### A releitura, com os cinco nós de cada aparelho (07/08, 19h00)
+
+| aparelho | `brightness=1` em | pela tabela |
+|---|---|---|
+| vpad `Hefesto P1` (`0003:054C:0DF2`, `HID_PHYS=hefesto-vpad`) | **só** `player-3` | **jogador 1** |
+| DualSense físico (`0005:054C:0CE6`, Bluetooth) | `player-1` + `player-3` + `player-5` | **jogador 3** |
+| Pro Controller (`0005:057E:2009`) | `green:player-1` + `green:player-2` | **jogador 2** |
+| 8BitDo em modo PS4 (`0005:054C:05C4`) | não tem nó `player-*` | — (é barra de DS4: a **cor**) |
+
+**Nenhum número se repetiu.** A numeração dos DualSense estava **certa**, e foi
+registrada como defeito. O item 2 daquela nota cai junto: o vpad chama-se `P1`
+**e** acende o padrão do jogador 1 — ele **concorda consigo mesmo**.
+
+### O que o registro das 22h40 tem, e o que ele não tem
+
+A tabela daquela nota anotou **um nó por aparelho**, os dois chamados `player-3`.
+Isso não é descuido de digitação: **o instrumento perguntou a coisa errada.**
+Quem acredita que "nó aceso = número do jogador" pergunta *"qual `player-N` está
+aceso?"*, anota a resposta e para — e nunca escreve o padrão inteiro, que é o
+único dado que decodifica.
+
+O efeito é que **o registro das 22h40 não é mais decodificável sozinho**: lido ao
+pé da letra, ele diria que os dois aparelhos eram jogador **1**, o que
+contradiria tanto o olho dela quanto a releitura de hoje. Não foi apagado e não
+se apaga — é a prova documental de que a pergunta errada estraga o dado, não só a
+conclusão. **O que fecha a questão é a releitura de hoje, com os cinco nós**, mais
+a confirmação dela.
+
+**Um dado colhido de graça, e ele NÃO fecha a pergunta em aberto do Pro:** às
+19h00 de 07/08, com a `E0` já entregue (`EXTERNAL_PLAYER_LED_ENABLED = False`), o
+Pro Controller **continua** com os verdes 1 e 2 acesos. Isso é compatível com as
+**duas** hipóteses — resíduo nosso congelado no nó (o custo que a `E0` declara) e
+padrão do firmware — porque o daemon já escreveu naquele controle antes da `E0`.
+A medição que decide continua sendo a mesma, e ninguém a fez: **ligar o Pro com o
+daemon parado desde o boot.**
+
+### O achado não evapora: ele muda de metade
+
+O invariante que o teste vigia tem duas metades. A refutação atinge a primeira e
+**deixa a segunda de pé, mais precisa do que estava**:
+
+| metade | o que diz | nesta mesa |
+|---|---|---|
+| 1 | dois jogadores não exibem o mesmo número | **não foi violada** — 1 e 3, distintos |
+| 2 | a lâmpada no plástico não contradiz o nome que o jogo mostra | **violada** |
+
+O DualSense físico e o vpad `Hefesto P1` são **o mesmo jogador**, e exibiram
+números **diferentes**: a lâmpada do plástico diz **3**, o nome que o jogo lê diz
+**P1**. É exatamente o que `conferir_sem_repetir` reprova na metade 2 e o que
+`test_lampada_que_discorda_do_nome_reprova` já modela em
+`tests/unit/test_lugar_a_mesa_numero_de_jogador_nao_se_repete.py`.
+
+**E o mecanismo já estava nomeado no nosso próprio código** — ninguém tinha
+ligado os dois fatos (`integrations/uhid_gamepad.py:351-355`):
+
+> *"o PROBE do `hid_playstation` no PRÓPRIO vpad emite outputs (reset de LEDs e,
+> via `dualsense_set_player_leds`, um player-LED com a numeração DO KERNEL — que
+> conta os físicos junto). Replicá-los pintaria o físico com o número errado no
+> nascimento de todo vpad — **o exato P3** que o REPLICA-03 cura."*
+
+O `hid-playstation` numera por ordem de registro e conta o nosso vpad como mais
+um DualSense: por isso o físico é empurrado para o **3**. **GRAU: SUSPEITA COM
+MECANISMO, forte** — mecanismo escrito em código nosso, mais a releitura de hoje
+e a confirmação de olho dela; o que falta é instrumentar ao vivo **qual**
+escritor pintou o 3 naquele instante.
+
+**A hipótese de perfil foi descartada por leitura** (**GRAU: MEDIDO**, 07/08):
+nos 13 perfis dela — 14 blocos `player_leds`, contando a sobreposição por
+controle de `vitoria.json` — **nenhum** tem `[true, false, true, false, true]`. O
+padrão mais comum ali é o do jogador 1, e é o que `fallback` (prio 0) e `sackboy`
+(prio 79) carregam.
+
+### O que isto NÃO desfaz
+
+1. **A queixa original dela continua inteira.** *"os 3 controles conectados e com
+   os 3 como player 1"* é sobre o espaço de numeração **do jogo** — a ordem de
+   enumeração dos dispositivos, que não é nossa. Esta correção não a toca. Ela
+   continua **SEM PROVA** (o caminho até o jogo nunca foi instrumentado) e com
+   dono declarado: as entregas **`E3`** e **`E4`**, que ela autorizou só depois da
+   MÁSCARA-01. **São dois defeitos distintos, e nenhum cura o outro.**
+2. **A contagem continua medida:** três controles na mesa, o daemon lista **um**,
+   o co-op conta **um** jogador. É o produto respondendo sobre si mesmo, e nada
+   aqui mexe nisso.
+3. **Os dois `xfail strict` continuam legítimos, por um motivo independente
+   deste erro.** Verificado hoje com `--runxfail` (**GRAU: MEDIDO**): a fila da
+   lâmpada (`CoopManager._numero_exibido` / `ExternalIdentityRegistry.slot_for`,
+   colocação entre os presentes) e o índice do jogo
+   (`CoopManager.player_indexes()`, primário eleito pelo backend) são espaços de
+   numeração **separados**, e o vpad só vive no segundo. A falha real que sai é
+   *"a luz e o nome trocam de dono entre dois jogadores"* — nada a ver com nome
+   de nó. Suíte do arquivo: **11 passed, 2 xfailed**.
+4. **A `E0` não muda.** Calar a luz nos externos foi decisão dela por outro
+   motivo, e segue de pé.
+
+### A lição, e ela é reaproveitável: nome de recurso do kernel não é valor de domínio
+
+**`:white:player-3` é *"a terceira lâmpada da barra"*, não *"o jogador 3"*.** O
+nome de um recurso do kernel descreve a **posição física** da coisa; a semântica
+do produto mora na tabela do produto. Ler nome de `sysfs` como se fosse valor de
+domínio é uma **armadilha de instrumento** — da mesma família do *"medir contra a
+biblioteca errada"* que a casa já lista em
+[COMO-OLHAR-A-TELA.md](../COMO-OLHAR-A-TELA.md), e com o mesmo efeito: o
+instrumento devolve um número **convincente, coerente consigo mesmo e falso**, e
+o erro sobrevive à revisão porque parece um achado.
+
+E há um agravante que esta armadilha tem e a outra não: **ela estraga o dado
+bruto, não só a conclusão.** Medir contra a biblioteca errada ainda deixa o
+número medido no papel, e outra pessoa pode redividir. Aqui, o modelo errado
+mudou a **pergunta** — *"qual `player-N` está aceso?"* em vez de *"qual é o
+padrão?"* — e o registro das 22h40 saiu **incompleto**, com um nó por aparelho.
+Nenhuma releitura salva aquele registro; foi preciso ligar tudo de novo. **Modelo
+errado não produz só resposta errada: produz coleta que não dá para reaproveitar.**
+
+A defesa é a mesma das outras armadilhas daquele arquivo: **declarar contra o quê
+se está medindo.** Quem lê player-LED de DualSense mede contra
+`player_led_pattern(n)`, sempre — os cinco bits inteiros, nunca um nó isolado. E
+quem **colhe** anota os cinco, mesmo os apagados, mesmo achando que já sabe a
+resposta.
+
+E há um contraste que vale guardar: **o único artefato desta leva que já fazia
+isso certo era o teste.** `test_lugar_a_mesa_numero_de_jogador_nao_se_repete.py`
+compara o padrão na escrita **e** na leitura, e a docstring de ancoragem dele diz
+a regra com todas as letras — *"o nome do NÓ não é o número do JOGADOR"*. **O
+documento errou onde o teste acertou**, e por isso nenhuma linha de `src/` mudou
+por causa desta correção.
+
+### Onde a nota foi escrita, e o que ficou de fora
+
+| lugar | o que ganhou |
+|---|---|
+| esta sprint (nota das 22h40, itens 1, 2 e 3, e o título da seção) | marcas de caducidade apontando para cá |
+| `docs/usage/modos.md` | nota datada — é **texto de produto**, e era o lugar mais grave |
+| `docs/process/2026-08-07-EXECUCAO-o-que-as-doze-decisoes-viraram.md` | nota datada sobre *"é por isso que «Hefesto P1» acende 3"* |
+| `docs/process/2026-08-07-PAINEL-as-nove-decisoes-que-esperam-ela.md` | uma linha: o teste existe, e a premissa dele mudou de metade |
+
+**Fica de fora, e a recusa é declarada:**
+
+- **as mensagens dos commits `a68c04e` e `6b1cb62`** afirmam o erro e **não têm
+  conserto** — histórico publicado não se reescreve. Ficam registradas aqui;
+- **`docs/process/agentes/2026-08-06/decisoes/candidatas-cruas.md` (contexto da
+  candidata 23) e `.../painel-de-decisoes.md`** repetem a leitura errada e
+  **não foram tocados de propósito**: `docs/process/agentes/README.md` declara
+  aquele diretório como **matéria-prima** — *"o que um agente devolveu, como
+  devolveu"* —, e a mesma razão isenta o diretório do portão de acentuação.
+  Corrigir o corpo de uma saída bruta é falsificá-la. A correção mora aqui;
+- **a docstring de ancoragem de `test_os_numeros_batem_com_o_journal_dela`**
+  atribui o "LED do meio" ao DualSense **físico**, quando foi o **vpad** — os
+  dois aparelhos estão trocados na frase. A **asserção não depende disso** (ela
+  mede o que `_numero_exibido` produz na fixture, não o `sysfs` dela), e a
+  correção é de uma frase. Ficou **em aberto** porque esta passagem tinha
+  proibição explícita de tocar em `tests/`.
 
 ---
 

@@ -111,6 +111,26 @@ os dois espaços — e o vpad, que só existe no segundo, carrega o número no
 Não foi curado porque a cura toca a adoção dos externos, que ela **adiou** até a
 máscara por controle existir.
 
+> **CORREÇÃO DATADA — 07/08/2026: a última frase do parágrafo acima está errada,
+> e o resto continua de pé.** O vpad `Hefesto P1` **não** acende 3: ele acende só
+> a lâmpada do meio da barra, que é o padrão canônico do jogador **1**
+> (`core/led_control.py:105-119` — o número do jogador é o **padrão** das cinco
+> lâmpadas, não o nome do nó `:white:player-N`). Quem acende o padrão do 3 é o
+> **DualSense físico** — medido de novo em 07/08 lendo os cinco nós de cada
+> aparelho, e ela já tinha lido certo de olho: *"o dualsense branco dessa vez
+> conectado como player 3"*.
+>
+> **O diagnóstico do parágrafo sobrevive inteiro, e fica mais preciso:** os dois
+> espaços de numeração continuam desencontrados, só que o desencontro não é
+> "dois aparelhos no mesmo número" — é **o mesmo jogador exibindo dois números
+> diferentes**: `3` na lâmpada do plástico e `P1` no nome que o jogo lê. O
+> mecanismo está nomeado no nosso código
+> (`integrations/uhid_gamepad.py:351-355`, *"o exato P3"*): o `hid-playstation`
+> numera por ordem de registro e conta o nosso vpad como mais um DualSense.
+> **GRAU: SUSPEITA COM MECANISMO, forte.** A correção inteira, com a tabela e a
+> lição, está na nota datada de 07/08/2026 da
+> [LUGAR-À-MESA-01](sprints/2026-08-06-LUGAR-A-MESA-01-tres-controles-ligados-e-um-jogador-so.md).
+
 ### E a luz calou sem enterrar a capacidade
 
 A função continua viva e testável; o **chamador** é que está desligado, com a

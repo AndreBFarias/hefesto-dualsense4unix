@@ -296,6 +296,34 @@ broker, reescreve o esconde a cada 30 s — `hidraw_broker_hidden` é o evento
 journal. O desalinhamento **não apoia** a hipótese; também **não a mata**, porque
 as escritas de 60 Hz não são logadas. GRAU: SEM PROVA, dos dois lados.
 
+**NOTA DATADA, 07/08/2026 18h55 — a Q-2 ganhou meio A/B de graça, e ele riscou
+um suspeito.** O
+[E-1 do protocolo dos externos](2026-08-07-ISOLAR-os-externos-o-metodo-da-lightbar-no-pro-e-no-8bitdo.md#e-1-fechado--07082026-18h55)
+fechou hoje, e um pedaço do resultado é desta página. Às 15:27:48 o daemon
+passou a rodar com `EXTERNAL_PLAYER_LED_ENABLED = False` (decisão 12 dela) —
+isto é, **uma fonte de tráfego de rádio do próprio Hefesto foi desligada** sem
+que o daemon parasse. O que se mediu nas 3h27m seguintes:
+
+| métrica | com a escrita de LED ligada (18h20m) | com ela desligada (3h27m) | GRAU |
+|---|---|---|---|
+| recusas `joycon_enforce_subcmd_rate` no kernel | 348 | **0** | MEDIDO |
+| links Bluetooth novos do **DualSense** | 5 (**0,27/h**) | 1 (**0,29/h**) | MEDIDO |
+
+**A leitura, e ela é estreita de propósito.** O daemon estava, até hoje,
+martelando o rádio com subcomando de LED no Pro Controller — 348 recusas de
+kernel em dois dias, MEDIDO. Isso era um candidato óbvio para a Q-2, porque
+tráfego de subcomando no mesmo rádio é mecanismo plausível para queda de link
+do vizinho. **Desligar esse tráfego não mudou a taxa de queda do DualSense.**
+Logo esse candidato específico **sai** da lista de suspeitos da Q-2. GRAU:
+MEDIDO, com a ressalva de que o lado B tem **3h27m** e **uma** queda — é sinal
+fraco, e não fecha nada sozinho.
+
+**O que esta nota NÃO faz:** não responde a Q-2. O daemon continua segurando o
+hidraw físico pelo broker, continua reescrevendo o esconde a cada 30 s e
+continua escrevendo estado a 60 Hz — nada disso foi desligado, e a Q-2 mede
+justamente isso, com o produto **parado**. A nota tira **um** suspeito da lista;
+a noite sem o produto continua sendo o que decide.
+
 **Por que é a SEGUNDA.** Custa uma noite **sem o produto**. Se a Q-1 fechar em
 bateria, esta janela não precisa existir.
 
@@ -475,6 +503,10 @@ não pediu*, e ela relatou sem pedir conserto.
 - **3** medições nesta fila; **1** delas decide, e cabe numa noite.
 - **1** entrega de instrumento fechada no mesmo dia: o daemon grava a bateria
   (seção 8). A Q-1 deixou de ser indecidível **por falta de instrumento**.
+- **1** suspeito da Q-2 riscado de graça em 07/08, 18h55: o storm de subcomando
+  de LED no Pro parou (348 recusas para **0**) e a taxa de queda do DualSense
+  **não** mudou (0,27/h para 0,29/h). MEDIDO, com janela curta — a nota datada
+  está na Q-2, e a medição inteira está no E-1 do protocolo dos externos.
 
 E a regra que este documento serve para lembrar: **hipótese tem de explicar o que
 JÁ funcionava**. Duas sessões de mais de quinze horas são exatamente isso — o que
