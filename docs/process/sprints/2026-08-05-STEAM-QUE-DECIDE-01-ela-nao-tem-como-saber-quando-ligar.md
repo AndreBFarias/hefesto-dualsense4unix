@@ -239,6 +239,50 @@ naturais escrevem em cadastros diferentes**.
 
 **Grau da pergunta: SEM PROVA.** Ninguém, em nenhuma sessão, verificou.
 
+> **NOTA DATADA — 06/08/2026, 19:56. A E1 FOI EXECUTADA, E O M-04 FECHOU
+> POSITIVO.** Nada abaixo é apagado: o protocolo estava certo, o veto estava
+> certo, e a pergunta era a pergunta certa. O que caducou é o **grau** e **duas
+> frases**.
+>
+> **O grau.** *"SEM PROVA"* passa a **MEDIDO**: em 06/08/2026, das 19:34 às
+> 19:56, com o guarda parado, o global `SteamController_PSSupport "0"` e um
+> DualSense físico, o `Microsoft X-Box 360 pad 1` do Steam Input **nasceu só no
+> jogo da allowlist** (Mullet Mad Jack, `2111190`) e **não existiu** no jogo fora
+> dela (Sackboy, `1599660`). **A Steam honra o per-app com o global desligado.**
+> O registro completo está em
+> [CONTROLE-SONY-MEDIDO-01](2026-08-06-CONTROLE-SONY-MEDIDO-01-o-experimento-que-decide-metade-da-doutrina.md),
+> seção *O RESULTADO*.
+>
+> **Primeira frase que caduca**, no bloco *"Por que isso decide metade da
+> sprint"*: *"O que faria os jogos da allowlist funcionarem seria apenas o
+> Hefesto sair da frente (ungrab + vpad suspenso)"*. Esse cenário era o do
+> **fracasso** do per-app, e o per-app **não fracassou**. E a frase erra também
+> na descrição do mecanismo: **"sair da frente" só vale para a ENTRADA.** Durante
+> a exceção o Hefesto **mantém a saída inteira** — com o Mullet aberto, os
+> gatilhos que ela aplicou seguraram (duros) e o vermelho dela ficou na lightbar,
+> com `hidraw abertos pelo daemon: 1`. Não há portão da exceção no caminho de
+> saída: os **oito** chamadores de `steam_input_excecao_ativa` estão todos em
+> `daemon/subsystems/gamepad.py`, nenhum em `core/` (**MEDIDO** por `grep` nesta
+> árvore, 06/08).
+>
+> **Segunda frase que caduca**, na mesma lista: *"a allowlist não é 'a lista dos
+> jogos com Steam Input' — é 'a lista dos jogos em que o Hefesto se cala'"*. O
+> Hefesto **não se cala** na allowlist. A leitura certa, medida por contraste
+> entre os dois jogos, é a **inversa**: **na** lista o Hefesto perde a entrada e
+> **ganha** a saída (os ajustes dela vencem); **fora** dela ganha a entrada e
+> **perde** a saída (o jogo escreve no vpad, a réplica chega ao físico, e a
+> camada GAME é o topo da precedência declarada em
+> `core/backend_pydualsense.py:1253-1259`). **Exceção: no rumble a usuária vence
+> nos dois casos** (`gamepad.py:747-748`).
+>
+> **O terceiro resultado possível — o mais traiçoeiro — está descartado por
+> medição:** os recursos de PlayStation **não** dependiam do global. Eles
+> obedeceram a ela com o global em `"0"`.
+>
+> **Consequência para esta sprint:** o portão zero está aberto. **As entregas E2
+> a E6 seguem como escritas**, que é exatamente o que a primeira linha da tabela
+> *"Como ler cada resultado"* mandava fazer.
+
 ### A pergunta, em uma linha
 
 O produto **sempre** zera `SteamController_PSSupport` (o global) e conta com

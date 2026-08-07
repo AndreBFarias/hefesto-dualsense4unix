@@ -16,9 +16,9 @@
 
 No mesmo boot, o daemon restaurou a fila de externos assim:
 
-    external_fila_restaurada  ordem={'e0f6b5664653': 3,
-                                     'e417d81c661a': 4,
-                                     'e417d81c9983': 5}
+    external_fila_restaurada  ordem={'e0f6b5000053': 3,
+                                     'e417d800001a': 4,
+                                     'e417d8000083': 5}
 
 Três MACs para **dois** controles físicos: o Pro Controller (`e0:f6:b5:…`) e o
 8BitDo — que aparece **duas vezes**, com `…1c:66:1a` e `…1c:99:83`. O prefixo
