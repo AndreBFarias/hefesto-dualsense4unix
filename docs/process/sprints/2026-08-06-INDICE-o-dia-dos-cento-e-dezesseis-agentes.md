@@ -187,9 +187,27 @@ existe exatamente para isso.
 
 ---
 
-## O que está ABERTO, e é DELA
+## O que estava ABERTO — e foi RESPONDIDO em 07/08
 
-Nenhum destes anda sem a palavra dela. Estão aqui para ela ler de uma vez.
+> **NOTA DATADA — 07/08/2026.** As três perguntas abaixo foram levadas a ela num
+> painel de nove decisões, depuradas de cem candidatas, e **as três foram
+> respondidas**. O texto original fica de pé para quem reconstituir a ordem em
+> que as coisas foram sabidas.
+>
+> - **`E3`/`E4` do `LUGAR-A-MESA-01`:** autorizadas, mas **só depois da
+>   `MASCARA-01`**. Ela recusou o preço, não a entrega.
+> - **A caixinha do Steam Input:** mora no editor do perfil, sob o jogo escolhido.
+>   **Já está na tela** (commit `6b1cb62`).
+> - **A fila de medições:** o protocolo de 06/08 vem antes do CHECKLIST de 25/07.
+>
+> As doze respostas estão em
+> [as doze respostas dela](../2026-08-07-DECISOES-DELA-as-onze-respostas-do-painel.md),
+> e o que elas viraram em código, em
+> [o diário de execução](../2026-08-07-EXECUCAO-o-que-as-doze-decisoes-viraram.md).
+
+## O que estava ABERTO, e era DELA
+
+Nenhum destes andava sem a palavra dela. Estão aqui para ela ler de uma vez.
 
 1. **`E3`/`E4` do `LUGAR-A-MESA-01`** — dar vpad próprio aos controles externos
    toca o veto do `QUATRO-NO-RÁDIO-01`. **Grau: o desenho é MEDIDO; a decisão é dela.**
