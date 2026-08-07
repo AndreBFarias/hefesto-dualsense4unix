@@ -7,8 +7,11 @@
   ligue um controle de outra marca**, não só esta bancada
 - **Faixa:** 2 — o produto se contradiz. E, no caso do LED, ele **afirma**
 - **Causa-raiz:** **PROVADA no código** (três contabilidades, duas se falam)
-- **Depende de decisão dela:** SIM. Ver *"O VETO"* — a entrega que fecha a
-  queixa literal **reabre o `8BIT-02` por escrito**, e isso é dela
+- **Depende de decisão dela:** **as DUAS perguntas já têm resposta (07/08/2026).**
+  A `E0` **deixou de estar presa** — ver a nota datada *"a E0 saiu da prisão, e a
+  luz calou"*, no fim deste arquivo. A `E3`/`E4` seguem atrás do
+  pré-requisito que ela pôs: a `MASCARA-01`. Ver *"O VETO"* — a entrega que
+  fecha a queixa literal **reabre o `8BIT-02` por escrito**, e isso é dela
 - **Fecho de tela:**
   [PROVA-DE-TELA-01](2026-07-27-PROVA-DE-TELA-01-dez-minutos-de-olho-antes-de-qualquer-leva.md)
 
@@ -24,10 +27,18 @@
 > Sem a resposta 1, esta sprint para na E1. Sem a resposta 2, a E0 não sabe se
 > conserta a boca ou se cala a lâmpada.
 
-> ### **RESPOSTA DA PERGUNTA 1 — 07/08/2026. A 2 SEGUE ABERTA.**
+> ### **AS DUAS RESPONDIDAS — 07/08/2026.**
 >
 > **Grau: DECISÃO DELA**, registrada em
-> [as onze respostas do painel](../2026-08-07-DECISOES-DELA-as-onze-respostas-do-painel.md).
+> [as doze respostas do painel](../2026-08-07-DECISOES-DELA-as-onze-respostas-do-painel.md).
+>
+> **NOTA DATADA — 07/08/2026: a pergunta 2 deixou de estar aberta.** O texto
+> abaixo dizia *"A 2 SEGUE ABERTA"* e *"Pergunta 2 continua sem dona"*; **isso
+> caducou no mesmo dia**, com a décima segunda resposta dela:
+> **calar a luz até a entrega existir.** Nada foi apagado — o parágrafo fica
+> como está para quem for reconstituir a ordem em que as coisas foram sabidas.
+> A `E0` **não está mais presa**, e a execução está na nota datada do fim deste
+> arquivo.
 >
 > **Pergunta 1: sim, mas SÓ DEPOIS da máscara por controle.** Ela não recusou a
 > entrega — recusou **o preço**: o botão de PlayStation na tela do jogo para
@@ -160,6 +171,12 @@ sprint registra com destaque.**
 > **Hoje o produto acende, no plástico, um indicador de JOGADOR 2 e de JOGADOR 3
 > em controles que o próprio co-op não conta como jogadores — e que o jogo trata
 > como jogador 1.**
+
+**NOTA DATADA — 07/08/2026: o "hoje" desta seção acabou.** A `E0` foi executada
+e o produto **parou de acender**. O achado **não se apaga** — é ele que explica
+por que a decisão dela foi necessária, e o `caminho:linha` abaixo continua sendo
+onde a coisa acontecia (e voltará a acontecer quando a `E3` existir). Ver a nota
+datada *"a E0 saiu da prisão, e a luz calou"*, no fim deste arquivo.
 
 O caminho, medido linha a linha:
 
@@ -461,8 +478,22 @@ no plástico, e não depende da resposta dela sobre vpad.)*
 - **E0c — a decisão dela sobre a luz.** Pergunta 2 do cabeçalho. As três opções,
   com o preço de cada uma, estão em *"O que fica ABERTO"*, item 2.
 
+  **RESPONDIDA E EXECUTADA em 07/08/2026 — grau: DECISÃO DELA.** A escolha foi
+  **calar a luz até a entrega existir**, e ela está no código:
+  `EXTERNAL_PLAYER_LED_ENABLED = False`
+  (`daemon/subsystems/external_identity.py:194`) desliga o **chamador**, e a
+  capacidade de acender continua inteira em `core/external_leds.py`. Detalhe,
+  medição e mordidas na nota datada do fim deste arquivo.
+
 **Risco:** perto de zero para E0a. **Não** toca `coop.py`, `external_identity.py`
 nem caminho de input.
+
+**Correção de escopo, 07/08/2026:** a linha acima envelheceu no mesmo dia. A
+`E0c`, ao ser executada, **toca sim** `external_identity.py` — é lá que mora o
+chamador que ela manda desligar. O que continua verdadeiro, e é o que a frase
+queria dizer: **nenhum caminho de INPUT é tocado**, o `coop.py` fica intacto, e
+a ATRIBUIÇÃO de lugar na fila segue rodando igual (R-14: numerar é identidade;
+o interruptor governa aparência).
 
 ### E1 — a mesa aparece na tela, servida do cache que já existe
 
@@ -589,8 +620,20 @@ inteira.** Que a ordem de criação dos vpads influencie a ordem de enumeração
 suspeita, não medição. Qualquer texto de tela ou de README que prometa
 "o número aceso é o mesmo do jogo" está **proibido** por esta sprint.
 
-**2. O que fazer com a luz enquanto a E3 não existe.** Três opções, e a escolha
-é dela:
+**2. O que fazer com a luz enquanto a E3 não existe. — FECHADO em 07/08/2026.**
+
+> **NOTA DATADA — 07/08/2026, grau: DECISÃO DELA.** Este item **deixou de estar
+> aberto**. Ela escolheu **calar** (a segunda opção da lista abaixo), sabendo do
+> custo que a própria lista declara, e **recusou explicitamente** "manter como
+> está" e "manter com cor diferente". A lista fica inteira, sem uma linha
+> apagada, porque foi ela que tornou a decisão possível — e porque o preço da
+> opção escolhida continua sendo o preço que ela aceitou pagar. A terceira
+> opção ("calar só com jogo aberto") **não foi escolhida**, e o risco que a
+> lista já lhe atribuía — `display_authority` preso em `unknown` deixaria
+> externo nenhum receber número, nunca — segue registrado e não precisa mais ser
+> resolvido para a `E0` andar.
+
+As três opções, como estavam quando a escolha foi feita:
    - **manter como está** — o Pro segue acendendo jogador 2. É a mentira medida;
    - **calar (E0b)** — zero escritas, sem apagar. Custo: quem tem dois externos
      perde o sinal que distingue um do outro, que é a cura medida da R-24/R-25;
@@ -677,6 +720,133 @@ Nada é reordenado, mas a **`E0`** ganha um critério a mais: não basta parar d
 afirmar o que não se entrega — é preciso garantir que **dois aparelhos nunca
 acendam o mesmo número**, inclusive quando um deles é o nosso próprio vpad. Um
 teste que conte LEDs acesos por número fecha isso, e não existe hoje.
+
+---
+
+## NOTA DATADA — 07/08/2026: a E0 saiu da prisão, e a luz calou
+
+**GRAU: DECISÃO DELA** (a décima segunda resposta,
+[registro do dia](../2026-08-07-DECISOES-DELA-as-onze-respostas-do-painel.md)),
+executada no mesmo dia.
+
+> *"Calar a luz até a entrega existir."*
+
+Enquanto o controle externo **não for jogador de verdade dentro do jogo**, o
+Hefesto **para de acender número de jogador nele**. A `E0` estava presa entre
+*calar* e *explicar*; ela desatou o nó escolhendo o lado caro: **perder o
+próprio instrumento** — a casa tem registrado que *ela distingue os controles
+pela COR da luz e pelo LED de jogador* (`app/actions/home_actions.py:13`) —
+para o produto parar de afirmar o que não cumpre.
+
+### O que mudou no código
+
+| onde | o quê |
+|---|---|
+| `daemon/subsystems/external_identity.py:194` | nasce `EXTERNAL_PLAYER_LED_ENABLED = False`, com o motivo, o custo e a condição de volta escritos ali |
+| `daemon/subsystems/external_identity.py:1220-1238` | o **chamador** desliga: `return` antes do laço de repintura, com o cache limpo |
+| `core/external_leds.py` | **intocado.** `write_player_number`, `write_lightbar_slot` e `apply_player_number` continuam inteiros, exportados e testados |
+
+**O caminho de volta é UMA LINHA:** trocar aquela constante para `True`. Não é
+promessa — é medido, ponta a ponta, por
+`test_uma_linha_devolve_a_luz_no_mesmo_tick`.
+
+### A escolha de desenho: "calar" é NÃO ESCREVER, não é APAGAR
+
+As duas leituras eram defensáveis e o efeito no plástico é diferente. A escolha
+foi **zero escritas**, e o critério é o dela — *o produto não pode AFIRMAR
+jogador*:
+
+1. **Apagar também é afirmar.** Seria a nossa mão, no mesmo nó, dizendo *"este
+   controle não tem jogador"*. Trocaria uma afirmação por outra, sob a mesma
+   autoridade.
+2. **Falseável.** Com zero escritas o plástico fica exatamente como ficaria com
+   o Hefesto **desinstalado**. Qualquer pessoa confere a promessa parando o
+   daemon: a luz não muda. Sob "apagar", o Hefesto ligado e o Hefesto ausente
+   dariam luzes diferentes — o produto continuaria no comando da lâmpada.
+3. **Não se destrói o que não é nosso.** O padrão do firmware/kernel é
+   informação do fabricante. Na lightbar do 8BitDo em modo DS4, **acesa é o
+   sinal de "ligado"**: apagá-la trocaria a mentira "jogador 3" pela mentira
+   "sem bateria".
+4. **O rádio.** Apagar manteria tráfego de LED vivo na direção do firmware mais
+   frágil da mesa — o clone do 8BitDo **morre** sob bombardeio de LED (medido,
+   `daemon/ipc_handlers.py:286-291`). Zero escritas é zero tráfego.
+5. **Precedente MEDIDO desta casa.** O gate `auto_numbers` já traduz "parar de
+   afirmar" como *"zero escritas, sem apagar ativamente"* (R-14/NUMA-03c,
+   `daemon/subsystems/external_identity.py:1240-1249`). Duas doutrinas para a
+   mesma frase é como se perde uma.
+
+**Isto não é meio termo.** As opções que ela recusou eram *manter* e *manter com
+cor diferente*; as duas continuam recusadas. A escolha entre "não escrever" e
+"apagar" é interna ao **calar** que ela mandou fazer.
+
+### O custo declarado, e ele não está escondido
+
+**GRAU: SUSPEITA COM MECANISMO.** O nó de classe LED guarda o último valor
+escrito enquanto o device segue vinculado. Num daemon que **reinicia com o
+controle já conectado** — o caso da atualização de versão —, o número que a
+versão anterior acendeu **fica aceso**. É resíduo nosso, não afirmação nova, e
+reconectar o controle devolve o padrão do firmware.
+
+Apagar uma vez na transição foi **recusado de propósito**: é exatamente a
+escrita que o critério dela proíbe, e comprá-la para limpar resíduo custaria a
+falseabilidade do item 2 acima.
+
+### Uma correção que esta execução obrigou: o "padrão do hid-nintendo" das 22h40
+
+**GRAU: SUSPEITA COM MECANISMO, forte — e ela derruba uma atribuição feita neste
+mesmo arquivo.**
+
+A nota das 22h40 (item 3) diz: *"O Pro Controller acende jogador 1 E 2 juntos. É
+o padrão do `hid-nintendo` para 'não numerado', e não uma atribuição nossa."*
+
+**A derivação não sustenta o "não é nossa".** `write_player_number(inst, 2)`
+acende **exatamente** os verdes 1 e 2, com o azul apagado — e o journal da
+medição das 21h08, **neste mesmo arquivo**, registra
+`external_led_written hidraw=/dev/hidraw7 slot=2` para o Pro Controller. O que
+foi lido às 22h40 é, byte a byte, o que o Hefesto tinha escrito.
+
+**Nada se apaga:** a leitura do `sysfs` continua MEDIDA (dois verdes acesos). O
+que caduca é a **atribuição ao kernel**. Por que importa para a `E0`: é a
+diferença entre "calar deixa o padrão do fabricante" e "calar deixa o nosso
+último número congelado até o controle reconectar" — e a segunda hipótese é
+justamente o custo declarado logo acima.
+
+**O que fecha isto, e só fecha com os aparelhos na mesa:** ligar o Pro
+Controller com o daemon **parado desde o boot** e ler
+`/sys/class/leds/<inst>:green:player-*/brightness`. É uma medição de dois
+minutos, e nenhum teste a alcança.
+
+### As mordidas, verificadas
+
+Bateria em `tests/unit/test_lugar_a_mesa_e0_calar_a_luz.py` (9 testes, 2
+baterias). Cada cura foi **arrancada** e a reprovação **vista**:
+
+| a cura arrancada | o que reprovou |
+|---|---|
+| interruptor devolvido a `True` (a chamada de volta) | os **5** testes do comportamento entregue; os 4 da capacidade seguiram verdes, como devem |
+| "calar" reimplementado como **APAGAR** (zera os nós no gate) | **só** `test_calar_e_nao_escrever_e_nao_apagar` — é o teste que separa as duas leituras |
+| gate movido para **antes** do `slot_for` e do `try` | `test_a_atribuicao_de_slot_continua_rodando` e `test_o_enable_imu_nao_foi_calado_junto` |
+| `apply_player_number` **enterrado** (no-op + fora do `__all__`) | os **2** testes da capacidade — e **nenhum** dos 5 do silêncio, que é a razão de a segunda bateria existir |
+
+A última linha é o achado de método desta entrega: **as provas de silêncio não
+distinguem "calar" de "apagar o código".** Sem a segunda bateria, uma E0 que
+deletasse `core/external_leds.py` passaria em tudo, e a volta da luz custaria a
+leva inteira em vez de uma linha.
+
+### O que a E0 NÃO fez
+
+- **não toca os DualSense.** Só os externos. O LED de jogador dos Sony continua
+  exatamente como estava;
+- **não apaga nada** — nem luz, nem código, nem decisão medida. A bateria
+  histórica que vigia a cura R-24/R-25 ("dois player 1, dois player 2") continua
+  rodando: a fixture `led_escritas` de `tests/unit/test_external_identity.py`
+  liga o interruptor de propósito, com nota datada dizendo que ali se mede a
+  **maquinaria**, não o comportamento entregue;
+- **não fecha a `E0b`** (o interruptor de superfície do `auto_numbers`: campo no
+  schema + lugar na tela). Aquilo é escolha da pessoa; isto é doutrina do
+  produto, e as duas convivem — com o `EXTERNAL_PLAYER_LED_ENABLED` em `False`,
+  o `auto_numbers` deixa de ter efeito sobre os externos até a `E3`;
+- **não fecha a `E0a`** (a CLI dizendo os dois números nomeados).
 
 ---
 
