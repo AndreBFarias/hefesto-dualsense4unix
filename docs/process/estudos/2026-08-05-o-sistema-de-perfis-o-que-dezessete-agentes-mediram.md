@@ -527,6 +527,42 @@ botão que **apaga exatamente a escolha que ela tomou**. É a queixa dela, prova
   O tooltip do glade já foi tornado honesto (`gui/main.glade:2431-2443`), **mas o comentário desse
   mesmo bloco ficou velho** — afirma "nem na linha de comando", e o caminho de CLI existe hoje.
 
+> **NOTA DATADA — 06/08/2026, 19:56, sobre a seção 1.5 inteira. O experimento
+> rodou, e ele dá o critério técnico que o D-34 dizia não existir.** Nada acima
+> é apagado: o D-31, o D-32 e o D-33 continuam valendo palavra por palavra, e o
+> D-34 continua certo sobre o **código** (não há campo, não há constante, e o
+> único escritor é o botão). O que ele não podia saber é qual seria o critério.
+>
+> **O critério, medido em 06/08/2026 (grau MEDIDO quanto ao comportamento):**
+>
+> - **A allowlist NÃO é "a lista dos jogos com DualSense nativo".** É **"a lista
+>   dos jogos cujo DualSense passa pela Steam"**. O **Sackboy** (`1599660`) tem
+>   suporte nativo, **não** está na lista, e funcionou completo — um controle,
+>   botões de PlayStation, controle andando. O **Mullet Mad Jack** (`2111190`)
+>   precisa da lista porque o pedido dele (`SetDualSenseTriggerEffect`) passa pela
+>   **API da Steam**, e sem o Steam Input daquele jogo o pedido não tem por onde
+>   chegar.
+> - **Grau da atribuição:** *Steamworks contra HID direto* é **SUSPEITA COM
+>   MECANISMO** — ninguém leu os símbolos dos dois binários. O que é **MEDIDO** é
+>   o comportamento contrastado dos dois jogos, e a **ausência** da distinção no
+>   repositório (`grep` por "HID direto" devolve zero em `.py`, `.md`, `.sh` e
+>   `.txt`).
+> - **E a doutrina que a casa escrevia pela metade:** *"o Hefesto sai da frente"*
+>   descreve só a **ENTRADA**. Durante a exceção o Hefesto **mantém a saída
+>   inteira** — no Mullet, os gatilhos dela seguraram e a cor dela ficou. **Fora**
+>   da allowlist é que a saída dela perde: o jogo escreve no vpad, a réplica
+>   chega ao físico e a camada GAME vence (`core/backend_pydualsense.py:1253-1259`).
+>   No **rumble** a política é a inversa e a usuária vence (`gamepad.py:747-748`).
+>
+> **Consequência para o D-34, e é concreta:** o `steam_input_apps.txt` dela já
+> tem **duas entradas com justificativas incompatíveis** — `2111190` por
+> Steamworks e `3357650` por *"suporte nativo entregue PELA Steam"*, registrado
+> em 26/07 depois de medir quatro joysticks para um controle. Uma entrou pelo
+> critério certo, a outra pelo **duplicado**. E o cabeçalho do arquivo define a
+> lista de um jeito só. **Nenhum agente reescreve esse arquivo:** ele é dela.
+> Registro completo em
+> [CONTROLE-SONY-MEDIDO-01](../sprints/2026-08-06-CONTROLE-SONY-MEDIDO-01-o-experimento-que-decide-metade-da-doutrina.md).
+
 ### 1.6 Integridade dos dados dela
 
 #### D-35 — Nenhum teste e nenhum script tocou os perfis. Foi a janela.
@@ -611,6 +647,25 @@ que falta medir.
 | M-17 | **O tooltip do glade contradiz o preset embarcado** | `gui/main.glade:2861` lista o Sackboy como "funciona completo com DualSense (PS)", mas `sackboy_nativo.json` pede `xbox` e `profiles/loader.py:191` migrou `dualsense→xbox` de propósito | **não medido em jogo** qual dos dois está certo hoje |
 | M-18 | **`on_emulation_open_toml` continua vivo depois de o botão sair** | registrado em `app/app.py:320`, implementado em `emulation_actions.py:449`, e o glade (`:2483-2489`) registra que o botão saiu | dívida residual das entregas 5 e 6 da BOTÃO-QUE-NÃO-MENTE-01; **sem efeito medido** |
 
+> **NOTA DATADA — 06/08/2026, 19:56. O M-04 SAI DESTA TABELA: ele foi medido, e
+> a suspeita está REFUTADA.** A linha fica onde está, porque decisão medida não
+> se apaga e porque a suspeita era legítima quando foi escrita. O que caducou é o
+> *"o experimento nunca foi feito"*: ele foi feito em 06/08/2026, das 19:34 às
+> 19:56, com ela, um DualSense físico e três jogos abertos de verdade.
+>
+> **Veredito, grau MEDIDO:** `UseSteamControllerConfig "2"` por jogo **é honrado**
+> com `SteamController_PSSupport "0"` global — o `Microsoft X-Box 360 pad 1`
+> apareceu **só** no jogo da allowlist e **não existiu** no jogo fora dela. **A
+> exceção per-app não é decorativa, e o botão "Este jogo não funciona" entrega o
+> que promete.** Registro completo em
+> [CONTROLE-SONY-MEDIDO-01](../sprints/2026-08-06-CONTROLE-SONY-MEDIDO-01-o-experimento-que-decide-metade-da-doutrina.md),
+> seção *O RESULTADO*.
+>
+> **O M-06 não fecha junto**, e é bom não confundir: o experimento mediu o
+> Pragmata em zero jogadas. O que ele mediu é o **Mullet Mad Jack** listando
+> **um** controle na tela, sem input duplicado — o que é evidência a favor da
+> mesma cura, num jogo diferente.
+
 ---
 
 ## 3. Premissas que CADUCARAM
@@ -654,7 +709,7 @@ Cada linha é uma refutação com medição. **Nada aqui deve ser reaberto sem n
 | **C-16** | *"O guarda desligou o Steam Input do Pragmata no boot"* | **REFUTADA por journal** (DUPLO-REGISTRO-01 `:75-93`): o guarda **rodou e editou** às 22:48:05, **e o campo não mudou** (`app=3357650 valor=2` antes e depois). *"O guarda preservou a escolha dela."* Fica registrada *"porque era a explicação mais plausível e teria fechado o caso no lugar errado"* |
 | **C-17** | *"`"dualsense" in saida.lower()` não casa o nome real do nó de áudio"* | **MEDIDA COMO FALSA em 03/08**: `alsa_input.usb-Sony_Interactive_Entertainment_DualSense_Wireless_Controller-00.iec958-stereo` contém "DualSense". *"A hipótese está refutada e não deve ser reaberta."* Fica dívida menor de robustez: o casador canônico da casa usa **três** marcadores (`app/mic_monitor.py:55-60`) |
 | **C-18** | *"O `.deb` não embala `profiles_default`"* / *"morto no AppImage e no Flatpak"* | **REFUTADO** (`scripts/build_deb.sh:133`; `build_appimage_gui.sh:112-117`; `flatpak/br.andrefarias.Hefesto.yml:170-183`). *"O botão morre mesmo assim — mas por causa do resolvedor, não do pacote."* Só o **wheel puro** não embala |
-| **C-20** | *"O campo `aplicado_em` diz onde a intenção pegou"* | **MEDIDO AO VIVO em 03/08**: `led.player_set` respondeu `{"status":"ok","aplicado_em":["143a9a13ebab"]}` e o **sysfs não mudou** (`player-3 = 1` antes e depois). *"O campo acrescentado justamente para o daemon parar de mentir ainda mente"* — informa onde foi **registrada**, não **onde pegou**. E a docstring de `gamepad.py:744-745` também: *"não é broadcast"* |
+| **C-20** | *"O campo `aplicado_em` diz onde a intenção pegou"* | **MEDIDO AO VIVO em 03/08**: `led.player_set` respondeu `{"status":"ok","aplicado_em":["143a9a0000ab"]}` e o **sysfs não mudou** (`player-3 = 1` antes e depois). *"O campo acrescentado justamente para o daemon parar de mentir ainda mente"* — informa onde foi **registrada**, não **onde pegou**. E a docstring de `gamepad.py:744-745` também: *"não é broadcast"* |
 | **C-21** | *"O ciclo PS+D-pad limpa as categorias travadas e portanto aplica o volume do perfil que entra"* (justificativa da SOM-02/E4, `hotkey.py:132-135`) | **"Não aplicava."** Derrubado pela TRAVA-QUE-SOLTA-TARDE-01; catalogado pela `ENTREGA-QUE-NÃO-LIGOU-01` |
 | **C-22** | *"`test_onda_u_trava_por_categoria.py` e `test_perfil_respeita_trava_manual.py` cobrem a ordem do clear"* | **REFUTADO**: o primeiro (`:144-155`) chama `clear_manual_trigger_active()` **à mão**, com o comentário `# o que profile.switch chama`, e **nunca chama `_handle_profile_switch`**; o segundo (`:122-132`) *"documenta a ordem certa que o produto não executava"*. **Ambos verdes com o produto quebrado** — mordida na metade errada da cadeia |
 | **C-24** | *"Tirar a prioridade numérica da tela e substituí-la por um seletor"* | **DESCARTADO por decisão dela, 27/07** (PERFIL-NASCE-CERTO-01 `:133-141`): *"o lance da lista de perfis, depois que vc explicou entendi como usar e vi que funcionam bem, talvez só deixar intuitiva, não precisamos desativar ela."* Princípio final: **"o número não é o problema; o número sem consequência visível é"** |
