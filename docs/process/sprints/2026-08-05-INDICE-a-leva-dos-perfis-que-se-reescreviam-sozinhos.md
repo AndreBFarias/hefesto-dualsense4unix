@@ -146,6 +146,13 @@ para interface, a regra de aceite continua sendo a
 | suíte | **6968 passed, 1 skipped**, medido em 05/08 com o canário do `$HOME` armado | MEDIDO (`CANÁRIO-FS-01`) |
 | deltas no `~/.config` dela durante a suíte | **zero**, pela primeira vez medidos em vez de supostos | MEDIDO |
 | perfis dela em disco | **15 arquivos**; **cinco colidem por acento ou caixa** | MEDIDO |
+
+> **NOTA DATADA — 06/08/2026: o número caducou; a frase, não.** São **13**
+> arquivos hoje e **nove** nomes cujo slug difere; e "colidir" aqui nunca
+> significou perfil contra perfil — significa que uma variante digitada cai
+> em cima do arquivo que já existe. A conta e o porquê estão em
+> [JANELA-FIEL-01](2026-07-31-JANELA-FIEL-01-a-janela-que-para-de-reconciliar-e-o-botao-morto-no-pacote.md).
+
 | o perfil ATIVO dela | `sackboy_nativo`: prioridade **191**, `match: any`, `suppress: true` | MEDIDO |
 | origem daquele 191 | **indeterminada** — três teses incompatíveis (DIV-1) | **SEM PROVA**, e agora **decidível** |
 

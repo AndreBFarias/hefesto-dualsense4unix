@@ -391,11 +391,17 @@ campo que a suíte vai usar. Foi exatamente o que aconteceu no defeito 3.
   **Grau: SEM PROVA** — mas com uma diferença que importa: agora ele reprova
   **dizendo** que o laço está parado, em vez de acusar regressão.
 - **O dublê do D-Bus é por arquivo, não da casa.** `tests/conftest.py` não tem
-  guarda contra notificação. Medido em 06/08: **13 arquivos de teste** tocam a
-  supressão de emulação e **9 deles não instalam o dublê**. **Grau: MEDIDO** a
-  contagem; **SUSPEITA COM MECANISMO** de que algum desses 9 alcance de fato o
-  `notify_emulation_suppressed` — o caminho existe e está lido, mas nenhum foi
-  executado com a tela dela à vista para confirmar.
+  guarda contra notificação. Recontado em 06/08, e desta vez **com o critério
+  escrito**, para a conta poder ser refeita: `grep -rlE 'emulation.*suppress'
+  tests/` devolve **12 arquivos**, e só **4** deles trocam o
+  `notify_emulation_suppressed` por uma função muda — **8 ficam sem**.
+  **Grau: MEDIDO** a contagem, por esse critério; **SUSPEITA COM MECANISMO** de
+  que algum desses 8 alcance de fato o `notify_emulation_suppressed` — o
+  caminho existe e está lido, mas nenhum foi executado com a tela dela à vista
+  para confirmar. **Nota datada — 06/08:** a primeira escrita desta página dizia
+  *"13 arquivos, 9 sem o dublê"*, sem dizer como contou, e nenhum critério
+  reproduz esses dois números. O número não foi apagado: foi **substituído por
+  um que se refaz**.
 - **Onze construções do `AutoSwitcher` na suíte não passam `store`** — e nessas,
   o gate do BUG-MOUSE-TRIGGERS-01 está **desligado**, pela mesma alavanca que o
   defeito 3 usou de propósito. **Grau: MEDIDO** a contagem. Quantas delas

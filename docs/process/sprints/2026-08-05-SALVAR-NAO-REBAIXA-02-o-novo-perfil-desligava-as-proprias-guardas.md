@@ -335,6 +335,11 @@ medida que **só existia como comentário de código**.
 - **`importar` continua comparando nome cru** (I-1), sem a guarda de slug que
   este Salvar acabou de ganhar. Cinco dos quinze arquivos dela colidem por
   acento ou caixa;
+  > **NOTA DATADA — 06/08/2026: o número caducou; a frase, não.** São **13**
+  > arquivos hoje e **nove** nomes cujo slug difere. E o I-1 **foi curado** —
+  > ver [NUNCA-TROCA-O-ALVO-01](2026-08-06-NUNCA-TROCA-O-ALVO-01-a-janela-trocava-o-nome-e-o-salvar-ia-para-o-arquivo-errado.md),
+  > que passou o `importar` a usar `find_by_slug` nas duas metades. A conta dos
+  > nomes está em [JANELA-FIEL-01](2026-07-31-JANELA-FIEL-01-a-janela-que-para-de-reconciliar-e-o-botao-morto-no-pacote.md).
 - **a escala satura no teto** (D-26): com qualquer catch-all acima de 190, todo
   perfil novo nasce em 200 e o desempate cai na ordem alfabética do `glob`. E
   **três números convivem** para o mesmo conceito de *"nascer acima dos
