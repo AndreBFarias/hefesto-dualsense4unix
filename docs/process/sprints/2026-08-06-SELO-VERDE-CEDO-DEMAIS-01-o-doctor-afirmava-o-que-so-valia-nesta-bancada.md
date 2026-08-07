@@ -196,6 +196,41 @@ asserções que cobram a **medição** (`_culpado_tardio`, o ramo de `ATENÇÃO`
 ramo da máquina sem as regras), com a justificativa datada no docstring do
 próprio teste.
 
+## ABERTO, GRAVIDADE ALTA — a réplica do parser recusa menos que o oráculo
+
+**Grau: MEDIDO** por leitura de código, achado na quarta rodada de verificação
+adversarial e **não curado**.
+
+O `bluez_config.sh` não usa o GKeyFile: ele tem uma **réplica em `awk`** que
+decide se o `bluetoothd` aceitaria o arquivo. A réplica
+(`scripts/bluez_config.sh:344-368`, `_linha_que_o_parser_recusa`) implementa
+**duas** regras:
+
+1. linha sem `=`;
+2. chave antes do primeiro grupo.
+
+**O GKeyFile recusa mais que isso** — nome de chave **vazio** (`=`), nome de
+chave **inválido** (com `[` ou `]`), e nome de **grupo** inválido (`[]`).
+
+E a direção do erro é a pior possível: nesses casos o `bluetoothd` **descarta o
+arquivo inteiro**, inclusive a nossa configuração — e o dono único responde
+`veredito: OK`, o `aplicar` anuncia "garantidos", e o doctor imprime `[ OK ]`.
+
+**A bancada não morde isto:** a `_TABELA_DA_RECUSA`
+(`tests/unit/test_bluez_config_sh.py:2234-2247`) tem três casos, e os três caem
+**dentro das duas regras já implementadas**. Nenhum teste exige que a réplica
+recuse tudo o que o oráculo recusa.
+
+**Atenuante, e é MEDIDO:** o default do BlueZ é `never`, que é **mais**
+restritivo que o nosso `confirm`. Então o efeito não é injeção de teclas — é o
+**diagnóstico que mente**, que é exatamente o assunto desta sprint.
+
+**O que fecharia:** um teste de propriedade que gere linhas malformadas e exija
+que réplica e oráculo concordem sempre; ou trocar a réplica por uma chamada ao
+GKeyFile de verdade (`python3 -c` com `GLib.KeyFile`, que já é dependência).
+
+---
+
 ## O que fica ABERTO
 
 - **A cura do defeito 1 avisa, mas não age.** Ela diz que o rádio só fecha no

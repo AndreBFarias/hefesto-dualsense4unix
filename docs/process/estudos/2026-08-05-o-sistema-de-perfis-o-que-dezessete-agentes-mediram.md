@@ -107,6 +107,13 @@ não passam por `_populate_editor`**.
 | **I-6** | **"Salvar" não aplica e "Aplicar" não salva** | `Aplicar → IPC ['profile.apply_draft']`, disco intacto; `Salvar → IPC ['launch_env.refresh']`, daemon intacto | a aba Perfis resolve isso (`profiles_actions.py:1260-1265`, `profile_switch` quando o salvo é o ativo, PERFIL-SAVE-APPLY-01). **O rodapé nunca recebeu essa cura** |
 | **I-8** | **Importar não recarrega aba nenhuma** | `_import_save_async` (`:459-483`) chama `_reload_profiles_store` e não `_refresh_all_tabs` | restaurar chama; importar não |
 
+> **NOTA DATADA — 06/08/2026: o número caducou; a frase, não.** São **13**
+> arquivos hoje e **nove** nomes cujo slug difere; e "colidir" aqui nunca
+> significou perfil contra perfil — significa que uma variante digitada cai
+> em cima do arquivo que já existe. A conta e o porquê estão em
+> [JANELA-FIEL-01](../sprints/2026-07-31-JANELA-FIEL-01-a-janela-que-para-de-reconciliar-e-o-botao-morto-no-pacote.md).
+
+
 **Diagnóstico estrutural que amarra os seis:** *"Que perfil eu estou editando?" tem hoje três
 respostas independentes* — `draft.source_name`, `HefestoApp._active_profile_name` e
 `state["active_profile"]` do daemon — e cada consumidor pergunta a uma diferente: `to_profile`

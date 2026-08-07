@@ -197,8 +197,12 @@ estão declaradas uma a uma no topo de
 `tests/unit/test_regra_nao_se_perde_02_o_nome_novo_nascia_sem_regra.py`, e a
 execução delas está **registrada em documento**, não nesta sprint: a E3a da
 `FIAÇÃO-QUE-FALTA-01` conta *"nove testes, com seis mutações verificadas"*.
-Conferido hoje: são nove testes, e a suíte deles passa (78 verdes junto dos
-arquivos irmãos do rodapé).
+Conferido hoje: são **nove** testes, e passam — **74 verdes** junto dos irmãos
+diretos do rodapé, nomeados aqui para a conta poder ser refeita:
+`test_footer_actions.py`, `test_footer_restore_default.py`,
+`test_footer_salvar_nasce_acima_dos_catch_all.py`,
+`test_gravacao_de_perfil_passa_pelo_funil.py` e
+`test_nunca_troca_o_alvo_01_o_salvar_que_mirava_outro_perfil.py`.
 
 | mutação | o que fica vermelho |
 |---|---|

@@ -459,6 +459,13 @@ seção 1.1 da síntese):
   contrário do irmão `on_save_profile`. Importar um `Navegacao.json` por cima da
   `Navegação` dela **não dispara diálogo nenhum** e sobrescreve o arquivo.
   **Cinco dos quinze perfis dela colidem por acento ou caixa;**
+
+> **NOTA DATADA — 06/08/2026: o número caducou; a frase, não.** São **13**
+> arquivos hoje e **nove** nomes cujo slug difere; e "colidir" aqui nunca
+> significou perfil contra perfil — significa que uma variante digitada cai
+> em cima do arquivo que já existe. A conta e o porquê estão em
+> [JANELA-FIEL-01](2026-07-31-JANELA-FIEL-01-a-janela-que-para-de-reconciliar-e-o-botao-morto-no-pacote.md).
+
 - **Importar não recarrega as abas** (I-8) — o restaurar chama `_refresh_all_tabs`,
   o importar não;
 - **"Salvar" não aplica** (I-6): a aba Perfis reaplica o perfil quando o salvo é

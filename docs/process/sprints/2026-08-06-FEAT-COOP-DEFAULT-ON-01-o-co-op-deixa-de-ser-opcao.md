@@ -96,9 +96,10 @@ por isso não podem ser confundidas com ela:
 | 2 | 13/07 | o co-op vira **padrão** com 2+ controles; o que se grava em disco é o **opt-out** (`coop_disabled.flag`) | `utils/session.py` |
 | 3 | 06/08 | o opt-out **deixa de existir**: `DaemonConfig.coop_enabled = True` é o piso único, e nenhuma superfície de comando desliga | `daemon/lifecycle.py:160` |
 
-A palavra dela, literal, que está citada em cinco arquivos do repositório
+A palavra dela, literal, que está citada em **sete** arquivos do repositório
 (`cli/cmd_coop.py`, `daemon/ipc_handlers.py`, `daemon/lifecycle.py`,
-`utils/session.py` e o teste `test_coop_sem_interruptor_01_*`):
+`utils/session.py`, `gui/main.glade` — onde entra abreviada — e os testes
+`test_coop_sem_interruptor_01_*` e `test_coop_optout_migracao.py`):
 
 > *"Independente do que escolhermos, todos e tudo no Hefesto tem que tá com o
 > permitir co-op ligado. Eu já havia pedido pra removermos até o botão da aba
