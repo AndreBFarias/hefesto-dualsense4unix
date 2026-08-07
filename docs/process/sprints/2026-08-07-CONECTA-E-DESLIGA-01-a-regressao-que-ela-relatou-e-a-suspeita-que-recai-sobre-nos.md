@@ -149,6 +149,53 @@ inocente.
 
 ---
 
+## NOTA DATADA — 07/08/2026, 20h: uma causa, quatro sintomas
+
+**Grau: MEDIDO** na correlação, **SUSPEITA COM MECANISMO** na cadeia.
+
+Uma hora de medição por minuto, com instrumento **validado contra contagem
+direta** (53 = 53), mudou o quadro inteiro. A tabela:
+
+| janela | estado do rádio | perda de IMU do Pro |
+|---|---|---|
+| 19h10 a 19h43 | quatro controles **estáveis** | **14,6** por minuto |
+| 19h44 a 19h53 | o 8BitDo **saindo e tentando voltar** | **48,4** por minuto |
+
+E no meio da segunda janela, o `bluetoothd`:
+
+```
+19:48:21  confirm_event_cb() Refusing connection from <8BitDo>
+19:49:03  search_cb() <8BitDo>: error updating services: Connection refused
+20:00:18  confirm_event_cb() Refusing connection from <8BitDo>
+```
+
+### A hipótese que isso monta, e ela liga tudo
+
+**Não é a quantidade de aparelhos — é o aparelho que não consegue entrar.**
+O ciclo de tentativa (busca de página, consulta de serviços, recusa, repetir)
+consome o canal, e quem paga é o vizinho que está usando o rádio de verdade.
+
+Isso explica, com **um** mecanismo, quatro coisas que pareciam separadas:
+
+1. **o que ela vê** — *"conecta e desliga em sequência"*: é o ciclo, visto de fora;
+2. **o estado fantasma** — `Connected=true` com zero aparelhos HID: é o meio do
+   ciclo, quando o rádio subiu e o perfil de entrada não;
+3. **a perda de pacotes do Pro** — sobe 3,3 vezes durante o ciclo e cai quando
+   ele para;
+4. **a recusa no journal** — o `Refusing connection from`, que é o motivo do
+   ciclo não terminar.
+
+### O que isto NÃO fecha
+
+Por que a confirmação é recusada **com o agente vivo**. Essa continua sendo a
+pergunta central, e as três hipóteses da seção anterior seguem de pé.
+
+E derruba a leitura anterior deste mesmo dia: eu havia dito, ao vivo, que três
+controles custavam 40 perdas por minuto e dois custavam zero. **Aquilo veio de
+um medidor quebrado** — ele formatava a data em português e o `journalctl` não
+entende `ago`, então devolvia zero sempre. A correlação com a **quantidade**
+está derrubada; a correlação com a **instabilidade** é que se sustenta.
+
 ## O que fica ABERTO
 
 1. **A causa.** Três hipóteses vivas, nenhuma medida (acima).
