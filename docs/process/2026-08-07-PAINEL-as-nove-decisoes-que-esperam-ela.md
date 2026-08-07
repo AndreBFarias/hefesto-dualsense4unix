@@ -241,6 +241,15 @@ Nada abaixo toca as nove perguntas.
   Hefesto: 1 / controles na mesa: 3, sendo 2 externos"). Com daemon antigo imprime `—`.
 - **O teste que a sua medição de 22h40 exigiu** — nenhum par de aparelhos pode acender o
   mesmo número, inclusive o nosso controle virtual. Não existe hoje.
+
+  > **Nota de 07/08/2026:** o teste **existe** desde então
+  > (`tests/unit/test_lugar_a_mesa_numero_de_jogador_nao_se_repete.py`), e a premissa
+  > que o pediu **mudou de metade**: a colisão "dois no jogador 3" nunca existiu — a
+  > leitura dos LEDs de 22h40 confundiu o nome do nó (`player-3`) com o número do
+  > jogador, que é o **padrão** das cinco lâmpadas. O que sobra, e o teste vigia, é o
+  > **mesmo** jogador exibindo dois números: `3` na lâmpada e `P1` no nome. Ver a nota
+  > datada de 07/08 na
+  > [LUGAR-À-MESA-01](sprints/2026-08-06-LUGAR-A-MESA-01-tres-controles-ligados-e-um-jogador-so.md).
 - **E1 e E2** — inventário de externos com guarda de frescor; descoberta unificada,
   normalizador de eixo e reencontro depois do replug, tudo por dublê, sem adoção nenhuma.
   Os cartões na tela eu preparo, mas só fecho com a sua foto antes e depois.

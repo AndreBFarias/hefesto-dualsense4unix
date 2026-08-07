@@ -9,6 +9,10 @@
   [O que a execução de 07/08 mediu e entregou](#o-que-a-execução-de-0708-mediu-e-entregou),
   no fim. Quando este documento e aquela seção discordarem, **a seção vale**:
   ela tem os comandos e os números de depois
+  - **A E0.1 foi respondida por ela na mesma tarde**, e o símbolo foi
+    redesenhado: ver
+    [O redesenho de 07/08 à tarde](#o-redesenho-de-0708-à-tarde--a-decisão-14-executada),
+    a última seção, que é a mais nova de todas e vale sobre as anteriores
   - *(estado original, preservado: "SPRINT DE FUTURO — ABERTA. Em 07/08
     nenhuma linha de código, ícone, instalador ou configuração foi tocada.
     Este documento é medição e roteiro. Quem executar não terá tido esta
@@ -1057,3 +1061,193 @@ copia**. Teste que passa com a cura arrancada não testa nada.
    (`~/.local/share/icons/hicolor/symbolic/apps/hefesto-dualsense4unix-symbolic.svg`).
    Ele fica **inerte** até a GUI dela reiniciar — o processo vivo pediu o nome
    antigo quando subiu, e ícone de bandeja não se troca sozinho.
+
+---
+
+## O redesenho de 07/08 à tarde — a DECISÃO 14, executada
+
+Escrito **depois** de executar, no mesmo dia, com a máquina dela viva e em uso.
+Nada foi reiniciado e **nada foi instalado**: esta leva mexe em arquivo do
+repositório e em teste, e mais nada. O desenho novo **não** foi copiado para o
+tema dela — a palavra final é dela, e instalar antes seria decidir por ela.
+
+**O que ela decidiu**, e é o que manda aqui:
+[DECISÕES DELA de 07/08](../2026-08-07-DECISOES-DELA-as-onze-respostas-do-painel.md),
+resposta 14 — *"redesenhar o símbolo mais parecido com a logo, mantendo a grade
+pequena"*. Isso **fecha a E0.1** de um jeito que o painel de opções não previa:
+nem a bigorna de 27/06, nem o desenho da manhã como estava. Redesenhar.
+
+A leitura desta execução, e ela é o contrato do trabalho: **a legibilidade a 16
+e 20 px é inegociável, e dentro dessa restrição o desenho se aproxima da logo o
+máximo que der.**
+
+### A medição que mudou o desenho mais do que o pedido
+
+**Grau: MEDIDO.** Antes de desenhar qualquer coisa, os vizinhos da barra dela
+foram renderizados a 320 px (20 vezes a grade de 16) e tiveram o **traço**
+medido por varredura de alfa na linha do meio, em unidades da grade de 16:
+
+| ícone | largura | altura | traço no meio |
+|---|---|---|---|
+| energia | 12,00 | 13,00 | **2,05** |
+| som | 15,50 | 11,90 | **2,00** |
+| Bluetooth | 11,00 | 15,10 | massa (4,45 e 4,75) |
+| Spotify | 16,00 | 16,00 | massa |
+| **o simbólico da manhã** | 14,80 | 14,80 | **1,15** |
+
+Reproduzir, para qualquer arquivo:
+
+```
+rsvg-convert -w 320 -h 320 <arquivo.svg> -o /tmp/med.png
+convert /tmp/med.png -alpha extract -depth 8 txt:- | \
+  awk -F'[,:( ]+' '$2==160 && $3>60 {print $1}' | sort -n
+```
+
+**O traço mínimo da barra dela é 2,0 unidades, e o nosso tinha 1,15.** O ícone
+não estava só com o desenho errado: estava com **metade do peso** dos vizinhos.
+Isso não aparece em nenhuma foto isolada — só na comparação, que é justamente o
+critério dela (*"no cosmic todos os applet são assim"*).
+
+O aro novo, medido no arquivo entregue pelo mesmo comando: **1,70**, com o cabo
+do martelo em 1,40 e a caixa do desenho em 14,80 por 15,20.
+
+**E 1,70 não é 2,00, de propósito — vale dizer em vez de esconder.** Com 2,00 o
+furo do aro cai para raio 5,4, o canto da cabeça do martelo passa a ficar a 0,70
+dele, e a 20 px essa folga some no antisserrilhado: o martelo encosta no aro e
+vira mancha. **1,70 é o mais grosso que ainda deixa o martelo respirar.** Na
+outra ponta, o aro da logo é proporcionalmente muito mais fino (equivalente a
+0,47 nesta grade), então 1,70 já é 3,6 vezes ele. Aqui **a barra ganhou da
+fidelidade**, e é a única troca desta leva em que isso aconteceu.
+
+### O que o redesenho trouxe da logo, item por item
+
+**Grau: MEDIDO** (cada número saiu de `assets/hefesto-logo.svg`).
+
+| o que | na logo | no símbolo novo | antes |
+|---|---|---|---|
+| o aro | arco **aberto** de 323 graus, falha de 232 a 269 graus, uma **conta** em cada ponta | idêntico nos ângulos; contas de raio 1,25 | círculo fechado, sem contas |
+| a cabeça | **cheia**, canto arredondado de 25% da espessura | cheia, canto 0,65 sobre espessura 2,60 | vazada (moldura) |
+| o cabo | cápsula (`rx` igual a metade da largura) | cápsula, ponta de baixo redonda | barra de canto vivo |
+| cabeça sobre cabo | 25,8 por 11,7 = **2,20** | 2,60 por 1,35 = **1,93** | 3,40 por 1,20 = 2,83 |
+| peso do traço | irrelevante a 512 px | 1,70 (barra pede 2,00) | 1,15 |
+
+A falha do aro com as duas contas é **a marca mais reconhecível da logo e a mais
+barata em pixel**: aparece inteira já a 16 px, e é o que faz o ícone novo parecer
+o Hefesto e não um martelo genérico.
+
+### A bigorna e o martelo juntos NÃO cabem — três tentativas, três borrões
+
+**Grau: MEDIDO**, com imagem renderizada e olhada nas três.
+
+A composição inteira da logo (aro, martelo e bigorna) foi tentada **três vezes**,
+com geometrias diferentes e as partes engrossadas até o limite da grade. As três
+viraram borrão a 20 px. O motivo é aritmético, e é o que faltava no registro de
+27/06: **na logo, a cabeça do martelo ENCOSTA na mesa da bigorna** (a cabeça
+termina em y=120,1 e a mesa começa em y=119,5, medido depois da matriz de cada
+grupo), e quem separa as duas é a **cor** — cinza contra branco. Em monocromia
+não há cor para separar, e o vão precisaria de 1 px que não existe.
+
+> **Nota de 07/08/2026.** A decisão de 27/06 (*"variante com martelo por cima da
+> bigorna foi testada e DESCARTADA"*) **continua válida, e agora tem causa**: não
+> é o tamanho da grade sozinho, é a falta de vão entre as duas peças na própria
+> logo. Aumentar a grade não resolveria; separar as peças deixaria de ser a logo.
+
+### A medição que favorece a bigorna, e o quanto ela favorece
+
+**Grau: MEDIDO**, e os números abaixo são dos **arquivos que estão no disco**,
+não dos rascunhos do caminho. Reduzindo a logo a 20 px e recortando a **mancha
+clara** (o que sobra dela no tamanho do painel: o aro com a falha, a bigorna
+branca e o risco do cabo), dá para medir quanto cada candidato **cobre** dessa
+mancha:
+
+| candidato | interseção sobre união | cobre da mancha da logo |
+|---|---|---|
+| **opção C, a bigorna no aro** | **0,211** | 46,9% |
+| **o entregue, o martelo no aro** | 0,205 | 46,9% |
+| o símbolo da manhã | 0,200 | 41,7% |
+
+Reproduzir: renderizar `assets/hefesto-logo.svg` a 20 px sobre preto, tomar como
+mancha os pixels com luminância acima de 110, e comparar com o alfa de cada
+candidato a 20 px.
+
+**A bigorna ganha por três centésimos, e isso é uma diferença pequena que vale
+dizer em voz alta.** Numa versão intermediária do caminho, com o aro FINO da
+manhã, a bigorna abria muito mais vantagem (0,285 contra 0,212). O aro grosso,
+que a barra exigiu, ocupa mais pixel e passa a dominar a conta dos dois lados —
+então a peça do meio pesa menos do que parecia. **Registrado porque é fácil citar
+o 0,285 achando que ele descreve o arquivo entregue: não descreve.**
+
+**E mesmo com a bigorna à frente, não foi ela a entregue.** O motivo é regra da
+casa, não gosto: ela **nomeou o martelo** em 07/08 pela manhã, e a decisão 14
+pediu **redesenhar** o símbolo mais parecido com a logo — não trocar o motivo
+dele. Trocar a peça central é mudança que ela não pediu, e três centésimos de
+cobertura não compram essa troca. Então a bigorna foi desenhada, renderizada, e
+**entregue como opção pronta** em
+`assets/simbolico/opcao-c-bigorna-no-aro-symbolic.svg`: se ela preferir, é copiar
+um arquivo por cima de outro, e nada no encanamento muda.
+
+### O que foi entregue
+
+| arquivo | o que é |
+|---|---|
+| `assets/simbolico/hefesto-dualsense4unix-symbolic.svg` | o símbolo redesenhado: aro aberto da logo, com as contas, e o martelo cheio ao centro |
+| `packaging/cosmic-applet/data/icons/hicolor/symbolic/apps/com.vitoriamaria.HefestoDualsense4Unix-symbolic.svg` | a mesma coisa, byte a byte (há teste) |
+| `assets/simbolico/opcao-c-bigorna-no-aro-symbolic.svg` | a bigorna dentro do mesmo aro, para ela escolher |
+| `tests/unit/test_simbolico_do_painel.py` | 18 asserções (eram 17) |
+
+A bigorna de 27/06 (`assets/simbolico/opcao-b-bigorna-symbolic.svg`, sem aro)
+**continua onde estava**: não se apaga decisão medida.
+
+### O teste que caducou, e o que entrou no lugar
+
+**Grau: MEDIDO** (arrancado e visto reprovar).
+
+O aro novo é **aberto**, e um arco aberto é um caminho fechado simples: não
+precisa de `fill-rule="evenodd"`, porque não tem furo. A asserção antiga
+`assert 'fill-rule="evenodd"' in corpo` passaria a travar **uma técnica**, não um
+defeito — e a técnica mudou. Ela saiu, e no lugar entrou
+`test_o_aro_e_faixa_e_nao_disco`, que lê os raios dos comandos de arco e exige
+**dois raios distintos** com o furo valendo pelo menos 60% do raio de fora.
+
+Isso trava o defeito de verdade, que é o **disco chapado** reproduzido pela
+manhã: um disco tem um raio só. A asserção contra o `stroke` **não foi tocada**,
+palavra por palavra.
+
+### A mordida
+
+Sete curas arrancadas, uma por vez, **sete reprovas**:
+
+| cura arrancada | quem reprovou |
+|---|---|
+| o aro virou disco (um raio só) | `test_o_aro_e_faixa_e_nao_disco` |
+| a faixa engordou até o furo cair para 3,0 | `test_o_aro_e_faixa_e_nao_disco` |
+| o aro voltou a ser `stroke` com `fill="none"` | `test_contorno_e_preenchimento_nunca_stroke` **e** `test_o_aro_e_faixa_e_nao_disco` |
+| `currentColor` de volta | `test_uma_cor_so_acromatica_e_clara` |
+| bandeja e applet com desenhos diferentes | `test_bandeja_e_applet_servem_o_mesmo_desenho` |
+| uma segunda cor no desenho | `test_uma_cor_so_acromatica_e_clara` |
+| linha de traços no comentário | `test_o_simbolico_e_xml_valido` |
+
+### A foto, e o que ela mostra
+
+**As fotos continuam efêmeras** e não entram no repositório. A desta leva põe,
+**a 20 px e nos dois temas**: a logo, o símbolo antigo, o novo e a opção C, mais
+a faixa com os vizinhos reais da barra (Spotify, Bluetooth, som, rede, energia).
+
+Um detalhe de método que evita alarme falso: no tema claro o arquivo **não** pode
+ser fotografado com a cor que ele carrega (`#bebebe` sobre fundo claro fica
+lavado). A foto tinge cada ícone com a cor que o COSMIC aplica em cada tema —
+`#CACACA` no escuro, `#272727` no claro, ambas lidas do tema dela. Quem refizer
+a foto sem tingir vai concluir, errado, que o ícone some no claro.
+
+### O que continua ABERTO
+
+1. **A palavra final é dela** (E6), e agora ela tem três desenhos para olhar: o
+   novo, a opção C e o antigo. **Nada foi instalado** — o que está no tema dela
+   continua sendo o desenho da manhã;
+2. **O tamanho da conta do aro é o limite do desenho.** As contas alcançam 7,80
+   de 8,00 a partir do centro; maiores, encostam na borda do `viewBox`. Na logo
+   a proporção é ainda mais apertada (99 de 100), então isto é fidelidade, não
+   descuido — mas quem for mexer precisa saber que não há folga ali;
+3. **O applet nativo continua sem recompilar**, como na execução da manhã;
+4. **O tema claro continua só SIMULADO** — renderizado com a cor lida do tema
+   dela, nunca olhado na barra clara de verdade.

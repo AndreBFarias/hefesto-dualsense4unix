@@ -2,6 +2,11 @@
 
 - **Escrito em:** 07/08/2026, entre 15h20 e 16h00, com a máquina dela **viva e em
   uso** — DualSense e Pro Controller no rádio, DualSense carregando desde os 5%.
+- **Ampliado em:** 07/08/2026, 18h55 — **o E-1 FECHOU**, e é a **primeira**
+  medição deste protocolo a fechar. O resultado inteiro está na subseção
+  [E-1 FECHADO](#e-1-fechado--07082026-18h55); o resumo em uma linha está logo
+  abaixo. Custo de atenção dela: **zero minuto**, como o desenho previa. Também
+  leitura pura, com a máquina dela em uso.
 - **Pedido dela, com as palavras dela:** *"o certo aqui não seria a gnt ir
   isolando e testando os parâmetros pra ele e pro 8bitdo igual fizemos ao mapear
   o lightbar do bt do dualsense? talvez dessa forma conseguiríamos inclusive
@@ -39,6 +44,17 @@ permanente**. O quadro medido é o oposto do esperado:
 
 **Quem cai é o DualSense; o Pro é o estável.** Qualquer leva que comece
 tratando "a queda do Pro" como o problema começa mirando o controle errado.
+
+**Adendo de 07/08, 18h55 — o E-1 fechou, e mudou duas linhas desta página.**
+Com o portão fechado às 15:27:48, o storm foi a **zero** em 3h27m, enquanto a
+taxa de queda do DualSense **não** mudou (0,27/h contra 0,29/h). E o pareamento
+minuto a minuto do lado A mostrou que **nenhuma** recusa do kernel aconteceu sem
+uma escrita nossa: a causa do storm passa de SUSPEITA COM MECANISMO para
+**MEDIDO** — o storm era nosso. Mas o Pro **não caía por causa dele**: do lado A
+ele atravessou 225 recusas e 54 falhas `-110` com o link intacto por 17h06m.
+GRAU: MEDIDO. E o achado maior não é sobre o Pro: **a decisão dela de calar a
+luz, tomada por honestidade, curou um defeito técnico que ninguém sabia que
+existia** — subseção 10 do E-1.
 
 ---
 
@@ -343,6 +359,22 @@ causalidade é **SUSPEITA COM MECANISMO**, e o mecanismo está descrito acima.
 GRAU: MEDIDO — mas a janela é de **19 minutos**, curta demais para concluir. É
 exatamente esta janela que o item **E-1** da seção 8 manda esticar.
 
+> **NOTA DATADA, 07/08/2026 18h55 — esta janela esticou para 3h27m, e o E-1
+> fechou.** Duas frases desta seção caducaram, e ficam escritas assim:
+>
+> - *"A causalidade é SUSPEITA COM MECANISMO"* — **caducou**. O pareamento
+>   minuto a minuto do lado A inteiro (subseção 3 do E-1) mostra **zero** recusas
+>   do kernel sem uma `external_led_written` no Pro no mesmo minuto, em quinze
+>   episódios, mais a intervenção que zerou os dois juntos. A causa passa a
+>   **MEDIDO**: a escrita é nossa e o storm é dela.
+> - *"a janela é de 19 minutos, curta demais para concluir"* — **parcialmente
+>   caducada**. São 3h27m contra 19h04m do lado A: bastam para a causa do
+>   **storm**, não para a previsão de 24 h. O que a janela ainda não cobre está
+>   listado na subseção 9 do E-1, item por item.
+>
+> E a pergunta do título mudou de resposta: o storm **não derruba o Pro** — ele
+> ficou 17h06m de pé do lado A tomando 225 recusas. GRAU: MEDIDO.
+
 ### 4.3 O que renumera os externos, e por que isso importa
 
 O slot exibido do externo é a colocação dele entre os controles **presentes**.
@@ -498,6 +530,18 @@ Colhido nesta varredura, sem hardware na mão além do que já estava ligado:
 | 12 | o Enable-IMU de 12 bytes é honrado pelo firmware | **SEM PROVA** |
 | 13 | o 8BitDo em PS4 tem timer próprio de ociosidade | **SEM PROVA** |
 
+**NOTA DATADA, 07/08/2026 18h55 — o E-1 fechou e mexeu em duas linhas desta
+tabela.** A tabela fica como está; a correção é esta:
+
+| # | o que mudou | GRAU novo |
+|---|---|---|
+| 11 | **quebrou em duas.** *"a escrita do Hefesto causa o storm"* — o pareamento 1:1 de quinze episódios mais a intervenção fecham a causa | **MEDIDO** |
+| 11 | *"o storm causa as quedas"*, **para o Pro** — do lado A ele levou 225 recusas e 54 `-110` com o link intacto por 17h06m; não houve queda para o storm causar | **REFUTADA nesta janela** |
+| 14 | **linha nova:** não há segundo escritor da barra do Pro — nenhuma recusa do kernel sem uma escrita nossa no mesmo minuto, no boot inteiro | **MEDIDO** nesta janela |
+
+Para o **8BitDo**, a linha 11 continua **SUSPEITA COM MECANISMO**: quem a decide
+é o **E-4**, e o E-1 não o antecipa.
+
 ---
 
 ## 8. O protocolo — cinco medições, nesta ordem
@@ -515,9 +559,25 @@ pedem a mão dela.
 começa pelo protocolo de 06/08): **isto vem depois**, e o E-1 pode rodar **em
 paralelo** com qualquer item daquela fila, porque não pede atenção.
 
+> **Estado da fila em 07/08/2026, 18h55:** **E-1 FECHADO** (custou os zero
+> minutos previstos). Restam **quatro**: E-2, E-3, E-4 e E-5 — e o custo total
+> de atenção dela cai de 70 para **70 minutos**, porque o E-1 já custava zero.
+> O que o E-1 entregou de aproveitável para as outras quatro está na subseção 11
+> dele.
+
 ---
 
-### E-1. O storm de subcomando derruba o Pro? *(a que decide, e já está meio montada)*
+### E-1. O storm de subcomando derruba o Pro? — **FECHADO em 07/08/2026, 18h55**
+
+> **Estado: FECHADO.** O título deste item, como foi escrito às 16h de hoje, era
+> *"E-1. O storm de subcomando derruba o Pro? (a que decide, e já está meio
+> montada)"* — fica registrado aqui, porque a única coisa que mudou nele foi o
+> estado. É a **primeira** medição desta fila a fechar, e a **primeira** do
+> protocolo dos externos a fechar em geral. O desenho abaixo fica
+> escrito palavra por palavra — inclusive a previsão que só se cumpriu pela
+> metade — e o resultado vem depois da LEITURA, na subseção
+> [E-1 fechado](#e-1-fechado--07082026-18h55). Custo real de atenção dela: **zero
+> minuto**, como previsto.
 
 **Pergunta.** Com o LED externo calado, o Pro Controller passa **mais** tempo de
 pé do que com ele falando?
@@ -581,6 +641,251 @@ mesma dos dois lados, e essa é a armadilha que inventou resultado na Q-2 de
 | storm aparece com o gate `False` | há um segundo escritor da barra | achado novo e mais grave — achar quem escreve vira o alvo |
 | o Pro nem fica ligado 24 h | a janela não pegou o fenômeno | anotar a duração real; **não concluir nada** |
 | o DualSense muda de taxa junto | contraste falhou | queda geral de rádio — descartar a rodada |
+
+---
+
+#### E-1 FECHADO — 07/08/2026, 18h55
+
+**Como foi conferido.** Tudo por `journalctl -k` e pelo journal do usuário na
+unidade `hefesto-dualsense4unix.service`, com **data completa em toda janela**
+(nota de instrumento nº 2 da seção 9). Leitura pura: nenhum serviço reiniciado,
+nenhum controle derrubado, nenhuma escrita em hidraw. A máquina dela estava
+**em uso** durante toda a contagem.
+
+**O P0 foi respeitado.** O daemon de 15:27:48 seguiu de pé até a contagem —
+`NRestarts=0`, `ExecMainStartTimestamp=Fri 2026-08-07 15:27:48 -03`. GRAU:
+MEDIDO. O `hefesto-bt-health-watchdog.timer` continua `active`, como mandado. A
+suíte de testes não rodou na janela.
+
+**O código do lado B, com precisão maior que a do P0.** O P0 mandou registrar
+"commit `6b1cb62`". O HEAD da árvore às 15:27:48 era **`18aa9a3`** — mas o
+`external_identity.py` **não foi tocado por nenhum commit depois do `6b1cb62`**,
+e não tinha diferença não commitada na hora da contagem. Logo o caminho do LED
+do lado B **é** o do `6b1cb62`, e o `6b1cb62` mexeu nesse arquivo **só somando**
+o portão (70 linhas inseridas, nenhuma removida). O A/B é limpo neste eixo: entre
+o lado A e o lado B, a **única** diferença no caminho do LED externo é a
+constante. GRAU: MEDIDO.
+
+##### 1. O relógio dos dois lados — e a assimetria que enfraquece o lado B
+
+| lado | janela | duração | GRAU |
+|---|---|---|---|
+| **A** — a luz falando | 06/08 20:23:12 (1.ª recusa do boot) a 07/08 15:27:48 | **19h04m** | MEDIDO |
+| **B** — a luz calada | 07/08 15:27:48 a 07/08 18:55 (hora da contagem) | **3h27m** | MEDIDO |
+
+**O lado B é 5,5 vezes mais curto que o lado A.** Quem ler "348 contra 0" e
+parar aí lê mais do que está escrito — a subseção 5 abaixo mede exatamente
+quanto vale esse zero.
+
+**Nota datada sobre a tabela ANTES, 07/08/2026.** A tabela ANTES rotula a janela
+do lado A como *"06/08 21:07 a 07/08 15:27"* e escreve **348**. Os 348 são o
+total do boot e começam às **20:23:12** — **103** deles caem **antes** das 21:07,
+em quatro minutos (20:23, 20:50, 20:53 e 20:54) que começam no minuto em que o
+Pro entrou no rádio pela primeira vez. Dentro do rótulo literal são **245**. O número não muda de sentido (é o total com a luz falando, e
+é o que a seção 4.2 já quebrava certo em 146 + 202), mas o **rótulo estava 44
+minutos atrasado**. A tabela fica como está; esta nota é a correção. GRAU:
+MEDIDO.
+
+##### 2. Os números, conferidos no kernel
+
+| métrica | lado A (19h04m) | lado B (3h27m) | GRAU |
+|---|---|---|---|
+| `joycon_enforce_subcmd_rate: exceeded max attempts` | **348** | **0** | MEDIDO |
+| `Setting an LED's brightness failed (-110)` | **83** | **0** | MEDIDO |
+| `external_led_written` no Pro | **18** | **0** | MEDIDO |
+| `external_led_repintado` (o laço da seção 4.2) | **11** | **0** | MEDIDO |
+| instâncias HID novas do Pro | **3** | **0** | MEDIDO |
+| instâncias HID novas do DualSense (o **contraste**) | **5** | **1** | MEDIDO |
+
+Custo médio por escrita, do lado A: **19,3** recusas de rate-limit por
+`external_led_written` no Pro (348 / 18) — coerente com as 12 medidas numa
+chamada isolada na seção 4.2, com a diferença por conta das repinturas do laço.
+GRAU: MEDIDO.
+
+##### 3. O que fecha a causa, e não é a contagem bruta
+
+A prova não são os 348. São os **minutos**. Estes são todos os minutos do boot em
+que o kernel recusou subcomando, e todos os minutos em que o daemon escreveu o
+LED **do Pro** — as duas listas, lado a lado:
+
+```
+minuto   recusa do kernel   escrita nossa no Pro
+06/08 20:23      x23               x1
+06/08 20:50      x40               x2
+06/08 20:53      x20               x1
+06/08 20:54      x20               x1
+06/08 21:07      x20               x1
+06/08 22:21      x23               x1
+07/08 01:56      x27               x1
+07/08 01:57       x5                -     <- cauda dos 3,7 s da escrita de 01:56
+07/08 13:30      x14               x1
+07/08 14:34      x20               x1
+07/08 14:37      x20               x1
+07/08 14:38      x39               x2
+07/08 15:22       x4               x1
+07/08 15:23      x60               x3
+07/08 15:24      x13               x1
+--------------------------------------------
+lado B (3h27m)    0                 0
+```
+
+**Nenhuma recusa sem escrita nossa. Nenhuma escrita nossa sem recusa.** Quinze
+minutos de recusa, catorze minutos de escrita, e o único descasado é o `01:57`,
+que é a cauda da cascata de 3,7 s aberta no minuto anterior — o mesmo formato
+medido na seção 4.2. GRAU: MEDIDO.
+
+Isso **descarta a linha mais grave da LEITURA**: não existe segundo escritor da
+barra do Pro nesta janela. GRAU: MEDIDO — para esta janela, esta mesa e estes
+aparelhos, e só.
+
+##### 4. O par que vale mais que a contagem — o "evento 6" desta rodada
+
+O método da seção 1 diz que o que fecha causa é o **par**, não a série. Aqui ele
+existe, e é o gatilho da seção 4.3:
+
+- **Lado A.** Cada volta do DualSense ao rádio produziu escrita **e** storm no
+  **mesmo minuto**: 14:34:43, 14:38:04, 15:22:09, 15:23:26 e 15:23:56 — cinco
+  gatilhos, cinco episódios. GRAU: MEDIDO.
+- **Lado B.** O DualSense caiu e voltou **uma** vez, às **18:41:38**, com os
+  mesmos dois externos na mesa e o mesmo rádio. O daemon estava vivo e
+  processou a volta (`motion_sensors_started` às 18:41:42,
+  `hidraw_broker_hidden` a cada 30 s sem falha). Resultado: **zero** escrita,
+  **zero** recusa. GRAU: MEDIDO.
+
+**O mesmo estímulo, o desfecho oposto, com a intervenção no meio.** Não é o
+controle negativo *simultâneo* da noite da lightbar — é um gatilho repetido
+através da cura, que é mais fraco. Mas é o par, e ele existe.
+
+##### 5. O contraste segurou — não foi uma tarde de rádio calmo
+
+| lado | links novos do DualSense | por hora | GRAU |
+|---|---|---|---|
+| A (18h20m, do rótulo da tabela ANTES) | 5 | **0,27/h** | MEDIDO |
+| B (3h27m) | 1 | **0,29/h** | MEDIDO |
+
+A taxa de queda do **controle negativo** não mudou. A linha *"o DualSense muda de
+taxa junto — descartar a rodada"* da LEITURA **não** se aplica: o rádio não ficou
+melhor, só a nossa boca ficou fechada. GRAU: MEDIDO.
+
+O que enfraquece o lado B não é o rádio, é o **relógio**: 3h27m e **um** gatilho
+de renumeração, contra 19h04m e quinze episódios. Contando por **episódio** — que
+é a unidade honesta, porque as recusas chegam em rajadas de vinte — o lado A teve
+**15 episódios em 19h04m** (0,79/h) e o lado B teve **0 em 3h27m**. Se a taxa não
+tivesse mudado, o esperado no lado B seriam **2,7 episódios**, e ver zero por
+acaso tem probabilidade de cerca de **7%** por Poisson. Sozinho, isso **não**
+fecha nada. O que fecha é o pareamento 1:1 da subseção 3 mais o mecanismo do
+código: com o portão em `False` o `tick` **retorna antes do laço de escrita**
+(`external_identity.py`, o `if not EXTERNAL_PLAYER_LED_ENABLED: return`), então
+zero escrita no lado B é **determinístico**, não sorte. GRAU: MEDIDO.
+
+##### 6. O Pro ficou de pé o tempo todo — e já estava de pé antes
+
+O Pro está na **mesma** instância HID `0005:057E:2009.0017` desde **06/08
+22:21:11**, sem nenhuma instância nova depois disso, e estava emitindo relatório
+de IMU no minuto da contagem. São **20h33m** de link ininterrupto: **17h06m** do
+lado A e **3h27m** do lado B. GRAU: MEDIDO. Bate com o olho dela às 18h: *"segue
+conectado"*.
+
+**E isto responde o título com um "não" que ninguém tinha previsto.** Contado no
+intervalo `06/08 22:21:11` (nascimento da `.0017`) a `07/08 15:27:48` (o corte),
+ainda **dentro do lado A**: o Pro atravessou **225** recusas de rate-limit e
+**54** falhas `-110` **sem soltar o link uma vez sequer**. As três instâncias
+dele nasceram todas nas duas primeiras horas em que entrou no rádio (20:23,
+21:07, 22:21) e nunca mais. **O storm existe, é nosso, e não derruba o Pro.**
+GRAU: MEDIDO para esta janela.
+
+A pergunta literal do E-1 — *"passa mais tempo de pé?"* — **não pôde ser
+medida**, porque o Pro nunca esteve caindo: não há queda para reduzir. O
+desfecho real não é nenhuma das cinco linhas da LEITURA; é uma sexta, e está
+escrita aqui.
+
+##### 7. Nota de operação: a barra ficou congelada, e isso é o preço aceito
+
+Os LEDs do Pro estão em `player-1=1, player-2=1, player-3=0, player-4=0` — o
+padrão que a última escrita, a das 15:24:01, deixou. Com o portão fechado o
+Hefesto **não apaga**, só para de escrever (é o que a docstring da constante
+manda, e é a diferença entre calar e mentir ao contrário). Consequência prática:
+a barra do externo **congela no último número que recebeu** e não acompanha mais
+nada. Isso não é defeito novo — é exatamente o custo que a decisão 12 aceitou, e
+está aqui para ninguém o redescobrir como surpresa. GRAU: MEDIDO.
+
+##### 8. O que o E-1 fecha, com grau
+
+1. **A escrita de LED do Hefesto no Pro CAUSA o storm de subcomando.** Sobe de
+   **SUSPEITA COM MECANISMO** (seção 4.2) para **MEDIDO**: pareamento 1:1 em
+   quinze episódios ao longo de 19h, mais a intervenção que zerou os dois juntos,
+   mais o mecanismo lido no código.
+2. **Não há segundo escritor da barra do Pro.** MEDIDO nesta janela.
+3. **O storm não derruba o Pro.** MEDIDO nesta janela: 225 recusas e 54 `-110`
+   com o link intacto. Para o Pro, a hipótese 11 da seção 7 fica **REFUTADA
+   nesta janela** — o storm não é o mecanismo da queda dele, porque não houve
+   queda dele.
+4. **A decisão 12 dela curou um defeito técnico real.** 348 recusas de kernel e
+   83 falhas de escrita em dois dias pararam, sem que ninguém tivesse pedido.
+   MEDIDO.
+
+##### 9. O que o E-1 NÃO prova — e esta lista é maior que a de cima
+
+1. **Que a luz era a ÚNICA causa do bombardeio.** O pareamento 1:1 exclui um
+   segundo escritor **nesta janela, nesta mesa, com estes dois externos**. Não
+   exclui um que só apareça com o Pro no cabo, com um jogo segurando o hidraw,
+   com quatro controles no rádio, ou com o 8BitDo em modo Switch. SEM PROVA
+   fora da janela.
+2. **Que o Pro não cairia por outro motivo.** Ele não caiu em 20h33m — mas as
+   três quedas que teve foram todas nas duas primeiras horas dele no rádio, e
+   **nenhuma** janela mediu o Pro sob rádio carregado. **H1, H2, H3 e H4 da
+   seção 7 continuam vivas**, e o E-5 continua devendo a H3.
+3. **Que o 8BitDo morreu pelo mesmo mecanismo.** A `EXT-04` continua sendo o que
+   era: relato com mecanismo. Quem fecha isso é o **E-4**, e o E-1 não o
+   antecipa.
+4. **Que a previsão foi cumprida.** A PREVISÃO pedia **24 h com carga**. O que
+   existe são **3h27m**. Ela está cumprida **na direção** e **não no tamanho** —
+   e a única honestidade possível aqui é escrever isso, não arredondar. Recontar
+   amanhã custa zero: o daemon está de pé e a régua é a mesma.
+5. **Que a luz pode voltar como estava.** Voltar sem escrita idempotente devolve
+   o laço inteiro da seção 4.2, porque o laço nasce da escrita que **falha no
+   meio**, não do número. A **E3 da LUGAR-A-MESA-01** herda isto como
+   pré-requisito medido, não como sugestão.
+6. **Um A/B de um lado só não vira lei.** Este é o parágrafo que o E-1 existe
+   para deixar escrito.
+
+##### 10. O achado sobre MÉTODO — e ele é maior que o achado sobre o Pro
+
+A decisão 12 dela — *"calar a luz até a entrega existir"*, tomada em 07/08 às
+01h45 — **não foi tomada por defeito nenhum**. Foi tomada por **honestidade**:
+enquanto o externo não for jogador de verdade dentro do jogo, o produto não podia
+acender um número afirmando que era. Nenhuma linha daquela decisão fala de rádio,
+de subcomando ou de `-110`.
+
+E aquela constante desligou **348 recusas de kernel e 83 falhas de escrita em
+dois dias** que ninguém sabia que existiam. O defeito foi descoberto **doze horas
+depois** da cura já estar no disco — a varredura de hoje achou o laço já morto.
+
+**A regra que sai daqui:**
+
+> **Parar de afirmar o que não se entrega apaga trabalho que ninguém tinha
+> medido.** Uma decisão de honestidade não é só higiene de produto: ela remove
+> caminho de código que estava custando alguma coisa em algum lugar — e o custo
+> só aparece se alguém for medir.
+
+**E o corolário operacional, que é o que dá para executar:** quando uma decisão
+de honestidade desligar um caminho, **medir o que ela apagou**, no journal, dos
+dois lados do corte. O A/B nasce montado e de graça — o lado A é o passado, o
+lado B começa no reinício, e o custo de atenção dela é **zero**. Foi assim que
+esta página fechou.
+
+GRAU: **MEDIDO uma vez.** Uma ocorrência não é lei, e esta linha fica com essa
+ressalva colada. Mas conferir custa um `journalctl`, e desta vez pagou.
+
+##### 11. O que fica de tarefa
+
+- **Recontar amanhã**, com as 24 h que a PREVISÃO pedia. Custo zero, mesma régua,
+  mesmo comando. Se aparecer **uma** linha de `joycon_enforce_subcmd_rate` com o
+  portão em `False`, a subseção 3 muda de sinal e existe segundo escritor.
+- **E3 da LUGAR-A-MESA-01** herda o pré-requisito da subseção 9.5: escrita
+  idempotente **antes** de a luz voltar.
+- **E-4** continua devendo o 8BitDo. O E-1 não o responde.
+- **Q-2 do PROTOCOLO de 07/08** ganhou um dado, e ele está anotado lá.
 
 ---
 
@@ -855,6 +1160,28 @@ Cada uma custou tempo hoje, ou está registrada como tendo custado antes:
   disco.
 - **5** medições nesta fila; **1** delas decide, custa **zero** atenção dela, e o
   lado B já começou às 15:27:48 de hoje.
+
+**Adendo do placar, 07/08/2026 18h55 — o E-1 fechou:**
+
+- **1** medição deste protocolo **FECHADA** no mesmo dia em que foi desenhada, e
+  é a **primeira** dos externos a fechar. Custo real de atenção dela: **zero
+  minuto**, exatamente o previsto.
+- **348** recusas de rate-limit e **83** falhas `-110` do lado A; **0** e **0**
+  do lado B, em 3h27m. MEDIDO.
+- **15** episódios de storm no lado A, **15** com escrita nossa no mesmo minuto,
+  **0** sem. É o pareamento que fecha a causa — não a contagem bruta.
+- **1** grau promovido: a escrita do Hefesto **causa** o storm — de SUSPEITA COM
+  MECANISMO para **MEDIDO**.
+- **1** hipótese **refutada nesta janela**: o storm não derruba o Pro. Ele levou
+  225 recusas de pé, por 17h06m sem soltar o link.
+- **1** linha de LEITURA **descartada com número**: não há segundo escritor.
+- **6** coisas que o E-1 **não** prova, listadas item por item — porque um A/B de
+  um lado só não vira lei.
+- **1** achado sobre **MÉTODO**, e é o maior desta página: a decisão de calar a
+  luz foi tomada por **honestidade**, sem saber de defeito nenhum, e apagou um
+  defeito técnico de dois dias. **Parar de afirmar o que não se entrega apaga
+  trabalho que ninguém tinha medido** — e o corolário é medir o que a
+  honestidade apagou, porque o A/B nasce montado e de graça.
 
 E a correção que esta página existe para entregar: **a pergunta dela era sobre a
 conexão dos externos, e a medição diz que o externo estável é o Pro.** Quem cai

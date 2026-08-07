@@ -1,4 +1,4 @@
-# As doze respostas dela — 07/08/2026
+# As dezessete respostas dela — 07/08/2026
 
 Registro das decisões tomadas sobre o
 [painel das nove](2026-08-07-PAINEL-as-nove-decisoes-que-esperam-ela.md), mais uma
@@ -30,8 +30,57 @@ delegação.
 | 10 | a janela fala inglês | **não — português é a língua do produto** |
 | 11 | até onde executar sem ela na cadeira | **tudo, inclusive a tela** |
 | 12 | a lâmpada dos externos, enquanto eles não são jogadores | **calar a luz até a entrega existir** |
+| 13 | o applet COSMIC nativo volta à barra | **não — o tray de hoje é superior** |
+| 14 | o desenho do ícone do painel | **redesenhar o símbolo mais parecido com a logo**, mantendo a grade pequena |
+| 15 | a regra 75, que tira o áudio USB do controle | **não entra** — e ver a nota abaixo, que é o motivo |
+| 16 | o `--restaurar-hidraw-uaccess` | **só no `doctor`, quando houver sintoma** |
+| 17 | o Hefesto é ferramenta dela ou produto | **produto — tem que funcionar em máquina limpa** |
 
 ---
+
+## As cinco de 07/08 à tarde, e a que muda a régua de tudo
+
+**A 17 é a mais importante que ela respondeu hoje**, e não é sobre nenhuma
+funcionalidade: *"produto — tem que funcionar em máquina limpa"*.
+
+Isso muda o critério de pronto. Três curas que hoje funcionam **só nesta
+máquina** deixam de ser detalhe e viram dívida alta: o grupo `input` dela veio
+do Ritual da Aurora e não do instalador, e o `60-openrgb.rules` está no
+self-heal pessoal dela. Numa instalação limpa, faltam — e como **aqui**
+funciona, ninguém perceberia.
+
+A régua passa a ser: **cura que só funciona na máquina dela não está pronta.**
+
+### A 15 tem um porquê que vale mais que a resposta
+
+A regra 75 desliga o áudio USB do controle, e é a cura histórica da tempestade
+de desconexões de junho. Ela **não entra** — mas não por gosto: porque a
+tempestade **parou sem ela**, e porque o preço dela é justamente o que a
+mantenedora quer de volta.
+
+> *"a ideia é usarmos o controle inteiro. pensa num jogo tipo Don't Scream que
+> precisa de mic ligado, jogar no BT sem mic é impossível."*
+
+**Ressalva medida, e ela importa:** a tempestade parou em **04/08**, e são três
+dias de silêncio — não é "resolvida em definitivo", e o mecanismo que a parou
+não foi confirmado. **Grau: MEDIDO** (a contagem por boot), **SEM PROVA** (a
+causa). Está na
+[CONTROLE-INTEIRO-NO-RADIO-01](sprints/2026-08-07-CONTROLE-INTEIRO-NO-RADIO-01-o-mic-e-o-fone-que-nao-atravessam.md).
+
+### A 14 nasceu de uma medição que derrubou o pedido original
+
+Ela pediu primeiro *"preto com bordas brancas"*, e depois *"a mesma logo da dock
+com essas alterações de cores"*. As duas foram **renderizadas e mostradas a
+ela** antes de qualquer código:
+
+- **preto com borda branca** vira mancha pesada no painel escuro e a borda some
+  no claro — e, por ter duas cores cravadas, deixa de acompanhar o tema;
+- **a logo da dock a 20px vira borrão** — ela foi desenhada para 512px, e o
+  martelo some dentro do aro.
+
+Vendo, ela escolheu o meio-termo: **redesenhar o símbolo mais parecido com a
+logo, mantendo a grade pequena**. A logo colorida continua na dock e no
+`.desktop`, intocada.
 
 ## A décima segunda, feita depois — e que fecha a E0
 
