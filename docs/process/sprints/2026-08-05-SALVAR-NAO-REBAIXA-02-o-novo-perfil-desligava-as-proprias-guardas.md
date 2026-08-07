@@ -17,6 +17,34 @@
 
 ---
 
+## NOTA DATADA — 06/08/2026: o aviso desta sprint matou a janela dela
+
+**Nada aqui está errado, e nada aqui foi apagado.** O diagnóstico, a cura e as
+nove mordidas continuam valendo: baixar prioridade em silêncio custava
+configuração dela, e o aviso tem de existir. **O que esta sprint não previu foi
+o CANAL.**
+
+Em 06/08/2026, às 20h22, ela baixou a prioridade do perfil "Vitória" de 78 para
+0 — o gesto que o `profiles/sanidade.py` desta casa **recomenda por escrito** —
+e a janela inteira parou de responder: *"interface travou legal aqui. nem
+consigo fazer nada nem fechar"*. O `py-spy` pegou a thread principal parada no
+`dialog.run()` do `confirm_downgrade_priority` (nascido nesta sprint, na leva 2)
+e a foto da tela dela **não tinha diálogo nenhum**.
+
+O defeito não era o aviso: era ele ser um `Gtk.MessageDialog` **modal e
+bloqueante** que, se nascer sem foco, prende a janela para sempre. Valia
+igualmente para os outros **dez** diálogos de `app/` — o `confirm_downgrade_...`
+só teve o azar de ser o que ela usou. Desde então **todos** passam pelo envelope
+`gui_dialogs.executar_dialogo`, que mostra o diálogo de verdade e devolve a
+janela a ela se ele não conseguir aparecer.
+
+A conta inteira — pilha, causa, alcance e as sete mordidas — está em
+[DIÁLOGO-QUE-MATA-A-JANELA-01](2026-08-06-DIALOGO-QUE-MATA-A-JANELA-01-o-aviso-que-deixou-a-janela-dela-morta.md).
+O item *"o aceite de tela"* do **O que fica ABERTO** continua aberto para os
+diálogos ainda não fotografados; os dois desta sprint já foram (05/08).
+
+---
+
 ## Aviso de origem: esta página nasce sobre um vazio
 
 **A SALVAR-NÃO-REBAIXA-01 nunca virou documento.** São **11 citações** em
