@@ -584,6 +584,96 @@ todos ≥ 77 min depois da segunda janela.
 (`03:29:27 → 03:30:37 → 03:33:51`). Não é escrita: `loader.py:499-502` pega `FileLock` **para ler**;
 é o daemon (PID 1670) recarregando.
 
+> **NOTA DATADA — 06/08/2026, 22:53. ANEXO AO D-35: há um TERCEIRO CANAL de prova,
+> independente do mtime — a permissão do arquivo.** Nada do que está escrito acima
+> caduca: as duas janelas vazias e os mtimes continuam de pé, e continuam sendo a
+> prova negativa. O que caduca é a **suficiência** deles. O D-35 inteiro se apoia em
+> relógio, e relógio é o que menos resiste a discussão. Este canal não usa relógio
+> nenhum, e o estudo original não podia tê-lo: o documento não tem uma linha sobre
+> modo de arquivo (`grep -ci` por `0600`, `0664`, `permiss`, `chmod` e `umask` devolve
+> **zero** nas cinco buscas), e o par `0600`/`0664` nunca entrou no repositório com o
+> sentido "perfil escrito contra perfil semeado".
+>
+> **O mecanismo, MEDIDO no código de hoje.** A gravação de perfil desemboca em
+> `_atomic_write_bytes` (`profiles/loader.py:1007`), que faz `tempfile.mkstemp` em
+> `:1017` e `os.replace` em `:1027`. São **dois** os chamadores em produção:
+> `save_profile` (`:787`), pelo `_atomic_write_json` (`:1002`) chamado em `:850`; e a
+> restauração de versão, em `:936`. O `mkstemp` cria o temporário em `0600` **por
+> construção** — medido em bancada sob o umask 002 dela: o arquivo recém-criado sai
+> `0o600` — e o `os.replace` carrega esse modo para o alvo. Logo **todo perfil que
+> passa pelo Salvar ou pela restauração termina `0600`**.
+>
+> A semeadura aterrissa no oposto, e por **dois** caminhos diferentes que o texto da
+> proposta tratava como um só:
+>
+> - `shutil.copyfile` (`loader.py:174`, dentro de `seed_default_presets` em `:130`)
+>   **não copia bits de permissão**: o destino nasce `0666 & ~umask` = **`0664`**.
+>   Medido em bancada: origem `0644`, destino `0664`.
+> - o `cp -f` de `scripts/install_profiles.sh:61` chega ao mesmo `0664` **por outra
+>   razão**. Sem `-p`, o `cp` **reproduz o modo da origem**, e a fórmula `0666 & ~umask`
+>   **não** se aplica a ele — medido em bancada sob umask 002: origem `0644` → destino
+>   `0644`; origem `0600` → destino `0600`. O que põe `0664` no destino é a origem:
+>   os presets de `assets/profiles_default/` estão `0664` na árvore de trabalho (o git
+>   guarda `100644` e o checkout cria com `0666 & ~umask`).
+>
+> O próprio marcador `.seeded_presets` está `0664`, o que confirma o caminho.
+>
+> **A ressalva que decide a leitura do canal, e que a proposta não tinha (MEDIDO).**
+> **Nem toda escrita de perfil passa pelo escritor atômico.** As quatro migrações
+> one-shot (`loader.py:231`, `:285`, `:364` e `:439`) reescrevem o perfil com
+> `Path.write_text` **no lugar**: o arquivo existente é truncado, e o modo dele
+> **é preservado**. A prova está no disco dela: `aventura.json`, `corrida.json` e
+> `coop_local.json` têm mtime `2026-07-25 18:28:58`, o **mesmo segundo** (dentro de
+> milissegundos) do marcador `.modo_jogo_nos_presets_migrated` — foram reescritos pela
+> `migrate_modo_jogo_nos_presets` (`loader.py:398`) e continuam `0664`. Portanto
+> **`0664` quer dizer "nunca passou pelo escritor atômico", e não "nunca foi tocado"**.
+>
+> **A medição no disco dela (MEDIDO; leitura pura, sem escrever nada em `~/.config`,
+> em 06/08/2026 às 22:53, por `stat -c '%a %n'` sobre os `.json` do diretório de
+> perfis):**
+>
+> - **`0600`, nove arquivos:** `acao`, `esportes`, `fallback`, `fps`, `navegacao`,
+>   `point_and_click`, `pragmata`, `sackboy`, `vitoria`.
+> - **`0664`, quatro arquivos:** `aventura`, `bow`, `coop_local`, `corrida`.
+>
+> Os números são idênticos aos da leitura feita horas antes, no mesmo dia: entre as
+> duas leituras nada mudou de modo.
+>
+> Dois recortes que o retrato de 05/08 já não descreve. Primeiro: `meu_perfil.json`,
+> `pragmata2.json` e `sackboy_nativo.json` **não existem mais** — sobraram só os `.lock`
+> órfãos dos três (`20:51`, `20:18` e `20:17` de 06/08). Segundo: dos **doze** presets de
+> `assets/profiles_default/`, **seis** estão `0600` no disco dela (`acao`, `esportes`,
+> `fallback`, `fps`, `navegacao`, `point_and_click`), e três desses seis carregam mtime
+> de **06/08 entre 20:19 e 20:51** — regravados pelo Salvar **depois** da madrugada
+> deste estudo. A fronteira, então, não é "catch-all contra preset": é **"o que o
+> aplicativo já regravou pelo Salvar contra o que continua com o modo que o instalador
+> deixou"**. *(Que exatamente quatro presets tenham cruzado de `0664` para `0600` desde
+> 05/08 é **SEM PROVA**: nenhuma leitura de modo de 05/08 ficou registrada — este
+> documento não tinha nenhuma —, então não há linha de base contra a qual contar.)*
+>
+> **O que o canal prova, e o que não prova (a última perna é SUSPEITA COM MECANISMO):**
+> `0600` prova que o arquivo **passou pelo escritor atômico do produto**, e isso exclui,
+> sem depender de relógio nenhum, a hipótese *"o arquivo nunca foi tocado desde a
+> semeadura"*. Sozinho não aponta a janela: daemon, CLI e restauração usam o **mesmo**
+> `_atomic_write_bytes`. É a soma com a prova negativa do D-35 — nenhum teste, nenhum
+> script — que fecha em *"foi a janela"*.
+>
+> **A consequência operacional, e é a razão de registrar:** `stat -c '%a'` vira a
+> **triagem de um comando** para qualquer susto futuro com os dados dela — separa
+> "regravado pelo Salvar" de "com o modo da instalação" antes de abrir journal ou
+> comparar mtime. E há um efeito colateral que ninguém documentou: um preset semeado
+> `0664` (legível pelo grupo) fica **`0600` depois do primeiro Salvar**. Se alguma
+> ferramenta dela lê esses arquivos por grupo, ela para de ler no primeiro Salvar —
+> **SEM PROVA** de que isso já tenha mordido alguém; fica como risco anotado.
+>
+> **Ainda nesta subseção, o que caducou por movimento da árvore:** os ponteiros do D-36
+> logo abaixo, *"`save_profile` (`loader.py:621`, escrita em `:724-738`)"*, **já não
+> caem onde caíam**. Em 06/08 o `save_profile` começa em `loader.py:787`, a escrita sai
+> em `:850`, e `:621`/`:724-738` são, respectivamente, o cabeçalho do histórico
+> versionado e o `_bytes_se_existe`. O **conteúdo** da afirmação segue verdadeiro — a
+> escrita é atômica, com `mkstemp` mais `os.replace` —, e por isso o texto do D-36 fica
+> onde está.
+
 #### D-36 — Nem validação semântica, nem backup, nem registro de gravação
 
 - `profiles/loader.py:499-502` `_read_profile` faz só `Profile.model_validate(raw)` — sintaxe e tipo.

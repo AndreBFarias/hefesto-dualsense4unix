@@ -369,6 +369,77 @@ são 15 arquivos, e cinco deles têm nome que colide por acento ou por caixa:
 Digitar `Navegacao`, ou `navegação`, ou `fps` em minúsculas — qualquer variação
 de acento ou de caixa — passa direto pelo gate e regrava o arquivo.
 
+> **NOTA DATADA — 06/08/2026, 22:53. O NÚMERO CADUCOU; A FRASE, NÃO.**
+>
+> A tabela acima e o parágrafo que a segue **não se apagam**: medem um defeito
+> real e são a prova de disco que sustenta a E4. O que caducou é a **contagem**,
+> por três razões — e nenhuma delas é *"não havia colisão"*.
+>
+> **Primeiro, o sentido — para ninguém reler errado.** *"Colidir por acento ou
+> caixa"* nesta casa **nunca** quis dizer um perfil colidir com OUTRO perfil.
+> Quer dizer o que o parágrafo acima já explica: o `name` de exibição e o slug do
+> arquivo divergem, então **uma variante digitada cai em cima do arquivo que já
+> existe** — digitar `Navegacao` grava em `navegacao.json`, que é a `Navegação`
+> dela. É o mesmo vocabulário de
+> [JOGOS-QUE-ELA-TEM-01](2026-08-06-JOGOS-QUE-ELA-TEM-01-escolher-da-biblioteca-em-vez-de-adivinhar-o-numero.md):390
+> — *"o `slugify` faz `Navegacao` e `Navegação` caírem no mesmo `.json`"*. Par a
+> par, os arquivos dela sempre tiveram slugs distintos, e isso **nunca** foi o
+> que se afirmou aqui. **Quem medir "colisão par a par" vai encontrar zero e
+> concluir que a frase é falsa — e vai concluir errado.** (Conferido em
+> 06/08/2026, 22:53: nenhum par de perfis dela compartilha slug. GRAU: MEDIDO.)
+>
+> **Segundo, o número já era subcontagem em 31/07.** Pelo critério da própria
+> tabela — nome de exibição cujo slug difere do nome —, `pragmata.json`
+> (`Pragmata`) e `pragmata2.json` (`Pragmata2`) também divergiam por caixa e
+> estavam em disco naquela semana; estão listados no
+> [mapa da sessão de 29/07](../estudos/2026-07-29-mapa-da-sessao-e-o-que-os-agentes-mediram.md):85-86.
+> A tabela recortou os cinco perfis **com regra de janela**, recorte legítimo
+> para o que a E4 precisa mostrar; foi a frase *"cinco dos quinze"* que
+> generalizou o recorte para o disco inteiro.
+>
+> **Terceiro, o disco dela mudou.** Medido em **06/08/2026, 22:53**, só leitura,
+> com `ls ~/.config/hefesto-dualsense4unix/profiles/*.json` e o `slugify` de
+> `src/hefesto_dualsense4unix/profiles/slug.py`: são **13 arquivos**, não 15.
+> `pragmata2.json`, `meu_perfil.json` e `sackboy_nativo.json` **não existem
+> mais** — do trio sobraram apenas três `.lock` órfãos, sem `.json` ao lado
+> (`meu_perfil.json.lock`, `pragmata2.json.lock`, `sackboy_nativo.json.lock`).
+> Dos 13, **nove** têm nome cujo slug difere do nome: `Ação`, `Aventura`,
+> `Corrida`, `Esportes`, `FPS`, `Navegação`, `Pragmata`, `Sackboy` e `Vitoria`;
+> os outros quatro já estão escritos em forma de slug (`bow`, `coop_local`,
+> `fallback`, `point_and_click`). Os cinco da tabela continuam todos em disco —
+> só a prioridade de `esportes.json` mudou, de 55 para **57**. **GRAU: MEDIDO em
+> 06/08/2026, 22:53.**
+>
+> **Não trocar "cinco" por "nove" e parar por aí.** Número de disco dela
+> envelhece em dias: o *"nove em treze"* vale para 06/08/2026, 22:53, e quem
+> reconferir tem de escrever a data **e** o comando, como está acima.
+>
+> **O que NÃO caducou:** o defeito, o mecanismo, o estrago em dois tamanhos e a
+> regra R-10 — que é anterior a esta tabela (auditoria de 23/07, citada logo
+> acima), e não nasceu dela. E o defeito vizinho I-1 foi **curado** em 06/08:
+> [NUNCA-TROCA-O-ALVO-01](2026-08-06-NUNCA-TROCA-O-ALVO-01-a-janela-trocava-o-nome-e-o-salvar-ia-para-o-arquivo-errado.md):276-306
+> fez o `on_import_profile` perguntar por `find_by_slug` nas **duas** metades
+> (importar **e** o nome novo do renomear), com `TestOImportarPerguntaPeloSlug`
+> em `tests/unit/test_nunca_troca_o_alvo_01_o_salvar_que_mirava_outro_perfil.py:781`.
+>
+> **Onde a mesma frase está escrita, e que herda esta nota** (cinco lugares, não
+> quatro — o quinto é a docstring que transforma a frase em teste):
+> [ÍNDICE de 05/08](2026-08-05-INDICE-a-leva-dos-perfis-que-se-reescreviam-sozinhos.md):148,
+> [GRAVA-POR-UM-FUNIL-01](2026-08-04-GRAVA-POR-UM-FUNIL-01-o-rodape-gravava-e-o-rascunho-nao-ficava-sabendo.md):461,
+> [SALVAR-NÃO-REBAIXA-02](2026-08-05-SALVAR-NAO-REBAIXA-02-o-novo-perfil-desligava-as-proprias-guardas.md):337,
+> [estudo dos dezessete agentes](../estudos/2026-08-05-o-sistema-de-perfis-o-que-dezessete-agentes-mediram.md):103
+> e `tests/unit/test_footer_actions.py:281`.
+>
+> **De quebra, para quem for até o ÍNDICE:** a linha imediatamente abaixo
+> daquela, `:149`, carrega um segundo número caducado, e mais caro — *"o perfil
+> ATIVO dela: `sackboy_nativo`, prioridade 191"*. Em 06/08/2026, 22:53,
+> `sackboy_nativo.json` não existe mais (sobrou só o `.lock`), enquanto
+> `~/.config/hefesto-dualsense4unix/session.json` ainda aponta
+> `last_profile: sackboy_nativo` — ou seja, quem for atrás do 191 vai atrás de um
+> arquivo que sumiu, e o ponteiro do perfil ativo dela está pendurado no vazio.
+> **GRAU: MEDIDO em 06/08/2026, 22:53.** Aquela linha merece a sua própria nota
+> datada, que esta página não pode escrever no lugar dela.
+
 **E o estrago tem dois tamanhos.** Se o perfil ATIVO for o mesmo que está sendo
 sobrescrito, `to_profile` reconhece pelo slug (`draft_config.py:506-508`) e
 preserva regra, prioridade e modo: o conteúdo fica coerente, mas o `name` no
