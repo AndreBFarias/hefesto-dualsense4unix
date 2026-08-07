@@ -1,7 +1,7 @@
 # LUGAR À MESA-01 — três controles ligados, e um jogador só
 
-- **Status:** PROPOSTA, escrita em 06/08/2026. **Nenhuma linha de `src/` ou de
-  `tests/` foi tocada.** Não commitada
+- **Status:** **PARCIALMENTE EM EXECUÇÃO** desde 07/08/2026 — ver a nota do
+  cabeçalho abaixo. Escrita em 06/08 como proposta; commitada em `a68c04e`
 - **Prioridade:** ALTA — é a queixa dela desta noite, medida ao vivo com os
   aparelhos na mesa, e o defeito de honestidade atinge **qualquer pessoa que
   ligue um controle de outra marca**, não só esta bancada
@@ -23,6 +23,32 @@
 >
 > Sem a resposta 1, esta sprint para na E1. Sem a resposta 2, a E0 não sabe se
 > conserta a boca ou se cala a lâmpada.
+
+> ### **RESPOSTA DA PERGUNTA 1 — 07/08/2026. A 2 SEGUE ABERTA.**
+>
+> **Grau: DECISÃO DELA**, registrada em
+> [as onze respostas do painel](../2026-08-07-DECISOES-DELA-as-onze-respostas-do-painel.md).
+>
+> **Pergunta 1: sim, mas SÓ DEPOIS da máscara por controle.** Ela não recusou a
+> entrega — recusou **o preço**: o botão de PlayStation na tela do jogo para
+> quem segura o Pro Controller. A `MASCARA-01` deixa de ser sprint paralela e
+> vira **pré-requisito** da `E3`. A ordem passa a ser
+> `MASCARA-01` → `E3` → `E4`.
+>
+> O veto do `QUATRO-NO-RÁDIO-01` e a decisão dela de 19/07 (*"externo não ganha
+> controle virtual"*) **não foram derrubados — foram adiados com condição**.
+> Enquanto a máscara não existir, valem. Quem retomar: **não comece a adoção.**
+>
+> **Pergunta 2 continua sem dona.** Ela não foi feita no painel de 07/08, e a
+> resposta 1 não a decide: adiar a adoção não diz o que a lâmpada deve fazer
+> enquanto isso. A `E0` fica presa nela — é escolher entre *calar a luz* (honesto,
+> mas ela perde o instrumento pelo qual distingue os controles) e *manter o
+> número com a boca da tela corrigida* (ela mantém o instrumento, e o plástico
+> segue afirmando o que o jogo não cumpre).
+>
+> **O que JÁ foi feito sem depender dela**, porque não toca a lâmpada: a `E0a` —
+> o `coop status` passou a imprimir os dois números nomeados, e existe teste que
+> impede dois aparelhos de acenderem o mesmo jogador.
 
 ---
 
@@ -694,6 +720,25 @@ teste que conte LEDs acesos por número fecha isso, e não existe hoje.
    **ganha um número e uma luz**. `modos.md:75-78` diz que os externos *"entram
    na contagem como jogadores"*, o que é falso sobre o jogo e verdadeiro só
    sobre a luz. As frases **não se apagam**: ganham a data e o que caducou.
+
+   **PAGA em 07/08/2026 — e o `grep` achou mais do que os dois arquivos acima.**
+   A nota 4 dizia dois lugares; a varredura por *"entram na contagem como
+   jogadores"*, *"jogadores adicionais"*, *"vira um jogador"* e *"um por
+   jogador"* achou **sete frases em cinco arquivos**. Nenhuma foi apagada; cada
+   uma ganhou nota datada com o que caducou e o que é verdade hoje:
+
+   | arquivo | a frase | a nota diz |
+   |---|---|---|
+   | `README.md` (seção *"O que é"*) | *"cada um vira um jogador"* e *"entram como jogadores adicionais"* | vale para DualSense; externo não entra na contagem nem ganha controle virtual |
+   | `README.md` (seção do 8BitDo por Bluetooth) | *"quatro controles (…), um por jogador"* | é lugar na fila, não jogador na partida |
+   | `docs/usage/modos.md` (*"Co-op local"*) | *"entram na contagem como jogadores e recebem número de LED próprio"* | a luz é verdade, a contagem caducou — com as duas ressalvas do LED de 22h40 |
+   | `docs/usage/bluetooth.md` (8BitDo por Bluetooth) | *"quatro controles (…), um por jogador"* | lugar na fila, não jogador |
+   | `docs/usage/troubleshooting-8bitdo.md` (placar do teste ao vivo) | *"um por jogador"* e o `slot` de 1 a 4 | o `slot` serve à luz e à ordem, não à contagem |
+   | `docs/usage/cli.md` (`coop on\|status`) | *"cada controle = um jogador"* e *"Cada controle conectado é um jogador, sempre"* | a conta do `status` vem só dos DualSense descobertos |
+
+   **Examinada e deixada como está:** `docs/usage/interface.md:7-11` fala em
+   *"o cenário de co-op que o projeto persegue"* — é meta declarada, não
+   afirmação de entrega, e por isso não caducou.
 
 ---
 
