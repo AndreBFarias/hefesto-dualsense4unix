@@ -116,7 +116,19 @@ retorno** de `set_gamepad_emulation` e devolve APLICADO incondicionalmente
 `daemon/lifecycle.py:1832-1833`, uma falha real de start é registrada como
 sucesso e **nunca mais tentada naquele episódio**.
 
-**Razão C — nos dois jogos dela o Hefesto sai de cena de propósito.**
+**Razão C — nos dois jogos dela o Hefesto entrega a ENTRADA de propósito.**
+
+> **NOTA DATADA — 07/08/2026.** Este parágrafo dizia *"o Hefesto sai de cena de
+> propósito"*, e a frase está **refutada pela metade** pela medição dela de
+> 06/08/2026
+> ([CONTROLE-SONY-MEDIDO-01](../sprints/2026-08-06-CONTROLE-SONY-MEDIDO-01-o-experimento-que-decide-metade-da-doutrina.md),
+> seção *A INVERSÃO*, **grau MEDIDO**): nesses appids o Hefesto entrega a
+> entrada e **mantém a saída** — cor, gatilhos e vibração continuam dele.
+> **A medição de código abaixo não muda uma linha**: os três mecanismos que
+> este parágrafo aponta (`.env` sem dedup, `mode` pulada no arming, vpads
+> suspensos) são todos de entrada, e é exatamente por isso que a frase antiga
+> generalizava demais.
+
 `steam_input_apps.txt` lista 2111190 (Mullet Mad Jack) e 3357650 (Pragmata), e o
 `localconfig.vdf` confirma `UseSteamControllerConfig="2"` nesses dois blocos.
 Por desenho: `daemon/launch_env.py:933-945` sobrescreve os `.env` desses appids

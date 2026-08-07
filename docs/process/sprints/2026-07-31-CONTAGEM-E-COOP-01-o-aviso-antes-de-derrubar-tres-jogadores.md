@@ -316,6 +316,20 @@ em `BLOQUEIO_DO_TECLADO_EM_PORTUGUES` (`emulation_actions.py:145-165`), e o caso
 
 O teclado dela já é honesto nesse estado. O gamepad, não.
 
+> **NOTA DATADA — 07/08/2026: o teclado era honesto sobre a pausa e errado
+> sobre a causa.** A frase citada acima **mudou** nesta data. A medição dela de
+> 06/08
+> ([CONTROLE-SONY-MEDIDO-01](2026-08-06-CONTROLE-SONY-MEDIDO-01-o-experimento-que-decide-metade-da-doutrina.md),
+> seção *A INVERSÃO*, **grau MEDIDO**) **refuta** *"o jogo assumiu o controle"*
+> como descrição do que acontece num jogo da lista: o jogo assume a **entrada**,
+> e a cor e os gatilhos **dela** continuam valendo lá dentro. Quem assume o
+> controle inteiro é o jogo que está **fora** da lista.
+>
+> **A metade que esta seção acerta continua acertando**, e é o precedente que
+> ela veio buscar: a frase abre afirmando *"Ligado, em pausa agora"* e promete a
+> volta. Foi só a **causa** que passou a ser nomeada — *"neste jogo quem entrega
+> o controle é a Steam, e o controle virtual foi recolhido"*.
+
 ## A decisão já registrada que esta sprint NÃO trata como lapso
 
 O índice de 26/07 pediu, na seção 4: *"aviso **antes** de entrar na exceção
@@ -365,6 +379,36 @@ tem "ZERO chamadores em `src/`", e hoje tem um —
 continua verdadeiro (não existe **botão**); o comentário, não.
 
 ## Entregas
+
+> **NOTA DATADA — 07/08/2026: o PREÇO desta sprint foi remedido, e ele é menor
+> do que estas entregas escrevem.** Todas as três falam do estrago como *"o
+> Hefesto sai da frente do jogo"* — a docstring citada na E0, a frase *"o que a
+> ação custa não é só 'o Hefesto sair da frente'"*, o diálogo proposto na E1b e
+> a primeira linha da tabela da E3. A medição dela de 06/08/2026
+> ([CONTROLE-SONY-MEDIDO-01](2026-08-06-CONTROLE-SONY-MEDIDO-01-o-experimento-que-decide-metade-da-doutrina.md),
+> seção *A INVERSÃO*, **grau MEDIDO**) refutou a metade da saída: num jogo da
+> lista os **gatilhos dela seguraram** e a **cor dela ficou**. O que a exceção
+> entrega é a **entrada**.
+>
+> **O que esta sprint acerta, e a medição só reforça:** o preço que ela existe
+> para nomear — **a queda de P2, P3 e P4** — é real, é consequência direta de
+> recolher os gamepads virtuais, e continua sendo a coisa que ninguém pode
+> descobrir sozinho. As três partes obrigatórias do aviso (o número, a negação
+> e a promessa de volta) continuam obrigatórias.
+>
+> **O que caduca, item a item:**
+>
+> | Onde | O que dizia | O que vale desde 06/08 |
+> |---|---|---|
+> | E0, a docstring de `on_steam_game_broken` | *"o que ela custa é o Hefesto sair da frente do jogo"* | custa **a entrada** daquele jogo (e, por tabela, o co-op). Já corrigida em `app/actions/daemon_actions.py` |
+> | E1b, o diálogo antes do clique | *"Neste jogo o Hefesto sai da frente, e 3 deles saem junto"* | a segunda metade está certa e é o ponto do diálogo; a primeira tem de dizer *"neste jogo quem entrega o controle é a Steam"* |
+> | E3, a linha `true`/`true` da tabela | *"O jogo assumiu o controle — o Hefesto saiu da frente deste jogo"* | **invertida.** Quem "assume o controle" da luz e dos gatilhos é o jogo **fora** da lista, não dentro |
+>
+> **O que já foi feito com esta nota na mão (07/08):** o tooltip do badge —
+> `app/actions/status_actions.tooltip_do_coop_derrubado`, que nasceu da E1a —
+> deixou de abrir com *"O jogo assumiu o controle"* e passa a nomear a entrada,
+> mantendo as três partes obrigatórias. A E1b e a E3 **continuam abertas**, e
+> quem as escrever usa a tabela acima.
 
 Ordem por risco crescente. As três são independentes: qualquer uma entra sozinha.
 

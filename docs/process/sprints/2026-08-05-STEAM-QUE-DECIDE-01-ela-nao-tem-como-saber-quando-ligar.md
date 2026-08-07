@@ -305,6 +305,9 @@ O estado atual da máquina dela é exatamente a configuração a testar, e está
   alguma. Nesse caso a allowlist não é "a lista dos jogos com Steam Input" —
   é "a lista dos jogos em que o Hefesto se cala", o nome está errado, os textos
   estão errados, e a E5 e a E6 mudam de forma.
+  *(**Este cenário NÃO se realizou** — ver a NOTA DATADA de 06/08 no topo desta
+  E1, que é quem paga as duas frases deste item. O per-app foi honrado, e o
+  Hefesto **não se cala** na lista: ele entrega a entrada e mantém a saída.)*
 - **Terceiro resultado possível, e o mais traiçoeiro:** a Steam honra o per-app
   para **entregar entrada** (os gamepads virtuais nascem) mas **não** os
   recursos de PlayStation (gatilhos adaptativos, lightbar), porque o gate desses
@@ -364,6 +367,12 @@ desligado não, o global é o gate e o per-app é decorativo.** Ao terminar, é 
 estado do produto.
 
 ### Como ler cada resultado
+
+> **NOTA DATADA — 07/08/2026, sobre a linha 2 desta tabela.** O veredito
+> *"o que muda é só o Hefesto sair da frente"* **não se realizou** (foi a linha
+> 1 que se realizou, em 06/08), e a frase que ele usa está refutada pela metade
+> de qualquer jeito: mesmo no cenário previsto, "sair da frente" só valeria
+> para a **entrada**. Ver a NOTA DATADA no topo desta E1.
 
 | Observação no passo 2 (allowlist) vs. passo 3 (fora) | Veredito | Consequência |
 |---|---|---|
