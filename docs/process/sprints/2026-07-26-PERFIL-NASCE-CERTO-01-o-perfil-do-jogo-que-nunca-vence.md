@@ -74,6 +74,115 @@ fechada com o olho dela.
 | **E3** — *"Neste jogo vai valer: X"* na aba Início | **ABERTA** | a frase não existe na árvore |
 | **E5** — teste que morde | **existe** para o detector | os 25 casos acima |
 
+#### Nota datada — 06/08/2026: a E1 vale para o jogo EM FOCO, e não para "Jogo da Steam" escolhido NA MÃO
+
+**Nada acima foi apagado, e a linha da E1 continua verdadeira no que afirma:** o
+nascimento com o jogo em foco existe e calcula a prioridade. O que caducou é a
+leitura de que a E1 cobre *"o perfil do jogo nasce certo"* — ela cobre **um** dos
+caminhos. Existe um terceiro caso, que a sprint de 26/07 não previa e que a
+tabela acima não separa: ela escolher **"Jogo da Steam"** no seletor *"Aplica a"*
+com o jogo fechado. Esse perfil sai com a escala em **0** e perde.
+
+**Os números de linha da tabela acima também caducaram** (a E1 cita
+`profiles_actions.py:1108` e `:1844`): na árvore de hoje são `:1325` e `:2125`.
+Os símbolos são a âncora estável, não a linha.
+
+**GRAU: MEDIDO** por leitura de código, cada linha reconferida em 06/08 na árvore
+de hoje.
+
+##### O mecanismo, exato: dois prefills no MESMO handler, e só um cuida da prioridade
+
+- `_on_aplica_a_changed` (`app/actions/profiles_actions.py:1032`), ao receber
+  `steam_game`, chama `_prefill_modo_de_jogo` (`:1091`, definido em `:1095`) e
+  `_prefill_steam_appid` (`:1093`, definido em `:1168`). Pré-preenche o **modo** e
+  o **appid**. **Nunca toca `profile_priority_scale`.**
+- `_aplicar_nascimento_com_jogo` (`:1325`) é o **único** ponto da aba Perfis que
+  chama `_prioridade_acima_dos_catch_all` (`:2125`) — na linha `:1368`.
+
+Logo: o perfil que nasce porque o jogo estava em foco sai com
+`max(catch-all) + 10`; o perfil montado à mão sai com o `set_value(0)` que
+`on_profile_new` (`:1253`) deixou em `:1265`. Não é um caminho esquecido — é o
+**mesmo handler** entregando metade da cura.
+
+##### Onde o furo está, e onde NÃO está
+
+O furo é do **"Salvar este perfil" da aba Perfis**: em
+`_build_profile_from_editor` (`:2233`), sem fotografia de disco e sem alvo
+existente (`_perfil_que_o_salvar_sobrescreve`, `:2095`, devolve `None`), vale
+`prioridade_final = priority` (`:2422`) — o valor do widget, que é 0.
+
+**O rodapé NÃO tem o furo:** `_prioridade_do_save`
+(`app/actions/footer_actions.py:364-399`) calcula justamente para quem não existe
+em disco (GRAVA-POR-UM-FUNIL-01). Dizer *"nasce 0"* sem qualificar faz o próximo
+leitor procurar o defeito no lugar errado.
+
+##### O que isto custa a ela, com nome de jogo
+
+**GRAU: MEDIDO** nos presets em `assets/profiles_default/`, lidos em 06/08: os
+presets de gênero são `criteria` — portanto **não** são catch-all. Como
+`_chave_de_selecao` devolve `(not e_catch_all, priority)`
+(`profiles/manager.py:824-831`), eles **empatam em especificidade** com o perfil
+novo e **a prioridade decide**. O perfil dela em 0 perde.
+
+Isso só morde onde o preset **também** casa aquela janela. O caso concreto é o
+dela, com o Sackboy: um perfil manual em 0 perde para `coop_local` (prioridade
+75, casa "Sackboy" pelo `window_title_regex`) e para `sackboy_nativo` (prioridade
+80, casa `steam_app_1599660` — **a mesma janela**). Num jogo cujo título não bate
+regex nenhum sobram só os catch-all, e aí a especificidade salva — que é o que o
+R-01 e o R-21 já garantem.
+
+##### O que este item NÃO é
+
+Não contradiz o **C-02** do estudo de 05/08
+(`docs/process/estudos/2026-08-05-o-sistema-de-perfis-o-que-dezessete-agentes-mediram.md:680`),
+que **REFUTA** *"a prioridade é a causa de o perfil do jogo não entrar"*. Aquele
+refute é sobre **catch-all contra específico**, onde a especificidade vem antes e
+o veto R-21 nem lê `priority`. Aqui os dois lados são **específicos** — e nesse
+patamar a prioridade é soberana. São afirmações sobre patamares diferentes, e as
+duas continuam de pé.
+
+##### A sprint de 06/08 descreve este caminho e não registra o furo
+
+**GRAU: MEDIDO**, por leitura em 06/08. A
+[JOGOS-QUE-ELA-TEM-01](2026-08-06-JOGOS-QUE-ELA-TEM-01-escolher-da-biblioteca-em-vez-de-adivinhar-o-numero.md)
+descreve exatamente este caminho na seção **F4** — o `_on_aplica_a_changed`, o
+campo livre, o `_prefill_steam_appid` — e a **F6** promete usá-lo *sem* o jogo
+aberto. Nenhuma das duas menciona prioridade. As únicas linhas daquele documento
+que falam de prioridade estão na **E4** (semeadura em lote, caminho que ainda não
+existe), e ali a prioridade calculada é **suposta**. Ou seja: a sprint que vai
+encostar neste seletor não sabe do furo. **Aquele arquivo não foi editado por
+esta nota** — o ponteiro fica aqui, e ele tem aviso próprio de que os números de
+linha dele envelheceram (o `_prefill_steam_appid` que ele cita em `:1125` está
+hoje em `:1168`).
+
+##### O que fazer com isto
+
+**A cura, e é onde a assimetria mora.** O handler que **já sabe calcular** é o
+`_aplicar_nascimento_com_jogo` (`app/actions/profiles_actions.py:1325`, chamando
+`_prioridade_acima_dos_catch_all` em `:1368`); o que **não chama** é o
+`_on_aplica_a_changed` (`:1032`). A mudança é no bloco que já dispara os dois
+prefills (`:1090-1093`): aplicar `_prioridade_acima_dos_catch_all()` (`:2125`) à
+escala quando `active_id` estiver em `_IDS_COM_CAMPO_LIVRE` (`:70`), com
+`_new_profile` ligado e `_prioridade_tocada` (`:517`, marcado por
+`_on_prioridade_tocada`, `:2058`) ainda falso — as **mesmas guardas estreitas**
+que `_aplicar_nascimento_com_jogo` usa em `:1351-1364`, pelas mesmas razões.
+
+**O teste que faltaria para MORDER.** Hoje não existe:
+`tests/unit/test_empate01_a_cor_volta_a_ser_dela.py:476-514` cobre o jogo **em
+foco** (nasce 110) e o desktop (continua 0), e nenhum teste da árvore exercita a
+escolha **manual**. O caso novo: perfil novo, escolher `steam_game` no *"Aplica
+a"* **sem** jogo em foco, digitar o appid, Salvar pela aba Perfis — a prioridade
+gravada tem de ficar acima de todo catch-all do disco **e** acima do preset que
+casa aquele título. Arrancada a cura, o teste vê 0 e reprova.
+
+**O risco de mexer, e o segundo caso que o mesmo teste tem de fixar.** Trocar o
+*"Aplica a"* de um perfil **já salvo** não pode mexer na prioridade dele — esse
+teste tem de continuar verde. É a mesma razão pela qual o gate de "perfil novo"
+do `_prefill_modo_de_jogo` está visível no chamador (`:1086-1091`) e não escondido
+dentro do helper. Um remendo largo — calcular a cada `changed` — promoveria ou
+rebaixaria perfis dela sem gesto dela, que é exatamente a classe de defeito que
+SALVAR-NAO-REBAIXA-02 e GRAVA-POR-UM-FUNIL-01 acabaram de fechar.
+
 ### E duas armadilhas novas que esta sprint não previa
 
 As duas foram medidas na madrugada de 05/08 e vivem em sprints próprias. Estão

@@ -594,6 +594,66 @@ de origem — SDL2 o enxerga, a API `js` legada não.
 
 ---
 
+## NOTA DATADA — 06/08/2026, 22h40: a segunda medição, e o achado que faltava
+
+Ela voltou a ligar os três e relatou: *"os 3 controles conectados e com os 3 como
+player 1"*. A medição foi refeita, e **o defeito não mudou** — mas apareceu um
+dado que a medição das 21h08 não tinha.
+
+### O que o produto responde, com os três na mesa
+
+```
+$ hefesto-dualsense4unix coop status
+co-op local: ligado
+jogadores ativos: 1
+
+$ hefesto-dualsense4unix controller list
+alvo de output: todos (broadcast)
+  Controle 1 — BT
+```
+
+**Um.** O sistema tem três controles físicos; o daemon lista **um**; o co-op
+conta **um jogador**. **Grau: MEDIDO** — é o produto respondendo sobre si mesmo,
+sem intermediário.
+
+### O achado novo: DOIS aparelhos no MESMO jogador 3
+
+Lido direto do `sysfs`, `brightness=1`:
+
+| LED aceso | dono | barramento |
+|---|---|---|
+| `input1147:white:player-3` | `DualSense ... (Hefesto P1)` — o **vpad** | `0003` (USB, virtual) |
+| `input1151:white:player-3` | `DualSense Wireless Controller` — o **físico** | `0005` (Bluetooth) |
+| `...:green:player-1` **e** `player-2` | `Pro Controller` | `0005` (Bluetooth) |
+
+Duas coisas, e as duas são novas:
+
+1. **O vpad e o controle físico acendem o mesmo número.** A sprint já registrava
+   que o produto acende jogador em quem o co-op não conta; o que não estava
+   registrado é que ele acende **o mesmo jogador em dois aparelhos ao mesmo
+   tempo**. Quem olha o plástico vê dois "jogador 3" na mesa.
+2. **O vpad chama-se `Hefesto P1` e acende `player-3`.** O nome do dispositivo e
+   o LED que ele acende **discordam entre si**, no mesmo objeto. Nenhuma das três
+   contabilidades da seção anterior explica isso sozinha — é o par
+   (nome fixado na criação do vpad) contra (slot atribuído depois).
+3. **O Pro Controller acende jogador 1 E 2 juntos.** É o padrão do `hid-nintendo`
+   para "não numerado", e não uma atribuição nossa. Reforça o que a sprint já
+   diz: sem adoção, o hardware escolhe sozinho o que exibir.
+
+**Grau: MEDIDO** (leitura de `sysfs` e resposta do próprio produto, na máquina
+dela, com os três ligados). **SEM PROVA:** que o jogo veja os três como jogador
+1 — foi o que ela relatou, e o caminho até o jogo não foi instrumentado nesta
+medição.
+
+### O que isto muda nas entregas
+
+Nada é reordenado, mas a **`E0`** ganha um critério a mais: não basta parar de
+afirmar o que não se entrega — é preciso garantir que **dois aparelhos nunca
+acendam o mesmo número**, inclusive quando um deles é o nosso próprio vpad. Um
+teste que conte LEDs acesos por número fecha isso, e não existe hoje.
+
+---
+
 ## Relação com as sprints que já existem
 
 | sprint | esta sprint... | por quê |
