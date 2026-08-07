@@ -11,7 +11,8 @@
 >
 > | entrega | estado | onde |
 > |---|---|---|
-> | **E1** `JustWorksRepairing` deixa de ser `always` | **FEITA** — os três assets em `confirm` | `tests/unit/test_radio_aberto_01.py` |
+> | **E1** `JustWorksRepairing` deixa de ser `always` | **FEITA** — os três assets em `confirm` — **mas ver a [NOTA DATADA de 06/08/2026](#nota-datada--06082026--a-e1-estava-escrita-e-nao-chegava-a-maquina): o disco dela continuou com `always` por quatro dias** | `tests/unit/test_radio_aberto_01.py` |
+> | **E1-bis** a cura de `confirm` CHEGA ao disco | **FEITA em 06/08/2026** — install/uninstall com dono único e bancada de raiz falsa | `tests/unit/test_bluez_config_sh.py` |
 > | **E2** agente próprio, que autoriza por política | **ABERTA** — é o que de fato fecha o cenário | — |
 > | **E3** alarme de sobrescrita de LinkKey | **ABERTA** — depende do observador de `mgmt` | — |
 > | **E4-E6** blindagem do observador de `mgmt` | **N/A hoje** — *o observador não existe na árvore* (conferido por `grep`); as regras ficam para quem o escrever | política em `POLITICA-core-nunca-sai-da-maquina.md` |
@@ -57,6 +58,249 @@
 > produto, não do estado atual desta máquina — e é exatamente a diferença que
 > ela nomeou: *"eu tô programando algo só pra eu usar? se é open source deveria
 > funcionar pra geral"*.
+
+## NOTA DATADA — 06/08/2026 (fim do dia) — as três primeiras rodadas mediram um produto que mudava debaixo delas
+
+Regra da casa, de novo: nada acima foi reescrito. O que caducou está aqui.
+
+**MEDIDO** por diagnóstico independente, com reprodução em três braços: as
+bancadas `tests/unit/test_bluez_config_sh.py` e
+`tests/unit/test_doctor_justworks_comportamento.py` executam
+`scripts/bluez_config.sh` e `scripts/doctor.sh` **pelo caminho absoluto da
+árvore de trabalho**. Nas rodadas 2 e 3 desta entrega, agentes irmãos estavam
+mutando esses mesmos arquivos **em paralelo, na mesma árvore** (arrancar a cura
+→ rodar → `cp ORIG` de volta). Contagem de execuções de `pytest` com mutação de
+OUTRO agente viva: **0** na rodada 1, **8** na rodada 2, **14** na rodada 3.
+
+O experimento de controle, que é o que fecha a questão:
+
+| braço | bancada lê | mutador cicla em | resultado |
+|---|---|---|---|
+| controle | cópia A | ninguém | 0 falhas / 10 |
+| contaminado | cópia A | **cópia A** | 5 falhas / 10, testes **diferentes** a cada vez |
+| vizinho | cópia B | cópia A | 0 falhas / 10 |
+
+Carga da máquina e concorrência entre execuções foram **refutadas** como causa
+(18 `pytest` simultâneos na árvore real: 0 falhas / 18). O canal era o **arquivo
+compartilhado**.
+
+**A contaminação vai nos dois sentidos, e o segundo é o pior.** Mutação alheia
+viva produz **vermelho falso** — mordida afirmada que não existe. E um `cp ORIG`
+alheio que desfaz a sua mutação antes de o `pytest` rodar produz **verde falso**
+— mordida real declarada inexistente. As duas violam a regra "teste tem de
+MORDER", e a segunda passa despercebida para sempre.
+
+### A cura (aplicada)
+
+`ARVORE-CONGELADA-01`, em `tests/conftest.py`: as bancadas deixam de ler a
+árvore de trabalho e passam a ler uma **cópia tirada uma vez por sessão**. A
+mordida não se perde — a cópia sai da árvore como ela está quando o `pytest`
+começa, então arrancar uma cura ANTES de rodar continua ficando vermelho; o que
+deixa de existir é a janela em que o arquivo muda **durante** a medição.
+
+Efeito MEDIDO da cura, com um mutador ciclando a 2 Hz na árvore durante dez
+execuções: as falhas deixaram de ser **sorteadas**. Antes, testes diferentes a
+cada rodada; depois, toda rodada vermelha caiu no **mesmo** conjunto de quatro —
+exatamente a mordida pretendida da mutação viva. Vermelho reproduzível é
+diagnosticável; vermelho sorteado não é.
+
+**O limite, declarado:** congelar torna o veredito COERENTE, não imune. Uma
+mutação que já estivesse viva no instante da foto é medida a sessão inteira — e
+tem de ser, porque é assim que se prova mordida. Por isso a segunda metade: uma
+sonda compara a foto com a árvore no fim da sessão e **REPROVA o run** quando o
+produto mudou no meio, dizendo que aquele run não decide nada. Ela compara dois
+instantes e não vigia o intervalo: na mesma reprodução acusou 3 das 10.
+
+### A revalidação (feita)
+
+As **nove** mordidas medidas dentro da janela contaminada foram refeitas **em
+série, uma por vez, sozinhas na árvore**, com restauração conferida por md5 e
+por modo: D1 (`fail`→`pass` no ramo `always`), D2 (detector fora do `main()`),
+M1 (backup com resolução de 1 s), o `if (_grupo != "General") next`, P2 (poda
+automática de volta no `aplicar`), M6 (sem o `trap`), M7 (promessa única do
+`never`), a conferência final do disco, e "o primeiro valor vence". **As nove
+mordem.** Saiu uma correção de número: a mutação do grupo derruba **três** casos
+da tabela mais o `test_o_veredito_acompanha_o_grupo` (quatro falhas), e não os
+"quatro casos" que a rodada 3 registrou.
+
+E saiu uma **retratação**: a rodada 3 afirmou que arrancar o `cmp` de
+conferência do backup deixava
+`test_backup_parcial_e_apagado_e_o_main_conf_nao_e_tocado` vermelho. **Não
+deixa** — medido por terceiro e reproduzido aqui: o shim daquele teste faz o
+`cp` sair 1, o `||` curto-circuita e o `cmp` nunca é avaliado. A cura foi
+escrever a bancada que faltava (um `cp` que corta o arquivo e **mente** saindo
+0), não apagar a frase.
+
+---
+
+## NOTA DATADA — 06/08/2026 — a E1 estava escrita e não chegava à máquina
+
+Regra da casa: *decisão medida não se apaga, ganha nota datada com o que
+caducou*. Nada acima foi reescrito. O que caducou está aqui.
+
+### O que foi MEDIDO em 06/08/2026
+
+`/etc/bluetooth/main.conf:25` da máquina dela:
+
+```
+JustWorksRepairing=always
+```
+
+e a linha está **dentro** do bloco `# >>> hefesto bluetooth >>>` (linha 3) /
+`# <<< hefesto bluetooth <<<` (linha 26) — ou seja, **escrita por uma versão
+anterior deste próprio projeto**. Não é config de terceiro, não é resíduo de
+distribuição: é nossa.
+
+**MEDIDO** também, e é o que explica tudo: pelo carimbo dos backups em
+`/etc/bluetooth`, a última vez que o `install.sh` escreveu o bloco foi
+**02/08/2026 02:33** (`main.conf.bak.hefesto-1785648797`). Os assets passaram
+para `confirm` em **05/08**. **Não houve nenhuma execução do `install.sh` entre
+as duas datas.** A E1 mudou o repositório; nada mudou o disco. O mecanismo não
+falhou — ele simplesmente nunca rodou, e não havia como saber disso.
+
+### A afirmação de 04/08 que caducou
+
+A caixa **PRECISÃO ANTES DE TUDO** acima diz, conferido em 04/08 às 03:10:
+
+> `/etc/bluetooth/main.conf.d/` está **VAZIO** — o `JustWorksRepairing` **não
+> está ativo** aqui e agora
+
+**Isso é falso, e a auditoria olhou o caminho errado.** MEDIDO em 06/08: o
+diretório `/etc/bluetooth/main.conf.d/` **não está vazio — ele não existe**
+(`ls` responde "diretório inexistente"), e o pacote `bluez` não o cria
+(`dpkg -L bluez | grep conf.d` volta vazio). Por isso o `install.sh` sempre usou
+o outro caminho, o do bloco apensado — e o `always` esteve **ativo o tempo todo**
+em `/etc/bluetooth/main.conf`. A auditoria conferiu o caminho A numa máquina que
+só usa o caminho B, e concluiu "não está ativo" de uma ausência que era só do
+lugar errado.
+
+A frase seguinte da mesma caixa — *"isto NÃO diminui o achado"* — continua
+valendo, e por um motivo mais forte do que ela supunha na época.
+
+### O furo estrutural que isso revelou (e que é pior que o valor errado)
+
+O `install.sh` decidia entre dois caminhos por um único `if -d
+/etc/bluetooth/main.conf.d`. Com o diretório **presente**, ele gravava os
+drop-ins, imprimia `FastConnectable + JustWorksRepairing via drop-ins
+main.conf.d` e **retornava sem nunca abrir o `main.conf`**.
+
+**MEDIDO:** `strings /usr/libexec/bluetooth/bluetoothd` (bluez
+`5.86-0ubuntu0.1~hefesto24.04.3`, o backport desta casa) contém **uma** string
+de caminho de configuração, `%*s/main.conf`, e **zero** ocorrências de
+`main.conf.d`. **SUSPEITA COM MECANISMO** (o `strings` é forte, mas não é
+leitura do fonte): este BlueZ não lê `main.conf.d`.
+
+Ou seja: bastava alguém criar aquele diretório — um pacote futuro, outro
+projeto, um `mkdir` de quem seguiu um tutorial — para o instalador **anunciar
+`confirm` enquanto o `always` seguia vivo no arquivo que o BlueZ lê de fato**.
+
+### O que entrou em 06/08 (E1-bis)
+
+| # | cura | grau |
+|---|---|---|
+| 1 | a lógica saiu de dentro do `install.sh`/`uninstall.sh` para **`scripts/bluez_config.sh`** (`aplicar` / `remover` / `verificar`), com raiz configurável por `HEFESTO_BT_ETC` | MEDIDO — a bancada roda |
+| 2 | o `aplicar` **reconhece e corrige** bloco antigo do próprio Hefesto com valor inseguro, e **diz em voz alta** que corrigiu | MEDIDO |
+| 3 | os dois caminhos deixaram de ser `if`/`elif` e viraram **cumulativos**: o `main.conf` é sempre normalizado, e os drop-ins entram por cima quando `main.conf.d` existe. Os dois lugares passam a declarar o mesmo valor | MEDIDO |
+| 4 | chave nossa **ativa fora do bloco** é **neutralizada** com a marca `#hefesto-desativou# ` em vez de apagada — e o `remover` **devolve a linha original** | MEDIDO |
+| 5 | sentinela de abertura **sem fechamento** faz o script **RECUSAR** em vez de apagar até o fim do arquivo (o `sed '/A/,/B/d'` antigo apagava) | MEDIDO |
+| 6 | **um** backup por execução, não um por bloco; e **poda com retenção declarada** (10 mais recentes, `HEFESTO_BT_BACKUPS_MANTER`) | MEDIDO |
+| 7 | o priming de `sudo` do `uninstall.sh` passou a conhecer a sentinela **unificada** — antes, numa máquina como a dela, `uninstall.sh --keep-udev` não pedia credencial e **deixava o bloco para trás** | SUSPEITA COM MECANISMO (li a lista inteira; não executei o uninstall) |
+| 8 | o `doctor.sh` ganhou `check_bluez_justworks_repairing` — **reprova** (`[FAIL]`) com `always` no disco, e **avisa** quando `confirm` está ativo com o `hefesto-bt-agent.service` fora do ar | MEDIDO no código; o ramo do `always` conferido em bancada |
+| 9 | `check_bluez_fastconnectable` deixou de atribuir o bloco a um terceiro (ele só conhecia a sentinela legada e caía no ramo *"já configurado por terceiro"*) | MEDIDO — reproduzi a cadeia de ramos |
+
+### A conta dos backups, e a dívida que ela fecha
+
+**MEDIDO** em `/etc/bluetooth` em 06/08/2026: **37** arquivos
+`main.conf.bak.hefesto-*` (23 do install, 14 do uninstall), somando **272 KB**,
+mais um `main.conf.bak.claude-1784689791` que **não é de nenhum dos dois
+scripts**. `grep -niE "poda|prune|manter os [0-9]+|tail -n \+" install.sh
+uninstall.sh scripts/doctor.sh` retornava **zero**: poda não existia em lugar
+nenhum. A retenção agora é declarada (10 mais recentes por mtime) e é **cega a
+arquivo que não seja nosso** — o `main.conf.bak.claude-*` nunca é tocado, e há
+teste que arranca essa garantia.
+
+### O que a troca CUSTA, e é honesto dizer
+
+`always` aceitava **sem depender de ninguém**; `confirm` aceita **só se houver
+agente registrado**. A cura troca uma garantia incondicional por uma
+condicional, e a condição já falhou duas vezes em 04/08
+(`BT-AGENT-TRAVA-O-RESTART-01` e `BT-AGENT-MORTO-FICA-MORTO-01`, ambas anotadas
+em `assets/systemd/hefesto-bt-agent.service`). Com o agente morto, o
+re-pareamento legítimo **dela** para de funcionar. É por isso que a entrega #8
+acima não é decorativa: o `doctor` avisa antes de o controle deixar de conectar.
+**MEDIDO em 06/08:** `hefesto-bt-agent.service` está `enabled` e `active`.
+
+### O que continua ABERTO depois desta nota
+
+- a **E2** segue sendo a entrega que fecha o cenário. `confirm` só devolve ao
+  BlueZ a decisão de perguntar; quem responde ainda é o `bt-agent`
+  `NoInputNoOutput`, que autoriza;
+- **DÍVIDA REGISTRADA, MEDIDA:** `assets/bluetooth/` **não é empacotada** em
+  formato nenhum (`grep -rn bluetooth scripts/build_deb.sh packaging/debian/*` só
+  encontra o `modprobe.d` do btusb). Quem instala pelo `.deb`/`.rpm`/`PKGBUILD`/
+  flatpak **nunca recebeu esta configuração** — nem o `always` de antes, nem o
+  `confirm` de agora. Fechar isso exige postinst que reescreva um conffile do
+  dpkg, e é entrega à parte. O portão novo em `scripts/check_packaging_parity.sh`
+  trava o que já é verdade (dono único, chamado pelos dois lados, detector no
+  doctor) e **não** finge cobrir o empacotamento;
+- **SUSPEITA COM MECANISMO, sem cura nesta leva:** a mesma série de backups
+  mostra que o `main.conf` dela **perdeu o template do upstream** — 404 linhas
+  em 21/07 19:29, 426 em 22/07 00:09, **3 linhas** em 22/07 01:24. O colapso
+  aconteceu na janela do backup com prefixo `claude-`, **não** numa execução do
+  `install.sh` (os backups do install de 21/07 mostram o arquivo ainda com 400+
+  linhas), e o `awk` do install não tem caminho que apague 400 linhas de
+  comentário. O `main.conf.dpkg-dist` íntegro (384 linhas) está ao lado.
+  **Nota de 06/08/2026:** os dois pontos desta medição agora estão PROTEGIDOS —
+  ver a nota abaixo sobre a poda.
+
+### Nota datada — 06/08/2026: a poda automática de backup foi RETIRADA
+
+A primeira versão do `scripts/bluez_config.sh` podava os
+`main.conf.bak.hefesto-*` dentro do `aplicar` e do `remover`, guardando os 10
+mais recentes por mtime. **MEDIDO** por simulação só-leitura do pipeline exato
+contra o `/etc/bluetooth` dela: a **primeira** execução de `aplicar` apagaria
+**27 dos 37 backups**. Entre eles, os dois pontos de medição do colapso descrito
+no item acima:
+
+| arquivo | tamanho | quando | seria apagado? |
+|---|---|---|---|
+| `main.conf.bak.hefesto-1784672963` | 404 linhas, 14797 bytes | 21/07 19:29 | **sim** |
+| `main.conf.bak.hefesto-1784694261` | 3 linhas, 59 bytes | 22/07 01:24 | **sim** |
+
+Retenção por mtime **descarta primeiro o que tem mais valor**: o estado
+pré-hefesto e o instante do estrago. Os 10 que ficariam são todos pós-colapso,
+de 11 a 1395 bytes. O gatilho seria o conselho da própria ferramenta — o
+`doctor.sh` manda *"rode ./install.sh"* —, e a regra da casa é **não se apaga
+decisão medida**. Cento e poucos quilobytes não valem a única evidência do único
+estrago deste projeto ainda sem explicação.
+
+**O que existe hoje, no lugar:**
+
+- `aplicar` e `remover` **reportam** quantos backups há e quantos bytes ocupam,
+  e dizem em voz alta que nenhum é apagado automaticamente;
+- a poda é um subcomando **explícito**: `bash scripts/bluez_config.sh podar`.
+  Ele **simula por padrão** (`--dry-run`); apagar exige `--aplicar`;
+- **o mais antigo nunca sai** — é o estado mais próximo do pré-hefesto;
+- **conteúdo único nunca sai** — se nenhum outro backup tem os mesmos bytes,
+  aquele arquivo é a única cópia daquele estado. É essa regra, e não a retenção,
+  que segura os dois arquivos da tabela;
+- `HEFESTO_BT_BACKUPS_MANTER` continua existindo, mas só o `podar` a consulta.
+
+Portões: `tests/unit/test_bluez_config_sh.py` (secão 6, com os nomes reais dos
+dois arquivos) e `scripts/check_packaging_parity.sh`, que reprova se a poda
+automática voltar ou se o subcomando explícito sumir.
+
+### Nota datada — 06/08/2026: `JustWorksRepairing=never` é REBAIXADO, e com aviso
+
+Quem já tinha `never` no `main.conf` escolheu um valor **mais restritivo** que o
+`confirm` desta casa: `never` recusa todo re-pareamento por Just Works de quem já
+tem bond, sem perguntar a ninguém. O `aplicar` **rebaixa** para `confirm` — mas a
+decisão é declarada, não silenciosa. **Por que rebaixar:** com `never`, quando o
+bond do controle dela se perde (o caso que a Onda R veio resolver) o
+re-pareamento simplesmente não acontece, e o sintoma chega como *"o controle não
+conecta mais"*. **O que muda:** a linha dela é **neutralizada**, nunca apagada —
+`bluez_config.sh remover` a devolve inteira —, e tanto o `aplicar` quanto o
+`doctor.sh` dizem isso na tela, com o comando para desfazer.
 
 ---
 
