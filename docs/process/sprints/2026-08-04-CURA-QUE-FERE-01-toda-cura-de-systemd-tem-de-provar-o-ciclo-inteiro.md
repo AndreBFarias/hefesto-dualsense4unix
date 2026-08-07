@@ -153,6 +153,73 @@ com chave nova por conta própria).
 
 ---
 
+---
+
+## NOTA DATADA — 06/08/2026: a cura desta sprint **não faz o que diz**
+
+Decisão medida não se apaga, e esta caducou pelo mecanismo. O texto acima
+afirma que, com `SuccessExitStatus=SIGKILL`, *"a unit para em `inactive`, e não
+em `failed`"*. **REFUTADO, MEDIDO, oito vezes desde que a cura entrou:**
+
+```
+ago 04 02:45:30  hefesto-bt-agent.service: Failed with result 'timeout'   <- 3 s DEPOIS do cp da cura
+ago 04 04:06:00 / 11:26:48 / 14:12:37 / 23:19:09
+ago 05 14:22:50 / 20:07:18
+ago 06 21:04:38  hefesto-bt-agent.service: Failed with result 'timeout'
+```
+
+**Por quê:** `SuccessExitStatus=` reclassifica o **status de saída do
+processo**. Aqui o resultado é `timeout`, gravado pelo systemd quando o estado
+`stop-sigterm` estoura — **antes** de a morte do processo ser avaliada — e um
+resultado de falha já posto não é limpo pelo `SuccessExitStatus`. A cura acerta
+um alvo que não é o que produz o `failed`.
+
+**E a "prova ao vivo" citada acima é um falso positivo, com carimbo.** Às 02:45
+de 04/08:
+
+```
+02:45:26.938  sudo cp assets/systemd/hefesto-bt-agent.service /etc/systemd/system/...
+02:45:27.132  sudo systemctl restart hefesto-bt-agent.service      <- o restart EXPLÍCITO
+02:45:30.351  hefesto-bt-agent.service: Failed with result 'timeout'   <- a cura JÁ estava lá
+02:45:30.363  Started hefesto-bt-agent.service                      <- voltou pelo restart
+```
+
+O agente voltou porque havia um job de start **explícito** na fila. Em 06/08 ele
+voltou porque o `Requires=bluetooth.service` propagou o restart automático. Em
+nenhum dos dois casos o `SuccessExitStatus` participou. **É exatamente a
+armadilha que esta sprint nomeia — cometida dentro dela.** Quem devolve o
+agente é a propagação de restart, e é isso que precisa ser dito no
+`assets/systemd/hefesto-bt-agent.service` (linhas 66-70, que repetem a
+afirmação refutada).
+
+**Acrescenta (MEDIDO):** o `bt-agent` **nunca** responde ao SIGTERM — nem com o
+`bluetoothd` vivo e são (o restart manual das 02:45:27 é a prova). A
+[BT-AGENT-TRAVA-O-RESTART-01](2026-08-04-BT-AGENT-TRAVA-O-RESTART-01-noventa-segundos-de-bluetooth-fora-do-ar.md)
+atribui isso a *"quando o `bluetoothd` morre"*; a condição é mais larga.
+
+**Ressalva honesta, para não inflar a gravidade:** seis das oito ocorrências
+são no **desligamento da máquina**, onde não custam nada. As duas de dentro de
+sessão recuperaram em 0,35 s e 3,0 s. O risco medido em 04/08 (2h30 sem agente)
+**não voltou a acontecer** — mas também não foi curado pelo que esta sprint diz
+tê-lo curado.
+
+**Estado dos aceites em 06/08:** 1 e 2 **abertos** (`grep -rn 'systemctl
+restart' tests/` só devolve `test_plataforma_wiring.py`, que **proíbe** a
+string; não existe teste de ciclo). 3 **aberto**. 4 **aberto** (`doctor.sh`
+segue `warn` para unit nossa em `failed`). A mordida prometida também não
+existe: `TimeoutStopSec`, `SuccessExitStatus` e `SendSIGKILL` não aparecem em
+`tests/` nem em `scripts/check_packaging_parity.sh` — nada pode reprovar por um
+campo que ninguém lê. **DECLARADO:** não arranquei a cura para ver reprovar,
+porque a ausência total da string nos testes e no portão já é conclusiva, e
+mutar `assets/systemd/` numa árvore com outros agentes escrevendo é risco sem
+ganho.
+
+E a primeira linha da tabela de combinações desta sprint (`SendSIGKILL=yes` sem
+`SuccessExitStatus`) precisa da mesma nota: o remédio que ela indica está agora
+medido como **remédio que não cura**.
+
+---
+
 ## Relacionado
 
 - [BT-AGENT-TRAVA-O-RESTART-01](2026-08-04-BT-AGENT-TRAVA-O-RESTART-01-noventa-segundos-de-bluetooth-fora-do-ar.md) — a cura que abriu este buraco
