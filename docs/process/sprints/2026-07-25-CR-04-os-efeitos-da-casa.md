@@ -43,12 +43,28 @@ partida**, não a lista final; a bancada é que decide:
 - [ ] README e `udp-schema.md` atualizados: o que existe agora, e que os doze do
       DSX seguem sem tradução (isso não muda — são coisas diferentes).
 
-## Uma possibilidade que vale considerar no fim
+## Uma possibilidade que vale considerar no fim — decidida em 07/08/2026
 
-Se os efeitos da casa ficarem bons, eles são material **original do Hefesto**,
-sob a licença do projeto — e podem ser oferecidos ao ecossistema Linux como
-alternativa livre às tabelas que hoje só existem sem licença. Seria a resposta
-mais útil possível ao problema que originou tudo isto.
+Se os efeitos da casa ficarem bons, eles são material **original do Hefesto** —
+e podem ser oferecidos ao ecossistema Linux como alternativa livre às tabelas
+que hoje só existem sem licença. Seria a resposta mais útil possível ao problema
+que originou tudo isto.
+
+**Nota datada de 07/08/2026 — grau: DECISÃO DELA.** Esta linha dizia "sob a
+licença do projeto", e isso **caducou**: as curvas NÃO saem sob a licença do
+código. A resposta 2 do
+[painel das onze](../2026-08-07-DECISOES-DELA-as-onze-respostas-do-painel.md) é
+**MIT no código, CC0-1.0 nas curvas** — duas licenças, de propósito, porque dado
+factual sob licença de código carrega uma dúvida de atribuição que CC0 não
+carrega.
+
+Consequência para quem executar esta sprint: cada efeito medido aqui nasce
+destinado a `CC0-1.0`. Isso não muda nada no formato (o `CurvaPropria` da CR-02
+segue igual) nem no registro de proveniência
+(`docs/protocol/curvas-proprias.md`) — muda o que a
+[CR-06](2026-07-25-CR-06-devolver-ao-ecossistema.md) escreve dentro do arquivo
+publicado. A proveniência continua obrigatória: CC0 dispensa **atribuição
+jurídica**, não dispensa dizer quem mediu e em que controle.
 
 ## Critério de conclusão
 
