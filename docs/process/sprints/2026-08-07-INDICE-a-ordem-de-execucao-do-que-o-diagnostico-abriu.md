@@ -507,13 +507,20 @@ oferece a opção sem dizer isso mente por omissão.
 
 ### LEVA 9 — O que a `E3` exige antes de existir
 
-**Por que aqui:** as três peças podem ser construídas **com o portão em
-`False`** — construí-las **não reacende nada**, porque o chamador continua
-desligado. E sem elas a `E3` quebra coisa medida.
+**Por que aqui:** as peças podem ser construídas **com o portão em `False`** —
+construí-las **não reacende nada**, porque o chamador continua desligado. E sem
+elas a `E3` quebra coisa medida.
+
+**Ordem interna, imposta pela A-LUZ-QUE-CUROU-01 e não negociável:** primeiro a
+leva 7 (o número certo), **depois** a escrita barata e honesta — as saídas `S3`
+(o detector comparar contra o que **nós** escrevemos, correção de uma linha),
+`S4` (escrita **diferencial**: só o nó cujo valor muda), `S5` e `S7` (o limite
+por subcomando). Inverter isso liga um laço infinito que hoje não existe.
 
 | item | o que entra | por que antes da `E3` | custo | jogo |
 |---|---|---|---|---|
-| **escrita idempotente** | a escrita do LED externo que não repete o que já está no aparelho | **pré-requisito MEDIDO**: o laço nasce da escrita que falha no meio | M | não (portão em `False`) |
+| **S5** | tirar o azul da conta: o `blue:player-5` deixa de ser o bit *"+5"*, e o produto para de escrever num nó que é o **LED HOME**. **Declarada obrigatória, independente de tudo** | menos um subcomando por chamada, sempre | P | não |
+| **escrita idempotente** (`S3` + `S4`) | a escrita do LED externo que não repete o que já está no aparelho, e o detector que compara contra o que nós escrevemos | **pré-requisito MEDIDO**: o laço nasce da escrita que falha no meio | M | não (portão em `False`) |
 | **rota de FF** | hoje o rumble de um externo faz **todos** os DualSense vibrarem: o endereço de um externo jamais casa handle do backend, e o código **cai no broadcast histórico** | sem ela, a `E3` estraga o rumble de quem já funciona | M | **sim** |
 | **precedência do LED** | com a `E3`, o player-LED do externo passa a ter **dois escritores** e precisa de precedência declarada | sem ela, dois donos escrevem no mesmo aparelho | P | **sim** |
 | **M-6** | ponte de giroscópio para externo mascarado | sem ela, *"Como DualSense"* num Pro custa o giroscópio | G | **sim** |
@@ -526,6 +533,22 @@ comentário na linha 783 diz literalmente que o MAC que não casa handle cai no
 `absinfo` de verdade neste caminho (tudo é dublê); a zona morta do Pro
 (`flat=500`) não é aplicada; e o normalizador **não tem consumidor** — quem
 apontaria é a `E3`.
+
+**As três exigências que a `E3` herda, e nenhuma existe hoje.** **Grau:
+SUSPEITA COM MECANISMO** — derivação direta dos achados, nenhuma executada nem
+medida:
+
+1. **um número ESTÁVEL para escrever** — enquanto o estado de conexão tiver dois
+   escritores, o valor a pintar oscila sozinho (é a leva 7 e a `S10`);
+2. **uma escrita que saiba se falhou** — hoje o código declara sucesso com uma
+   lâmpada de cinco, e o cache grava como se tudo tivesse ido;
+3. **um limite cuja unidade seja o SUBCOMANDO**, não a chamada, e cujo valor
+   seja maior que o custo medido de uma repintura.
+
+**A regra que não se apaga:** a `S5` derruba a regra R-25 (o azul como *"+5"*),
+que é decisão medida. Ela **ganha nota datada, não sumiço** — e os três testes
+que travam hoje o comportamento antigo em `tests/unit/test_external_leds.py`
+mudam **junto**, no mesmo commit, com a nota.
 
 ---
 
@@ -571,6 +594,7 @@ delas deve ser respondida por quem executa.
 | 2 | **o ícone do painel** | *"São três desenhos: o novo, a opção C e o antigo. Qual fica?"* |
 | 3 | **o preço da cura de segurança** | *"A RADIO-ABERTO-01 previu que a cura do pareamento cobraria um preço. Ninguém te perguntou se você aceita esse preço. Aceita, ou revemos a cura?"* |
 | 4 | **a ordem da fila** | *"Hoje a fila é a ordem da PRIMEIRA VEZ que cada controle apareceu. Você descreveu a ordem da SESSÃO. Trocar revoga três decisões medidas de 25/07 — troco?"* |
+| 4b | **quem obedece a quem** (a cura do cruzamento) | *"Para o número parar de mentir, as duas contas viram uma. Dá para fazer de dois jeitos: (1) a LÂMPADA passa a obedecer ao jogo, ou (2) o JOGO passa a obedecer à fila. O jeito 2 pode mudar quem é o Jogador 1 no meio da sessão. Qual você quer?"* |
 | 5 | **os dois endereços de teste** | *"Tem dois endereços de teste dentro da sua fila real, restaurados a cada início do daemon, empurrando todo controle de verdade para o terceiro lugar. O cano já foi curado; a sujeira ficou. Apago?"* |
 | 6 | **a faxina do `/tmp`** | *"São 911 alvos e 2,0 MB de sobra da suíte no seu `/tmp`. Rodo a faxina com `--apagar`?"* |
 | 7 | **a marca do mic promovido à mão** | *"Quem promove o microfone à mão não deixa marca persistente — a variável morre com o terminal. Onde essa marca deve morar, e como se chama?"* |
@@ -614,6 +638,26 @@ está na mesa. **Nada do que 07/08 abriu passa na frente dele.**
 | 9 | **PR-Q3** — quem reconecta: ela ou o sistema? | **10 min de não tocar no controle** | pega carona na PR-Q1, e fecha sem cronômetro se a `PR-5` da leva 3 existir |
 | 10 | **PR-Q2** — o daemon contribui para as quedas? | **uma noite sem o produto** | se a resposta for sim, **vira sprint de defeito** — e é o único caminho |
 | 11 | **IS-E5** — o Pro esquece este host quando volta ao Switch? | **20 min, e repareamento** | **só vale se a PR-Q1, a IS-E3 e a IS-E4 não explicarem** (ver seção 6) |
+
+### E um protocolo que não custa atenção dela nenhuma: a `CURA-A/B-01`
+
+**Grau: MEDIDO** o desenho; a medição não rodou. O A/B natural (luz falando
+contra luz calada) **já aconteceu** e é o E-1 do estudo dos externos. **Falta o
+A/B da CURA:** a escrita diferencial custa mesmo zero subcomando quando nada
+muda?
+
+**E o desenho é o achado:** o padrão que está no plástico agora **é exatamente o
+que o slot pediria**. Então os dois primeiros braços escrevem **o que já está
+lá** — nenhuma lâmpada muda, nada novo é afirmado, e **a resposta 12 fica
+intacta**. A medição inteira acontece **sem que a tela dela mude e sem que o
+plástico mude**.
+
+**Quatro travas do `P0`, e as quatro são obrigatórias:** não reiniciar o daemon
+(reiniciar zera o cronômetro do lado B); o portão continua `False` e a medição
+**não passa pelo produto** — é bancada; **suíte parada**, porque ela suja o
+journal e este protocolo lê o journal; e **anotar o denominador do rádio**
+(quantos ACL, se está descobrindo, se a tela de Bluetooth do COSMIC está
+aberta), sem o que a rodada não é comparável com nenhuma anterior.
 
 ### Três coisas que quem for medir carrega, e todas são MEDIDAS
 
@@ -681,9 +725,9 @@ entrega existir**. Encurtar isso é **repropor decisão medida**, e a casa proí
 |---|---|---|
 | levas 0 a 3 (janela, defeito sentido, reavaliação, instrumento) | 25 | quase tudo **P**, uma **M** |
 | levas 4 a 6 (máquina limpa, áudio, a mesa na tela) | 11 | **P** e **M** |
-| levas 7 a 11 (cruzamento, máscara, pré-requisitos, adoção, luz) | 13 | duas **G** |
-| espera a palavra dela | 17 | zero — é decisão |
-| espera o hardware na mão dela | o protocolo de 06/08 (41 medições) mais 11 | ~85 min mais três noites |
+| levas 7 a 11 (cruzamento, máscara, pré-requisitos, adoção, luz) | 16 | duas **G** |
+| espera a palavra dela | 18 | zero — é decisão |
+| espera o hardware na mão dela | o protocolo de 06/08 (41 medições), mais 11, mais a `CURA-A/B-01` | ~85 min mais três noites |
 | não entra | 15 | zero, e é o ponto |
 
 **A primeira coisa a fazer amanhã é a leva 0**, porque é a única cuja janela
@@ -704,7 +748,20 @@ conferidas contra esta árvore com `grep` — e três delas mudaram de linha des
 o inventário que as levantou, o que está corrigido acima.
 
 **O que este índice NÃO tem:** entrega inventada. Onde uma frente está aberta
-**sem desenho** — a cura do cruzamento, a cura do `i18n_extract.sh`, o mecanismo
-alternativo do canário — está escrito *"sem desenho"*, e a leva correspondente
-começa pelo desenho. Imaginar a solução aqui seria contorno, e contorno é
-gambiarra.
+**sem desenho** — a cura do `scripts/i18n_extract.sh`, o mecanismo alternativo
+do canário — está escrito *"sem desenho"*, e a leva correspondente começa pelo
+desenho. Imaginar a solução aqui seria contorno, e contorno é gambiarra.
+
+**Uma sprint nasceu depois deste índice e foi encaixada nele.** A
+[A-LUZ-QUE-CUROU-01](2026-08-07-A-LUZ-QUE-CUROU-01-calar-parou-o-bombardeio-e-voltar-tem-preco.md)
+foi escrita em paralelo, recontou os números na máquina dela viva e trouxe duas
+coisas que **mudaram esta fila**:
+
+1. **a cura do cruzamento deixou de ser "sem desenho"** — ela é a saída `S9`, com
+   dois caminhos e a escolha pendente (pergunta 4b da seção 4). O texto anterior
+   deste índice, que a dava por não desenhada, **está corrigido na leva 7 e
+   permanece registrado aqui**, porque não se apaga o que já foi escrito;
+2. **a trava "nenhuma cura de luz entra antes da cura da numeração"**, que
+   promoveu a leva 7 de "leva de valor próprio" a **pré-requisito da leva 9**.
+
+**Grau: MEDIDO** que as duas mudanças vieram daquela sprint, e não desta leitura.
