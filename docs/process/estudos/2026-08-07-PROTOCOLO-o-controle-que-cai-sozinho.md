@@ -449,15 +449,32 @@ não pediu*, e ela relatou sem pedir conserto.
    1 à mão.
 3. **A borda de subida não registra a origem.** GRAU: MEDIDO (ausência). É a única
    coisa que falta para a Q-3 fechar sem cronômetro.
+4. **Nada no produto avisa que o daemon vivo é mais velho que o código.** GRAU:
+   MEDIDO (ausência: `grep -n "ExecMainStartTimestamp" scripts/doctor.sh` devolve
+   zero linhas em 07/08). É a pré-condição da seção 8.1, e hoje ela depende de
+   alguém lembrar. O desenho está na **seção 9** — desenho, não entrega: mexe em
+   `scripts/doctor.sh`, que estava com outra leva em cima no dia em que isto foi
+   escrito, e a regra da casa é *não entregue mudança que ela não pediu*.
 
 ---
 
 ## 6. Notas de instrumento — as armadilhas desta medição
 
+- **O MEDIDOR PODE ESTAR INERTE — confira o relógio do processo ANTES da noite.**
+  O install é *editable*: cura de daemon escrita hoje só vale no **próximo
+  start**, e um daemon velho não escreve, não falha e não avisa. O diário da
+  bateria passou 5h49m no disco sem produzir uma linha, por isso. A pré-condição,
+  o comando que confere e a mordida medida estão na **seção 8.1**; a lição
+  genérica está em
+  [COMO-OLHAR-A-TELA.md](../COMO-OLHAR-A-TELA.md). Esta nota é a primeira da
+  lista de propósito: se ela falhar, **nenhuma** das outras importa. GRAU:
+  MEDIDO.
 - **`journalctl` sempre com data completa.** `--since "23:20"` sem data devolve
   zero em todas as janelas, e zero em todas é sinal de instrumento quebrado, não
   de ausência de defeito. GRAU: MEDIDO (custou uma medição inteira, registrado na
-  fila de 06/08).
+  fila de 06/08). Combinado com a nota acima, é a armadilha em cascata: **duas
+  causas diferentes produzem o mesmo zero**, e o zero é o valor que uma noite
+  bem-sucedida também produziria se o controle não caísse.
 - **18 é piso.** Ver a seção 1. Quem repetir a contagem sem isto vai achar que
   mediu quedas de controle e terá medido quedas do **último** controle.
 - **Endereços com a máscara da casa** — octetos 4 e 5 zerados — em **tudo** que for
@@ -531,6 +548,81 @@ janela), mais `fonte=kernel|handle` dizendo qual das duas mandou na faixa. Se as
 duas discordarem em mais de um degrau, **o resultado é sobre o instrumento** — a
 nota de instrumento da Q-1 continua valendo palavra por palavra, e agora ela é
 verificável sem ninguém na cadeira.
+
+#### A terceira régua é o RELÓGIO — e sem ela as outras duas não existem
+
+**PRÉ-CONDIÇÃO DA MEDIÇÃO, e ela não é opcional: enquanto o daemon não
+reiniciar, esta medição NÃO MEDE NADA.** O `install.sh` deste projeto é
+*editable* — o `.pth` da venv aponta para o `src/` do repositório —, então **todo
+código de daemon escrito hoje só entra em vigor no PRÓXIMO start do processo**.
+Um daemon vivo mais velho que o `battery_journal.py` não escreve uma linha, não
+falha e não avisa: ele simplesmente não tem o diário dentro dele.
+
+E o modo como isso engana é o pior possível: **o resultado de uma noite inteira
+de medição é um journal vazio, e journal vazio é indistinguível de "não houve
+queda"**. Quem for ler amanhã lê zero e conclui "estável".
+
+Confira **antes** de deixar a noite correr, e de novo pela manhã:
+
+```bash
+# 1) desde quando o processo que está no ar existe
+systemctl --user show hefesto-dualsense4unix.service \
+  -p ExecMainStartTimestamp --value
+
+# 2) o diário está escrevendo? (a janela precisa começar DEPOIS do start acima)
+journalctl --user -u hefesto-dualsense4unix.service \
+  --since "2026-08-07 21:34:39" --no-pager | grep -c bateria_amostra
+```
+
+**Zero na linha 2 é instrumento morto, não ausência de defeito.** Se der zero
+com o controle conectado há mais de 30 s, a medição está inerte: o start da
+linha 1 é anterior ao código, e a noite vai render nada. A cura é o restart —
+que é **decisão dela**, porque derruba os handles de uma partida em curso.
+
+Duas armadilhas dentro da própria conferência, as duas MEDIDAS em 07/08:
+
+- **`journalctl` sempre com data completa.** `--since "21:34:39"` sem data
+  devolve zero em toda janela, e aqui zero é exatamente o valor que significa
+  "instrumento morto" — o comando quebrado imita o defeito que ele deveria
+  detectar. Ver a seção 6.
+- **A janela tem de começar depois do start**, não antes. Uma janela que
+  atravesse o restart mistura o daemon velho (mudo) com o novo (falante), e a
+  contagem passa a depender de quanto tempo cada metade durou.
+
+**A MORDIDA desta pré-condição — arrancada e verificada em 07/08/2026.** O
+`battery_journal.py` foi escrito às **16:06:07** (mtime do arquivo) e o daemon
+vivo naquele momento era o **PID 797312, no ar desde as 14h34** — anterior ao
+código. Contando na janela em que o código já estava no disco e o daemon ainda
+era o velho:
+
+```
+--since "2026-08-07 15:45:00" --until "2026-08-07 21:34:39"  ->  0
+```
+
+**Zero.** Cinco horas e quarenta e nove minutos com o arquivo no disco, 474
+linhas de código e 49 testes verdes, o controle dela conectado o tempo todo — e
+o diário não existia. Depois do restart das **21:34:39** (autorizado por ela),
+com o `ExecMainStartTimestamp` em `Fri 2026-08-07 21:34:39 -03` e o PID
+**3523225**, a primeira amostra saiu **35 segundos depois**:
+
+```
+2026-08-07T21:35:10.700811 [info] bateria_amostra borda=None
+  controle=14:3a:9a:00:00:ab faixa=70 fonte=kernel motivo=abertura
+  pct_handle=75 pct_kernel=75 status=Discharging
+2026-08-07T21:35:10.700992 [info] bateria_amostra borda=None
+  controle=a0:fa:9c:00:00:f0 faixa=90 fonte=kernel motivo=abertura
+  pct_handle=95 pct_kernel=95 status=Discharging
+```
+
+Os dois DualSense, faixa 70 e faixa 90, as duas réguas concordando degrau por
+degrau (`pct_handle` = `pct_kernel` nas duas linhas). E às **21:40:10** o diário
+já tinha pegado a primeira borda sozinho — `faixa=80 borda=queda motivo=faixa`
+no controle da faixa 90. GRAU: **MEDIDO** (journal desta máquina, endereços com
+a máscara da casa como a seção 8.4 exige).
+
+O mesmo comando, portanto, dá **0** e **2** sobre o mesmo código no disco, no
+mesmo dia, no mesmo controle. A única variável é o start do processo. É por isso
+que o relógio é régua.
 
 ### 8.2 A cadência, e por que ela é esta
 
@@ -635,3 +727,146 @@ anterior acima de 40% refuta a bateria como explicação das nove.
 O que este dia **já** entregou para a próxima noite: quem for ler não precisa
 mais do amostrador em `tee`, nem de ninguém acordado. O `bateria_na_queda` da
 próxima queda responde à pergunta sozinho.
+
+---
+
+## 9. O aviso que o PRODUTO devia dar — desenho, não entrega
+
+**Nome proposto para a sprint: `MEDIDOR-INERTE-01`.** Não implementado. A cura
+mora em `scripts/doctor.sh`, que tinha outra leva em cima no dia em que isto foi
+escrito, e a regra da casa é *não entregue mudança que ela não pediu*. O que
+segue é para quem for pegar.
+
+### 9.1 Por que isto é do produto, e não de um documento
+
+A seção 8.1 resolve o caso de quem **lê o protocolo antes de medir**. Não
+resolve o caso real: alguém instala o Hefesto, atualiza (`git pull` num clone
+editable, ou `pipx upgrade`), abre a janela e o produto se comporta como a
+versão antiga. **O Hefesto é produto — cura que só funciona na máquina dela não
+está pronta**, e conhecimento que só existe num `.md` de processo não chega a
+quem instalou.
+
+E a casa já foi mordida duas vezes pela mesma coisa, com custo medido:
+
+| quando | o que aconteceu | onde está registrado |
+|---|---|---|
+| **05-06/08/2026** | O daemon vivo era o **PID 1670, de 04/08 23:39:46**; as curas de perfil eram de 05/08 00:38:41. Ela trocava de perfil e a cor/gatilho/rumble não entravam — **o defeito JÁ CURADO no disco** —, e a sprint teve de abrir com um aviso em negrito de que nada dela estava rodando lá | [PERFIL-REESCRITO-NA-PARTIDA-01](../sprints/2026-08-05-PERFIL-REESCRITO-NA-PARTIDA-01-o-perfil-dela-era-reescrito-sozinho-no-meio-da-partida.md), linhas 43-47 e 540-541 |
+| **07/08/2026** | O diário da bateria passou **5h49m** inerte. Zero linhas. Ver a mordida na seção 8.1 | esta página |
+
+Nos dois casos o disco estava certo, os testes verdes, e **a mantenedora estava
+olhando para o produto de anteontem**. Em 05/08 ela perdeu tempo achando que a
+cura não funcionava; em 07/08 quase perdeu uma noite de medição.
+
+### 9.2 O mecanismo: dois relógios, exatamente como o `bluetoothd`
+
+O doctor já sabe fazer isto. A cura do
+[SELO-VERDE-CEDO-DEMAIS-01](../sprints/2026-08-06-SELO-VERDE-CEDO-DEMAIS-01-o-doctor-afirmava-o-que-so-valia-nesta-bancada.md)
+compara o `mtime` do `main.conf` com o `ActiveEnterTimestamp` do
+`bluetooth.service`: config mais nova que o start do daemon significa que o
+disco ainda não é o que o daemon carregou (`scripts/doctor.sh:1831-1867`). O
+aviso proposto aqui é **o mesmo desenho, com os dois relógios trocados**:
+
+```
+relógio A = ExecMainStartTimestamp de hefesto-dualsense4unix.service
+relógio B = mtime mais novo entre os *.py do pacote que o daemon importaria
+
+B > A  ->  [WARN] o daemon vivo é mais velho que o código instalado
+```
+
+Três diferenças em relação ao irmão do BlueZ, e as três são o trabalho de
+verdade:
+
+1. **`ExecMainStartTimestamp`, não `ActiveEnterTimestamp`.** O que interessa é o
+   relógio do **processo**, não o da unidade: com `Restart=`, o processo pode ter
+   trocado sem a unidade sair de `active`. GRAU: **SEM PROVA** de que os dois
+   divergem nesta máquina — em 07/08 os dois marcavam `Fri 2026-08-07 21:34:39
+   -03`, então esta bancada não distingue. O argumento é o contrato do systemd,
+   não uma medição; quem implementar **tem de morder isso na bancada** com
+   injeção, como o `HEFESTO_BT_ATIVO_DESDE` faz hoje.
+2. **O relógio B não é um arquivo, são 165.** O pacote tem 165 `.py` em 44
+   diretórios. O `stat -c %Y` do irmão não serve; é `find -newermt`.
+3. **Achar o pacote é parte do problema, e é a parte que faz isto ser produto.**
+   Não se pode assumir o `src/` do repositório: numa instalação por `.deb` ou
+   `pipx` o código mora em `site-packages`. O caminho honesto sai do **próprio
+   interpretador que a unidade executa**:
+
+```bash
+# o ExecStart aponta para o console-script; o shebang dele diz o interpretador
+_py="$(head -1 "$(command -v hefesto-dualsense4unix)" | sed 's|^#!||')"
+_pkg="$("${_py}" -c 'import importlib.util as u
+s = u.find_spec("hefesto_dualsense4unix")
+print(s.submodule_search_locations[0])' 2>/dev/null || true)"
+```
+
+`find_spec` **não executa** o `__init__` do pacote — resolve e devolve o
+caminho, sem efeito colateral. É de propósito: o doctor não pode importar o
+produto para diagnosticá-lo.
+
+### 9.3 As quatro armadilhas que este desenho tem de evitar
+
+Cada uma já custou em outro lugar. Quem implementar sem elas reescreve um
+defeito conhecido.
+
+1. **`date -d ""` devolve MEIA-NOITE DE HOJE, com `rc=0`.** É o *defeito 2* do
+   SELO-VERDE-CEDO-DEMAIS-01, e ele nasceu exatamente ao escrever esta mesma
+   comparação. Capturar a saída do `systemctl` **primeiro**, testar se está
+   vazia, e **calar** quando não houver relógio — serviço parado, mascarado,
+   container sem systemd. Sem essa guarda, toda máquina sem systemd acusa o
+   daemon de velho por qualquer arquivo tocado hoje.
+2. **`*.py`, nunca o diretório inteiro.** Há **18** `__pycache__` DENTRO do
+   pacote, e os `.pyc` são escritos **pelo próprio daemon**, no primeiro import
+   de cada módulo. Um deles, medido em 07/08, tem mtime **dois minutos depois**
+   do `.py` que o gerou. Um `find -newer` sem filtro veria import preguiçoso
+   posterior ao start e acusaria o daemon de ser mais velho que si mesmo, para
+   sempre. GRAU: MEDIDO para os `.pyc` existirem e para a defasagem; SUSPEITA
+   COM MECANISMO para o alarme falso — não o produzi.
+3. **Serviço parado não é serviço velho.** Se o `is-active` não diz `active`, a
+   comparação não se faz: o doctor já tem uma linha para serviço parado
+   (`scripts/doctor.sh:122-126`) e duas mensagens sobre o mesmo estado é ruído.
+4. **Mtime normalizado por empacotador.** Builds reproduzíveis carimbam mtime
+   fixo (`SOURCE_DATE_EPOCH`); o código instalado pareceria antiquíssimo e o
+   aviso **calaria**. GRAU: **SEM PROVA** — não medi nenhum empacotador deste
+   projeto. Fica registrado porque a **direção do erro é a boa**: falso silêncio,
+   nunca falso alarme. Um aviso que grita à toa é pior que um que não grita.
+
+### 9.4 O custo, medido
+
+Três chamadas por execução do doctor, cronometradas nesta máquina em 07/08
+(20 repetições cada, exceto o `find_spec`, 10):
+
+| chamada | custo |
+|---|---|
+| `systemctl --user show -p ExecMainStartTimestamp --value` | **3,1 ms** |
+| `find <pkg> -name '*.py' -newermt <start> -print -quit` | **10,7 ms** |
+| `find_spec` no interpretador da unidade | **11,9 ms** |
+| **total** | **~26 ms** |
+
+O `-print -quit` é o que segura o custo: ele para no **primeiro** arquivo mais
+novo, não varre os 165. Contra as **38** chamadas de `systemctl` que o doctor já
+faz em 4011 linhas, 26 ms é ruído. GRAU: MEDIDO.
+
+O custo caro não é o de execução — é o de **bancada**: o `systemctl` de mentira
+da bancada não tem relógio (foi por isso que o SELO-VERDE-CEDO-DEMAIS-01 precisou
+do `HEFESTO_BT_ATIVO_DESDE`), então este aviso precisa da mesma porta de injeção,
+com dois valores, e de uma árvore de mentira com `.py` e `__pycache__` para morder
+a armadilha 2. Estimativa: a bancada é maior que a cura. GRAU: SEM PROVA (não
+escrevi nem uma linha dela).
+
+### 9.5 O que este aviso NÃO pega
+
+Seja honesto ao implementar:
+
+- **não prova que o daemon carregou o que está no disco** — prova que o disco não
+  mudou depois do start. Um arquivo alterado e revertido no intervalo passa
+  limpo, e está certo;
+- **não distingue mudança que importa de mudança que não importa.** Numa árvore
+  de desenvolvimento com agentes editando `src/`, o aviso vai sair quase sempre —
+  e vai estar **certo** todas as vezes. Numa máquina de usuária, sai depois de
+  atualizar e some no restart seguinte, que é o comportamento desejado. Não tente
+  filtrar por "só os arquivos do daemon": a fronteira não existe, e a tentativa
+  troca um aviso barulhento e correto por um silencioso e errado;
+- **não age.** Ele nomeia o arquivo mais novo e o intervalo, e oferece
+  `systemctl --user restart hefesto-dualsense4unix.service`. **Reiniciar é
+  decisão dela** — derruba os handles de uma partida em curso, exatamente como o
+  restart do `bluetoothd` derruba os controles conectados. O doctor avisa; quem
+  reinicia é quem está na cadeira.

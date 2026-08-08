@@ -861,6 +861,20 @@ luz calada o tempo todo.
 6. **A P-4 da referência canônica dos externos segue aberta** — ninguém nunca
    olhou se o 8BitDo tem lâmpada colorida física. **Cinco segundos de olho
    dela**, e o desfecho muda o valor de metade da `E3`.
+
+   > **NOTA DATADA — 07/08/2026 21h06: ela olhou, e esta metade FECHOU.** Nas
+   > palavras dela: *"não há lightbar mas existe led de identificação de player
+   > nele também, igual o pro controller"*. **Não há lâmpada colorida física**,
+   > logo o caminho `ds4` de LED externo escreve cor em nó que não acende cor —
+   > e a metade da `E3` que dependia disso está decidida. GRAU: MEDIDO (o olho
+   > dela no plástico).
+   >
+   > **O que sobra da `P-4`** é quem acende as quatro luzes de jogador que o
+   > plástico tem: o firmware traduzindo a cor que escrevemos, ou o aparelho por
+   > conta própria. **GRAU: SEM PROVA.** É a **resposta 23** dela — *"preparar,
+   > e rodar quando ele estiver ligado"* —, e a pergunta reescrita está na seção
+   > 8.4 de
+   > [os externos, a referência canônica](../../protocol/externos-referencia-canonica.md).
 7. **O 8BitDo saiu do rádio e continua sem HID** — a terceira forma de zumbi da
    seção 1.2 da referência canônica dos externos, que **não tem cura em lugar
    nenhum** e sobre a qual a vigia de `scripts/bt_health_watchdog.sh` não diz uma

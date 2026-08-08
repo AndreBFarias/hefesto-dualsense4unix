@@ -49,6 +49,32 @@ arquivo daqui voltar a ter segredo ou MAC real. A lista de OUIs tem **dono
 único** em `tests/unit/test_docs_mac_anonimato.py`, e o teste reprova se as duas
 divergirem.
 
+### NOTA DATADA, 07/08/2026 — o filtro estava mirando a forma ERRADA
+
+**GRAU: MEDIDO.** Até esta data o sanitizador reconhecia a senha em duas formas
+só: o cano `echo ... | sudo -S` (a de 26/06) e a palavra-chave **com
+separador** (`senha:`, `password=`). **Ela não escreve de nenhuma das duas
+maneiras.** Ela escreve a senha **solta, sem separador nenhum**, ao lado do
+`sudo` — a forma apareceu em 06/08 e de novo em 07/08, nas duas vezes em que ela
+autorizou uma leitura com root. Contra essas duas linhas o filtro respondia
+**nada**, e o arquivo passaria.
+
+É o mesmo cano de 26/06 com a mira presa na forma anterior — e ele só voltou a
+ser perigoso porque em 06/08 ela mandou versionar a saída dos agentes, que é o
+que esta pasta é.
+
+**Curado no mesmo dia**, com dois padrões novos em `_SEGREDOS` e a mordida
+verificada (arrancados os dois, `1 failed, 120 passed`; devolvidos, `121
+passed`). Eles são **apertados de propósito**: só um número solto onde deveria
+haver um comando, e só um número colado à palavra-chave. Medido antes de entrar:
+**753** arquivos de `docs/`, `scripts/` e `tests/unit/` varridos, **zero**
+acertos — nenhum `sudo systemctl`, `sudo python3` ou data reprova.
+
+**O que continua verdade, e não tem cura por portão:** o histórico do `git`
+guarda o vazamento de 26/06, e nenhum portão desta casa varre histórico — o de
+MAC lê `git ls-files` e o disco, que é a regra certa para tudo, menos para isto.
+A árvore está limpa; o passado, não.
+
 ## O que há aqui
 
 | pasta | o que é |

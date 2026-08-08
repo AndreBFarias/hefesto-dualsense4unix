@@ -342,6 +342,37 @@ Janela colhida do journal, com o daemon **anterior** ainda de pé:
 4. o tick conclui "escritor estrangeiro" e **repinta**;
 5. volta ao passo 2, para sempre.
 
+> **NOTA DATADA, 07/08/2026 21h04 — três dos cinco passos acima CADUCARAM, e o
+> desfecho desta seção continua de pé.** A refutação está medida ponta a ponta
+> na
+> [A-LUZ-QUE-CUROU-01](../sprints/2026-08-07-A-LUZ-QUE-CUROU-01-calar-parou-o-bombardeio-e-voltar-tem-preco.md),
+> seções 2.1 e 2.2. Nada aqui se apaga — o mecanismo escrito acima era a melhor
+> leitura de 19h12, e a medição das 21h04 é que o derrubou.
+>
+> - **Passo 2** (*"a primeira lâmpada passa, as outras morrem em `-110`"*) —
+>   **REFUTADO.** O subconjunto que passa é **arbitrário, e não é prefixo**: em
+>   **16** episódios no kernel desde 06/08, em **11** deles **todas as cinco**
+>   lâmpadas falharam; em 07/08 15:22:13 falhou **só a `player-2`**; em 07/08
+>   13:30:15 passaram as **duas últimas**. GRAU: MEDIDO.
+> - **Passo 3** (*"a releitura devolve **sempre** um número diferente do
+>   pedido"*) — **REFUTADO, e é o oposto do que acontece.** O `brightness` da
+>   classe LED é memória do **PEDIDO**: o kernel o grava antes de tentar o
+>   hardware e **nunca o reverte** quando a escrita falha. Às 15h24 os cinco nós
+>   do Pro liam `1,1,0,0,0` — exatamente o slot 2 pedido às 15:24:01 —, e
+>   **três** daquelas cinco escritas tinham falhado com `-110`. GRAU: MEDIDO.
+> - **Passo 5** (*"volta ao passo 2, para sempre"*) — **REFUTADO pela
+>   aritmética.** Um laço travado no piso de `LED_MIN_INTERVAL_SEC = 2,0 s`
+>   produziria da ordem de **34 000** escritas nas 19h04m do lado A. Foram **18**
+>   no Pro — uma a cada **63,6 minutos**. GRAU: MEDIDO.
+>
+> **Os passos 1 e 4 ficam de pé, e o rótulo do passo 4 é que é falso.** O
+> "intruso" que o log acusa foi **a nossa própria escrita anterior**, em **11 de
+> 11** ocorrências: as repinturas são o daemon perseguindo o próprio eco. E o que
+> sobra no lugar do laço é pior que ele — **o detector é cego à falha de
+> escrita**, e não existe hoje, em ponto nenhum da árvore, um caminho que saiba
+> que uma escrita de LED externo morreu no rádio (83 falhas no kernel contra
+> ZERO avisos do daemon na mesma janela). GRAU: MEDIDO.
+
 **A contagem, e ela é a régua:** **348** ocorrências de
 `joycon_enforce_subcmd_rate: exceeded max attempts` no kernel desde 01/08 —
 **146** em 06/08 e **202** em 07/08, e **zero** entre 01 e 05/08. Mais **83**

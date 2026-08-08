@@ -216,6 +216,122 @@ disputa o hidraw com o daemon, que sobrescreve em ≤ 0,5 s — **e imprime
 "trigger aplicado" mesmo assim**. Testes de gatilho vão pela GUI/IPC, ou com o
 daemon parado.
 
+### Nome de recurso do kernel é POSIÇÃO, nunca semântica de produto
+
+Registrado em **07/08/2026**, do commit `cf176d6`. **GRAU: MEDIDO.**
+
+Em 06/08 às 22h40 a medição dos player-LEDs foi lida assim: cada nó aceso em
+`/sys/class/leds/*:player-N` foi tomado como *"este aparelho é o jogador N"*.
+É falso para o DualSense. O número do jogador é o **padrão das cinco lâmpadas**
+(`core/led_control.py`, a tabela `_PLAYER_LED_PATTERNS`): jogador 1 é **só a do
+meio**, que o kernel chama de `player-3`; jogador 3 são as duas pontas mais o
+meio.
+
+O que a leitura errada produziu foi um achado inteiro que **nunca existiu**
+(*"DOIS aparelhos no MESMO jogador 3"*), commitado em dois lugares e citado em
+duas mensagens de commit. Não houve colisão naquela mesa: o vpad acendia o
+padrão do 1 e o DualSense físico o do 3.
+
+**Quem leu certo foi ela, de olho, sem instrumento** — *"o dualsense branco
+dessa vez conectado como player 3"*. A pessoa que USA o produto leu o plástico
+melhor do que quem o escreve leu o `sysfs`.
+
+**A regra, e ela é da mesma família do "medir contra a biblioteca errada":**
+nome de recurso do kernel descreve **onde a lâmpada fica**, não o que ela
+significa no produto. Antes de usar um nome de `sysfs` como valor de domínio,
+confira contra a tabela do produto que traduz um no outro — aqui,
+`core/led_control.py`. Se não existir essa tabela, o nome não é dado: é
+coincidência.
+
+**O que salvou a casa foi um teste que já sabia disso:**
+`tests/unit/test_lugar_a_mesa_numero_de_jogador_nao_se_repete.py` compara o
+**padrão**, nunca o nome do nó — era o único artefato da leva com a distinção
+escrita, e por isso não herdou o erro.
+
+### Instrumento que consulta o `journal` declara o locale, ou mente calado
+
+Registrado em **07/08/2026**, do commit `6e04c57`. **GRAU: MEDIDO.**
+
+Um medidor formatava a janela de tempo com a data **em português** e a passava
+para o `journalctl --since`. O `journalctl` não entende `ago`, `set`, `dez` — e
+não reclama: ele devolve **zero linha**, que é indistinguível de "não houve
+nenhum evento". Foi daí que saiu a afirmação falsa dita **a ela, ao vivo**, de
+que *"três controles custam 40 perdas por minuto e dois custam zero"*.
+
+Refeita a medição com instrumento validado, o número **inverte a conclusão**:
+quatro controles estáveis custam **14,6** perdas de IMU por minuto, e **três**
+controles com o 8BitDo tentando voltar custam **48,4**. Não é a quantidade de
+controles; é o que não consegue entrar. A retratação está na
+[CONECTA-E-DESLIGA-01](sprints/2026-08-07-CONECTA-E-DESLIGA-01-a-regressao-que-ela-relatou-e-a-suspeita-que-recai-sobre-nos.md).
+
+**A regra tem duas metades, e a segunda é a que faltava:**
+
+1. **declare o locale.** `LC_ALL=C` no instrumento, ou monte a data com
+   `strftime("%Y-%m-%d %H:%M:%S")` — nunca com nome de mês;
+2. **prove a janela contra contagem direta antes de acreditar nela.** Foi assim
+   que o medidor das 20h13 se validou: a contagem do instrumento bateu com a
+   contagem à mão do mesmo intervalo, **53 = 53**. Sem essa conferência, um
+   instrumento quebrado e uma janela limpa dão a mesma saída.
+
+Vale a mesma advertência de data completa da armadilha seguinte: `--since
+"21:34:39"` **sem data** também devolve zero em qualquer janela.
+
+Esta foi a **segunda** vez no mesmo dia em que o instrumento enganou quem media.
+A primeira é a armadilha logo acima, do nome de `sysfs`.
+
+### O medidor pode estar INERTE — e inerte é indistinguível de "não houve nada"
+
+Esta é a irmã da anterior, e é pior, porque a anterior mente e esta **cala**.
+
+**O install deste projeto é *editable*** (o `.pth` da venv aponta para o `src/`
+do repositório). Consequência que vale para **todo** código de daemon, sem
+exceção: **o que você escreveu hoje só entra em vigor no PRÓXIMO start do
+processo**. Um daemon vivo mais velho que a sua cura não a executa, não falha e
+não avisa — ele simplesmente não a tem dentro dele.
+
+Quando a cura é um **medidor**, o resultado é o pior que existe: a medição
+devolve **zero**, e zero é exatamente o que uma medição bem-sucedida devolveria
+se o defeito não tivesse acontecido. **Silêncio de instrumento morto é
+indistinguível de ausência de defeito.**
+
+A casa já pagou por isso **duas vezes**, com custo medido:
+
+- **05-06/08/2026** — o daemon vivo era o PID 1670, de 04/08 23:39:46; as curas
+  de perfil eram de 05/08 00:38:41. Ela trocava de perfil e a cor/gatilho/rumble
+  não entravam. **Era o defeito já curado no disco**, e ela estava olhando para o
+  produto de anteontem
+  ([PERFIL-REESCRITO-NA-PARTIDA-01](sprints/2026-08-05-PERFIL-REESCRITO-NA-PARTIDA-01-o-perfil-dela-era-reescrito-sozinho-no-meio-da-partida.md),
+  linhas 43-47);
+- **07/08/2026** — o diário da bateria (474 linhas, 49 testes verdes) ficou
+  **5h49m** no disco sem escrever **uma linha** no journal, com o controle dela
+  conectado o tempo todo. Uma noite de medição teria produzido nada, em silêncio.
+  Reiniciado o serviço às 21:34:39 (autorização dela), a primeira amostra saiu
+  35 segundos depois.
+
+**A regra: antes de acreditar em qualquer medição feita pelo daemon, confira o
+relógio do processo.** Os dois comandos, e o zero que condena:
+
+```bash
+systemctl --user show hefesto-dualsense4unix.service \
+  -p ExecMainStartTimestamp --value            # desde quando o processo existe
+
+journalctl --user -u hefesto-dualsense4unix.service \
+  --since "AAAA-MM-DD HH:MM:SS" --no-pager \
+  | grep -c <evento_que_a_sua_cura_emite>      # 0 = instrumento morto
+```
+
+A janela do `journalctl` tem de **começar depois** do start, e **sempre com data
+completa** — `--since "21:34:39"` sem data devolve zero em qualquer janela, e
+aqui o comando quebrado imita exatamente o defeito que ele deveria detectar.
+
+E **reiniciar é decisão dela**, nunca sua: o restart derruba os handles de uma
+partida em curso.
+
+O caso inteiro, com a mordida (0 antes, 2 depois, mesmo código no disco) e o
+desenho de um aviso no `doctor` que mediria isso sozinho, está em
+[PROTOCOLO — o controle que cai sozinho](estudos/2026-08-07-PROTOCOLO-o-controle-que-cai-sozinho.md),
+seções 8.1 e 9.
+
 ### `paplay --device=inexistente` sai ZERO e toca no padrão
 
 Nunca aceite código de saída como prova de que o som saiu no dispositivo certo.

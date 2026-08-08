@@ -265,6 +265,48 @@ que anuncia esta decisão.
    `scripts/i18n_compile.sh` como passo de build. Estão **certos** e ficaram
    como estavam: compilar catálogo que existe é encanamento, não convite. O
    portão não os cobre de propósito — não são páginas que ensinam o usuário.
+5. **O portão é ESTREITO, não quebrado — e o alcance dele está medido.** Ver a
+   nota abaixo.
+
+### NOTA DATADA, 07/08/2026 — o alcance do portão, medido por arrancamento
+
+**GRAU: MEDIDO**, nesta bancada, com a suíte deste arquivo (50 testes).
+
+As quatro marcas são casadas com **a redação que saiu**. Um convite
+**equivalente, escrito com outras palavras**, passa **verde**. Medido assim,
+acrescentando ao fim da `docs/usage/flatpak.md` — uma das três páginas que o
+portão cobre — um bloco com cabeçalho de receita, comando e ponteiro:
+
+```
+## Traduzir o Hefesto
+
+A janela nasce em português. Se você fala outra língua, gere o esqueleto do
+catálogo com `msginit -l xx_XX -i locale/hefesto.pot`, preencha as frases e
+mande o arquivo resultante num pull request.
+```
+
+**50 passaram.** Nenhuma marca casou: o cabeçalho não tem
+*adicionar/criar/contribuir*, o comando é o `msginit` do `gettext` e não o
+`i18n_extract.sh --add`, o alvo é um `.pot` e não um `po/<algo>.po`, e a frase
+não é a frase-ponteiro.
+
+**O controle, na mesma bancada e no mesmo arquivo:** trocado só o comando por
+`scripts/i18n_extract.sh --add xx_XX`, com o resto do bloco igual, o portão
+reprovou na hora — `1 failed, 49 passed`, apontando a linha 268 com o motivo
+*"receita: o comando que cria catálogo novo"*. A `flatpak.md` foi devolvida
+**byte a byte** depois das duas medições (`sha256` conferido, `git diff` vazio).
+
+**A leitura honesta disso, e ela não pede conserto:** o portão faz o que a
+seção *"O critério, pensado ANTES de escrever"* diz que ele faz — impede o
+convite de **voltar sozinho**, que era o defeito. Ele **não** é, e nunca foi
+anunciado como, um detector geral de "qualquer texto que convide a traduzir".
+Alargá-lo até lá é o caminho que aquela seção recusa por escrito, porque
+reprovar o inocente desliga o portão na terceira vez.
+
+**O que fica registrado é a fronteira**, para que ninguém a descubra do jeito
+caro: se alguém escrever o convite com outras palavras, **nenhum portão fala**.
+A defesa contra essa forma é a revisão humana, não a suíte — e é ela que precisa
+saber disso.
 
 ---
 

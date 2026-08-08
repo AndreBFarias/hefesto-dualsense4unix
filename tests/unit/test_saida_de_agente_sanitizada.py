@@ -97,6 +97,45 @@ def test_o_sanitizador_recusa_a_forma_que_vazou() -> None:
     )
 
 
+def test_o_sanitizador_recusa_a_forma_que_ela_usa_de_verdade() -> None:
+    """A forma nova, medida em 07/08/2026 — e ela escapava do filtro inteiro.
+
+    O padrão antigo de senha literal cobra `senha:` / `password=`, isto é, a
+    palavra-chave COM SEPARADOR. Ela não escreve assim. Ela escreve a senha
+    SOLTA, ao lado do `sudo` — "usa sudo <numero> roda ... te autorizo" (07/08)
+    e "senha sudo <numero> pode tomar a decisão que quiser" (06/08). Nas duas, o
+    `\\s*[:=]\\s*` não casa e o arquivo passaria por um portão que existe
+    exatamente para impedir isso.
+
+    Os números aqui são inventados. A senha dela não entra nesta árvore nem
+    numa asserção.
+    """
+    assert recusar("usa sudo 8675309 e roda"), (
+        "o sanitizador não recusa a senha solta ao lado do `sudo` — é a forma "
+        "que ela usa no chat, e este portão existe para pegá-la"
+    )
+    assert recusar("senha sudo 8675309 pode tomar a decisão que quiser"), (
+        "o sanitizador não recusa `senha sudo <numero>` — palavra-chave sem "
+        "separador, que é como ela escreve"
+    )
+    assert recusar("a senha é 8675309"), "palavra-chave e número sem separador"
+
+
+def test_a_forma_nova_nao_reprova_comando_legitimo_nem_data() -> None:
+    """A contrapartida, e sem ela o portão morre de ruído.
+
+    Um `sudo\\s+\\S+` genérico reprovaria metade dos relatórios desta casa. O
+    que entrou é apertado de propósito: só um número solto onde deveria haver
+    um comando, e só um número colado à palavra-chave. Data não conta — foi por
+    isso que o dígito não pode vir depois de `/` nem de `-`.
+    """
+    assert not recusar("sudo systemctl --user restart hefesto-dualsense4unix")
+    assert not recusar("rodei sudo python3 scripts/doctor.sh e li a saída")
+    assert not recusar("sudo chmod 755 /usr/local/bin/hefesto")
+    assert not recusar("a senha dela vazou em 26/06/2026 e está em cinco commits")
+    assert not recusar("a senha continua no histórico desde 2026, e a árvore está limpa")
+
+
 def test_a_mencao_solta_ao_sudo_nao_recusa() -> None:
     """E a contrapartida: um portão que reprova citação vira ruído e morre.
 
