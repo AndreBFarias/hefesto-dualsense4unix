@@ -113,8 +113,10 @@ A regra do `_render_home`, e ela é a coisa mais importante deste passo:
 - **quando houver escolha pendente** → os seletores mostram a **escolha dela**, e
   o `_render_home` **não os sobrescreve**.
 
-**Teste que morde:** `tests/unit/test_agora_e_depois_01.py` — com escolha
-pendente, dois tiques de `_render_home` seguidos não mudam o que o seletor mostra.
+**Teste que morde** (o arquivo ainda NÃO existe — quem executar o cria, e o
+nome sugerido é `test_agora_e_depois_01`, no padrão da casa): com escolha
+pendente, dois tiques de `_render_home` seguidos não mudam o que o seletor
+mostra.
 Arranque a guarda e ele reprova (é o defeito de "a escolha dela volta sozinha").
 
 ### Passo 2 — o clique deixa de aplicar
