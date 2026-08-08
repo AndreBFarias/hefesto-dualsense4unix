@@ -7,6 +7,11 @@
   sobre uma cura **nossa**, de ontem
 - **Causa-raiz:** **SUSPEITA COM MECANISMO.** O caminho fecha; o gatilho não foi
   reproduzido
+- **CAUSA ISOLADA EM 07/08 às 20h30, e ela NÃO é nenhuma das três hipóteses
+  desta página** — ver
+  [BUSCA-QUE-ESTOURA-01](2026-08-07-BUSCA-QUE-ESTOURA-01-o-sdp-que-nao-responde-a-tempo.md)
+  e a nota datada no fim deste documento. Esta sprint fica de pé como registro
+  do **sintoma**, do caminho percorrido e das hipóteses que caíram
 - **Índice:** [O dia dos cento e dezesseis agentes](2026-08-06-INDICE-o-dia-dos-cento-e-dezesseis-agentes.md)
 - **Parentes, e distintas:**
   - [RADIO-ABERTO-01](2026-08-04-RADIO-ABERTO-01-o-que-instalamos-por-padrao-anula-a-autenticacao.md)
@@ -205,3 +210,46 @@ está derrubada; a correlação com a **instabilidade** é que se sustenta.
 3. **O aviso do doctor não bastou.** Ele avisa quando o agente está *morto*.
    Aqui o agente está **vivo** e a recusa acontece assim mesmo — logo o critério
    do aviso está incompleto, e isso é um defeito do diagnóstico, não só do rádio.
+
+---
+
+## NOTA DATADA — 07/08/2026, 20h30: as três hipóteses caíram, e a causa é outra
+
+**Grau: MEDIDO.** Nada acima foi apagado: as três hipóteses estão de pé no
+texto porque **mostram o caminho percorrido**, e duas delas custaram medição
+para cair. O que muda é o veredito sobre cada uma.
+
+| hipótese desta página | veredito | como caiu |
+|---|---|---|
+| 1. o agente está vivo mas **não registrado** para a capacidade que o `confirm` exige | **CAIU** | `hefesto-bt-agent.service` **ativo**, `bt-agent` com `--capability=NoInputNoOutput`, `Agent registered` no log |
+| 2. o agente responde **depois** do prazo do BlueZ | **CAIU** | a recusa não passa pelo agente. `unknown device` sai de `profiles/input/server.c` **antes** de qualquer confirmação — é o perfil de entrada, não o pareamento |
+| 3. a recusa vem de outro caminho (`connect_event_cb` é causa, não consequência) | **CAIU como formulada** | as duas linhas são **irmãs**, não causa e efeito: ambas saem do mesmo fato — não existe aparelho de entrada registrado para aquele endereço |
+
+**A causa medida está em
+[BUSCA-QUE-ESTOURA-01](2026-08-07-BUSCA-QUE-ESTOURA-01-o-sdp-que-nao-responde-a-tempo.md),
+e em uma frase:** o 8BitDo re-pareou sozinho por volta das 19h50 e o
+pareamento **nasceu sem serviços** (cache de 35 bytes, `info` sem `Services=`);
+sem perfil HID registrado o BlueZ recusa a reconexão dele como `unknown
+device`; e a busca de serviços que consertaria isso sozinha **estourou por
+tempo duas vezes, com 42 segundos de silêncio cada**. O clique dela, às
+20:21:10, completou a busca de primeira e escreveu os 1485 bytes que faltavam.
+
+Três consequências para esta página:
+
+1. **A `RADIO-ABERTO-01` está inocente do sintoma.** O item 2 de "O que fica
+   ABERTO" pode descansar: o `JustWorksRepairing=confirm` não participa da
+   recusa medida. A pergunta sobre o preço de segurança continua sendo dela,
+   mas **não** é urgente por causa deste defeito.
+2. **A tabela de recusas de hoje, acima, está certa e incompleta.** Ela conta
+   as recusas; falta o par que importa, o `error updating services` que vem
+   logo depois. É o par — e não a recusa sozinha — que identifica o defeito.
+3. **A leitura de "não é regressão nossa" se confirma, e ganha número.** Sete
+   dias de journal: 01/08 e 02/08 tiveram **dezessete** falhas de busca de
+   serviços **por dia**, antes de qualquer uma das curas suspeitas; 05 e 06/08
+   tiveram **zero**; 07/08 teve cinco. O defeito é intermitente e anterior.
+
+**E o item 3 de "O que fica ABERTO" fica de pé, maior do que estava:** o
+critério do aviso do doctor não está só incompleto — o check que enxergaria
+este caso **se cala sem senha de root e não diz que está cego**, e o check
+antigo de cache SDP **descarta justamente o controle doente** pelo próprio
+filtro de elegibilidade. As duas coisas estão medidas na sprint nova.
