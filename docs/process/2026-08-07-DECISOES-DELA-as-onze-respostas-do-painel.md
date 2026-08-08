@@ -1,4 +1,4 @@
-# As dezessete respostas dela — 07/08/2026
+# As vinte e três respostas dela — 07/08/2026
 
 Registro das decisões tomadas sobre o
 [painel das nove](2026-08-07-PAINEL-as-nove-decisoes-que-esperam-ela.md), mais uma
@@ -35,8 +35,56 @@ delegação.
 | 15 | a regra 75, que tira o áudio USB do controle | **não entra** — e ver a nota abaixo, que é o motivo |
 | 16 | o `--restaurar-hidraw-uaccess` | **só no `doctor`, quando houver sintoma** |
 | 17 | o Hefesto é ferramenta dela ou produto | **produto — tem que funcionar em máquina limpa** |
+| 18 | quantas entregas da `MASCARA-01` antes da adoção | **as SEIS**, contadas como *escritas e testadas* |
+| 19 | quem obedece a quem, na cura do número trocado | **a lâmpada obedece ao jogo** |
+| 20 | os dois endereços de teste dentro da fila real dela | **apagar os dois** |
+| 21 | o preço da cura de segurança do pareamento | **aceita — a cura fica** |
+| 22 | a luz voltar só nos DualSense, como etapa | **não — a decisão 12 vale inteira** |
+| 23 | medir se o firmware do 8BitDo traduz a cor para os LEDs | **preparar, e rodar quando ele estiver ligado** |
 
 ---
+
+## As seis da noite, e o impasse que a 18 resolveu
+
+### A 18 desfez uma circularidade sem ela ceder em nada
+
+A `MASCARA-01` tem seis entregas, e a **terceira** — *"as variáveis que escondem
+os físicos passam a ser montadas a partir dos controles mascarados"* — precisa
+saber **quais controles têm gamepad virtual**. Isso é a adoção, que ela
+condicionou à máscara estar pronta.
+
+```
+máscara pronta (6)  ->  adoção  ->  cobertura  ->  entrega 3  ->  máscara pronta
+```
+
+Perguntada, ela escolheu **as seis, sem exceção** — o que fecharia o ciclo e
+travaria tudo. O impasse foi apresentado a ela em vez de contornado em silêncio,
+e a saída não custou nada: **a entrega 3 conta como pronta quando a função existe
+e é mordida por teste.** Ela já existe — foi escrita em 07/08 e deixada
+**desligada** de propósito (`daemon/launch_env.py`). Ligar o fio é parte da
+adoção, não da máscara.
+
+**Grau: DECISÃO DELA**, com a leitura confirmada por ela depois de ver o impasse.
+
+### A 19 escolhe o caminho que não muda jogador no meio da partida
+
+Para o plástico parar de mentir, as duas contabilidades viram uma. Havia dois
+jeitos, e a diferença aparece **durante o jogo**: se a **lâmpada** passa a
+obedecer ao jogo, ninguém troca de jogador — a luz só passa a dizer a verdade.
+Se o **jogo** passasse a obedecer à fila, quem é o Jogador 1 poderia mudar no
+meio de uma partida em andamento.
+
+Ela escolheu a lâmpada obedecendo ao jogo.
+
+### A 22 é a mais dura, e é coerente
+
+Os dois DualSense **não** têm o defeito do bombardeio — ele é do caminho do Pro.
+Então a luz poderia voltar só neles, dando **dois** controles numerados agora em
+vez de zero.
+
+Ela recusou. A decisão 12 foi tomada por princípio — *o produto não acende número
+enquanto não entrega o jogador* — e vale inteira, mesmo custando a ela o que
+poderia ter já.
 
 ## As cinco de 07/08 à tarde, e a que muda a régua de tudo
 
