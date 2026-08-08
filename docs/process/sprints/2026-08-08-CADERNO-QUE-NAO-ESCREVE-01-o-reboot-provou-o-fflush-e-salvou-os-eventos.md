@@ -112,6 +112,38 @@ medição falsa nesta madrugada.
 > **Fica registrado em vez de apagado** porque é a regra da casa, e porque o erro
 > é instrutivo: *"o reboot fez o experimento de graça"* é uma frase boa demais
 > para ser verdade sem contraste, e ela passou justamente por ser elegante.
+>
+> ### E a causa real apareceu — **a cura não é o `fflush()`**
+>
+> **GRAU: MEDIDO**, nesta bancada, em 08/08/2026. Duas medições independentes
+> chegaram ao mesmo resultado, e ele derruba a hipótese inteira:
+>
+> ```
+> produtor vivo (o cano NÃO fecha), 3-4 s de espera:
+>     mawk '{print; fflush()}'                 ->  0 bytes
+>     stdbuf -oL -i0 mawk '{print; fflush()}'  ->  0 bytes
+>     mawk -W interactive '{print}'            ->  escreve na hora
+> ```
+>
+> **O gargalo é a ENTRADA do mawk, não a saída.** Ele lê com buffer PRÓPRIO, fora
+> do stdio, e **nem chega a executar o bloco** — por isso não há o que um
+> `fflush()` de saída descarregue, e por isso o `stdbuf` também não resolve (o
+> `LD_PRELOAD` dele só alcança o stdio). O `journalctl -f` está **inocente**: ele
+> entrega as linhas na hora, como a terceira linha da tabela mostra.
+>
+> **A cura é `mawk -W interactive`**, escolhido por sonda em vez de assumido — o
+> `gawk` recusa a opção e sairia com erro, deixando a vigia muda de um jeito pior
+> que o defeito original. O `fflush()` **fica junto**, e não é redundante: é ele
+> que cobre o caso do `gawk`, que ignora o `-W interactive` mas honra o flush.
+>
+> **E o teste de comportamento passou a ser possível.** Sabendo a causa, ele
+> morde: com a cura arrancada, reprova com **zero byte** — que é literalmente o
+> caderno dela. Está em `tests/unit/test_caderno_que_nao_escreve_01.py`.
+>
+> **O que isto ensina, e vale além deste arquivo:** a hipótese natural (buffer de
+> saída) era plausível, tinha mecanismo, e estava errada. O que a derrubou foi
+> **testar as três variantes lado a lado** em vez de testar só a cura proposta.
+> Uma bancada que só mede a hipótese favorita confirma a hipótese favorita.
 
 O resultado, lido às 00:43:
 
