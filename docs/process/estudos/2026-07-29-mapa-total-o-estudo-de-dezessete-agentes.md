@@ -1389,7 +1389,7 @@ Explícito, para ninguém tomar leitura por prova.
 
 | Achado | Onde tem dono |
 |---|---|
-| O cadeado congela a troca de perfil; o modo jogo solta no alt-tab; o cadeado cede a preset casado por título | [PERFIL-JOGO-01](../sprints/2026-07-27-PERFIL-JOGO-01-o-modo-jogo-que-liga-e-solta.md) — faixa 1, **zero linhas entregues**, e a entrega ZERO (o experimento de cinco passos com ela abrindo o jogo) nunca foi executada |
+| O cadeado congela a troca de perfil; o modo jogo solta no alt-tab; o cadeado cede a preset casado por título | [PERFIL-JOGO-01](../sprints/2026-07-26-PERFIL-JOGO-01-as-configs-somem-ao-abrir-o-jogo.md) — faixa 1, **zero linhas entregues**, e a entrega ZERO (o experimento de cinco passos com ela abrindo o jogo) nunca foi executada |
 | O detector só enxerga XWayland; `window_detect_seeing` existe e ninguém pergunta | JANELA-CEGA-01 (a "leva de uma linha" **não entrou**: `daemon/lifecycle.py:2952` ainda lê o trinco) + JANELA-CEGA-02, **sem documento** |
 | Os dois cadastros de Steam Input divergem | [DUPLO-REGISTRO-01](../sprints/2026-07-26-DUPLO-REGISTRO-01-o-steam-input-tem-dois-cadastros.md) — a cura R-D não entrou; o que segura hoje é o remendo de 26/07 |
 | O desfazer da allowlist existe no CLI e a tela nega | STEAM-INPUT-01 (item 0 e "o desfazer dentro da janela") — e agora com a correção mínima medida: `gui/main.glade:2069`, verbo "desmarcar" |

@@ -583,6 +583,84 @@ proibido pela casa.**
 
 ---
 
+### NOTA DATADA — 07/08/2026: quatro itens de rádio, controles e protocolo que esta ordem não roteou
+
+**Esta seção não acrescenta trabalho novo — acrescenta ENDEREÇO.** Uma varredura
+de 07/08 conferiu as listas de *"o que fica ABERTO"* das dezessete sprints de 06
+e 07/08 contra as doze levas acima, e o que saiu é **MEDIDO**: `grep -c -F`
+neste arquivo devolvia **zero** para o nome de dez sprints de 06/08. O que delas
+chegou aqui chegou de carona nos inventários de 07/08 (os rótulos `EN-`, `BT-`,
+`IN-`, `OQ-`, `CR-`, `RS-`, `PR-`, `IS-`, `CD-`, `BZ-`, `AP-`), nunca pela
+leitura da lista de aberto da sprint de origem. Por isso a cobertura é boa em
+07/08 e rala em 06/08.
+
+**Esta nota e a nota `PI-` do fim deste arquivo são IRMÃS, e não se repetem:**
+aquela roteia produto, instalação e interface; esta, **rádio, controles e
+protocolo**. As duas dívidas de máquina limpa e de áudio que também são de rádio
+já entraram lá como `PI-1` e `PI-2`, e por isso **não** são repetidas aqui.
+Somadas, são **dez** itens sobre o placar da seção 7, que continua contado às
+21h15 e não se reescreve.
+
+**Nenhum destes quatro está esquecido:** todos estão escritos e datados na sprint
+que os mediu, e nenhuma sprint foi apagada. O defeito é de **roteamento** — quem
+abrir este índice amanhã, que é o ponto de entrada de quem executa, não os
+encontra. **E a leva sugerida é sugestão, não decisão:** a ordem tem travas dela
+(as respostas 3 e 12), e mexer nelas não é de quem varre.
+
+1. **A réplica do parser do `bluez_config.sh` recusa menos que o oráculo.**
+   **GRAU: MEDIDO.** `scripts/bluez_config.sh:344` (`_linha_que_o_parser_recusa`)
+   decide se o `bluetoothd` aceitaria o `main.conf` com **duas** regras; o
+   GKeyFile de verdade recusa mais — chave vazia (`=`), chave com `[` ou `]`,
+   grupo `[]`. Nesses casos o `bluetoothd` **descarta o arquivo inteiro**,
+   inclusive a configuração de segurança da casa, e o dono único responde
+   `veredito: OK`, o `aplicar` anuncia "garantidos" e o `doctor` imprime
+   `[ OK ]`. **A bancada não morde:** os três casos da `_TABELA_DA_RECUSA` caem
+   dentro das duas regras já implementadas. Escrito em
+   [SELO-VERDE-CEDO-DEMAIS-01](2026-08-06-SELO-VERDE-CEDO-DEMAIS-01-o-doctor-afirmava-o-que-so-valia-nesta-bancada.md),
+   seção *"ABERTO, GRAVIDADE ALTA"*. É a mesma classe que as levas 1 e 3 existem
+   para curar — **diagnóstico que mente** — e é o único item de gravidade ALTA
+   que ficou de fora. **Leva candidata: 1 ou 3**, ao lado do `CD-3`.
+
+2. **A varredura de regras de udev não lê `ENV{...}` nem `GOTO`.**
+   **GRAU: SUSPEITA COM MECANISMO.** Regra de terceiro que abra o hidraw por
+   caminho indireto passa batida em três lugares: na acusação do `doctor`, no
+   defeito 3 do SELO-VERDE e no inventário do restauro — onde ganhou
+   consequência nova: o nó aberto por regra indireta é classificado como
+   **órfão**, e o restauro nesse caso é **atropelo** (o texto na tela avisa que
+   o nó pode reabrir, mas aviso é consolo, não trava). Escrito em
+   [ACUSA-O-CULPADO-01](2026-08-06-ACUSA-O-CULPADO-01-o-doctor-acusava-quem-nao-tinha-feito-nada.md)
+   e em
+   [RESTAURO-SO-COM-SINTOMA-01](2026-08-07-RESTAURO-SO-COM-SINTOMA-01-o-conserto-que-ninguem-podia-chamar.md).
+   A `RS-4` e a `RS-5` desta última atravessaram para a leva 3; este, escrito no
+   parágrafo **vizinho de cima**, não. **Leva candidata: 3**, ao lado da `RS-4`.
+
+3. **O 8BitDo saiu do rádio e continua sem HID — a terceira forma de zumbi.**
+   **GRAU: MEDIDO.** Está catalogada na seção 1.2 de
+   [os externos, a referência canônica](../../protocol/externos-referencia-canonica.md),
+   **não tem cura em lugar nenhum**, e a vigia `scripts/bt_health_watchdog.sh`
+   não diz uma palavra sobre ela: a linha 165 pula todo aparelho cujo cache de
+   SDP já tenha `[ServiceRecords]`, e o 8BitDo tem o cache completo porque já
+   conectou dezenas de vezes. Quatro passagens da vigia **depois** de o HID
+   sumir, e nenhuma acusou. Isso **muda a mesa** de qualquer medição de externo
+   — e a `IS-E4` da leva 0 pede exatamente deixar o 8BitDo uma noite no rádio.
+   **Leva candidata: 0 ou 1**, como pré-condição declarada da `IS-E4`, ou a
+   medição nasce contaminada.
+
+4. **A QUATRO-NA-MESA-01 (defeito 1) e a QUATRO-NO-RÁDIO-01 (B4, B5) continuam
+   ABERTAS desde 03/08.** **GRAU: MEDIDO.** A
+   [A-LUZ-QUE-CUROU-01](2026-08-07-A-LUZ-QUE-CUROU-01-calar-parou-o-bombardeio-e-voltar-tem-preco.md)
+   as chama de *"a raiz medida disto tudo"* e registra que o preço delas
+   **subiu**: de *"o número dança na tela"* para *"348 recusas de firmware"*. O
+   veto da
+   [QUATRO-NO-RADIO-01](2026-08-03-QUATRO-NO-RADIO-01-o-checklist-dos-quatro-controles-por-bluetooth.md)
+   aparece na leva 10 **sem nome** (*"o veto de 19/07"*), e o defeito 1 da
+   [QUATRO-NA-MESA-01](2026-08-03-QUATRO-NA-MESA-01-o-que-so-quebra-quando-sao-quatro.md)
+   não aparece de forma nenhuma — apesar de a LUGAR-À-MESA-01 escrever que *"a
+   E3 não deveria entrar antes de a QUATRO-NA-MESA-01 ser lida"*. **Destino:
+   leitura obrigatória declarada da LEVA 10.**
+
+---
+
 ## 4. O que espera a palavra dela
 
 **Isto não é trabalho: é decisão.** Cada linha traz a pergunta pronta. Nenhuma
@@ -638,6 +716,33 @@ está na mesa. **Nada do que 07/08 abriu passa na frente dele.**
 | 9 | **PR-Q3** — quem reconecta: ela ou o sistema? | **10 min de não tocar no controle** | pega carona na PR-Q1, e fecha sem cronômetro se a `PR-5` da leva 3 existir |
 | 10 | **PR-Q2** — o daemon contribui para as quedas? | **uma noite sem o produto** | se a resposta for sim, **vira sprint de defeito** — e é o único caminho |
 | 11 | **IS-E5** — o Pro esquece este host quando volta ao Switch? | **20 min, e repareamento** | **só vale se a PR-Q1, a IS-E3 e a IS-E4 não explicarem** (ver seção 6) |
+
+### E a mais barata da fila, que entrou depois desta tabela
+
+**A `P-4`, na metade que sobrou: a lightbar do 8BitDo chega às luzes do
+plástico?** **Trinta segundos dela.** Não está na tabela acima porque depende
+de o aparelho estar **ligado e no rádio**, e ele não está desde a saída de
+19h38.
+
+- **O que se faz:** escrever uma cor conhecida na lightbar dele (caminho `ds4`)
+  e ela dizer se as quatro luzes de jogador do plástico mudaram.
+- **O que decide:** se `write_lightbar_slot` **já numera** o 8BitDo, ou se
+  escreve num lugar que não chega a lugar nenhum. **Bloqueia a numeração dele**,
+  e a numeração é a linha de chegada das levas 8 a 11.
+- **O que já está respondido:** ela olhou o aparelho às 21h06 — *"não há
+  lightbar mas existe led de identificação de player nele também, igual o pro
+  controller"*. A ausência de lightbar RGB **física** passou a MEDIDA; **quem
+  acende as quatro luzes é o que sobra. GRAU: SEM PROVA.**
+- **DECISÃO DELA (resposta 23):** *"preparar, e rodar quando ele estiver
+  ligado"*. O preparo pode ser escrito agora; a rodada espera o aparelho.
+- **A trava, e ela é a resposta 12:** hoje o produto **não escreve** em externo
+  (`EXTERNAL_PLAYER_LED_ENABLED = False`), então esta medição é **de bancada**,
+  fora do produto — e ainda assim ela **acende uma luz no plástico dela**. Não
+  se arma sem ler a decisão 12 antes.
+
+O protocolo, com o `P0` e a leitura do driver que o sustenta, está na seção 8.4
+de
+[os externos, a referência canônica](../../protocol/externos-referencia-canonica.md).
 
 ### E um protocolo que não custa atenção dela nenhuma: a `CURA-A/B-01`
 
@@ -735,6 +840,184 @@ fecha sozinha.
 
 **A segunda é a leva 1**, porque é a única coisa desta lista que ela sente na
 mão hoje, e porque a causa já está medida.
+
+---
+
+## NOTA DATADA — 07/08/2026, 22h: seis frentes de produto, instalação e interface que esta ordem não pegou
+
+**Nada aqui é entrega nova, e nada aqui é medição nova.** As seis já estavam
+escritas e datadas nas sprints de origem, que continuam no repositório. O que
+faltava era **roteamento**: este arquivo diz de si que é o ponto de entrada de
+quem for executar, e quem entrar por ele amanhã não encontra nenhuma das seis.
+
+**O mecanismo, e ele é MEDIDO por `grep -c -F` neste próprio arquivo, às 22h05,
+antes desta nota:** este é um índice de 07/08. Treze sprints de 06/08 tinham
+**zero** ocorrências pelo nome aqui — entre elas as cinco que abrem as frentes
+abaixo, e é esta nota que passa a citá-las. O que dessas sprints chegou à
+ordem chegou de carona nos inventários de 07/08 (os rótulos `EN-`, `BT-`, `IN-`,
+`OQ-`, `CR-`, `RS-`, `PR-`, `IS-`, `CD-`, `BZ-`, `AP-`), nunca pela leitura da
+lista de ABERTO da sprint de origem. Um caso mostra o mecanismo inteiro: a
+[CONTROLE-INTEIRO-NO-RADIO-01](2026-08-07-CONTROLE-INTEIRO-NO-RADIO-01-o-mic-e-o-fone-que-nao-atravessam.md)
+**está** citada aqui (leva 5) e, mesmo assim, o item 8 do "O que fica ABERTO"
+dela não atravessou — a citação veio pela `CR-P0`, e o resto da lista ficou.
+
+**Os códigos `PI-` são novos** e não renumeram nada: `grep -c -F '**PI-'` neste
+arquivo devolvia zero antes desta nota.
+
+**Sobre o placar da seção 7:** ele foi contado às 21h15, sobre o índice como
+estava, e **não é reescrito aqui** — não se apaga contagem medida. Quem recontar
+soma seis: três na leva 3, uma na leva 4, uma na leva 5, e uma que não tem leva.
+
+### PI-1 (LEVA 4) — as três dívidas de máquina limpa que a sprint do rádio já marcou como bloqueio
+
+**O que entra:** os três itens do "O que fica ABERTO" (item 8) da
+[CONTROLE-INTEIRO-NO-RADIO-01](2026-08-07-CONTROLE-INTEIRO-NO-RADIO-01-o-mic-e-o-fone-que-nao-atravessam.md):
+
+- o quirk `usbcore.quirks` é **opt-in** no `install.sh` (passos `3b` e `3e`) e
+  **não entra no `.deb`** — conferido nesta árvore hoje: `grep -rn usbcore
+  packaging/` devolve **zero**, e o `packaging/debian/postinst` existe;
+- a **ponte de mic não tem gate em instalador nenhum** e **morre com o processo**
+  que a subiu — conferido hoje: o nome só aparece em `src/` (nove arquivos, entre
+  eles `daemon/subsystems/bt_mic.py`), e zero vezes no `install.sh` ou em
+  `packaging/`;
+- a **eleição de fonte** só não morde nesta bancada porque a pilha persistida do
+  WirePlumber dela disfarça; **em máquina limpa não há pilha**.
+
+**Por que na leva 4:** ela nasceu da **resposta 17** — *"produto: tem que
+funcionar em máquina limpa"* — e é o único lugar da ordem cujo critério de
+admissão é exatamente o critério que estes três violam. A sprint fecha com
+*"nenhum dos três está pronto. Cura que só funciona nesta bancada é dívida"*.
+
+**GRAU: MEDIDO** nos dois primeiros; no terceiro, **MEDIDO** o mecanismo e **NÃO
+MEDIDO** em máquina limpa de verdade. **Custo: não estimado** — a sprint de
+origem não estimou, e esta nota não inventa número.
+
+### PI-2 (LEVA 5) — o áudio dela: a causa medida, e o pré-requisito que trava a cura
+
+**Este item junta dois achados que são o mesmo fato por dois ângulos**, e por
+isso não vira duas linhas na fila.
+
+- **A causa.** O drop-in 51 rebaixa o mic do DualSense para
+  `priority.session = 50`, abaixo de alto-falantes de 696 e 736 — numa máquina em
+  que o controle é o **único** microfone, o monitor ganha a eleição. A
+  [RECEITA-ERRADA-01](2026-08-06-RECEITA-ERRADA-01-o-doctor-mandava-rodar-o-que-nao-resolvia.md)
+  fecha o ponto assim: *"o sintoma ficou honesto; a causa ficou"*. **GRAU:
+  MEDIDO** (o rebaixamento e as três prioridades).
+- **O pré-requisito que impede a cura de ser proposta.** A
+  [SEM-MICROFONE-NENHUM-01](2026-08-06-SEM-MICROFONE-NENHUM-01-o-alto-falante-vira-a-entrada-padrao.md)
+  declara, antes de qualquer entrega, uma medição que ninguém fez: se o
+  `pipewire-pulse` faz a **própria** seleção quando a metadata está vazia, então
+  zerar `default.audio.source` não muda o que `pactl get-default-source` devolve,
+  e toda cura pelo lado do WirePlumber nasce inerte. **GRAU: SEM PROVA**, e é a
+  própria sprint que se declara assim.
+
+**A junção, declarada:** este é o mesmo assunto do terceiro item da `PI-1`, visto
+do outro lado — lá é *"a cura não sobrevive a uma máquina limpa"*, aqui é *"a
+política que fabrica o defeito continua de pé"*.
+
+**Por que na leva 5:** a leva de áudio leva hoje **um** item (a `CR-P0`), e não
+inclui a causa medida do defeito de áudio que ela **já sentiu**. O aceite da
+sprint de origem já está escrito em cinco linhas, e a quinta é *"arrancar a cura
+escolhida faz o teste reprovar"*.
+
+### PI-3 (LEVA 3) — o `coop.py` ainda ensina o default que a decisão dela inverteu
+
+**O que entra:** `src/hefesto_dualsense4unix/daemon/subsystems/coop.py:29` diz,
+no bloco de pré-requisitos do `should_be_active`, que o co-op depende de
+`config.coop_enabled` *"(default OFF — preserva o modo '1 player')"*. Esse
+default foi invertido, e a nota datada que o declara caduco está a poucos
+arquivos de distância: `daemon/lifecycle.py:151-165`, com `coop_enabled: bool =
+True` na linha 165 e a fala dela citada no meio. Origem:
+[FEAT-COOP-DEFAULT-ON-01](2026-08-06-FEAT-COOP-DEFAULT-ON-01-o-co-op-deixa-de-ser-opcao.md),
+"O que fica ABERTO", primeiro item.
+
+**Por que na leva 3:** o título da leva é *"o instrumento e a página param de
+mentir"*, e esta é a página mais provável de ser lida por quem for executar as
+levas **7** e **11**, que mexem no co-op — e ela contradiz uma decisão dela.
+
+**GRAU: MEDIDO**, conferido nesta árvore hoje. **Tamanho:** uma linha de
+docstring; a sprint de origem não pôs rótulo de custo, e esta nota não põe.
+
+### PI-4 (LEVA 3, e ela depende da `AP-3`) — o painel dela diz o nome velho ao lado do nome novo
+
+**O que entra:** o bloco de status do applet ainda diz *"Jogando direto (pelo
+perfil)"* e *"Jogando direto (Sony)"* (`packaging/cosmic-applet/src/app.rs:610` e
+`:612`), enquanto o **seletor do mesmo painel**, setenta linhas abaixo, já diz
+*"Conexão Nativa (Sony)"* (`:682`). O portão de vocabulário não pega porque só
+casa **listas de pares** — frase solta fica fora do alcance dele, e foi por aí
+que o item sobreviveu. Origem:
+[FEAT-COOP-DEFAULT-ON-01](2026-08-06-FEAT-COOP-DEFAULT-ON-01-o-co-op-deixa-de-ser-opcao.md),
+itens 2 e 3.
+
+**A dependência, e é ela que obriga este item a estar escrito aqui:** trocar o
+texto no `app.rs` **não muda o painel dela** enquanto o binário não for
+recompilado, e a seção 6 deixou a `AP-3` fora das levas **de propósito** (*"a
+build do libcosmic é longa e a máquina dela está em uso"*, ver
+[APPLET-MONOCROMATICO-01](2026-08-07-APPLET-MONOCROMATICO-01-o-icone-que-destoa-do-painel.md)).
+Quem recompilar o applet na primeira janela ociosa sem ler isto vai recompilar o
+nome velho.
+
+**GRAU: MEDIDO**, conferido nesta árvore hoje.
+
+### PI-5 (LEVA 3) — a lista de jogos dela mostraria cada jogo duas vezes
+
+**O que entra:** `src/hefesto_dualsense4unix/integrations/steam_launch_options.py:815`
+deduplica as pastas de biblioteca com `candidata not in pastas` — comparação de
+`Path` que **não resolve symlink**. **MEDIDO hoje, nesta máquina:**
+`~/.steam/steam` é symlink para `~/.steam/debian-installation`, logo a mesma
+pasta entra **duas vezes** na lista devolvida por `pastas_steamapps`.
+
+Os dois consumidores de hoje são imunes **por acidente da estrutura de dados**
+(um acumula num `set`, o outro devolve no primeiro acerto), e é por isso que
+ninguém viu. Mas qualquer lista de escolha construída iterando essa função —
+que é o caminho óbvio, porque é o módulo que sabe traduzir nome — **mostra cada
+jogo dela duas vezes**, e uma lista com tudo em dobro é pior que um campo de
+texto: ela não sabe qual dos dois clicar. Origem:
+[JOGOS-QUE-ELA-TEM-01](2026-08-06-JOGOS-QUE-ELA-TEM-01-escolher-da-biblioteca-em-vez-de-adivinhar-o-numero.md),
+`F3`, que fecha com *"uma linha, um teste, reversível sozinha. Vale mesmo que o
+resto desta sprint nunca aconteça"*.
+
+**Por que na leva 3:** é uma lista que ela lê, e ela mente. A sprint inteira está
+fora da ordem — `grep -c -F 'Steam'` neste arquivo devolvia **zero** antes desta
+nota —, e este passo é o único dela que **não** depende de decisão dela.
+
+**GRAU: MEDIDO.**
+
+### PI-6 (sem leva) — a recarga silenciosa que pode comer o que ela não salvou
+
+**O que entra:** `src/hefesto_dualsense4unix/app/actions/profiles_actions.py:1702-1706`
+— o `_refazer_as_abas_apos_ativar` pergunta *"há edição pendente?"* dentro de um
+`contextlib.suppress(Exception)` com default `pendente = False`. Se o
+`_tem_edicao_pendente` estourar ali, as abas são recarregadas **em silêncio** e o
+que ela não salvou some — **sem** o diálogo que a
+[ATIVAR-NAO-MENTE-01](2026-08-05-ATIVAR-NAO-MENTE-01-o-botao-que-parecia-falhar-e-ativava-duas-vezes.md)
+criou justamente para dar essa decisão a ela, e cujo default é MANTER o que ela
+não salvou (está no docstring da própria função, `:1697-1700`). Origem:
+[NUNCA-TROCA-O-ALVO-01](2026-08-06-NUNCA-TROCA-O-ALVO-01-a-janela-trocava-o-nome-e-o-salvar-ia-para-o-arquivo-errado.md),
+"O segundo `except` que ainda falha ABERTO".
+
+**GRAU: SUSPEITA COM MECANISMO** — o caminho de código fecha; ninguém viu o
+`_tem_edicao_pendente` estourar. **Esta nota não promove o grau.**
+
+**Onde entra: não há leva de janela nesta ordem.** A mais próxima é a leva 6, e o
+assunto dela é a mesa na tela, não os perfis. Fica **registrado sem alocação**:
+a ordem é dela e tem travas que uma leitura de fora não deve mexer. O que não
+pode continuar é o item viver só dentro de uma sprint que **nenhuma leva
+retoma** — é perda de trabalho **dela**, sem aviso, que é a classe mais cara que
+a casa tem.
+
+### O que esta nota NÃO faz
+
+Não propõe ordem, e não estima custo onde a sprint de origem não estimou. **Não
+toca uma linha de código:** os cinco defeitos com caminho e linha acima continuam
+vivos exatamente como estão, e a `PI-2` continua sem cura possível até a medição
+que ela mesma exige. E não recolhe todos os órfãos de 06/08 — só os de produto,
+instalação e interface.
+
+**Grau desta nota: MEDIDO.** Cada `caminho:linha` citado foi conferido nesta
+árvore em 07/08/2026, entre 22h e 22h30, por leitura pura: nenhum serviço foi
+reiniciado, nada em `/etc` foi tocado, e a única leitura fora do repositório foi
+um `ls -ld` no `~/.steam` dela.
 
 ---
 

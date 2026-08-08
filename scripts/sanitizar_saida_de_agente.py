@@ -116,10 +116,41 @@ _QUALQUER_OUI = re.compile(
 #: em `origin/main`. `sudo -S` sozinho NÃO recusa — os relatórios citam o comando
 #: para explicar um achado, e recusar a citação faria o portão virar ruído (que é
 #: como um portão morre).
+#: NOTA DATADA — 07/08/2026: O FILTRO ESTAVA APONTADO PARA A FORMA ANTIGA.
+#:
+#: GRAU: MEDIDO. Até esta data o `_SEGREDOS` reconhecia duas formas só: o cano
+#: `echo ... | sudo -S` (a de 26/06) e o par palavra-chave-COM-SEPARADOR
+#: (`senha:` / `password=`). A forma que ela usa de verdade no chat não é
+#: nenhuma das duas — ela escreve a senha SOLTA, sem separador nenhum, do lado
+#: do `sudo`: `usa sudo <numero> roda ... te autorizo` (07/08) e
+#: `senha sudo <numero> pode tomar a decisão que quiser` (06/08). Nas duas, o
+#: `\s*[:=]\s*` do padrão antigo não casa, e o arquivo PASSARIA.
+#:
+#: É o mesmo cano do vazamento de 26/06 com o filtro mirando a forma anterior —
+#: e o cano só ficou perigoso de novo porque em 06/08 ela mandou versionar a
+#: saída dos agentes. Os dois padrões abaixo fecham a forma nova.
+#:
+#: Por que tão APERTADOS, e não um `sudo\s+\S+` genérico: um portão que reprova
+#: `sudo systemctl`, `sudo python3` ou `sudo chmod 755` vira ruído e é desligado
+#: na terceira vez — é a mesma razão por que `sudo -S` sozinho só AVISA. Medido
+#: antes de entrar: os dois varreram 753 arquivos de `docs/`, `scripts/` e
+#: `tests/unit/` desta árvore com ZERO acertos.
 _SEGREDOS = (
     (
         re.compile(r"(?i)(echo|printf)\s+\S+\s*\|\s*sudo\s+-S\b"),
         "senha canalizada para o sudo (`echo ... | sudo -S`) — a forma do vazamento de 26/06",
+    ),
+    (
+        re.compile(r"(?i)\bsudo\s+[0-9]{4,}\b"),
+        "senha solta ao lado do `sudo` (`... sudo <numero>`) — a forma dela, 07/08",
+    ),
+    (
+        re.compile(
+            r"(?i)\b(?:senha|password|passwd)\s+"
+            r"(?:(?:de|do|da|para|e|eh|é)\s+)?(?:sudo\s+)?"
+            r"(?<![0-9/-])[0-9]{4,}\b"
+        ),
+        "senha com número colado, sem separador (`senha sudo <numero>`)",
     ),
     (re.compile(r"(?i)\b(pass(word|wd)?|senha)\s*[:=]\s*\S+"), "senha literal"),
     (re.compile(r"(?i)\b(api[_-]?key|secret|token)\s*[:=]\s*\S{8,}"), "chave ou token"),

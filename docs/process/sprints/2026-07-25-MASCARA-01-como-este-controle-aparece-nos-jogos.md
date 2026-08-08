@@ -68,6 +68,165 @@ Como este controle deve aparecer nos jogos?
 **Cada opção diz o que custa.** É o que falta na interface hoje, e é metade do
 valor desta sprint.
 
+---
+
+## NOTA DATADA — 07/08/2026: este texto de tela está FALSO em três pontos medidos
+
+**O texto acima fica onde está, sem uma linha apagada.** Ele é a proposta que
+abriu a sprint, e quem escrever a `E4` precisa ver as **duas** versões para
+entender por que a segunda existe. Esta nota não reescreve a proposta: mede o
+que, dela, o produto de hoje **não pode prometer**. A razão de ela existir agora
+é concreta — **a `E4` vai copiar este bloco para a tela de verdade**, e um texto
+de tela é uma promessa que a pessoa lê antes de escolher.
+
+Escopo: as três opções falam do controle **EXTERNO** mascarado (o Nintendo Pro
+do exemplo). Nada aqui muda o que um DualSense recebe.
+
+### (a) "luz ... funciona" — a luz do externo está CALADA. GRAU: DECISÃO DELA
+
+`EXTERNAL_PLAYER_LED_ENABLED = False` (`external_identity.py:194`), lido no tick
+em `:1220`. É a `E0` da
+[LUGAR-À-MESA-01](2026-08-06-LUGAR-A-MESA-01-tres-controles-ligados-e-um-jogador-so.md)
+e **decisão dela de 07/08/2026** (resposta 12 do painel, em
+[as respostas](../2026-08-07-DECISOES-DELA-as-onze-respostas-do-painel.md)),
+mantida inteira neste mesmo dia. "Calar" é **zero escritas**, e explicitamente
+não é apagar (`external_identity.py:162-176`): apagar também seria afirmar. A
+condição de volta está escrita e é objetiva — quando o externo virar jogador de
+verdade, a `E3` da LUGAR-À-MESA-01 (`:184-186`), que ela autorizou **só depois
+desta sprint**. Enquanto isso, a tela não pode prometer luz: prometer é
+exatamente o que o interruptor recusa.
+
+### (b) "vibração funciona" — o rumble do externo vira BROADCAST. GRAU: MEDIDO
+
+A cadeia, lida e depois **executada**:
+
+1. `coop.py:495` — `target = None if identity.startswith("path:") else identity`:
+   identidade sem MAC já entra sem alvo;
+2. `gamepad.py:776-785` — com alvo, tenta `set_rumble_for`; **quando ele devolve
+   falso, cai no `controller.set_rumble`**. O próprio docstring nomeia o preço
+   (`:762-764`): *"com MAC que não casa nenhum handle, cai no broadcast
+   histórico — limitação documentada: TODOS os controles vibram juntos"*;
+3. `core/backend_pydualsense.py:2978-2985` — `set_rumble_for` acha o handle por
+   `_key_for_uniq`, que varre `self._handles`;
+4. `core/backend_pydualsense.py:1428-1430` — `self._handles` só recebe o que a
+   enumeração aceitou, e ela filtra `vendor_id=DUALSENSE_VENDOR` com
+   `product_id in DUALSENSE_PIDS`. **Endereço de externo nunca casa handle**,
+   por construção.
+
+A medição de 07/08 (sem aparelho, handles forjados, endereços na máscara da
+casa, código real do produto):
+
+| chamada | o que aconteceu |
+|---|---|
+| `set_rumble_for(MAC de DualSense)` | `True` — só aquele handle recebeu |
+| `set_rumble_for(MAC de externo)` | `False` — nenhum handle casou |
+| `apply_game_rumble(target=externo)` | caiu no broadcast: **os dois DualSense** receberam `left=200 right=60` |
+| `apply_game_rumble(target=DualSense B)` | broadcast vazio; só o B recebeu |
+
+**A mordida:** as duas últimas linhas são a MESMA chamada com a cura arrancada e
+devolvida. Com um endereço que não casa handle, a mesa inteira vibra; com o
+endereço que casa, vibra um só. O defeito foi reproduzido, não deduzido.
+
+E "todos" nem é o pior caso: `_for_each`
+(`core/backend_pydualsense.py:2090-2096`) respeita o seletor de controle da GUI
+quando ele aponta um handle vivo. Com o seletor apontado, quem vibra é **um**
+DualSense escolhido pela janela — não o controle de quem está jogando. As duas
+saídas erram de jeitos diferentes.
+
+### (c) "Entra na sua ordem de jogador" — proibido por escrito. GRAU: DECISÃO
+
+LUGAR-À-MESA-01, seção "O que fica ABERTO", item 1: *"Qualquer texto de tela ou
+de README que prometa 'o número aceso é o mesmo do jogo' está **proibido** por
+esta sprint"*. A razão é medida como SUSPEITA COM MECANISMO e está lá: o jogo
+escolhe o índice pela ordem em que abre os dispositivos, e **qual** número cada
+um recebe não é nosso — *"a luz pode dizer 2 e a tela do jogo dizer 3, e isso
+sobrevive à entrega inteira"*.
+
+O que a tela pode dizer sem mentir é o que esta própria sprint estabelece em
+"Por que isto é o que resolve a numeração": mascarado, o controle passa a fazer
+parte do **conjunto** que nós montamos. Conjunto não é ordem, e a diferença é a
+sprint inteira.
+
+### (d) o custo do Xbox está INCOMPLETO — GRAU: MEDIDO em 01/08/2026
+
+"Sem gatilhos adaptativos" é menos da metade: **perde giroscópio E touchpad**.
+Medido em 01/08 e escrito no código — com a máscara Xbox o vpad é uinput,
+*"que declara 8 eixos e 11 botões — não há onde pôr giroscópio nem touchpad"*, e
+`integrations/virtual_pad.py` recusa o uhid para qualquer sabor que não seja
+`dualsense` (`app/actions/home_actions.py:236-240`).
+
+A frase certa **já existe, com dono**: `TEXTO_CUSTO_MASCARA_XBOX`
+(`home_actions.py:245-250`), servida pela função pura
+`texto_do_custo_da_mascara` (`:253-260`) e já reusada pela
+[ESCOLHA-DELA-VENCE-01](2026-08-01-ESCOLHA-DELA-VENCE-01-a-mascara-do-perfil-e-o-tooltip-do-xbox.md)
+(E4, entregue em 01/08). **A `E4` desta sprint reusa essa função** em vez de
+escrever a segunda frase sobre o mesmo fato — dois donos da mesma frase derivam,
+e a regra já está escrita naquela sprint.
+
+**Armadilha ao reusar, e ela é do ponto (b):** aquela frase termina em
+*"Vibração, microfone e alto-falante continuam funcionando"*, e isso foi medido
+para o **DualSense físico** (`home_actions.py:242-244`). Num cartão de controle
+**externo** a cláusula da vibração é falsa hoje, pelo mesmo broadcast. Ou a
+função ganha o caso do externo, ou o cartão do externo não mostra essa cláusula
+— o que não pode é a frase do DualSense aparecer inteira debaixo de um Pro.
+
+### Um quarto ponto, achado ao conferir — "Gatilhos ... funcionam"
+
+**GRAU: MEDIDO no código.** A réplica de gatilho que o jogo escreve no vpad
+nunca chega a um externo, e falha **em silêncio**: `apply_game_trigger`
+(`gamepad.py:799-807`) *"nunca degrada para broadcast"* — de propósito, porque
+replicar gatilho em todo mundo pintaria o jogador errado —, e
+`set_game_trigger_for` com MAC sem handle **registra o bloco e devolve `True`**
+(`core/backend_pydualsense.py:3016-3020`: *"registrado; o hotplug aplica quando o
+controle voltar"*), esperando um handle que, para um externo, nunca vem.
+
+Se o plástico de um externo sequer tem gatilho adaptativo é outra pergunta, e
+esta nota **não a mede**.
+
+### A versão que a `E4` pode copiar
+
+Proposta, não decisão: interface fecha com o olho dela (PROVA-DE-TELA-01), com
+foto antes e depois.
+
+```
+Como este controle deve aparecer nos jogos?
+
+  ( ) Como ele mesmo — Nintendo Pro
+      Os botões batem com o que está escrito neles.
+      Quem numera este controle é o jogo, por conta dele.
+
+  ( ) Como DualSense
+      Este controle entra no conjunto que o jogo enxerga.
+      O jogo vai pedir o botão de triângulo onde o seu diz X.
+      A luz de jogador dele continua apagada.
+      A vibração do jogo ainda não chega neste controle.
+      Enquanto a ponte de movimento não existir, perde o giroscópio.
+
+  ( ) Como Xbox 360
+      Máxima compatibilidade.
+      Nesta máscara o jogo não recebe giroscópio nem touchpad.
+```
+
+Três cuidados para quem copiar:
+
+1. **não escreva o triângulo desenhado neste documento.** As lacunas das linhas
+   24 e 61 acima são um apagamento já consumado — conferido byte a byte em
+   07/08: na 24 sobrou um par de crases vazio, na 61 sobraram dois espaços. E o
+   culpado **não é o portão de glifos**: medido hoje, ele ACEITA U+25B3 e
+   U+25B2 (bloco Geometric Shapes, que o ADR-011 manda preservar) e só reprova
+   o triângulo de emoji, U+1F53A. Quem apagou foi o higienizador do ambiente,
+   que tem sprint própria e aberta
+   ([GATE-EMOJI-01](2026-07-27-GATE-EMOJI-01-o-higienizador-apaga-o-que-o-adr-protege.md)),
+   com a regra de escrita que esta nota segue: **glifo citado por codepoint,
+   nunca desenhado**. No documento, escreva a palavra ou o codepoint; no
+   widget, o desenho pode voltar;
+2. **cada linha nova precisa de dono no código**, como a do Xbox tem — texto de
+   tela sem função pura é a próxima frase a envelhecer sozinha;
+3. **as três linhas negativas de "Como DualSense" caducam juntas** com as
+   entregas que as causam: a luz volta com a `E3` da LUGAR-À-MESA-01, a vibração
+   com a rota de FF da mesma sprint, o giroscópio com a `E6` daqui. Quem entregar
+   qualquer uma delas apaga a linha correspondente **e escreve a nota datada**.
+
 ## Onde a máscara mora — a decisão, com o argumento
 
 A máscara é propriedade do **aparelho**, não da configuração do jogo.

@@ -229,6 +229,58 @@ restritivo que o nosso `confirm`. Então o efeito não é injeção de teclas �
 que réplica e oráculo concordem sempre; ou trocar a réplica por uma chamada ao
 GKeyFile de verdade (`python3 -c` com `GLib.KeyFile`, que já é dependência).
 
+### NOTA DATADA, 07/08/2026 — as formas saíram do papel: MEDIDAS contra o oráculo
+
+O achado acima estava **MEDIDO por leitura de código**, e as três formas eram
+previsão. Foram **executadas** em 07/08 contra o GKeyFile de verdade (GLib
+2.80.0, `gi.repository.GLib.KeyFile.load_from_file`) e contra o dono único
+(`bash scripts/bluez_config.sh verificar`, com `HEFESTO_BT_ETC` num diretório
+temporário — **nada tocou `/etc`**). A previsão estava certa, e **passa de três
+para quatro** as formas que produzem o falso `OK`.
+
+O corpo do arquivo era sempre o mínimo válido mais a linha injetada:
+
+```
+[General]
+JustWorksRepairing=confirm
+<a linha injetada>
+```
+
+| linha injetada | GKeyFile (o que o `bluetoothd` faz) | dono único | saída |
+|---|---|---|---|
+| `linha-solta` (controle, **já coberto**) | descarta o arquivo inteiro | `veredito: RECUSADO` | 1 |
+| chave antes do grupo (controle, **já coberto**) | descarta o arquivo inteiro | `veredito: RECUSADO` | 1 |
+| `=valor` (nome de chave vazio) | descarta: *"is not a key-value pair"* | **`veredito: OK`** | **0** |
+| `=` sozinho | descarta: *"is not a key-value pair"* | **`veredito: OK`** | **0** |
+| nome de chave com colchete de abrir | descarta: *"Invalid key name"* | **`veredito: OK`** | **0** |
+| nome de chave com colchete de fechar | descarta: *"Invalid key name"* | **`veredito: OK`** | **0** |
+| grupo vazio, no lugar de `[General]` | descarta: *"Invalid group name"* | `veredito: INSEGURO` | 1 |
+| grupo com colchete no nome | descarta: *"Invalid group name"* | `veredito: INSEGURO` | 1 |
+
+**GRAU: MEDIDO**, oito formas, uma execução cada.
+
+**Duas leituras que a previsão não tinha:**
+
+1. **as quatro primeiras são o defeito inteiro** — o dono responde `OK` e sai
+   **0** sobre um arquivo do qual o `bluetoothd` não lê **uma chave sequer**,
+   nem as nossas nem as dela;
+2. **as duas de grupo inválido erram de outro jeito, e é um jeito que engana
+   igual.** Não dão `OK`: dão `veredito: INSEGURO` com
+   `JustWorksRepairing: ausente`. A saída é 1, então a direção é conservadora —
+   mas o **motivo** que ela lê é falso. A página vai dizer que falta uma chave,
+   quando o que há é um arquivo descartado inteiro, e a receita que ela seguir
+   a partir daí conserta a coisa errada.
+
+**E o oráculo é mais permissivo em pelo menos um ponto**, o que também importa
+para quem for escrever o teste de propriedade: valor com byte UTF-8 inválido o
+GKeyFile **aceita**. Réplica que recusasse ali passaria a reprovar arquivo bom.
+
+**O que continua ABERTO é exatamente o que estava:** nada foi curado, e a
+bancada continua sem morder — a `_TABELA_DA_RECUSA` segue com os três casos que
+já caem dentro das duas regras. O que mudou é que as quatro formas do falso
+`OK` agora estão escritas com a mensagem exata do GKeyFile ao lado, prontas
+para virar linha de tabela no dia em que alguém as cobrar.
+
 ---
 
 ## O que fica ABERTO
