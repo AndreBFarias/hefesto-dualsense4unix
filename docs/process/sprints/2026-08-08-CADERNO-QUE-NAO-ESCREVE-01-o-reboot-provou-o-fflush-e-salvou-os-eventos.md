@@ -79,12 +79,40 @@ medição falsa nesta madrugada.
 
 ---
 
-## 3. A metade certa: o caderno dela está vazio, e o `fflush` subiu de grau
+## 3. A metade certa: o caderno dela está vazio
 
-**GRAU: MEDIDO** — e é o reboot que fez o experimento que ninguém podia fazer.
+> ## NOTA DATADA — 08/08/2026, 04h: **o título desta sprint está errado, e esta
+> ## seção foi corrigida**
+>
+> Esta seção afirmava que *"o reboot fez o experimento"* e promovia o `fflush`
+> ausente de SUSPEITA COM MECANISMO a **MEDIDO**. **Isso é falso, e a correção
+> vem de duas fontes independentes que chegaram ao mesmo lugar:**
+>
+> 1. **Uma verificação adversarial** desta madrugada leu o mecanismo inteiro e
+>    apontou o erro: o `SIGTERM` do systemd **destrói** o buffer, não o
+>    descarrega. O que o reboot mostra é que o caderno está vazio — não *por que*
+>    ele está vazio. Um caderno vazio é compatível com o `fflush` ausente **e**
+>    com meia dúzia de outras causas;
+> 2. **A tentativa de reproduzir em bancada FALHOU.** Três variantes (`awk` sem
+>    `fflush`, com `fflush()`, e com `stdbuf -oL`) devolveram **zero byte** com o
+>    processo vivo. Como o `stdbuf -oL` é sabidamente line-buffered, o resultado
+>    idêntico nas três acusa **o instrumento**, não o `awk` — e um instrumento que
+>    não distingue as três variantes não pode promover grau nenhum.
+>
+> **O grau volta para SUSPEITA COM MECANISMO**, agora com o mecanismo lido de
+> ponta a ponta (o `trap ... EXIT INT TERM` da linha 162 faz o *shell* sobreviver
+> ao `SIGTERM` e escrever o banner, enquanto o `awk` morre com o buffer dentro —
+> é isso que faz o caderno **parecer vivo estando vazio**).
+>
+> **O que segue MEDIDO, e não depende disto:** o caderno tem 120 linhas, **todas
+> banners**, zero eventos classificados, contra 723 eventos no journal do mesmo
+> período. O defeito de produto é real e a cura é a mesma. O que caiu foi a
+> *prova do porquê*.
+>
+> **Fica registrado em vez de apagado** porque é a regra da casa, e porque o erro
+> é instrutivo: *"o reboot fez o experimento de graça"* é uma frase boa demais
+> para ser verdade sem contraste, e ela passou justamente por ser elegante.
 
-O `OQ-1` declarava o `fflush` ausente como **SUSPEITA COM MECANISMO**, porque
-provar exigiria reiniciar a unit. O reboot de 08/08 00:00 reiniciou tudo de graça.
 O resultado, lido às 00:43:
 
 ```
@@ -100,12 +128,15 @@ O resultado, lido às 00:43:
 **zero** linhas — só os cabeçalhos de "kernel-watch iniciado" que o próprio
 script escreve fora do `awk`.
 
-O mecanismo está em `scripts/storm_watch.sh`: o `classify()` (linhas 54-72) é um
-`awk` sem `fflush()`, e a saída vai para `>>"${LOG}"` (`:165-167`). A saída fica
-num buffer de 256 KiB que o `SIGTERM` do desligamento descarta. **O reboot
-executou o experimento: o buffer morreu, o arquivo não cresceu.**
+O mecanismo está em `scripts/storm_watch.sh`: o `classify()` é um `awk` sem
+`fflush()`, e a saída vai para `>>"${LOG}"` (`:165-167`). A saída fica num buffer
+de 256 KiB, e o `SIGTERM` que o systemd manda ao cgroup inteiro **destrói** esse
+buffer em vez de descarregá-lo.
 
-**O `fflush` ausente passa de SUSPEITA COM MECANISMO para MEDIDO.**
+**O `fflush` ausente continua SUSPEITA COM MECANISMO** — ver a nota datada acima,
+que corrige a afirmação anterior desta seção. O mecanismo está lido de ponta a
+ponta; o experimento que o provaria **não foi feito**, e a tentativa de bancada
+falhou por instrumento.
 
 ### E o teste que existe hoje não morde
 
