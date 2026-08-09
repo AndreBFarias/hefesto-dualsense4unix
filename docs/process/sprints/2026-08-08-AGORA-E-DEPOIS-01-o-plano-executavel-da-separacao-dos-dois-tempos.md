@@ -293,6 +293,14 @@ Quatro perguntas foram à mesa com o preço de cada saída escrito. **Estas são
 decisões dela: não se repropõem.** Onde uma delas caduca algo escrito acima, a
 linha antiga ficou riscada, com a data — não foi apagada.
 
+> **AS DECISÕES 1 E 2 CADUCARAM NA MESMA NOITE, VENDO A TELA.** Ela abriu a
+> janela, clicou em "Jogar pelo Hefesto" e a caixa da máscara **sumiu** — porque
+> o daemon ainda estava em desktop. A leitura da tela não é "a máscara ainda não
+> cabe aqui"; é "a máscara sumiu". A revisão está na **§12**, e é ela que vale.
+>
+> As duas ficam escritas abaixo porque explicam o raciocínio, e porque o preço
+> que cada uma cobrava era real — só não era o preço certo.
+
 ### Decisão 1 — só a máscara pergunta. O modo, não.
 
 Com jogo aberto e pendência **só de modo**, o Aplicar executa a transição **sem
@@ -407,3 +415,80 @@ entre mixins não existe neles. É **a mesma lição** já escrita em
 `reconciliar_pendente`, `render_pendente` e `marcar_escolha` são funções de
 MÓDULO pelas duas razões de sempre: o rodapé precisa das mesmas, e função não
 depende da montagem do dublê.
+
+---
+
+## 12. A REVISÃO DE 08/08 À NOITE — o que ela viu na tela
+
+As decisões 1 e 2 da §9 foram tomadas **lendo o preço**; estas foram tomadas
+**vendo o efeito**. Onde as duas discordam, valem estas — e a diferença entre
+elas é a razão de a PROVA-DE-TELA-01 existir.
+
+### 12.1 A máscara volta a aparecer com a escolha dela (revoga a decisão 2)
+
+> *"a máscara volta ao que era. Não temos que burocratizar aí. Clico hefesto, a
+> máscara aparece, clico em jogar xbox ou dualsense e ao clicar em aplicar lá
+> embaixo o efeito aplica de fato. só isso"*
+
+A visibilidade da caixa passa a seguir o **modo escolhido**, não o vigente
+(`home_actions._render_home`, o `set_visible(modo_exibido == "gamepad")`). Um
+"Aplicar" só, com modo e máscara decididos juntos.
+
+**O que a decisão 2 acertava:** o custo em código é real — é uma guarda a mais.
+**O que ela errava:** o preço não era "dois Aplicar", era uma caixa sumindo da
+tela no meio de um gesto. Preço de código se paga uma vez; preço de tela se paga
+toda vez que ela abre a janela.
+
+### 12.2 Com jogo aberto, o modo também pergunta (revoga a decisão 1)
+
+> *"se o jogo tiver aberto aparece o popup falando em fechar o jogo pra aplicar e
+> afins. e isso vai permitir aplicar tudo que alterar em todas as abas"*
+
+`"modo"` volta a `relancar.EXIGEM_RELANCAR`. **A opinião dela não mudou — o
+LUGAR da pergunta mudou.** A `RELANCAR-ORDEM-01` tirou o modo da lista porque o
+diálogo nascia no CLIQUE, antes de ela escolher a máscara; agora ele nasce no
+"Aplicar", com a decisão inteira na mão. O motivo da retirada caducou.
+
+E isto **fecha o caminho** pelo qual o "Jogador 3" fantasma era alcançado sem
+aviso — o que a §3 deste plano tinha dado por perdido às 20h. A cura do estado
+meio-a-meio continua sendo a `JOGADOR-3-FANTASMA-01`; o diálogo é o que impede
+de chegar lá sem ela saber.
+
+### 12.3 O contrato dos dois botões do rodapé, na palavra dela
+
+> *"aplicar aparece lá embaixo igual já era antes e isso aplica no perfil atual
+> que tá ativo e se eu clicar em salvar, ele salva as modificações de cada aba
+> naquele perfil ativo"*
+
+É o que o produto faz, e agora vale para os dois tempos: o **Aplicar** manda ao
+vivo (as sete seções + o modo/máscara pendentes) e o **Salvar** persiste o
+rascunho no perfil ativo. O modo entra no rascunho quando o Aplicar confirma
+(decisão 3, que **não** caducou), então salvar depois de aplicar leva o modo
+junto.
+
+**O canto que fica declarado:** salvar **sem** ter aplicado grava o perfil com o
+modo/máscara ANTIGOS — a escolha pendente ainda não é "o que ficou de pé". É
+coerente com a decisão 3 e ninguém reclamou dele ainda; está escrito aqui para
+não ser descoberto numa partida.
+
+### 12.4 Nada disto vale só para o cabo, nem só para o DualSense
+
+> *"cada decisão nossa não é pra funcionar só via cabo mas via bt também e deve
+> ser universal, caso eu tenha 4 novos controles dual sense ou novos pro
+> controler ou 8bitdo e afins"*
+
+**MEDIDO:** o caminho da escolha pendente não lê transporte, índice, `uniq` nem
+contagem de controles em lugar nenhum — modo e máscara são do **sistema**, e o
+payload da transição (`plan_mode_transition`) nunca foi por-controle.
+
+Mas "não lê hoje" é fácil de perder amanhã, então virou portão
+(`test_agora_e_depois_01.py`, grupo 5):
+
+- a escolha resiste ao tique com **1, 2 e 4** controles, por **USB e por BT**
+  (parametrizado nos dois eixos);
+- ela continua de pé com a **mesa vazia** — nenhum controle conectado. É o caso
+  que prova a ausência de acoplamento: modo e máscara descrevem o que o sistema
+  vai entregar ao jogo, não o que um aparelho faz;
+- o payload do "Aplicar" **não pode** conter `uniq`, `index` nem `transport`.
+  Um payload por-controle faria a máscara valer para um aparelho e não para os
+  outros, e a mesa de quatro viraria quatro verdades sobre o que o jogo vê.
