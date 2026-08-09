@@ -8,7 +8,11 @@
   [OITO-DEFEITOS-01](2026-08-08-OITO-DEFEITOS-01-a-fila-que-a-verificacao-adversarial-derrubou-inteira.md),
   **por construção** — não por remendo
 - **Grau:** o diagnóstico é **MEDIDO**; o desenho é **DECISÃO DELA**, aprovada em
-  08/08; a execução ainda **não começou**
+  08/08
+- **Estado (08/08, noite):** os **passos 1 a 5 estão FEITOS** — código, testes
+  que mordem e foto. As quatro decisões que faltavam estão na **§9**, e o
+  **passo 6** (a pendência gravada em disco, §10) é a única coisa deste plano
+  que continua aberta. Falta o aceite dela na tela (PROVA-DE-TELA-01)
 
 > **ANTES DE COMEÇAR, LEIA A SEÇÃO 6.** Ela tem oito fatos medidos que, se você
 > não souber, farão você escrever uma cura que já foi escrita e revertida hoje.
@@ -77,7 +81,7 @@ máscara" — e uma leitura apressada deste plano o reabriria. Ver seção 6, fa
 |---|---|---|
 | **1** | o diálogo está no botão errado | passa a ter **um lugar óbvio**: o "Aplicar" do rodapé, que é onde a mudança sai |
 | **2** | a máscara pergunta a cada clique | o clique **não aplica mais** — só marca a escolha. Nada a perguntar |
-| **4** | o "Jogador 3" fantasma | **impossível**: o modo nunca muda no meio da partida sem passar pelo relançamento |
+| **4** | o "Jogador 3" fantasma | ~~**impossível**: o modo nunca muda no meio da partida sem passar pelo relançamento~~ **CADUCOU em 08/08, noite** — ela decidiu que só a máscara pergunta (§9, decisão 1). O modo pendente aplica direto, e o caminho do fantasma continua aberto na `JOGADOR-3-FANTASMA-01` |
 | **8** | a tela mostra o que não confere | separa "é" de "vai ser" — cada caixa tem uma fonte só |
 | **3** | "1 jogador saiu" falso | ver seção 5 (é leva própria, pequena) |
 
@@ -113,6 +117,12 @@ A regra do `_render_home`, e ela é a coisa mais importante deste passo:
 - **quando houver escolha pendente** → os seletores mostram a **escolha dela**, e
   o `_render_home` **não os sobrescreve**.
 
+**A guarda cobre o VALOR, não a visibilidade** (§9, decisão 2). A linha
+`self._home_gamepad_opts.set_visible(mode == "gamepad")` (`home_actions.py:1063`,
+onde `mode` é o do daemon) **fica exatamente como está**: a caixa da máscara só
+nasce quando "Jogar pelo Hefesto" já está **valendo**. Ela escolheu pagar dois
+Aplicar em vez de ganhar uma guarda a mais.
+
 **Teste que morde** (o arquivo ainda NÃO existe — quem executar o cria, e o
 nome sugerido é `test_agora_e_depois_01`, no padrão da casa): com escolha
 pendente, dois tiques de `_render_home` seguidos não mudam o que o seletor
@@ -125,6 +135,13 @@ Arranque a guarda e ele reprova (é o defeito de "a escolha dela volta sozinha")
 
 Hoje eles chamam `apply_mode(...)` e `call_async("gamepad.emulation.set", ...)`.
 Passam a **só** gravar em `_escolha_pendente` e pedir um redesenho.
+
+**Leve o `registrar_modo_no_rascunho` junto** (§9, decisão 3). Ele hoje mora
+dentro dos callbacks `_done` do IPC (`home_actions.py:1226` e `:1286`) — sem o
+IPC, ninguém mais o chama, e o "Salvar este perfil" passaria a gravar perfil
+**sem a seção `mode`**, em silêncio. Ele vai para o callback de sucesso do
+Aplicar (passo 4): o rascunho continua descrevendo **o que ficou de pé**, nunca
+uma intenção que pode ter falhado.
 
 **Cuidado (fato 3 da seção 6):** o `_home_guard` já existe e impede que o
 `set_active_id` do próprio `_render_home` dispare o handler. **Ele continua
@@ -156,6 +173,14 @@ Ele passa a, **antes** do `apply_draft`:
    (`mode_transition.apply_mode`), depois segue com o `apply_draft`;
 3. se há pendência **e há jogo aberto** → abre o diálogo de relançamento que já
    existe (`base._perguntar_antes_de_relancar`, fato 7).
+
+**O passo 3 vale para a MÁSCARA, não para o modo** (§9, decisão 1). Chame o
+helper com `mudanca="mascara"` e ele já faz a coisa certa sozinho: `"modo"` não
+está em `EXIGEM_RELANCAR` (`relancar.py:49-62`), então uma pendência **só de
+modo** cai no `return False` de `base.py:87-88` e aplica direto — que é
+exatamente o comportamento de hoje, e é o que ela decidiu manter. **Não devolva
+`"modo"` à lista** para "fechar o caso": isso reabriria a decisão dela da
+`RELANCAR-ORDEM-01` por conta própria.
 
 **NÃO** ponha a transição de modo dentro do `apply_draft` do daemon. Fato 5
 explica por quê — e o erro produz "ERRO ao aplicar" com o modo já aplicado, que
@@ -259,3 +284,126 @@ zero, com `git add -A` **antes** — eles não veem arquivo novo.
 
 **Se o passo 3 falhar, pare** — é o coração do desenho, e o resto não vale nada
 sem ele.
+
+---
+
+## 9. AS DECISÕES DELA — 08/08/2026, noite
+
+Quatro perguntas foram à mesa com o preço de cada saída escrito. **Estas são
+decisões dela: não se repropõem.** Onde uma delas caduca algo escrito acima, a
+linha antiga ficou riscada, com a data — não foi apagada.
+
+### Decisão 1 — só a máscara pergunta. O modo, não.
+
+Com jogo aberto e pendência **só de modo**, o Aplicar executa a transição **sem
+diálogo**, como o produto faz hoje. A `RELANCAR-ORDEM-01` fica **de pé**.
+
+**O preço, declarado antes da escolha e aceito:** o defeito 4 (o "Jogador 3"
+fantasma) **sai do alcance deste plano**. Trocar de modo com jogo aberto continua
+mexendo no `compose_env` ao vivo, e a cura daquilo é o que a
+[JOGADOR-3-FANTASMA-01](2026-08-08-JOGADOR-3-FANTASMA-01-a-cura-certa-no-momento-errado.md)
+já dizia que era: impedir o estado meio-a-meio, não perguntar mais.
+
+### Decisão 2 — a caixa da máscara continua obedecendo ao daemon
+
+Ela só nasce quando "Jogar pelo Hefesto" está **valendo**. Escolher o modo e a
+máscara na mesma passada exigiria uma guarda de visibilidade, e ela preferiu o
+caminho de menos código: **dois Aplicar**, um por decisão.
+
+**Consequência que quem executar vai ver e não deve "consertar":** com o daemon em
+gamepad e uma pendência de "Controlar o PC", a caixa da máscara **continua
+visível**, ecoando a máscara vigente. Está certo — aquela caixa mostra o que o
+daemon tem, e o Aplicar leva a pendência.
+
+### Decisão 3 — o modo entra no rascunho quando o Aplicar confirma
+
+Nunca no clique. O rascunho segue descrevendo **o que ficou de pé**, e um Aplicar
+que falhe ou um diálogo cancelado não deixam rastro no perfil.
+
+### Decisão 4 — a escolha adiada é gravada em DISCO
+
+No diálogo, *"Aplicar na próxima abertura"* passa a **guardar de verdade**: a
+escolha sobrevive a fechar a janela e a reiniciar o daemon, e é aplicada sozinha
+**quando o jogo fechar**. O toast volta a poder dizer *"Guardado — aplico assim
+que {jogo} fechar"* sem mentir.
+
+**Isto é leva própria, e é a maior das cinco.** Ver o passo 6.
+
+---
+
+## 10. Passo 6 — a pendência que sobrevive (decisão 4)
+
+**Faça-o DEPOIS dos passos 1 a 5**, e num commit próprio: os cinco primeiros
+fecham sozinhos e valem por si.
+
+Três peças, e nenhuma existe hoje:
+
+1. **Onde gravar.** Um arquivo em `~/.config/hefesto-dualsense4unix/`, no padrão
+   do `steam_input_apps.txt`. Dono: o **daemon**, não a janela — ela pode estar
+   fechada na hora de aplicar, e é justamente isso que a decisão 4 promete.
+
+2. **O gatilho.** Ele **já existe e não precisa ser inventado**: o
+   `game_signal` emite `game_signal_transition {de, para, evidencia}` a cada
+   mudança real de autoridade (`daemon/subsystems/game_signal.py:12-22`), com
+   histerese de 30 s na queda para `daemon` (`:54-62`). A queda `game → daemon` é
+   "o jogo fechou", e a histerese é uma **vantagem**: alt-tab curto não dispara a
+   aplicação no meio da partida.
+
+3. **O gesto de cancelar.** Se ela pode marcar, tem de poder desmarcar — a linha
+   `● vai mudar para:` precisa de saída, e o produto não pode aplicar uma escolha
+   que ela esqueceu que fez há dois dias.
+
+**O que muda no que já existe:** o `_MUDANCAS_QUE_SAO_ESCRITA` (`base.py:50`) e o
+`guardou=` do `toast_da_escolha` (`relancar.py:190-210`) nasceram da
+`DEPOIS-QUE-APLICAVA-AGORA-01`, que é de 08/08 e cuja premissa era *"a janela não
+tem onde guardar"*. Com o passo 6 essa premissa **deixa de valer**, e a máscara
+passa a poder dizer `guardou=True`. **Enquanto o passo 6 não existir, ela não
+pode** — e a linha da tela tem de sumir junto, ou a tela contradiz o rodapé.
+
+**A proibição da seção 7 continua inteira:** guardar **não** é aplicar. O ramo
+"na próxima abertura" nunca chama `apply_mode` com jogo aberto — ele escreve a
+pendência e vai embora. Quem aplica é o gatilho, com o jogo já fechado.
+
+---
+
+## 11. O que a execução dos passos 1 a 5 aprendeu
+
+Três coisas que não estavam no plano e que custaram tempo. Ficam escritas para
+não serem redescobertas.
+
+### 11.1 O retrato oficial precisa do Python do venv
+
+`scripts/gui-captura/retratar_abas.py` tem shebang `python3`, e o Python do
+sistema não tem `structlog` nem `platformdirs`. Rodado assim, ele **não avisa
+alto**: imprime `aba Início não montada (No module named 'structlog')` no meio
+de outras linhas e salva um PNG **vazio** — que passa por retrato.
+
+**Rode `.venv/bin/python scripts/gui-captura/retratar_abas.py`.** É a armadilha
+nº 1 da casa (medir contra a biblioteca errada) na roupa do instrumento de foto.
+
+### 11.2 O retrato não fotografa estado transitório, e isso não é defeito nosso
+
+A linha `● vai mudar para:` só existe **depois de um clique**, e o retrato
+oficial renderiza um estado de daemon sem pendência — ele nunca a mostra.
+
+Tentar forçar (montar a aba e renderizar duas vezes num roteiro próprio) produz
+**foto em branco com a aba montada**: medido, com a caixa tendo os 5 filhos e o
+rótulo respondendo `get_text()`/`get_visible()` corretamente. E o mesmo roteiro
+contra o **código de antes desta leva**, num `git worktree` do `HEAD`, produz a
+mesma foto vazia — é limitação do `OffscreenWindow`, não regressão.
+
+**O que funciona** é a técnica que o `retratar_dialogos.py` já usava: tirar o
+miolo (`tab_home_box`) do pai, pô-lo numa `Gtk.OffscreenWindow` própria,
+`show_all()` no MIOLO primeiro (para medir a largura natural), `set_size_request`
+e só então `show_all()` na janela.
+
+### 11.3 Método de mixin quebra dublê parcial — de novo
+
+`_render_pendente` nasceu método de `HomeActionsMixin` e derrubou 26 testes de
+uma vez: os dublês desta base copiam handlers avulsos (`_HomeStub`), e chamada
+entre mixins não existe neles. É **a mesma lição** já escrita em
+`registrar_modo_no_rascunho`, paga uma segunda vez.
+
+`reconciliar_pendente`, `render_pendente` e `marcar_escolha` são funções de
+MÓDULO pelas duas razões de sempre: o rodapé precisa das mesmas, e função não
+depende da montagem do dublê.
