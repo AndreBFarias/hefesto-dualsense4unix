@@ -1,6 +1,12 @@
 # STATUS-SIMETRIA-01 — a aba que era pra mexer, e só ela
 
-- **Status:** ABERTA
+- **Status:** **ENTREGUE EM CÓDIGO — AGUARDANDO A PALAVRA DELA**, remarcada em
+  09/08/2026. Os três pontos que ela nomeou na faixa do card entraram em
+  `e96dea8` (27/07/2026) e `b3e8b7f` (28/07/2026). **Rótulo anterior: ABERTA**,
+  preservado aqui. Ver a nota datada no fim
+- **O que falta ela validar, em uma linha:** abrir a aba Estado com um controle
+  ligado e olhar a faixa do card — os analógicos alinhados, os glifos legíveis e
+  a área do microfone à direita dos analógicos, como ela pediu
 - **Prioridade:** PRIMEIRA DA FILA — não por gravidade, mas porque é a única
   coisa que ela autorizou, e a última coisa que aconteceu foi eu extrapolar
 - **Aberta em:** 26/07/2026, depois do rollback para `restauro/inicio-da-sessao`
@@ -266,3 +272,32 @@ nomeou, e nenhuma outra tela do Hefesto muda um pixel.
 - **Não rodei nada nesta árvore.** A árvore em
   `/home/vitoriamaria/Desenvolvimento/hefesto-dualsense4unix` é a que o Hefesto
   instalado executa; foi só lida.
+
+---
+
+## NOTA DATADA — 09/08/2026: os três pontos da faixa saíram, e o `ABERTA` caducou
+
+**Nada acima foi apagado.** O pedido literal dela, os quatro itens e a
+delimitação de escopo continuam inteiros.
+
+**O que está de pé — GRAU: MEDIDO em 09/08/2026 contra a árvore de hoje.**
+
+| o que ela pediu | onde está hoje |
+|---|---|
+| os glifos do DSX legíveis (piso de glifo com escala de fonte zerada) | `src/hefesto_dualsense4unix/app/widgets/controller_card.py:165` |
+| a área do microfone à direita dos analógicos | `src/hefesto_dualsense4unix/app/widgets/controller_card.py:2410` — a linha cita o pedido dela |
+| a cura do degrau de 20px entre os dois lados | `src/hefesto_dualsense4unix/app/widgets/controller_card.py:3662` |
+
+**Commits:** `e96dea8` (27/07/2026) e `b3e8b7f` (28/07/2026).
+
+### Por que o rótulo não é ENTREGUE e sim ENTREGUE EM CÓDIGO
+
+Porque esta sprint **é** interface, e o pedido veio dos olhos dela olhando a
+faixa. Nenhuma medição de geometria substitui a frase dela sobre o que ficou na
+tela
+([PROVA-DE-TELA-01](2026-07-27-PROVA-DE-TELA-01-dez-minutos-de-olho-antes-de-qualquer-leva.md)).
+
+**Nada ficou em aberto nesta sprint além dessa validação.** A continuação — os
+cinco defeitos que ela nomeou depois — é a
+[STATUS-SIMETRIA-02](2026-07-27-STATUS-SIMETRIA-02-distanciar-nao-e-organizar.md),
+que tem cabeçalho próprio.

@@ -111,6 +111,26 @@ Cada item aqui só vira commit com print antes e depois, pela regra da
 | 2.9 | **PERFIL-JOGO-01** — a mais cara e a de maior impacto | [PERFIL-JOGO-01](2026-07-26-PERFIL-JOGO-01-as-configs-somem-ao-abrir-o-jogo.md) | **Atenção:** a entrega 1 (o experimento) vem antes de qualquer código, e as E3/E4 precisam ser **reescritas** contra as duas portas |
 | 2.10 | **LIGHTBAR-JOGADOR-01** — as seis entregas | [LIGHTBAR-JOGADOR-01](2026-07-27-LIGHTBAR-JOGADOR-01-a-cor-e-consequencia-do-jogador.md) | só **depois** da 2.9: as duas mexem em quem manda na cor |
 
+> **NOTA DATADA (09/08/2026) — o item 2.6 caducou, e caducou em três minutos.**
+> A linha acima diz *"o fato já é emitido pelo daemon; falta a janela mostrar"*.
+> **A janela mostra.** O aviso mora no banner — `app/actions/status_actions.py`,
+> `_coop_badge` criado em `:1173-1181` e escondido/mostrado em `:1662` — com a
+> frase montada por `texto_do_coop_derrubado` (`:255`), e coberto por
+> `tests/unit/test_coop_derrubado_aparece_no_banner.py`.
+>
+> O que dói é o relógio. Este índice entrou em `23c7c94`, **31/07 às 09:43:57**.
+> O banner entrou em `cd5eaf1`, **31/07 às 09:47:19** — **três minutos e vinte e
+> dois segundos depois**. Ninguém voltou aqui para riscar a linha, e ela ficou
+> nove dias na fila dizendo que faltava algo que já estava de pé.
+>
+> **O texto acima não se apaga**: ele é a prova de que um índice envelhece em
+> minutos, e de que a passada de cabeçalhos (a C7 da onda 3, prometida no topo
+> deste arquivo) é dívida real, não capricho.
+>
+> **O que ainda falta nela:** abrir a janela com o co-op montado, deixar um jogo
+> com Steam Input derrubar os jogadores 2/3/4, e ver se o aviso aparece no topo
+> da janela — de qualquer aba — dizendo quantos caíram e que não foi ela.
+
 ---
 
 # ONDA 3 — o que trava esperando decisão dela

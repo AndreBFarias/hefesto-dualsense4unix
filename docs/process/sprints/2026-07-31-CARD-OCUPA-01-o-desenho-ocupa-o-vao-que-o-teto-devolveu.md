@@ -1,6 +1,13 @@
 # CARD-OCUPA-01 — o desenho ocupa o vão que o teto devolveu
 
-- **Status:** ABERTA
+- **Status:** **PARCIAL — as E1, E2 e E3 estão ENTREGUES EM CÓDIGO, AGUARDANDO
+  A PALAVRA DELA; a E4 segue ABERTA, e a E4 É a palavra dela.** Remarcada em
+  09/08/2026: entraram em `cd5eaf1` (31/07/2026). **Rótulo anterior: ABERTA**,
+  preservado aqui. Ver a nota datada no fim
+- **O que falta ela validar, em uma linha:** abrir a aba Estado maximizada e ver
+  se o touchpad, a lightbar, o microfone e o alto-falante **ocuparam os espaços
+  laterais vazios** que ela apontou — é literalmente o pedido dela, palavra por
+  palavra
 - **Prioridade:** MÉDIA — é a aba que ela mais olha, mas nada aqui desfaz
   trabalho dela
 - **Aberta em:** 31/07/2026, 01h34, com a janela maximizada em 1920x1080, o
@@ -193,3 +200,31 @@ guardados junto.
   Se elas repetem os desenhos, a cura daqui não as alcança — a auditoria de
   31/07 está abrindo as duas pela primeira vez, e o resultado dela decide se
   esta sprint ganha uma entrega irmã.
+
+---
+
+## NOTA DATADA — 09/08/2026: três entregas saíram, e a quarta É a palavra dela
+
+**Nada acima foi apagado.** O pedido literal dela, a foto de 31/07 01h34 e as
+quatro entregas continuam inteiros.
+
+**O que está de pé — GRAU: MEDIDO em 09/08/2026 contra a árvore de hoje.**
+
+| entrega | estado | onde está |
+|---|---|---|
+| **E1.** Touchpad e lightbar elásticos | ENTREGUE EM CÓDIGO, aguardando a palavra dela | `src/hefesto_dualsense4unix/app/widgets/controller_card.py:2554` e `:2586`, mais `src/hefesto_dualsense4unix/app/widgets/sensor_widgets.py:253` — esta última cita o pedido dela por extenso |
+| **E2.** Microfone e alto-falante elásticos | ENTREGUE EM CÓDIGO, aguardando a palavra dela | mesmo par de widgets, mesma leva |
+| **E3.** O teste que morde | ENTREGUE EM CÓDIGO | `src/hefesto_dualsense4unix/app/widgets/controller_card.py:3032` — *"CARD-OCUPA-01 exige os dois IGUAIS, e há teste"* |
+
+**Commit:** `cd5eaf1`, 31/07/2026.
+
+### A E4 continua ABERTA — e ela é a única que não podemos fechar sozinhos
+
+**A E4 desta sprint é "A prova de tela".** Ela não é um resto de trabalho: ela
+**é** a validação dela. Enquanto ela não olhar a aba Estado maximizada e disser
+que o vão sumiu, esta sprint não fecha — é a regra da casa, escrita na
+[PROVA-DE-TELA-01](2026-07-27-PROVA-DE-TELA-01-dez-minutos-de-olho-antes-de-qualquer-leva.md)
+e repetida no corpo deste documento: *"o aceite final é o olho dela"*.
+
+Por isso o rótulo desta sprint é o que é: **o código está de pé, e a entrega que
+falta é a palavra dela.**

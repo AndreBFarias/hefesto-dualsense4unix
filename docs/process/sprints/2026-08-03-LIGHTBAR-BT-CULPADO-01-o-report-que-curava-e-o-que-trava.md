@@ -1,7 +1,14 @@
 # LIGHTBAR-BT-CULPADO-01 — o report que "curava" é o que trava
 
-- **Status:** PROPOSTA, escrita em 03/08/2026 **depois da medição no hardware**.
-  Nenhuma linha de código tocada
+- **Status:** **PARCIAL — as E1, E2 e E4 estão ENTREGUES EM CÓDIGO, AGUARDANDO
+  A PALAVRA DELA; a E3 segue ABERTA.** Remarcada em 09/08/2026: o `0x08` saiu
+  do caminho em `108b711` (04/08/2026). **Rótulo anterior: "PROPOSTA, escrita em
+  03/08/2026 depois da medição no hardware. Nenhuma linha de código tocada"**,
+  preservado aqui. Ver a nota datada no fim
+- **O que falta ela validar, em uma linha:** ligar o controle por Bluetooth,
+  trocar de perfil e ver a barra **acender na cor do perfil e continuar
+  obedecendo** — a própria sprint diz que isso se mede pelo olho dela em dez
+  minutos
 - **Prioridade:** **MÁXIMA DA LEVA.** É a regressão que ela descreve como
   *"sempre arrumamos mas sempre volta"*, e a causa-raiz está **provada**
 - **Faixa:** 1 — o produto quebra o que deveria consertar
@@ -201,3 +208,37 @@ com o `0x08`) ou **o sintoma** (fica, invertido).
 - **o `8BitDo` e a renumeração dos externos** — capturados no mesmo journal
   (`external_led_repintado intruso=3` / `intruso=2`, o Pro renumerado duas vezes
   em 24 s), e são de outra sprint.
+
+---
+
+## NOTA DATADA — 09/08/2026: três entregas saíram, e o `PROPOSTA` caducou
+
+**Nada acima foi apagado.** A correlação perfeita em 7 eventos, a refutação da
+LIGHTBAR-BT-CLAIM-01 e as quatro entregas continuam inteiras.
+
+**O que está de pé — GRAU: MEDIDO em 09/08/2026 contra a árvore de hoje.**
+
+| entrega | estado | onde está |
+|---|---|---|
+| **E1** — parar de enviar o `0x08` | ENTREGUE EM CÓDIGO, aguardando a palavra dela | `src/hefesto_dualsense4unix/core/backend_pydualsense.py:1588` — *"O 0x08 SAIU DAQUI, E ELE ERA A..."* |
+| **E2** — o `RESET-02` e o `RESET-03` saem junto | ENTREGUE EM CÓDIGO, aguardando a palavra dela | `src/hefesto_dualsense4unix/core/backend_pydualsense.py:1691` (o `send_release_leds`) |
+| **E4** — o teste que morde | ENTREGUE EM CÓDIGO | `src/hefesto_dualsense4unix/core/backend_pydualsense.py:2162` — a linha registra os 7 de 7 desta sprint |
+
+**Commit:** `108b711`, 04/08/2026.
+
+### O que continua ABERTO nesta sprint — e não foi remarcado
+
+- **E3** — a tela para de afirmar o que não mediu. O `multi_intensity` **não é a
+  verdade do hardware**, e a aba Estado inteira ainda depende dele. É o defeito 3
+  da [BT-E-VPAD-01](2026-08-01-BT-E-VPAD-01-o-que-so-existe-no-cabo-e-os-seis-furos.md),
+  que segue aberto.
+
+### Por que o rótulo não é CURADO E MEDIDO
+
+Porque **a cura ainda não foi medida no rádio dela desde a entrega**. A
+causa-raiz foi provada em 03/08 com o olho dela; a cura entrou em 04/08 e
+**ninguém repetiu a medição depois**. Enquanto a barra não for vista acendendo e
+obedecendo por Bluetooth na mesa dela, o rótulo honesto é este: o código está de
+pé, a palavra é dela. A regressão que abriu esta sprint é justamente a que ela
+descreve como *"sempre arrumamos mas sempre volta"* — declarar cura sem medir de
+novo é exatamente o que produziu essa frase.

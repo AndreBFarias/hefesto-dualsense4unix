@@ -1,7 +1,14 @@
 # SOM-02 — o alto-falante que funciona
 
-- **Status:** PROPOSTA (nada de código nesta rodada — é o documento que decide o
-  desenho antes de mexer no produto)
+- **Status:** **ENTREGUE EM CÓDIGO — AGUARDANDO A PALAVRA DELA**, remarcada em
+  09/08/2026. **A sprint INTEIRA saiu — E1 a E5** —, de `c10adaf` (01/08/2026)
+  a `7a0a655` (09/08/2026). **Rótulo anterior: "PROPOSTA (nada de código nesta
+  rodada)"**, preservado aqui, porque descrevia com exatidão a rodada de
+  abertura. Ver a nota datada no fim
+- **O que falta ela validar, em uma linha:** com o controle no cabo, arrastar o
+  volume do alto-falante no card, ouvir o som **sair pelo controle**, apertar o
+  mudo e ouvir calar — e depois trocar de perfil e ver o volume voltar como ela
+  deixou
 - **Prioridade:** MÉDIA-ALTA — não há defeito aberto, mas há um método de
   protocolo com superfície pela metade e um bloco de tela que só sabe dizer
   "não sei"
@@ -535,3 +542,32 @@ teste de layout sobre ele passa com qualquer desenho.
 - **nada foi validado na tela dela**: esta rodada é documento. As medidas de
   geometria são de `Gtk.OffscreenWindow` e as de áudio são desta máquina hoje,
   mas o aceite é o dela.
+
+---
+
+## NOTA DATADA — 09/08/2026: a sprint INTEIRA saiu, e o `PROPOSTA` caducou
+
+**Nada acima foi apagado.** O desenho, as três armadilhas e as cinco entregas
+continuam inteiros: é por esse material que se entende por que o código de hoje
+é assim, e a armadilha 3 continua citada dentro do próprio código.
+
+**O que está de pé — GRAU: MEDIDO em 09/08/2026 contra a árvore de hoje.**
+
+| entrega | onde está hoje |
+|---|---|
+| **E1.** Controle deslizante de volume no card | `src/hefesto_dualsense4unix/app/widgets/controller_card.py:4040` |
+| **E2.** Botão de mudo do alto-falante | `src/hefesto_dualsense4unix/app/widgets/controller_card.py:3479` |
+| **E3.** Devolução da posse, o irmão do `mic release` | `src/hefesto_dualsense4unix/cli/cmd_speaker.py:3` — a linha cita `SOM-02 (E3)` |
+| **E4.** Persistência por perfil | `src/hefesto_dualsense4unix/profiles/schema.py:360` (a seção `speaker`) e `src/hefesto_dualsense4unix/profiles/manager.py:637` (a aplicação) |
+| **E5.** O que a tela diz quando não há leitura | a curva e o mapeamento em `src/hefesto_dualsense4unix/core/speaker_scale.py:52`, que cita a armadilha 3 desta sprint |
+
+**Commits:** de `c10adaf` (01/08/2026) até `7a0a655` (09/08/2026).
+
+### Por que o rótulo não é ENTREGUE e sim ENTREGUE EM CÓDIGO
+
+Porque **alto-falante é aparelho, e nenhuma suíte de teste ouve**. Esta é a
+sprint em que a diferença entre *entregue no código* e *validado por ela* é mais
+literal: tudo pode estar certo no byte e o som não sair pelo controle. O aceite
+é ela ouvir.
+
+**Nada ficou em aberto nesta sprint além dessa validação.**

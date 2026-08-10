@@ -1,6 +1,17 @@
 # MODO-01 — o modo jogo liga sozinho
 
-- **Status:** ABERTA
+- **Status (09/08/2026):** **ENTREGUE EM CÓDIGO (B1, B2, B3, B5 e os presets) —
+  AGUARDANDO A PALAVRA DELA.** A cura central, o **B3**, entrou em `54f1f3b`
+  (25/07/2026) e foi refinada em `f319c6f` (30/07/2026). **O B4 continua
+  ABERTO** — e não é detalhe: é o gate de foco, e a AUTOMATISMO-MORTO-01 mediu
+  **135** episódios dele **depois** desta sprint. Conferência item a item na
+  [nota datada de 09/08/2026](#nota-datada-09082026--quatro-dos-cinco-elos-estão-de-pé-e-o-quinto-não), no fim
+- **O que falta ela validar, em uma linha:** abrir um jogo sem perfil próprio e
+  ver se o controle entra em modo jogo sozinho, sem ela tocar em nada — e depois
+  fechar o jogo e ver se ele volta
+- **Status anterior:** ABERTA (assim desde 25/07/2026). O rótulo **não se
+  apaga**: sprint marcada como aberta é lida como dependência viva, e esta
+  passou quinze dias assim com quatro dos cinco elos de pé
 - **Prioridade:** ALTA
 - **Aberta em:** 25/07/2026
 
@@ -153,3 +164,40 @@ correto para quem não quer administrar perfil por jogo.
 seis conceitos ao mesmo tempo é como se cria um sétimo. Mas enquanto forem seis,
 toda conversa sobre "o modo não liga" começa por descobrir de qual se fala. O
 mínimo desta sprint é **não criar nomes novos**.
+
+---
+
+## NOTA DATADA (09/08/2026) — quatro dos cinco elos estão de pé, e o quinto não
+
+Conferido no código de hoje, elo a elo. **O texto acima não foi reescrito.**
+
+| elo | veredito | onde está hoje | commit |
+|---|---|---|---|
+| **B1** — o perfil de jogo nasce com modo | **ENTREGUE** | `app/actions/profiles_actions.py:1406` `_prefill_modo_de_jogo`, chamado em `:1182`. Só em perfil NOVO, só quando o modo está em `none`, e a máscara vem do daemon | `54f1f3b` 25/07/2026 |
+| **B2** — o cadeado deixou de congelar mais do que promete | **ENTREGUE** | o predicado novo `perfil_declara_modo_de_jogo` em `profiles/schema.py:828`, usado pelo cadeado em `profiles/autoswitch.py:360-363`. O predicado estrito `perfil_e_regra_de_jogo` (`:755`) **não** foi afrouxado, e há teste que cobra isso | `54f1f3b` 25/07/2026 |
+| **B3** — o modo jogo padrão quando ninguém opina | **ENTREGUE** | `daemon/lifecycle.py:2184` `aplicar_modo_jogo_padrao`, acionado por `profiles/autoswitch.py:469` quando o motivo é `MOTIVO_JOGO_SEM_PERFIL_PROPRIO` (`profiles/manager.py:68`). Fiação em `daemon/subsystems/autoswitch.py:204` e `:263` | `54f1f3b` 25/07, refinado em `f319c6f` 30/07 |
+| **B4** — o gate de foco cega a detecção | **NÃO ENTREGUE** | `integrations/window_backends/xlib.py:273-277` continua devolvendo `None` e logando `x11_focus_gate_no_x_focus`. Nenhum fallback foi acrescentado | — |
+| **B5** — a enxurrada de log | **ENTREGUE** | o `ProfileManager` deixou de nascer a cada tique: `daemon/lifecycle.py:457` guarda a instância, criada uma vez em `:3464-3470`. A deduplicação por instância (`profiles/manager.py:816-818`) passou a valer de verdade | `54f1f3b` 25/07/2026 |
+| *(extra)* — presets de jogo nascem com `mode` | **ENTREGUE** | `profiles/loader.py:382` `_PRESETS_DE_JOGO`; sete dos treze presets têm seção `mode` hoje | `54f1f3b` 25/07/2026 |
+
+Os testes vivem em `tests/unit/test_modo01_o_modo_jogo_liga_sozinho.py` — o B3
+sozinho tem 24 casos, distribuídos em `:243`, `:386` e `:515`.
+
+### Por que o B4 sobreviveu, e por que isso importa
+
+O B4 é o elo que a leitura de código não fecha. A
+[AUTOMATISMO-MORTO-01](2026-07-30-AUTOMATISMO-MORTO-01-o-perfil-do-jogo-nunca-entra.md)
+mediu **135** episódios de `x11_focus_gate_no_x_focus` em 30/07 — **cinco dias
+depois** desta sprint. Ou seja: os elos B1, B2, B3 e B5 estão de pé, e o
+automatismo **ainda pode não acontecer na máquina dela**, porque o elo que
+detecta a janela desiste antes.
+
+**É por isso que esta sprint não vira ENTREGUE inteira, e é por isso que a
+validação dela não é formalidade.** O que o código prova é que cada peça existe
+e tem chamador. O que só o aparelho dela prova é se a corrente inteira puxa.
+
+### O grau, como manda a casa
+
+**MEDIDO** para B1, B2, B3, B5 e os presets — há símbolo, chamador e teste que
+morde. **SEM PROVA** para o efeito ponta a ponta na máquina dela: ninguém abriu
+um jogo e viu o `profile_mode_aplicado origin=game_signal` no journal dela.
