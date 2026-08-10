@@ -5,6 +5,20 @@
 - **O que é:** a caixinha *"Deixar a Steam entregar o controle neste jogo"* passa
   a curar o duplicado **sem desligar o Hefesto** — e para de derrubar o
   jogador 2
+- **Estado (09/08/2026, fim do dia):** **ENTREGUE EM CÓDIGO — AGUARDANDO A PALAVRA
+  DELA E MENOS O APARELHO.** O desenho da seção 3 e os textos da seção 4
+  entraram em `7a0a655` (09/08/2026): `esconder_o_fisico_para_o_jogo` em
+  `daemon/subsystems/gamepad.py:339`, chamada na borda da exceção em `:312`, com
+  os vpads do co-op de pé (`:832` e `:841`) e a caixinha rebatizada em
+  `gui/main.glade:2101`. Conferência na
+  [nota datada no fim](#nota-datada-09082026--o-que-entrou-hoje-e-o-que-so-a-mesa-dela-fecha)
+- **O que falta ela validar, em uma linha:** é a seção 6 deste documento, e ela
+  não mudou — **abrir o jogo marcado com dois controles e contar quantos o jogo
+  lista e quantos jogadores entram**; o alvo é um controle por pessoa, dois
+  jogadores
+- **E falta a palavra dela sobre o texto novo da caixinha** — *"Esconder o
+  controle físico neste jogo"* está escrito no código, mas quem decide o texto é
+  ela (PROVA-DE-TELA-01)
 
 ---
 
@@ -100,3 +114,41 @@ descreve o **efeito**, que é o léxico desta casa.
 A prova é dela, com o aparelho: **abrir o jogo marcado com dois controles e
 contar quantos o jogo lista, e quantos jogadores entram.** O alvo é *um controle
 por pessoa, dois jogadores* — hoje é *um controle, um jogador*.
+
+---
+
+## NOTA DATADA (09/08/2026) — o que entrou hoje, e o que só a mesa dela fecha
+
+Conferido no código de hoje. **O texto acima não foi reescrito** — ele é o
+desenho como ela o decidiu, e continua sendo o contrato.
+
+**Tudo o que esta sprint desenhou está commitado em `7a0a655` (09/08/2026).**
+Não sobrou nada na árvore suja.
+
+| o que a sprint pediu | onde está hoje |
+|---|---|
+| esconder o físico em vez de sair da frente | `daemon/subsystems/gamepad.py:339` `esconder_o_fisico_para_o_jogo`, chamada na borda da exceção em `:312` |
+| **não** suspender os vpads | `daemon/subsystems/gamepad.py:832` e `:841`: `suspend_vpads_for_steam_input` deixou de ser chamada na borda de entrada |
+| **não** soltar o grab do físico | mesma borda, `:312` — o `gamepad_controller_grab grab=False` saiu do caminho |
+| a caixinha muda de nome e de promessa | `gui/main.glade:2101` — o rótulo passou a descrever o efeito, não a implementação |
+| os dois appids medidos ficam | `2111190` e `3357650` intocados |
+
+A inversão é a que a seção 3 previu: o mecanismo `hide`/`restore` do broker
+(`broker/hidraw_broker.py:416-446`) passou a ser chamado **na direção
+contrária**. Nenhum mecanismo novo foi escrito, exatamente como a sprint disse
+que seria.
+
+### Por que isto NÃO é "entregue" no sentido pleno
+
+Duas coisas seguram, e as duas são dela:
+
+1. **O aparelho.** A prova desta sprint é contar controles na tela de um jogo de
+   verdade. Nenhum teste desta casa consegue contar quantos controles um jogo
+   lista. É a seção 6, e ela continua aberta.
+2. **A tela.** O texto novo da caixinha é uma **direção** proposta, e o próprio
+   documento escreveu isso: *"a palavra final é dela — PROVA-DE-TELA-01"*.
+
+### O grau, como manda a casa
+
+**MEDIDO** para o código: há símbolo, chamador e commit. **SEM PROVA** para o
+efeito — ninguém abriu o jogo marcado com dois controles depois da cura.

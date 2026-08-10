@@ -1,6 +1,13 @@
 # UI-SELETOR-01 — Os chips do topo aparecem fora de ordem
 
-**Status:** ABERTA
+**Status:** **ENTREGUE EM CÓDIGO — AGUARDANDO A PALAVRA DELA**, remarcada em
+09/08/2026, e **absorvida pela
+[PLAYER-01](2026-07-25-PLAYER-01-um-numero-de-jogador.md)**: a ordem dos chips
+passou a ser a do número exibido em `14cd31b` (25/07/2026). **Rótulo anterior:
+ABERTA**, preservado aqui. Ver a nota datada no fim.
+**O que falta ela validar, em uma linha:** ligar quatro controles em qualquer
+ordem e ver os chips do topo saírem 1, 2, 3, 4 — e cada chip selecionar o
+controle certo.
 **Prioridade:** média — não quebra nada, mas confunde justamente quem tem vários
 controles, que é o público do co-op.
 
@@ -57,3 +64,32 @@ não é, os dois divergem sempre que alguém liga os controles fora de ordem —
 
 Com quatro controles ligados em qualquer ordem, os chips aparecem 1, 2, 3, 4 —
 e clicar em cada um seleciona o controle certo.
+
+---
+
+## NOTA DATADA — 09/08/2026: absorvida pela PLAYER-01, e o `ABERTA` caducou
+
+**Nada acima foi apagado.** O sintoma medido com quatro controles é o que
+justificou o conserto, e é por ele que se entende a ordenação de hoje.
+
+**O que está de pé — GRAU: MEDIDO em 09/08/2026 contra a árvore de hoje.** Esta
+sprint não ganhou código próprio: ela foi **absorvida** pela
+[PLAYER-01](2026-07-25-PLAYER-01-um-numero-de-jogador.md), que resolveu o
+número e, com ele, a ordem.
+
+| o que a sprint pedia | onde está hoje |
+|---|---|
+| os conectados saem na ordem do número exibido | `src/hefesto_dualsense4unix/app/actions/status_actions.py:1012` |
+| e a ordem das linhas passa a ser a mesma | `src/hefesto_dualsense4unix/app/actions/status_actions.py:1055` |
+
+As duas linhas citam `UI-SELETOR-01` por nome — a absorção está escrita no
+próprio código, não só aqui.
+
+**Commit:** `14cd31b`, 25/07/2026.
+
+### Por que o rótulo não é ENTREGUE e sim ENTREGUE EM CÓDIGO
+
+Porque o critério de conclusão desta sprint, escrito logo acima, **exige quatro
+controles ligados** — e ninguém rodou isso na mesa dela desde a entrega.
+
+**Nada ficou em aberto nesta sprint além dessa validação.**

@@ -5,6 +5,25 @@
   e o registro de **quatro hipóteses minhas derrubadas por medição** — três delas
   derrubadas por ela
 - **Grau:** tudo abaixo é **MEDIDO** salvo onde diz o contrário
+- **Estado da fila (09/08/2026, fim do dia):** **PARCIALMENTE PAGA.** Seis itens
+  da fila — **F-1, F-3, F-4, F-8, F-9 e F-10** — entraram em `7a0a655`
+  (09/08/2026) e estão **ENTREGUES EM CÓDIGO, AGUARDANDO A PALAVRA DELA**.
+  **F-2, F-5, F-6, F-7 e F-11 continuam ABERTOS** — dois deles com a prova da
+  ausência registrada na
+  [nota datada no fim](#nota-datada-09082026--o-que-a-fila-pagou-hoje-e-o-que-não). A fila
+  abaixo **não foi reescrita**: ela é o texto de origem
+- **RECONTAGEM (09/08/2026, fim do dia) — a linha acima está desatualizada em
+  três pontos, e a de baixo é a que vale.** **ENTREGUES EM CÓDIGO, aguardando a
+  palavra dela:** F-1, F-4, **F-5**, **F-6(b)**, **F-6(c)**, F-8.
+  **PARCIAIS:** F-3, F-7, F-9, F-10. **ABERTOS:** F-2, **F-6(a)**, F-11. O
+  F-5 estava entregue e a busca anterior não o achou — a cura se chama
+  `controles_sem_driver` e mora em `app/actions/status_actions.py`, não nos dois
+  arquivos que o `grep` varreu. A prova de cada item está na
+  [segunda nota datada, no fim](#nota-datada-09082026-fim-do-dia--a-recontagem-e-três-correções-à-nota-acima)
+- **O que falta ela validar, em uma linha:** ligar dois controles pelo rádio ao
+  mesmo tempo e ver se os dois sobem; e mexer no touchpad e no giroscópio depois
+  de uma instalação limpa, **sem `sudo`**, para ver se pararam de funcionar por
+  acidente
 
 ---
 
@@ -189,3 +208,132 @@ o experimento do 0x08 com o restart que era necessário para o instrumento
 existir.** A barra voltou no restart, dois minutos antes do gesto que eu queria
 medir. A lição virou desenho: o instrumento seguinte (`player-leds`) é
 **comutável ao vivo**, justamente para não exigir restart.
+
+---
+
+## NOTA DATADA (09/08/2026) — o que a fila pagou hoje, e o que não
+
+Conferido no código do fim do dia, item a item. **A fila acima não foi
+reescrita.** Tudo o que entrou está em `7a0a655` (09/08/2026), commitado — não
+sobrou nada em árvore suja.
+
+### Os seis que a noite pagou
+
+| item | onde está hoje |
+|---|---|
+| **F-1** o backoff que cavalgava o timeout do BlueZ | `assets/dkms/hid-playstation/hid-playstation.c:909` e `:935` — o comentário mede o preço antigo (falha em ~10 s em vez de ~3,3 s) e declara o backoff novo contra o `REPORT_REQ_TIMEOUT` de 3 s do BlueZ |
+| **F-3** o `WatchdogSec=0` em vigor, com portão que meça | `assets/systemd/bluetooth-dropin-10-hefesto-resilience.conf:9-11` e o portão que morde em `tests/unit/test_bt_resilience_assets.py:119` — que exige `^WatchdogSec=0$` exato. O teste antigo aceitava `WatchdogSec=\d+`, **qualquer número**, e por isso ficou verde enquanto o watchdog matava o rádio dela (`:111`) |
+| **F-4** detector de probe morto do `hid-playstation` | `scripts/doctor.sh:332`, com o porquê em `:14`; teste em `tests/unit/test_doctor_hid_playstation_probe.py` |
+| **F-8** o touchpad e o giroscópio funcionavam por acidente | `assets/72-hefesto-touchpad-motion-uaccess.rules` — arquivo **novo**. O `:29` registra a causa: o kernel classifica o nó de movimento como `ID_INPUT_ACCELEROMETER`, e a `70-uaccess.rules` do sistema só cobre `ID_INPUT_JOYSTICK` |
+| **F-9** regra-cola empacotada sem quem a instale | `scripts/install_udev.sh:58` e `:113`, e `scripts/install-host-udev.sh:194` — os **dois** caminhos de instalação passaram a instalar a regra nova |
+| **F-10** o portão de paridade, cego ao que mais regride | `scripts/check_packaging_parity.sh:386` — passou a reprovar quando nenhuma regra dá `uaccess` ao nó dos sensores de movimento, e `:383` cobra a renumeração para antes da `73-seat-late.rules` |
+
+### Os cinco que continuam abertos — e dois com prova da ausência
+
+- **F-5 — "visto no rádio, não adotado": NÃO ENTREGUE, medido por ausência.**
+  `grep` por `adotado`, `nao_adotado` e `visto_no_radio` em
+  `daemon/ipc_handlers.py` e `app/actions/home_actions.py` devolve **zero**. A
+  noção de controle não-adotado continua não existindo no produto, e a aba
+  Início continua podendo escrever *"Nenhum controle conectado"* para um
+  controle ligado e pareado.
+- **F-7 — o `install.sh` que desiste: NÃO ENTREGUE.** O `exit 0` do formato
+  não-`native` continua em `install.sh:941`, com os cinco passos antes dele. O
+  aviso de `:935-938` foi reescrito e hoje lista o que pula com mais honestidade,
+  mas **os doze passos de cura continuam de fora**.
+- **F-2, F-6 e F-11 — NÃO CONFERIDOS.** Não achei evidência suficiente para
+  afirmar nem para negar, e por isso **não foram remarcados**. Ficam na fila.
+
+### O grau, como manda a casa
+
+**MEDIDO** para os seis pagos — há símbolo, arquivo e portão que morde.
+**MEDIDO por ausência** para F-5 e F-7. **SEM PROVA** para F-2, F-6 e F-11.
+
+E **SEM PROVA** para o efeito de todos eles na máquina dela: nada aqui foi visto
+com o aparelho na mão. É o que a linha de validação do cabeçalho pede.
+
+---
+
+## NOTA DATADA (09/08/2026, fim do dia) — a recontagem, e três correções à nota acima
+
+**Nada acima foi apagado.** A nota anterior é honesta e a maior parte dela se
+confirma. O que muda são **três itens**, e o motivo importa mais que a
+correção: em dois deles **o instrumento errou, não o produto** — a busca
+procurou a palavra errada, no arquivo errado.
+
+### Correção 1 — o F-5 ESTÁ entregue; a busca é que não o achou
+
+A nota acima declarou o F-5 *"NÃO ENTREGUE, medido por ausência"*, com `grep`
+por `adotado`, `nao_adotado` e `visto_no_radio` em `daemon/ipc_handlers.py` e
+`app/actions/home_actions.py`. **A cura existe e está ligada de ponta a ponta —
+só que com outro nome e em outro arquivo:**
+
+| ponta | onde |
+|---|---|
+| o daemon publica o bloco | `src/hefesto_dualsense4unix/daemon/ipc_handlers.py:1924` (`result["controles_sem_driver"]`) e `:2819` (`_controles_sem_driver_payload`) |
+| a janela lê o bloco | `src/hefesto_dualsense4unix/app/actions/status_actions.py:221` |
+| a função pura do texto | `src/hefesto_dualsense4unix/app/actions/status_actions.py:188` (`texto_de_controle_nao_adotado`) |
+| o banner que pinta | `src/hefesto_dualsense4unix/app/actions/status_actions.py:2375` (monta) e `:2418` (atualiza), chamado em `:470` e `:2249` |
+
+O nome no código é **`controles_sem_driver`**, e a superfície é a aba **Estado**,
+não a Início. A docstring de `:188` cita `CONTROLE-QUE-NAO-ENTROU-01
+(09/08/2026)` e descreve a mesma medição da seção 3 deste documento: dois
+DualSense ligados e pareados, a janela mostrando um.
+
+**Esta é a armadilha da casa, na forma mais pura:** *o instrumento mente mais
+que o produto*. Um `grep` por três palavras que a cura não usou produziu uma
+"prova de ausência" convincente e falsa. A régua correta é a que segue o dado do
+daemon até a tela — e foi ela que achou.
+
+**F-5: ENTREGUE EM CÓDIGO — AGUARDANDO A PALAVRA DELA.**
+
+### Correção 2 — o F-6 sai de "NÃO CONFERIDO": duas partes pagas, uma aberta
+
+| parte | estado | onde |
+|---|---|---|
+| **F-6(a)** a aba Estado afirma "Conectado · USB · 85%" com a mesa vazia | **ABERTO** | `src/hefesto_dualsense4unix/daemon/ipc_handlers.py:2756` diz, no próprio código, que a `ESTADO-QUE-MENTE-01` *"segue aberta neste mesmo payload"* |
+| **F-6(b)** o toast *"Cor aplicada no controle"* | ENTREGUE EM CÓDIGO | `src/hefesto_dualsense4unix/app/actions/lightbar_actions.py:54` — hoje é `"Cor enviada ao controle ({pct}% de brilho)"`, e `:29` registra por que a palavra mudou |
+| **F-6(c)** `rumble_ff.plays` mudo justo no zero | ENTREGUE EM CÓDIGO | `src/hefesto_dualsense4unix/app/actions/rumble_actions.py:89-132` — a linha passou a falar no zero, com os seis casos escritos |
+
+### Correção 3 — F-3, F-9 e F-10 pagaram uma PARTE do que o item pedia
+
+Não é erro da nota acima: o que entrou entrou mesmo, e está bem citado. É
+**escopo**. Relido contra o texto de origem da fila (seção 4), sobra pedaço em
+cada um:
+
+- **F-3.** A fila pedia duas coisas: o `WatchdogSec=0` **em vigor** (pago: o
+  drop-in mais o portão que exige `^WatchdogSec=0$` exato) **e** que o
+  diagnóstico soubesse distinguir *"cura no disco"* de *"cura em vigor"*. Esta
+  segunda metade **continua aberta**: `grep` por `WatchdogUSec` em
+  `scripts/doctor.sh` devolve **zero** — o único lugar do repositório que lê o
+  valor efetivo é `scripts/retrato_do_estado.sh:83`, que é **instrumento**, não
+  portão. Máquina curada e máquina que vai morrer continuam imprimindo o mesmo
+  veredito no doutor.
+- **F-9.** A cura cobriu a **regra nova** (a `72-...-uaccess`, instalada pelos
+  dois caminhos). O item de origem, porém, fala das regras **82 e 83**:
+  `assets/82-nintendo-pro-nosniff.rules:23-24` continua chamando
+  `/usr/local/lib/hefesto-dualsense4unix/bt_nosniff_now.sh`, e esse script só é
+  instalado pelo caminho **nativo** (`install.sh:1507`). As duas regras seguem
+  viajando no `spec`, no `PKGBUILD` e no `package.nix` — quem instalar por
+  pacote continua com a regra de pé e o alvo ausente.
+- **F-10.** O portão ganhou uma seção nova e boa
+  (`scripts/check_packaging_parity.sh:351`, o acesso da sessão aos nós de
+  entrada), que é o portão do **F-8**. A lista do F-10 continua descoberta:
+  units/timers/scripts de Bluetooth, os drop-ins de WirePlumber, o
+  `hefesto-launch`, o `storm_watch.sh`, as dependências de tempo de execução
+  (`bluez-tools`, `libopus0`), o **alvo** de uma regra-cola, e a assimetria
+  inversa. As quinze seções do portão hoje estão listadas nos `echo "== ..."`
+  do próprio arquivo, e nenhuma cobre esses pontos.
+
+### A fila, recontada em 09/08 à noite
+
+- **ENTREGUES EM CÓDIGO, aguardando a palavra dela:** F-1, F-4, **F-5**,
+  **F-6(b)**, **F-6(c)**, F-8.
+- **PARCIAIS:** F-3 (falta o doutor ler o valor em vigor), F-7 (o aviso ficou
+  honesto, o `exit 0` de `install.sh:941` continua), F-9 (a regra nova está
+  coberta; as 82 e 83 não), F-10 (ganhou o portão do F-8; a lista do F-10
+  continua).
+- **ABERTOS:** F-2, **F-6(a)**, F-11.
+
+**Grau:** MEDIDO, por leitura de `caminho:linha` na árvore de trabalho de
+09/08/2026 à noite — que é o que roda. **SEM PROVA**, como a nota acima já dizia,
+para o efeito de qualquer um deles na máquina dela.

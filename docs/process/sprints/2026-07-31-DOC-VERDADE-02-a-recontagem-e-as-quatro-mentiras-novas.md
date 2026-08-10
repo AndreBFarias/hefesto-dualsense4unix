@@ -1,7 +1,13 @@
 # DOC-VERDADE-02 — a recontagem de 31/07 e as mentiras novas
 
-- **Status:** ABERTA — plano com aceite executável. Nesta rodada **nenhum arquivo
-  do repositório foi alterado**: o documento é só leitura e medição
+- **Status:** **PARCIAL — a E10 está ENTREGUE EM CÓDIGO (é portão, e portão se
+  valida sozinho); as E1 a E9 seguem ABERTAS.** Remarcada em 09/08/2026: o gate
+  ganhou as regras que faltavam em `c10adaf` (01/08/2026). **Rótulo anterior:
+  "ABERTA — plano com aceite executável. Nesta rodada nenhum arquivo do
+  repositório foi alterado"**, preservado aqui. Ver a nota datada no fim
+- **O que falta ela validar, em uma linha:** nada, nesta entrega — a E10 é um
+  portão de documentação, e quem o valida é o CI, não ela. As nove entregas que
+  faltam é que ainda pedem trabalho
 - **Prioridade:** MÉDIA-ALTA — não impede jogar, mas duas das entregas abaixo são
   receitas que **quebram na primeira colagem** (o exemplo de perfil e as duas
   vias de ligar plugins), e isso já não é dívida de documento: é defeito de uso
@@ -722,3 +728,35 @@ na janela abertos — as entregas são texto, gate e teste.
   escolha é de produto: um projeto de uma mantenedora brasileira pode
   legitimamente decidir que a janela é em português e que o convite do
   CONTRIBUTING é que está errado.
+
+---
+
+## NOTA DATADA — 09/08/2026: a E10 saiu, e as outras nove continuam devendo
+
+**Nada acima foi apagado.** A recontagem item a item e as dez entregas
+continuam inteiras — inclusive as nove que **ainda devem**.
+
+**O que está de pé — GRAU: MEDIDO em 09/08/2026 contra a árvore de hoje.**
+
+| entrega | estado | onde está |
+|---|---|---|
+| **E10.** O gate que deixou tudo isso passar — e a extensão exata que faltava | ENTREGUE EM CÓDIGO | `scripts/validar-referencias-docs.py:59` (regra 2, variável de ambiente), `:68` (regra 3, método de IPC) e `:582` (o README entra na varredura) — as três citam `DOC-VERDADE-02, entrega E10` por nome |
+
+**Commit:** `c10adaf`, 01/08/2026.
+
+### Por que a E10 é ENTREGUE EM CÓDIGO e não pede a palavra dela
+
+Porque é **portão**: ele reprova ou não reprova, e quem o valida é o CI. Nenhuma
+tela dela muda por causa desta entrega.
+
+### O que continua ABERTO nesta sprint — e não foi remarcado
+
+**As nove primeiras.** E1 (o exemplo de perfil que o daemon recusa), E2 (as duas
+vias de ligar plugins), E3 (as três grafias do socket), E4 (a porta UDP), E5 (a
+tabela de métodos do IPC), E6 (o i18n anunciado em três documentos), E7 (o
+`DaemonConfig` de três parâmetros), E8 (o replay que não existe) e E9 (as três
+notas baratas).
+
+**Isto importa:** duas dessas entregas são receitas que **quebram na primeira
+colagem**, como o cabeçalho já dizia. O portão da E10 impede mentiras **novas**;
+ele não apaga as que já estão escritas.

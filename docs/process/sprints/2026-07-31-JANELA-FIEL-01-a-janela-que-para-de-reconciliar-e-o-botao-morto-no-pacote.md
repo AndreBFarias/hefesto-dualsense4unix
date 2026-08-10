@@ -1,7 +1,14 @@
 # JANELA-FIEL-01 — a janela que para de reconciliar, e o botão morto no pacote
 
-- **Status:** ABERTA — documento de medição e plano. **Nenhuma linha de código,
-  de teste ou de configuração foi tocada nesta rodada**
+- **Status:** **PARCIAL — as E1 a E4 estão ENTREGUES EM CÓDIGO, AGUARDANDO A
+  PALAVRA DELA; a E5 (TUI) e a E6 (bandeja) seguem ABERTAS.** Remarcada em
+  09/08/2026: entraram em `cd5eaf1` (31/07/2026). **Rótulo anterior: "ABERTA —
+  documento de medição e plano. Nenhuma linha de código, de teste ou de
+  configuração foi tocada nesta rodada"**, preservado aqui, porque descrevia com
+  exatidão a rodada de abertura. Ver a nota datada no fim
+- **O que falta ela validar, em uma linha:** deixar a janela aberta por uns
+  minutos com um perfil ativo e ver se ela **não troca sozinha** o que está na
+  tela — e clicar em "Restaurar Padrão" para ver se ele acha o arquivo
 - **Prioridade:** **ALTA** nas entregas E1 e E4 — as duas mexem no perfil dela
   sem perguntar e sem avisar. MÉDIA na E2, E3 e E5. BAIXA na E6
 - **Aberta em:** 31/07/2026, a partir da auditoria de nove áreas rodada contra o
@@ -718,3 +725,34 @@ e ela é explicitamente exigida aqui.
 - **Se o número 15 é o certo.** A prioridade que o rodapé calcula ao salvar
   (`max(catch-all) + 10`) dá 15 com o disco dela de hoje. Que 15 seja o número
   certo é decisão da PERFIL-NASCE-CERTO-01 e não foi reavaliada aqui — só medida.
+
+---
+
+## NOTA DATADA — 09/08/2026: quatro entregas saíram, e o "nada tocado" caducou
+
+**Nada acima foi apagado.** A auditoria de nove áreas, o diagnóstico do reload
+que não volta e as seis entregas continuam inteiros — inclusive as duas que
+**ainda devem**.
+
+**O que está de pé — GRAU: MEDIDO em 09/08/2026 contra a árvore de hoje.**
+
+| entrega | estado | onde está |
+|---|---|---|
+| **E1.** O reload que não volta trava a janela no perfil anterior | ENTREGUE EM CÓDIGO, aguardando a palavra dela | `src/hefesto_dualsense4unix/app/app.py:60` (o prazo do latch), `:101`, `:292` e `:852` — as quatro linhas citam `JANELA-FIEL-01/E1` por nome |
+| **E2.** Os dois relógios mais rápidos apontam para a aba pelo número | ENTREGUE EM CÓDIGO, aguardando a palavra dela | mesma leva |
+| **E3.** "Restaurar Padrão" só acha o arquivo na máquina de quem programou | ENTREGUE EM CÓDIGO, aguardando a palavra dela | `src/hefesto_dualsense4unix/app/actions/footer_actions.py:54` — o caminho deixou de ser `ROOT_DIR / "assets" / ...` |
+| **E4.** "Navegacao" sem acento come a "Navegação" dela sem perguntar | ENTREGUE EM CÓDIGO, aguardando a palavra dela | mesma leva |
+
+**Commit:** `cd5eaf1`, 31/07/2026.
+
+### O que continua ABERTO nesta sprint — e não foi remarcado
+
+- **E5.** A TUI desenha gatilho zerado e analógico centrado como se estivesse
+  medindo.
+- **E6.** Os relógios continuam correndo com a janela guardada na bandeja.
+
+### Por que o rótulo não é ENTREGUE e sim ENTREGUE EM CÓDIGO
+
+Porque a E1 e a E4 **mexem no perfil dela**, e a prova de que pararam de mexer
+não é um teste verde: é a janela dela aberta, com os perfis dela, sem trocar
+sozinha o que está na tela. Só ela pode dizer que parou.

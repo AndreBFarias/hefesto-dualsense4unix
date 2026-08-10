@@ -13,6 +13,18 @@
   que mordem e foto. As quatro decisões que faltavam estão na **§9**, e o
   **passo 6** (a pendência gravada em disco, §10) é a única coisa deste plano
   que continua aberta. Falta o aceite dela na tela (PROVA-DE-TELA-01)
+- **Estado (09/08/2026), remarcado com o vocabulário da casa:** **PARCIAL — os
+  passos 1 a 5 estão ENTREGUES EM CÓDIGO, AGUARDANDO A PALAVRA DELA; o passo 6
+  segue ABERTO.** Reconferido hoje contra a árvore: o diálogo já oferece a
+  escolha `na_proxima_abertura`
+  (`src/hefesto_dualsense4unix/app/actions/relancar.py:111` e `:250`,
+  `app/actions/base.py:189`), mas **a pendência não é gravada em disco e nada
+  consome o `game_signal_transition` para aplicá-la** — as três peças da §10
+  continuam não existindo. Commits da leva: `1c75a1a`, `10f013a` (08/08) e
+  `47a6275` (09/08)
+- **O que falta ela validar, em uma linha:** com o jogo aberto, trocar o modo ou
+  a máscara e ver a janela **perguntar** em vez de aplicar por baixo — e o
+  "Aplicar" aplicar as duas coisas de uma vez quando ela mandar
 
 > **ANTES DE COMEÇAR, LEIA A SEÇÃO 6.** Ela tem oito fatos medidos que, se você
 > não souber, farão você escrever uma cura que já foi escrita e revertida hoje.

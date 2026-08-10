@@ -1,6 +1,19 @@
 # WRAPPER-EM-TODOS-01 — a invariante "duplicado > zero" com quatro controles
 
-- **Status:** PROPOSTA, escrita em 03/08/2026. Nenhuma linha de código tocada
+- **Status (09/08/2026):** **PARCIAL — E1, E2 e E4 ENTREGUES EM CÓDIGO, AGUARDANDO A
+  PALAVRA DELA; a E3 continua ABERTA.** A invariante passou a exigir
+  **cobertura**: `daemon/launch_env.py:900` `cobertura_total`, com o parâmetro
+  `fisicos` em `:846` e a omissão registrada em `:915`. Entregue por `108b711`
+  (04/08/2026) — **o mesmo commit que tocou esta sprint por último**.
+  Conferência na [nota datada no fim](#nota-datada-09082026--a-frase-nenhuma-linha-de-código-tocada-deixou-de-ser-verdade)
+- **O que falta ela validar, em uma linha:** plugar os quatro controles, abrir um
+  jogo pela Steam, e ver se cada pessoa move o próprio personagem — a invariante
+  desta sprint é *"duplicado é melhor que zero com quatro"*, e só a mesa dela
+  diz se o preço valeu
+- **Status anterior:** *"PROPOSTA, escrita em 03/08/2026. Nenhuma linha de código
+  tocada"*. **A frase não se apaga** — ela é o assunto da nota datada: no dia
+  seguinte à escrita, o código foi tocado, e o cabeçalho continuou negando isso
+  por cinco dias
 - **Prioridade:** **ALTA, e urgente por um motivo de janela:** o passo que abre
   este risco **está na árvore de trabalho dela agora, não commitado**. É mais
   barato resolver antes do commit do que depois
@@ -194,3 +207,35 @@ cobre o outro.
   o `11b-bis` presente, os jogos já estão com o wrapper. `python3
   src/hefesto_dualsense4unix/integrations/steam_launch_options.py --status`
   responde, e não escreve nada.
+
+---
+
+## NOTA DATADA (09/08/2026) — a frase "nenhuma linha de código tocada" deixou de ser verdade
+
+Conferido no código de hoje. **O texto acima não foi reescrito.**
+
+O cabeçalho afirmava, até hoje, *"Nenhuma linha de código tocada"*. O
+`git log -S'_fisicos_na_mesa'` devolve `108b711` (**04/08/2026**) — **o dia
+seguinte**. E o mesmo `108b711` é o último commit a tocar este próprio arquivo.
+A sprint e a entrega das suas E1/E2/E4 caminharam juntas, e só o cabeçalho não
+foi avisado.
+
+| entrega | veredito | onde está hoje |
+|---|---|---|
+| **E1** — a env exige COBERTURA, não tipo | **ENTREGUE** | `daemon/launch_env.py:900` `cobertura_total = fisicos <= 0 or len(backends) >= fisicos`, consultado nos dois ramos (`:906` e `:910`). O `fisicos` entrou na assinatura em `:846`, e a omissão é registrada em `:915` (`launch_env_ignore_omitido_sem_cobertura`) |
+| **E2** — o pendente conta como ausente | **ENTREGUE** | `_snapshot` passou a devolver cinco valores, com `_fisicos_na_mesa(daemon)` (`:930`) no fim (`:985`); consumido em `:1175`. O porquê está escrito em `:961-964` |
+| **E3** — o install avisa antes de fechar a Steam | **ABERTA** | `grep` por *"fechar a Steam"* em `install.sh` devolve **zero**. O passo `11b-bis` continua rodando `--apply --stop-steam` sem aviso prévio |
+| **E4** — a bancada que faltou | **ENTREGUE** | `tests/unit/test_wrapper_em_todos_cobertura.py` — arquivo dedicado a esta sprint, cobrindo os casos de cobertura parcial |
+
+**A ressalva de método, e ela é minha:** a primeira redação desta nota citou um
+símbolo — `garantir_hefesto_launch_em_todos` — que **não existe** neste
+repositório. Foi corrigido antes de fechar, conferindo o `grep`. Fica escrito
+porque é exatamente o erro contra o qual esta passada existe: remarcar por
+dedução é como a fila se corrompe.
+
+### O grau, como manda a casa
+
+**MEDIDO** para a E1 — símbolo, chamador, commit e data. **SEM PROVA** para o
+efeito: a invariante desta sprint só se prova com **quatro controles numa
+partida de verdade**, e ninguém mediu isso. Enquanto isso não acontecer, esta
+sprint é *escrita e parcialmente construída*, não *provada*.

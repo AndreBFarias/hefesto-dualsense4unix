@@ -1,6 +1,16 @@
 # CONTAGEM-E-COOP-01 — o aviso antes de derrubar três jogadores
 
-- **Status:** ABERTA — documento de medição e plano. Nada de código nesta rodada
+- **Status (09/08/2026):** **E1 e E2 ENTREGUES EM CÓDIGO — AGUARDANDO A PALAVRA
+  DELA.** As duas entraram em `cd5eaf1` (31/07/2026), **três minutos e vinte e
+  dois segundos** depois do índice que as agendava como pendentes. **A E3
+  continua ABERTA.** Conferência na
+  [nota datada no fim](#nota-datada-09082026--o-aviso-existe-desde-o-dia-em-que-esta-sprint-foi-agendada)
+- **O que falta ela validar, em uma linha:** montar o co-op, abrir um jogo com o
+  Steam Input marcado, e ver se o aviso aparece no topo da janela — de qualquer
+  aba — dizendo **quantos** jogadores caíram e que **não foi ela**
+- **Status anterior:** *"ABERTA — documento de medição e plano. Nada de código
+  nesta rodada"*. **Não se apaga**: era verdade quando foi escrito, e deixou de
+  ser no mesmo dia
 - **Prioridade:** MÉDIA-ALTA — não custa nada enquanto ela joga com um controle,
   e custa a noite inteira quando os quatro estão na mesa. A medição do journal
   mais abaixo mostra por que ela subiu de "MÉDIA" para cá: o caminho que derruba
@@ -674,3 +684,36 @@ De olho, sem terminal. Duas rodadas, porque o defeito tem dois tamanhos.
 - **O caminho de pacote.** Toda a medição é da árvore de trabalho em
   `restauro/inicio-da-sessao`, HEAD `7bd0cb7`. A cópia instalada em
   `~/.local/share/hefesto-dualsense4unix/` não foi conferida linha a linha.
+
+---
+
+## NOTA DATADA (09/08/2026) — o aviso existe desde o dia em que esta sprint foi agendada
+
+Conferido no código de hoje. **O texto acima não foi reescrito.**
+
+O relógio é o achado. O
+[índice das ondas de 31/07](2026-07-31-INDICE-as-ondas-depois-da-auditoria.md)
+entrou em `23c7c94` às **09:43:57** e agendou o item 2.6 como *"o fato já é
+emitido pelo daemon; falta a janela mostrar"*. O banner entrou em `cd5eaf1` às
+**09:47:19** — **três minutos e vinte e dois segundos depois**. A sprint e o
+índice passaram nove dias dizendo que faltava o que já estava de pé.
+
+| entrega | veredito | onde está hoje | commit |
+|---|---|---|---|
+| **E1** — o aviso na janela, com o preço em palavras | **ENTREGUE** | `app/actions/status_actions.py:257` `texto_do_coop_derrubado`; o rótulo nasce em `:1173-1182` (`_coop_badge`, no banner, visível de qualquer aba) e é atualizado por `_update_coop_badge` (`:1659`), chamado em `:2187`. O ramo que **esconde** é tão testado quanto o que mostra (`:1662`) | `cd5eaf1` 31/07/2026 |
+| **E2** — a contagem honesta na aba Emulação | **ENTREGUE** | `app/actions/emulation_actions.py:48` — o campo "Gamepads:" parou de contar **nó** (`glob("/dev/input/js*")`, que dizia SEIS com um controle no cabo) e passou a contar **aparelho** | `cd5eaf1` 31/07/2026 |
+| **E3** — a superfície da exceção de Steam Input | **ABERTA** | há uma superfície (`app/actions/emulation_actions.py:1380` `_steam_input_excecao_status`, consumida em `:1427`), mas ela é **anterior a esta sprint** — `git log -S` a data em `f191564`, **24/07/2026**, uma semana antes de a sprint ser escrita. Ou seja: o que existe hoje é o que já existia quando a E3 foi pedida |
+
+Os testes que mordem: `tests/unit/test_coop_derrubado_aparece_no_banner.py`
+(E1), `tests/unit/test_contagem_um_numero_na_janela.py`,
+`tests/unit/test_contagem_emulacao_conta_aparelho.py` e
+`tests/unit/test_contagem_emulacao_largura_do_rotulo.py` (E2).
+
+### O grau, como manda a casa
+
+**MEDIDO** para E1 e E2 — símbolo, chamador, teste, commit e hora.
+**MEDIDO por datação** para a E3 estar aberta: a superfície citada é mais velha
+que o pedido.
+
+**SEM PROVA** para o efeito na tela dela: ninguém viu o banner aparecer numa
+partida de verdade. É interface, e por PROVA-DE-TELA-01 a palavra final é dela.

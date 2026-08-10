@@ -1,6 +1,12 @@
 # ABAS-01 — as abas brigam pelo mesmo estado
 
-- **Status:** ABERTA
+- **Status:** **ENTREGUE EM CÓDIGO — AGUARDANDO A PALAVRA DELA**, remarcada em
+  09/08/2026. A identidade do perfil de origem viaja com o rascunho desde
+  `d92b544` (25/07/2026). **Rótulo anterior: ABERTA**, preservado aqui porque
+  foi ele que valeu de 25/07 a 09/08. Ver a nota datada no fim
+- **O que falta ela validar, em uma linha:** abrir a janela, mexer em uma aba,
+  ir a outra aba e voltar — e ver se **nada** do que ela mexeu se perdeu no
+  caminho
 - **Prioridade:** ALTA — há perda silenciosa de dados
 - **Aberta em:** 25/07/2026
 
@@ -175,3 +181,32 @@ em tempo de execução.
 **Nenhuma sequência de cliques entre abas pode perder configuração sem aviso.**
 É o teste que resume a sprint, e o que ela vem relatando desde 23/07 como *"a
 config que eu deixo nunca é respeitada"*.
+
+---
+
+## NOTA DATADA — 09/08/2026: o código está de pé, e o `ABERTA` caducou
+
+**Nada acima foi apagado.** A tabela de reconstrução por aba, os achados e o
+desenho continuam inteiros: foi esse material que produziu o código. O que
+caducou é **uma linha** — o `Status: ABERTA` do cabeçalho, com o rótulo
+anterior preservado ali em cima.
+
+**O que está de pé — GRAU: MEDIDO em 09/08/2026 contra a árvore de hoje.**
+
+| o que a sprint pedia | onde está hoje |
+|---|---|
+| o rascunho carrega a identidade do perfil de origem | `src/hefesto_dualsense4unix/app/draft_config.py:657` |
+| quem grava perfil usa essa identidade | `src/hefesto_dualsense4unix/app/actions/profile_writer.py:191` |
+| a aba de perfis também | `src/hefesto_dualsense4unix/app/actions/profiles_actions.py:2540` |
+
+**Commit:** `d92b544`, 25/07/2026.
+
+### Por que o rótulo não é ENTREGUE e sim ENTREGUE EM CÓDIGO
+
+Porque **ninguém viu isto acontecer na tela dela**. O código existe, os testes
+passam, e a regra da casa é a de sempre: interface só fecha com o olho dela
+([PROVA-DE-TELA-01](2026-07-27-PROVA-DE-TELA-01-dez-minutos-de-olho-antes-de-qualquer-leva.md)).
+Enquanto essa validação não acontecer, o rótulo declara as duas coisas ao mesmo
+tempo — *entregue no código*, *ainda não validado por ela*.
+
+**Nada ficou em aberto nesta sprint além dessa validação.**
