@@ -43,8 +43,8 @@ tag, e é assim que o próprio `install.sh` os cita.
 | A | crash de heap (`unaligned fastbin chunk`) | `docs/usage/bluetooth.md:71`; `docs/process/sprints/2026-08-04-BT-AGENT-TRAVA-O-RESTART-01-noventa-segundos-de-bluetooth-fora-do-ar.md:85`; `docs/process/sprints/2026-08-04-RADIO-BOMBARDEADO-01-quarenta-mil-frames-corrompidos-em-meia-hora.md:249`; `docs/process/estudos/2026-07-25-leva-causas-raiz.md:46`; `docs/process/estudos/2026-08-03-PROTOCOLO-as-medicoes-que-decidem-a-leva.md:203`; `docs/process/estudos/2026-07-27-mapa-dominio-dualsense-hid-e-bluetooth.md:243` |
 | B | issue **#815**, *"random crash on device reconnect"* | `docs/usage/bluetooth.md:71`, e a tabela de commits no estudo arquivado de 19/07 |
 | C | `bluetoothctl` mudo no one-shot (**COMPAT BLUEZ-586-CTL-01**) | `scripts/doctor.sh:82-95`; `scripts/bt_health_watchdog.sh:49-54`; sprint arquivada de 21/07 |
-| D | uso-depois-de-liberado do 5.87 | `install.sh:1576-1577` — *"5.87 foi descartado (UAF novo em `dev_disconnected`, fix só em git HEAD sem release)"* |
-| E | o retry-limit do 5.86 com defeito próprio | `install.sh:1574-1575`, e a sprint arquivada de 21/07 |
+| D | uso-depois-de-liberado do 5.87 | `install.sh:1689-1690` — *"5.87 foi descartado (UAF novo em `dev_disconnected`, fix só em git HEAD sem release)"* |
+| E | o retry-limit do 5.86 com defeito próprio | `install.sh:1687-1688`, e a sprint arquivada de 21/07 |
 | F | **LP #2137758**, SIGSEGV em `btd_service_connecting_complete()` | estudo arquivado de 19/07, secão 1 |
 
 Os três arquivados abrem assim:
@@ -349,7 +349,7 @@ primeiro lançamento em que a conta fecha.**
 | tudo, limpo | **esperar o 5.88** e refazer o backport | o caminho da casa; o gatilho é o anúncio do lançamento |
 
 Em qualquer um dos quatro, o preço já conhecido continua valendo, e está escrito
-em `install.sh:1557-1563`: o `postinst` do próprio `bluez` **reinicia o
+em `install.sh:1670-1676`: o `postinst` do próprio `bluez` **reinicia o
 `bluetoothd`**, e a migração **descarta os bonds antigos no primeiro start** —
 ela repareia uma vez. Com três controles na mesa, isso não é operação de
 madrugada de trabalho; é operação com ela presente e sabendo.

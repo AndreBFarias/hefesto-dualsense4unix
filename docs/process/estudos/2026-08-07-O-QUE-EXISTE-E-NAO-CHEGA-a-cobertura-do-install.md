@@ -71,7 +71,7 @@ uma vigia instalada justamente para guardar a explicação num arquivo dela. Ela
 está **ligada, ativa e escrevendo em lugar nenhum**.
 
 O install faz tudo certo: copia o script, copia a unit, faz `daemon-reload` e
-`enable --now`. GRAU: MEDIDO (`install.sh:2262-2284`). Na máquina dela a unit
+`enable --now`. GRAU: MEDIDO (`install.sh:2381-2403`). Na máquina dela a unit
 está `enabled` e `active`.
 
 Falta **uma linha** em `scripts/storm_watch.sh`: o `awk` do `classify()`
@@ -116,7 +116,7 @@ $ grep -c TimeoutStopSec assets/systemd/bluetooth-dropin-10-hefesto-resilience.c
 0
 ```
 
-O drop-in chega e o `daemon-reload` roda (`install.sh:1513-1521`) — o cano está
+O drop-in chega e o `daemon-reload` roda (`install.sh:1626-1634`) — o cano está
 sadio. O conteúdo é que não tem a cura. GRAU: MEDIDO.
 
 **Não entregar sozinho.** Sem o `flock -n` do item 2, o teto só troca "rádio
@@ -137,7 +137,7 @@ $ grep -rn "HEFESTO_CONTROLLER_VARIANT" src/ | wc -l
 ```
 
 GRAU: MEDIDO. A cura de sistema está perfeita e o produto não a usa. Pior: o
-`install.sh:1141` **imprime a promessa** de que a regra "separa o Pro genuíno do
+`install.sh:1254` **imprime a promessa** de que a regra "separa o Pro genuíno do
 8BitDo clone" — e é essa frase que faz a cura parecer entregue.
 
 Junto disso, duas coisas que quem for integrar precisa saber ou vai curar pela
@@ -320,7 +320,7 @@ outras onze:
 
 **A regra 75** (desligar a placa de som do controle) tem um preço que ela precisa
 saber: o controle **perde o microfone e o fone**. Ela está excluída do laço do
-install por linha explícita (`install.sh:1120`), e a retenção está escrita em
+install por linha explícita (`install.sh:1233`), e a retenção está escrita em
 **quatro lugares que concordam entre si**. Nada falta aqui. E o problema que ela
 sentia já está curado por outro caminho, que preserva o microfone: zero
 tempestades desde 20/07. GRAU: MEDIDO.
@@ -427,7 +427,7 @@ se fosse a certa** — e por isso quem vai conferir lendo a documentação *conf
 o defeito:
 
 - o `ADR-013:33` documenta o `udevadm trigger` que não aciona a regra 72;
-- o `install.sh:1141` **imprime** que a regra 84 separa os dois Pro, e o produto
+- o `install.sh:1254` **imprime** que a regra 84 separa os dois Pro, e o produto
   não lê a marca;
 - a página de solução de problemas ensina uma receita que não casaria com
   nenhum controle dela.

@@ -687,7 +687,7 @@ todos ≥ 77 min depois da segunda janela.
 - `profiles/schema.py:467` `priority: int = 0`, **sem `ge`/`le`**: 191, 200, -5 e 10⁹ passam iguais.
 - Catch-all com prioridade 191 e perfil de jogo sem `window_class` **passam calados**.
 - **Backup automático não existia.** O `backup-20260726-233630/` interno que ela tem é **órfão**,
-  manual, sem criador no repositório (`scripts/purge.sh:86` e `uninstall.sh:1262` criam um irmão
+  manual, sem criador no repositório (`scripts/purge.sh:86` e `uninstall.sh:1375` criam um irmão
   *externo*). **Por sorte, é a única testemunha do estado pré-corrupção.**
 - `doctor` (`cli/cmd_doctor.py`, `cli/app.py:82`) é infra pura — **não olha perfil nenhum**.
 - **Zero registro no journal de gravação de perfil** — `grep -cE 'footer_|gui_'` = **0**; e o
