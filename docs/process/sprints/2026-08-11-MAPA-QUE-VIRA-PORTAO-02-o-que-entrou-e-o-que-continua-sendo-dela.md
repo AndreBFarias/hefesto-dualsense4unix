@@ -199,9 +199,42 @@ As duas leituras concordam sobre **qual extremidade do controle**, e é a
 extremidade que o mapa precisa saber. Fica registrado porque quem ler o CSV e o
 SVG lado a lado vai estranhar a diferença de palavra.
 
-**Continua aberto:** a **lightbar do DualSense** segue `nao-localizada` em
-`dualsense.svg`. Ela não foi fotografada nesta rodada, e desenhar de memória
-seria exatamente o que esta sprint recusa. Uma foto fecha.
+**FECHADO na mesma sessão, com a terceira foto.** Ela mandou os dois DualSense
+acesos ao mesmo tempo — o roxo em **azul**, o branco em **vermelho** — e a foto
+respondeu mais do que a pergunta: **a lightbar não é uma peça só.** São **duas
+tiras**, uma de cada lado do touchpad, na costura entre ele e a carcaça. O
+grupo em `dualsense.svg` sai de `nao-localizada` com as duas desenhadas, e o
+comentário registra que elas acendem juntas e sempre da mesma cor — para o mapa
+é uma feature com duas peças.
+
+**E o padrão de jogador dos externos ficou medido**, com as palavras dela: *"se
+o controle é do player 3, da esquerda pra direita os 3 primeiros leds estão
+acesos"*. É **cumulativo**, e `core/external_leds.py:129-131` já faz
+exatamente isso (`1 if i <= verdes else 0`). A observação **confirma** o código
+em vez de contradizê-lo, e por isso as células do Pro e do SN30 sobem de
+`inferido-do-codigo` para `medido`.
+
+Vale gravar o contraste, porque a mesma coluna do mapa passa a carregar duas
+semânticas: o **DualSense é simétrico** (`led_control.py:105-114`), os
+**externos são cumulativos**. Quem ler `luz.led_jogador` sem isso vai supor uma
+regra só.
+
+**Continua aberto, e é outro assunto:** o padrão **P4 do DualSense** — a
+canônica diz `x-xx-` e o código diz `xx-xx`. A foto de hoje não decide isso,
+porque mostrou a lightbar, não as cinco lâmpadas de jogador. Numerar quatro
+controles e olhar fecha.
+
+### Como se erra isto, para não se errar de novo
+
+A primeira tentativa de desenhar a lightbar **nasceu em cima dos ombros**. A
+caixa do touchpad tinha sido calculada varrendo os comandos do `path`, e o
+varredor conta ponto de controle de curva como se fosse extremidade: devolveu
+`x 38.8..86.4` onde a borda real é `x 42.5..85.5`. Larga demais dos dois lados.
+
+**Renderizar e OLHAR corrigiu em um passo o que a aritmética errou** — e é a
+mesma lição que a casa já pagou três vezes com instrumento mentindo mais que o
+produto. Vale como regra para as próximas peças: geometria nova em SVG se
+confere na imagem, não na conta.
 
 ### Pergunta 3 — quem tem direito de escrever "provado"?
 
