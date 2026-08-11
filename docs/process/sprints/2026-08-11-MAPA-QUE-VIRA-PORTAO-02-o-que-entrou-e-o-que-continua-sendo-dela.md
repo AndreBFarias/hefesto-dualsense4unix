@@ -117,7 +117,12 @@ e agora tem nota. **Esse número viajou:** o cabeçalho da fixture nova, em
 mexer ali herda a correção — o certo é 1 de 233, e o argumento da fixture
 continua de pé sem depender do zero.
 
-## 4. As três perguntas que são dela
+## 4. As três perguntas que são dela — RESPONDIDAS em 11/08/2026
+
+> **Nota de 11/08/2026.** As três foram respondidas por ela no mesmo dia, poucas
+> horas depois de escritas. As perguntas ficam abaixo como estavam — não se
+> apaga o que se perguntou, porque a resposta só se entende com ela ao lado —
+> e cada uma ganhou a resposta logo em seguida, com o que destravou.
 
 Nenhuma destas três se responde com código, medição ou pesquisa. Todas travam
 alguma coisa hoje.
@@ -132,6 +137,26 @@ como está por ora.
 > escreva de onde os desenhos vieram (e o crédito, se houver)? Ou continua como
 > está, e a gente escreve isso no dia em que for mexer neles?
 
+**RESPOSTA DELA (11/08/2026), literal:** *"não me lembro a origem correta, mas
+editamos eles."*
+
+O que isso fixa, e o que não fixa. **Fixa** que os desenhos de hoje são **obra
+derivada**: partiram de arte de terceiro e foram editados aqui. **Não fixa** a
+procedência, porque ela não é lembrada — e ninguém deve inventá-la depois para
+fechar um campo.
+
+Fica escrito assim, com todas as letras, porque é o estado verdadeiro:
+
+- os SVG em `assets/control-svg/` são derivados de arte externa de **origem não
+  lembrada**, editada neste repositório;
+- o `LICENSE` é **MIT** — não GPL-3 — e uma atribuição futura respeita isso;
+- **isto é um risco aberto de licença, não um item fechado.** Se um dia a
+  origem aparecer, ela entra aqui com data, e a decisão de crédito é dela.
+
+Uma sugestão, para quando ela quiser: os três desenhos podem ser **redesenhados
+do zero** a partir dos aparelhos que estão na mesa dela. Custa uma tarde e
+elimina a dúvida em vez de administrá-la. Não é urgente e não bloqueia nada.
+
 ### Pergunta 2 — onde ficam as luzinhas de jogador do Nintendo Pro?
 
 Que elas existem, o repositório sabe. **Onde ficam no aparelho, não está escrito
@@ -143,6 +168,40 @@ motivo.
 > jogador acesas — e uma do DualSense com a lightbar acesa? Uma foto de cada
 > fecha as duas, e o desenho passa a acender a peça certa quando a tabela a
 > seleciona.
+
+**RESPOSTA DELA (11/08/2026):** duas fotos, do Pro e do 8BitDo, com as palavras
+*"pro controller fica na parte de baixo"* e *"no 8bitdo fica na parte de baixo.
+esses são os leds do player"*.
+
+**O que as fotos mostram:** quatro LED numa faixa recuada na **aresta frontal**,
+entre os grips, no vão que os ombros deixam. No Pro, dois acesos e dois
+apagados; no SN30, três acesos e um apagado.
+
+**Duas coisas fecharam, e uma delas ninguém tinha perguntado:**
+
+1. `nintendo-pro.svg` sai de `data-posicao="nao-localizada"` e passa a ter os
+   quatro LED desenhados.
+2. **O SN30 não tinha grupo nenhum.** O desenho não representava os LED de
+   jogador dele, então o mapa nem sabia perguntar por eles. O grupo nasceu
+   nesta leva, junto com a peça.
+
+**A geometria não é estimativa** — saiu dos marcos de cada desenho. No Pro,
+`ZL`/`L` ocupam `x 19..39` e `ZR`/`R` ocupam `x 61..81`, deixando o vão em
+`x 39..61` (centro 50), com a aresta superior do corpo em `y 20.5`. No SN30, o
+ombro `L` ocupa `x 55..163` e o `R` ocupa `x 337..445`, vão em `x 163..337`
+(centro 250), aresta em `y 75`. Os dois foram **renderizados e olhados** depois
+de desenhados, e não só escritos.
+
+**Sobre "parte de baixo".** No aparelho na mão, a faixa fica na aba inferior da
+aresta frontal — é o que ela vê e é o que ela disse. Numa vista de cima, que é
+como estes desenhos são feitos, a mesma aba projeta no topo, entre os ombros.
+As duas leituras concordam sobre **qual extremidade do controle**, e é a
+extremidade que o mapa precisa saber. Fica registrado porque quem ler o CSV e o
+SVG lado a lado vai estranhar a diferença de palavra.
+
+**Continua aberto:** a **lightbar do DualSense** segue `nao-localizada` em
+`dualsense.svg`. Ela não foi fotografada nesta rodada, e desenhar de memória
+seria exatamente o que esta sprint recusa. Uma foto fecha.
 
 ### Pergunta 3 — quem tem direito de escrever "provado"?
 
@@ -160,6 +219,41 @@ falhou"*, e essa confusão é a doença que o mapa existe para curar.
 >
 > Pode valer mais de um, desde que fique escrito qual foi. E, se valer (b), por
 > quanto tempo continua valendo antes de precisar ser visto de novo?
+
+**RESPOSTA DELA (11/08/2026), literal:** *"vc no caso tem o direito de escrever,
+vamos ir validando juntos ponto a ponto e vc vai isolando."*
+
+Ela delegou a caneta e **manteve a validação**: escrevo, e a conferência é
+junto, um ponto por vez. Isso não é licença para afirmar mais — é obrigação de
+afirmar com procedência anexada, porque quem confere depois é ela.
+
+### A régua que passa a valer
+
+Três valores em `provado_por`, e cada um tem prazo próprio:
+
+| `provado_por` | o que significa | `validade_dias` |
+|---|---|---|
+| `teste` | há teste que **reprova** quando aquilo quebra, naquele transporte | **vazio** — o CI reprova a cada run; prazo seria burocracia |
+| `aparelho` | observado no controle dela: descritor lido, foto dela, ou ela vendo funcionar | **180** |
+| `descritor` | lido do descritor HID do próprio aparelho, sem escrita | **180** |
+
+E a resposta ao item **(a)** da pergunta é **não**: *ter lido em documento não é
+prova*. Continua sendo `afirmado-no-doc` na coluna de confiança, e **nunca**
+preenche `provado_por`. Foi documento convincente e não medido que produziu as
+regressões que este mapa existe para impedir.
+
+Por que 180 dias, e não "para sempre": o **plástico** não muda, mas o firmware
+do controle, o kernel e o nosso código mudam — e o que a célula afirma é a
+relação entre os três, não o aparelho sozinho. Meio ano é o intervalo em que
+esta casa já viu uma feature caducar sem ninguém notar (a regra udev 76 do
+touchpad levou 25 dias; o `hid_capture_bt.bin` do ADR-008 levou meses). Se na
+prática o prazo incomodar, ele muda com uma nota datada — é número, não dogma.
+
+**O que isso destravou hoje:** quatro linhas saíram de vazias e ganharam a linha
+de provado — `luz.led_jogador` do Pro e do SN30 (por `aparelho`, a foto dela) e
+`audio.alto_falante` e `plataforma.escrita_crua` do DualSense (por `descritor`,
+a leitura de 11/08). As demais continuam vazias, e vazias querem dizer
+exatamente o que parecem: ninguém provou ainda.
 
 ## 5. Nota datada de 11/08/2026 — o que ficou escrito, e onde
 
