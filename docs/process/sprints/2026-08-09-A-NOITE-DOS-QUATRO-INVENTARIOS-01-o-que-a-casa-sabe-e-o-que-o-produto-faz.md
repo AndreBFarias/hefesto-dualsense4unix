@@ -312,7 +312,7 @@ cada um:
   dois caminhos). O item de origem, porém, fala das regras **82 e 83**:
   `assets/82-nintendo-pro-nosniff.rules:23-24` continua chamando
   `/usr/local/lib/hefesto-dualsense4unix/bt_nosniff_now.sh`, e esse script só é
-  instalado pelo caminho **nativo** (`install.sh:1507`). As duas regras seguem
+  instalado pelo caminho **nativo** (`install.sh:1620`). As duas regras seguem
   viajando no `spec`, no `PKGBUILD` e no `package.nix` — quem instalar por
   pacote continua com a regra de pé e o alvo ausente.
 - **F-10.** O portão ganhou uma seção nova e boa

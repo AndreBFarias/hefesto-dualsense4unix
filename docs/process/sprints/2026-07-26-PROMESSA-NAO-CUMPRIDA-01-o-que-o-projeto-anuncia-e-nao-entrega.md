@@ -159,7 +159,7 @@ limpeza.
   documentação de `--force-xwayland` e as notas de default (linhas 129-144).
 - `--no-snd-quirk` é parseado em `install.sh:203` e **não aparece** no cabeçalho,
   logo não aparece no `--help`.
-- `install.sh:1073` sugere `--disable-usb-audio` como se fosse flag do
+- `install.sh:1186` sugere `--disable-usb-audio` como se fosse flag do
   instalador. É do `scripts/install_udev.sh`; passada ao `install.sh`, aborta com
   código 2.
 

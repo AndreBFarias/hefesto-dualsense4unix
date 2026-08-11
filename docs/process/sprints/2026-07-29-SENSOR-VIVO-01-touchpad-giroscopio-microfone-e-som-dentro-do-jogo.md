@@ -343,7 +343,7 @@ WirePlumber marca indisponível, e é essa que faz a source nascer RUNNING"*. É
 premissa que a medição de 26/07 derrubou.
 
 Agravante, e por isso a prioridade é ALTA: **o `install.sh` desta árvore passou
-a chamar essa cura**. `install.sh:2192` roda
+a chamar essa cura**. `install.sh:2311` roda
 `bash scripts/doctor.sh --fix-mic --quiet` no passo de áudio. Ou seja, a
 instalação de ontem fixou o perfil que não capta — e é por isso que o estado
 medido hoje é exatamente esse.

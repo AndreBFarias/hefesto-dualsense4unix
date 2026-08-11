@@ -219,7 +219,7 @@ $ ls ~/.local/share/icons/hicolor/scalable/apps/hefesto-dualsense4unix.svg
   -> não existe
 ```
 
-E não é acidente: `install.sh:1840` **apaga** qualquer SVG que exista sob esse
+E não é acidente: `install.sh:1959` **apaga** qualquer SVG que exista sob esse
 nome (linha herdada da v3.4.2, que instalava um placeholder ali).
 
 O mecanismo, lido no libcosmic — é um desvio de duas pernas, e a perna do PNG
@@ -689,7 +689,7 @@ O que a entrega precisa fazer:
 
 1. instalar o simbólico novo em `hicolor/symbolic/apps/` (destino a confirmar
    pela E1), sob o nome **que o código vai pedir**;
-2. **rever a linha `install.sh:1840`** — ela apaga `${APP_ID}.svg`. Se o nome
+2. **rever a linha `install.sh:1959`** — ela apaga `${APP_ID}.svg`. Se o nome
    novo for `${APP_ID}-symbolic.svg`, ela não o alcança; mas deixar uma linha
    que apaga SVG num diretório onde agora existe SVG de propósito é armadilha
    para a próxima pessoa. **Comente o porquê ou restrinja o alvo**;

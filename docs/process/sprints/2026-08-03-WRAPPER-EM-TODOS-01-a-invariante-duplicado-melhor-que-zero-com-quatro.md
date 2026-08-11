@@ -45,7 +45,7 @@ dizia *"veneno estático: 0 / chamadas do wrapper: 0"*.
 ## O furo: a invariante foi calculada para 1 físico ↔ 1 vpad
 
 A doutrina está escrita em três lugares — `daemon/launch_env.py:806-810`,
-`assets/hefesto-launch.sh:19-20`, `install.sh:2455-2458` — e é a regra de ouro do
+`assets/hefesto-launch.sh:19-20`, `install.sh:2574-2577` — e é a regra de ouro do
 projeto:
 
 > *"o pior caso continua sendo o controle duplicado de hoje — nunca um jogo que

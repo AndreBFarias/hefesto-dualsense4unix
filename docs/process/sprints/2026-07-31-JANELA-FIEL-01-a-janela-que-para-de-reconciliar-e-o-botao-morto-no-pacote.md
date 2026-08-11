@@ -63,7 +63,7 @@ duas conclusões precisaram de reenquadramento**, e é por isso que a regra exis
 | `tray.py:191` e `compact_window.py:122` | **sim** | os dois `timeout_add` com o id descartado |
 | `rumble_actions.py:322-326` (o precedente de cancelar timer) | **ajustado** | a função é `:322-327`; o comentário que explica o porquê é `:317-320` |
 | `constants.py:34-38` | **ajustado** | o aviso é `:34-36` e `ROOT_DIR` é `:37` |
-| `install.sh:1049` (instala `-e`) | **sim** | `-e "${ROOT_DIR}[${_extras}]"` está em `:1049` |
+| `install.sh:1162` (instala `-e`) | **sim** | `-e "${ROOT_DIR}[${_extras}]"` está em `:1049` |
 | "o .deb não embala `profiles_default`" | **REFUTADO** | `scripts/build_deb.sh:133` faz `cp -r assets/. .../usr/share/hefesto-dualsense4unix/assets/` — o `profiles_default` **vai junto**, e cai exatamente no terceiro candidato do loader |
 | "morto no AppImage e no Flatpak" | **REFUTADO como causa** | `scripts/build_appimage_gui.sh:112-117` e `flatpak/br.andrefarias.Hefesto.yml:170-183` (FIX-FLATPAK-PRESET-SEED-01, de 30/07) instalam o `profiles_default` **de propósito**, no segundo candidato do loader. O botão morre mesmo assim — mas por causa do resolvedor, não do pacote |
 
@@ -283,7 +283,7 @@ próprio arquivo avisa, em `:34-36`: *"Em instalação real esses paths podem n�
 existir — sempre verifique `.exists()` antes de usar."* O rodapé verifica
 (`footer_actions.py:464`) e desiste com um toast (`:465-474`).
 
-Na máquina dela funciona porque `install.sh:1049` instala com `-e` (editável), e
+Na máquina dela funciona porque `install.sh:1162` instala com `-e` (editável), e
 aí `parents[3]` cai na raiz do repositório. Num `.deb`, o pacote vive num venv em
 `/opt/hefesto-dualsense4unix/venv`, o módulo em `.../site-packages/hefesto_dualsense4unix/app/`,
 e `parents[3]` vira `.../venv/lib/python3.X` — um diretório onde `assets/` nunca

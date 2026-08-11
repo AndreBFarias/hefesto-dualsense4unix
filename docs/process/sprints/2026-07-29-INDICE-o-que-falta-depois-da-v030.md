@@ -170,7 +170,7 @@ zero e zero. Quem quiser reescrever o bloco A4 tem que trocar "pulam" por
 
 ### MIC-USB-01: a entrega 7 saiu, e o veredito do doctor mudou de critério
 
-`install.sh:2192` chama `scripts/doctor.sh --fix-mic --quiet` no passo de áudio,
+`install.sh:2311` chama `scripts/doctor.sh --fix-mic --quiet` no passo de áudio,
 em best-effort, e respeita quem desligou a source de propósito. A seção
 "O instalador NÃO chama a cura — e devia" descreve um passado.
 
