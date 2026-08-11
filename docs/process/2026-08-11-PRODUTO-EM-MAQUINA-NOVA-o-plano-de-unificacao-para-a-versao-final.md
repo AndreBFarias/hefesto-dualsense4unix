@@ -62,6 +62,7 @@ ela olha** e **o que reprova**. Nenhum é adjetivo.
 | **B-4** | Com os quatro controles ligados, os **quatro** aparecem na aba **Status** | a aba Status | um card faltando |
 | **B-5** | O **touchpad** e o **giroscópio** respondem, **sem `sudo`** e sem mexer em grupo de usuário | a aba Status, com o dedo no touchpad | não responderem |
 | **B-6** | Nenhum controle acende número de jogador, e a janela **diz por quê** | a aba Início e o plástico | um controle acender número. A decisão 12 vale inteira |
+| **B-7** | Com um jogo aberto, ela sabe dizer **o que está valendo naquela sessão** — Hefesto ou nativo, Steam Input ligado ou não, quantos jogadores — sem terminal | a aba **No jogo** | ter de perguntar. Foi assim que este critério nasceu, em 11/08 |
 
 ### Bloco C — O plástico (com o controle na mão)
 
@@ -247,6 +248,49 @@ do BlueZ; e o veredito da última conferência. Texto de função **pura**, no m
 de `app/actions/daemon_actions.py:513`. *Prova:* funções puras testadas, foto das
 dez abas, e **a palavra dela**.
 
+**3.3 A janela diz o que está valendo NAQUELE jogo — 4 h.**
+
+**Achado por ela, em 11/08, pelo caminho mais caro que existe: perguntando.**
+Com quatro controles funcionando e um jogo aberto, ela perguntou *"esse é o modo
+nativo ou é o modo steam input?"* — e a resposta só existia rodando um script no
+terminal. A janela não dizia.
+
+O que ela tinha na tela naquele momento, e que estava certo: a aba **Início**
+mostrava **"Jogar pelo Hefesto"** e **"DualSense (botões PlayStation)"**, e no
+perfil daquele jogo a caixinha **"Esconder o controle físico neste jogo"**
+estava marcada. Três informações verdadeiras, em dois lugares diferentes, e
+nenhuma delas responde a pergunta que ela fez — que é sobre a **sessão de
+agora**, não sobre a configuração.
+
+**O que falta aparecer, e é o que o terminal respondeu:**
+
+- que **o Steam Input está ligado** para o jogo em sessão (consequência da
+  caixinha, mas invisível depois de marcada);
+- que **o wrapper injetou** as variáveis naquele processo — hoje só
+  `scripts/medir_steam_virtual_gamepad.sh` sabe;
+- **quantos controles virtuais existem** agora (P1, P2, ...), que é a resposta
+  direta de "tenho co-op?";
+- que **não há espelho** da Steam em cena — ou que há, se houver.
+
+**Onde:** o painel da aba **No jogo** já é o lugar certo. Ele nasceu para dizer
+o que o jogo está pedindo ao controle (giroscópio, vibração, luz), e esta é a
+mesma pergunta um andar acima: *o que está no caminho entre o meu controle e o
+jogo, agora*. A aba já aparece só quando há jogo aberto, o que é exatamente
+quando a pergunta faz sentido.
+
+**Por que 4 h e não mais:** o daemon já sabe tudo isso. O `state_full` publica os
+controles e o `gamepad_emulation`; a leitura do ambiente do processo do jogo é a
+mesma que o instrumento faz, e já está escrita. O trabalho é de tela e de
+redação, não de mecanismo.
+
+**Prova:** a pergunta dela, refeita. Com um jogo aberto, ela olha a aba **No
+jogo** e sabe responder *"nativo ou Steam Input?"* sem terminal. Se precisar
+perguntar de novo, não está pronto.
+
+**Depende de:** 3.2 (o mesmo cartão e o mesmo molde de função pura). Não é
+pré-requisito de nada — se o tempo apertar, cai, e o preço é ela continuar sem
+saber o que está valendo sem chamar alguém.
+
 ### ETAPA 4 — Os formatos param de prometer o que não fazem (~1 dia)
 
 **4.1 O aviso do `exit 0` diz o número — 2 h.**
@@ -419,13 +463,13 @@ promessa de tradução.
 |---|---|---|---|
 | 1. A verdade da instalação | ~2 dias | — | o `doctor` reprova o que o install prometeu e não fez |
 | 2. Instrumentos honestos | ~1 dia | 1 | nenhum veredito afirma efeito a partir de permissão |
-| 3. A janela publica o estado | ~2 dias | 1, 2 | a versão e as curas de kernel, na aba Sistema |
+| 3. A janela publica o estado | ~2,5 dias | 1, 2 | a versão e as curas de kernel, na aba Sistema |
 | 4. Formatos honestos | ~1 dia | 1 | o aviso do install diz quantos passos pula |
 | 5. O ensaio em casa | ~1,5 dia | 3, 4 | o ciclo comparado e as dez abas fotografadas |
 | 6. O lacre | ~1,5 dia | 5 | a tag `v0.9.4`, com o CI verde na mesma SHA |
 | 7. A viagem | ~4 h dela | 6 e a seção 0 | os quatro blocos de critérios, no PC novo |
 
-**Total:** cerca de nove dias de bancada e quatro horas dela. **Caminho mínimo:**
+**Total:** cerca de nove dias e meio de bancada e quatro horas dela. **Caminho mínimo:**
 dois dias e meio.
 
 E o `1.0.0` vem depois — não como promessa, como consequência da viagem ter dado
