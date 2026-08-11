@@ -47,9 +47,9 @@ Antes de qualquer entrega, o que está escrito hoje, em uma frase:
 
 Cada pedaço tem endereço:
 
-- **Padrão desligado, sem perguntar.** `install.sh:2181` (passo 11/11) roda
+- **Padrão desligado, sem perguntar.** `install.sh:2300` (passo 11/11) roda
   `scripts/disable_steam_input.sh --apply`. O opt-out é `--keep-steam-input`.
-- **Um vigia permanente.** `install.sh:2199` e `install.sh:2204` instalam e
+- **Um vigia permanente.** `install.sh:2318` e `install.sh:2323` instalam e
   habilitam `hefesto-steam-input-guard.path` + `.timer` (30 min), que reaplicam o
   desligamento se a Steam reescrever o `localconfig.vdf`.
 - **O global sempre morre; o per-app é a exceção.**

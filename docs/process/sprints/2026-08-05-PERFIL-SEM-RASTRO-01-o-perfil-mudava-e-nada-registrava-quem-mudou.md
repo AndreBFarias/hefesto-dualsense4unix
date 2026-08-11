@@ -52,7 +52,7 @@ depois).
 
 **Grau: MEDIDO.** O único backup que existia no disco dela
 (`backup-20260726-233630/`) é **órfão** — manual, sem criador no repositório
-(`scripts/purge.sh:86` e `uninstall.sh:1262` criam um irmão *externo*, outro
+(`scripts/purge.sh:86` e `uninstall.sh:1375` criam um irmão *externo*, outro
 diretório). Por sorte, foi a única testemunha do estado pré-corrupção.
 
 ### Camada 2 — nem uma linha de journal, e depois o carimbo cego

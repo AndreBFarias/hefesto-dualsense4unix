@@ -70,7 +70,7 @@ AS TRES PERGUNTAS PARA ELA
     "achados": [
       {
         "gravidade": "media",
-        "onde": "/mnt/Apate/Desenvolvimento/hefesto-dualsense4unix/install.sh:1238-1283",
+        "onde": "/mnt/Apate/Desenvolvimento/hefesto-dualsense4unix/install.sh:1351-1396",
         "o_que": "`./install.sh --no-udev` pula a cura do BlueZ inteira e não diz nada. O passo 3d é gateado por `if [[ \"${SKIP_UDEV}\" -eq 0 ]] && command -v sudo ...` e NÃO tem `else` (o `fi` de 1283 é seguido direto pelo comentário do 3d-bis). Com a flag, `step \"3d\"` nem imprime — ao contrário do 3d-bis (linhas 1297-1298), que anuncia `pulado (--no-udev)`. O eixo das flags foi considerado só de um lado: o buraco espelhado do uninstall (`--keep-udev` não primava sudo pela sentinela unificada) FOI fechado neste mesmo diff, em uninstall.sh:291-293. O texto de cura do detector novo (scripts/doctor.sh, check_bluez_justworks_repairing) diz `Cura: rode ./install.sh`, sem ressalva.",
         "prova": "MEDIDO por leitura das linhas exatas 1238 e 1279-1283 de install.sh: extraí o intervalo 1235-1285 e conferi a estrutura if/else/fi — há `else` em 1242 e em 1247, nenhum para o gate de 1238. Não executei install.sh contra o sistema, por regra da casa."
       },

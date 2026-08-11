@@ -490,7 +490,7 @@ concluir que está tudo certo e continuar sem janela nenhuma além da principal.
 
 O item 2 da mesma seção (linhas 129-134), por outro lado, está **certo** e é o
 que de fato a salvou: diz que o projeto traz um applet COSMIC nativo instalado
-por padrão em sessões COSMIC — e o `install.sh:2232` confirma (passo 9/11,
+por padrão em sessões COSMIC — e o `install.sh:2351` confirma (passo 9/11,
 *"applet COSMIC nativo (padrão em COSMIC; --no-cosmic-applet desativa)"*).
 
 E vale a nota de honestidade: **isto não é uma das nove contradições da
@@ -799,7 +799,7 @@ frase nova nunca aparece e a validação reprova por engano.
   decisão registrada contra uma queixa dela (`tray.py:196-203`), e esta sprint
   não os discute.
 - **A decisão de instalar o applet por padrão em COSMIC.** Está no
-  `install.sh:2232` com identificador próprio
+  `install.sh:2351` com identificador próprio
   (`BUG-INSTALL-APPLET-OPT-IN-SKIPPED-01`, `:2225-2229`) e é o que faz o painel
   dela funcionar hoje. Não é alvo.
 - **Compilar o applet no CI (G2).** É entrega de infraestrutura, custa minutos

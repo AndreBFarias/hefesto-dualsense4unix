@@ -48,7 +48,7 @@ o gesto de religar o controle **abre a Steam**, e sem `wmctrl` abre uma segunda.
 
 **B3. [WRAPPER-EM-TODOS-01](2026-08-03-WRAPPER-EM-TODOS-01-a-invariante-duplicado-melhor-que-zero-com-quatro.md) —
 antes do PRÓXIMO `install.sh` nesta máquina.** O passo `11b-bis` está **no
-índice** e roda `--apply --stop-steam` (`install.sh:2467`); pela regra da casa,
+índice** e roda `--apply --stop-steam` (`install.sh:2586`); pela regra da casa,
 *a árvore de trabalho é o que roda*. Com 2 DualSense e 1 vpad, o `IGNORE` esconde
 **os dois** físicos e só **um** volta: a mesa cai de 4 para 3, e o que some é um
 DualSense.

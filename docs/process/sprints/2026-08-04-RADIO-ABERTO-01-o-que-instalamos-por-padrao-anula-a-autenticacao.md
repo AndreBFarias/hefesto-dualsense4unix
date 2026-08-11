@@ -53,7 +53,7 @@
 > - `kernel.core_pattern` é o `apport` padrão do Pop!\_OS — a janela de captura
 >   de core **não está armada**.
 >
-> **Isto NÃO diminui o achado.** O `install.sh:1268-1269` instala o arquivo
+> **Isto NÃO diminui o achado.** O `install.sh:1381-1382` instala o arquivo
 > **por padrão**, sem flag, em toda máquina que rodar o instalador. O risco é do
 > produto, não do estado atual desta máquina — e é exatamente a diferença que
 > ela nomeou: *"eu tô programando algo só pra eu usar? se é open source deveria
@@ -310,7 +310,7 @@ Três peças, cada uma defensável sozinha, e juntas um buraco:
 
 | peça | onde | o que faz |
 |---|---|---|
-| `JustWorksRepairing = always` | `assets/bluetooth/hefesto-justworks.conf:28`, instalado por `install.sh:1268` **sem flag** | o BlueZ aceita **re-pareamento** de quem já tem bond, por Just Works |
+| `JustWorksRepairing = always` | `assets/bluetooth/hefesto-justworks.conf:28`, instalado por `install.sh:1381` **sem flag** | o BlueZ aceita **re-pareamento** de quem já tem bond, por Just Works |
 | `bt-agent --capability=NoInputNoOutput` | `assets/systemd/hefesto-bt-agent.service:23`, `enabled` | agente **padrão do sistema**; `NoInputNoOutput` dos dois lados = Just Works = **zero proteção contra MITM** |
 | `FastConnectable=true` | `assets/bluetooth/hefesto-fastconnectable.conf` | page scan agressivo — de propósito, para o controle reconectar rápido |
 

@@ -35,9 +35,9 @@ jogo) e AUTO-04 (o que só existe no terminal).
 passo — porque ele mesmo acabou de reabrir a Steam.**
 
 ```
-passo 11   install.sh:2146  → fecha, edita Steam Input, REABRE
-passo 11b  install.sh:2191  → fecha, migra opções de lançamento, REABRE
-passo 11c  install.sh:2220  → "Steam aberta" → recusa → ADIADO
+passo 11   install.sh:2265  → fecha, edita Steam Input, REABRE
+passo 11b  install.sh:2310  → fecha, migra opções de lançamento, REABRE
+passo 11c  install.sh:2339  → "Steam aberta" → recusa → ADIADO
 ```
 
 O terceiro passo (`proton_pin --lock`) não tem a opção de fechar a Steam que os
@@ -171,7 +171,7 @@ inclusive a nota de 06/08 sobre o botão de co-op, que continua valendo.
 | **.1** a emulação nasce desligada | **ENTREGUE** | `daemon/lifecycle.py:1465` `aplicar_gamepad_para_multiplos_controles`, chamada no tique de 2 s em `:3673`. As três preferências vivem em `utils/session.py:486` `load_gamepad_preference` — a escolha dela vence sempre | `8fe735d` 25/07/2026 |
 | **.2** co-op não existe na janela | **SUPERADO POR DECISÃO DELA** | o botão saiu porque o co-op deixou de ser opção (`daemon/lifecycle.py:167` `coop_enabled: bool = True`). O gesto insubstituível mudou de dono **antes** da remoção: `app/actions/home_actions.py:390` `RECONCILIAR_LABEL`, botão em `:991`, IPC `coop.sync` registrado em `daemon/ipc_server.py:163` e servido por `daemon/ipc_handlers.py:3569` | `ae32c10` 06/08/2026 |
 | **.3** o preset de co-op perdia para sete perfis | **ENTREGUE** | `assets/profiles_default/coop_local.json:8` tem `priority: 75` (era 45; o `navegacao` é 50). Quem já instalou é migrado por `profiles/loader.py:385` `migrate_modo_jogo_nos_presets`, chamada em `:464` | `54f1f3b` 25/07/2026 |
-| **.4** o instalador nunca aplicava o wrapper | **ENTREGUE** | passo `11b-bis` em `install.sh:2526`, que chama `python3 "${LAUNCH_MIGRATE_PY}" --apply --stop-steam` em `:2528`. O modo de linha de comando que faltava existe: `integrations/steam_launch_options.py:1228` | `108b711` 04/08/2026 |
+| **.4** o instalador nunca aplicava o wrapper | **ENTREGUE** | passo `11b-bis` em `install.sh:2645`, que chama `python3 "${LAUNCH_MIGRATE_PY}" --apply --stop-steam` em `:2528`. O modo de linha de comando que faltava existe: `integrations/steam_launch_options.py:1228` | `108b711` 04/08/2026 |
 | **.5** dois donos do valor padrão de máscara | **ENTREGUE, com resíduo** | `app/actions/mode_transition.py:54` `plan_mode_transition` deixou de mandar `flavor` quando ela não escolheu, e o daemon preserva a sua. O `DEFAULT_FLAVOR` de `integrations/uinput_gamepad.py:136` sobrevive só como fallback declarado | `8fe735d` 25/07/2026 |
 | **.6** a máscara da aba Início não persistia | **ENTREGUE** | `app/draft_config.py:702` `with_mode` marca o rascunho como sujo e `:616` decide se o modo vai junto; escritor único em `app/actions/home_actions.py:699` `registrar_modo_no_rascunho`, chamado pelo Aplicar em `app/actions/footer_actions.py:349` | `2bbfa22` 30/07 e `1c75a1a` 08/08/2026 |
 | **.7** parâmetros de módulo exigindo reboot | **METADE ENTREGUE** | a escrita a quente existe: `install.sh:631-633` e `:702-713` gravam em `/sys/module/.../parameters/` sem recarregar módulo. **A outra metade não**: o `--no-dkms` continua único (`install.sh:239`), derrubando os três módulos de uma vez | `8fe735d` 25/07/2026 |
