@@ -154,6 +154,110 @@ nenhum, porque dá sossego falso.
 
 ---
 
+## O CHECKLIST — o padrão universal de validação de um elemento
+
+- **Acrescentado em:** 11/08/2026, a pedido dela: *"pra que esse padrão de agora
+  seja o padrão universal de validação de cada elemento, pra que tenhamos um
+  padrão de checklist nesse sentido"*.
+- **Nasceu de:** a sessão da mesa cheia — quatro DualSense, dois no cabo e dois
+  no rádio — em que rumble, lightbar e gatilho foram validados pela mesma
+  sequência, e a sequência se mostrou melhor que a soma das partes.
+
+Os oito passos acima continuam sendo o ciclo. Este checklist é **a ordem em que
+se percorre o ciclo para UM elemento**, do zero até poder escrever `O APARELHO
+OBEDECEU` no mapa sem mentir.
+
+Marque cada linha. Item pulado é dado — anote que pulou. Item respondido no
+chute contamina tudo o que vier depois.
+
+### A — Antes de tocar no aparelho
+
+- [ ] **A1.** As cinco perguntas desta página, na ordem. A primeira que falhar
+      interrompe.
+- [ ] **A2.** Os suspeitos levantados **lendo o código**, não por palpite
+      (Passo 1). Liste tudo que é escrito para aquele elemento: bits de
+      autorização, bytes de valor, e quem mais escreve no mesmo lugar.
+- [ ] **A3.** **Que grau esta feature tem hoje?** Se está em `MONTOU`, ninguém
+      provou que o aparelho obedece — e essa é a pergunta, não um detalhe.
+
+### B — Provar que a peça responde
+
+- [ ] **B1. A linha de base** (Passo 2). No estado normal, aciona? Se não, o
+      defeito é anterior aos suspeitos.
+- [ ] **B2. O teste de controle: tudo apagado contra tudo aceso.** Antes de
+      perguntar *de que lado* falha, prove que **responde**. Em 11/08 três
+      rodadas foram perdidas medindo uma peça que talvez nem obedecesse.
+
+### C — Medir NO PAR, que é o que a mesa cheia compra
+
+- [ ] **C1.** Acione o elemento em **um controle no cabo e um no rádio, na mesma
+      janela**. Registre o espalhamento do disparo — se não for de milissegundos,
+      são dois ensaios em fila, não um ensaio de coexistência.
+- [ ] **C2.** Leia o resultado por esta regra, que não se negocia:
+      - **`sim` em par** → vale, e é evidência **mais forte** que sozinho: a
+        feature sobreviveu à companhia.
+      - **`não` ou `parcial` em par** → **ambíguo**. Não se sabe se é o
+        transporte ou a coexistência. Re-meça aquele controle **sozinho** antes
+        de escrever qualquer coisa.
+- [ ] **C3.** O **controle negativo simultâneo**: o que não deveria mudar, na
+      mesma mão e no mesmo instante. Em 11/08 foi o R2 continuar solto enquanto
+      o L2 endurecia — provou de uma vez que o comando agiu e que não vazou de
+      lado.
+
+### D — Isolar o mecanismo, não só o sintoma
+
+- [ ] **D1. Um suspeito por vez, os DOIS lados** (Passo 3), com **ida e volta**:
+      tire o suspeito e veja curar, devolva e veja o defeito voltar. Só a volta
+      distingue causa de coincidência.
+- [ ] **D2. DOSE-RESPOSTA, sempre que o suspeito tiver um número.** Se o
+      suspeito é um intervalo, um limite ou uma constante, **mude o número e
+      veja a resposta seguir**. Isso é prova causal; sim/não é indício.
+      Em 11/08 o keepalive foi fechado assim: `0,5 s` produzia um pulso,
+      `8,0 s` produziu **oito segundos exatos** de vibração.
+- [ ] **D3. O aparelho honra os BITS de autorização, ou os BYTES de valor?**
+      Pergunte sempre, para todo elemento. Em 11/08 ficou medido que o firmware
+      do DualSense **obedece aos bytes de motor com os bits de vibração
+      desligados** — o que derrubou a premissa de uma cura inteira que estava
+      escrita, correta na própria lógica, e mirando o alvo errado.
+      **Isto não foi medido para gatilho, LED nem áudio**, e os blocos deles
+      também saem escritos em todo report.
+- [ ] **D4. A hipótese explica o que JÁ funcionava?** (pergunta 5). Se o
+      elemento funcionava em outro transporte, em outro dia, ou no relato dela,
+      a explicação tem de cobrir isso também.
+
+### E — O desenho do ensaio, para não desperdiçar a mão dela
+
+- [ ] **E1. Nunca peça cronômetro a um humano.** Se a resposta depende de
+      *quando* algo mudou, o instrumento está errado — redesenhe para que a
+      resposta seja **sentida**, não medida. Em 11/08 duas rodadas se perderam
+      pedindo "em que instante parou", e a terceira fechou a questão trocando o
+      tremor **de lado**: ou muda de mão, ou não muda.
+- [ ] **E2. Ela não vê a janela do comando.** A mensagem "aperte agora" só chega
+      **depois** que o comando termina. Ou o ensaio roda em segundo plano e ela
+      age quando quiser, ou dura o bastante para ela pegar o controle depois de
+      ler.
+- [ ] **E3. Amplitude máxima na primeira tentativa** (`METODO-01`, 01/08). 15%
+      contra 100% quase reprovou uma entrega correta; 0 contra 255 a reabilitou
+      em trinta segundos.
+
+### F — Fechar
+
+- [ ] **F1. Registrar na hora** (Passo 6) — **inclusive o ensaio que você
+      descartou, e por quê**. Um ensaio mal desenhado que foi trocado é
+      informação: sem o registro, o próximo o repete.
+- [ ] **F2. O teste que MORDE** (Passo 8), arrancado **de verdade** do arquivo
+      de produção, visto reprovar, devolvido.
+- [ ] **F3. O grau, e ele é honesto por construção:** `MONTOU` → `SAIU NO FIO` →
+      `O APARELHO OBEDECEU`. Só o olho dela sustenta o terceiro.
+- [ ] **F4. A PODA** (Passo 7): o que foi inocentado pode parar de ser acionado.
+- [ ] **F5. A pergunta que ela faz e que fecha o assunto:** *"o elemento
+      específico que faz ele funcionar de fato está isolado?"* Funcionar **não
+      é** saber por quê. Se o elemento passou em tudo acima e você ainda não sabe
+      de qual bit, byte ou condição ele depende, escreva isso na ressalva — em
+      vez de deixar a linha parecer fechada.
+
+---
+
 ## As sete armadilhas, todas medidas
 
 Cada uma custou tempo real. Nenhuma é hipotética.
@@ -167,10 +271,28 @@ Cada uma custou tempo real. Nenhuma é hipotética.
 | 5 | **Relatório de agente não é prova** | Reportou `aplicado=true` sem ter escrito no arquivo |
 | 6 | **Colisão de nomes silenciosa** | `getElementById('corpo')` devolveu o `<g>` do SVG, não a tabela; nenhum erro |
 | 7 | **Só um lado do ensaio** | Seis ensaios "com" e nenhum "sem": zero poder de prova |
+| 8 | **Pedir cronômetro à mão humana** | Duas rodadas com respostas incompatíveis entre si — e nenhuma delas era erro dela |
+| 9 | **A janela que ela não vê** | O "aperte agora" só chega depois que o comando terminou |
+| 10 | **Confundir controle negativo com prova** | O R2 ficar solto prova que o comando não vazou; **não** prova que o R2 obedece |
+| 11 | **Supor que o firmware honra os bits** | A cura desliga os bits de autorização e o aparelho obedece aos bytes assim mesmo |
+| 12 | **O caderno envelhecer sem que ninguém note** | Uma medição que só existe em docstring deixa o `eliminacao.py` acusando um culpado removido há sete dias |
 
 A número 5 merece nota: em 10/08 um agente relatou a cura aplicada e com mordida
 provada, e o arquivo estava intacto. **Conferir o arquivo é parte do método**, não
 desconfiança.
+
+As de 8 a 12 são de 11/08, e três delas são erro meu, registrado de propósito:
+
+- **A 8 e a 9 são de desenho, não de execução.** Quando o ensaio exige da mão
+  dela uma precisão que a mão não dá, quem falhou foi o instrumento. A saída não
+  é repetir com mais cuidado — é **redesenhar para que a resposta seja sentida**.
+- **A 10 aconteceu comigo em pleno registro:** marquei `gatilho.direito` como
+  `O APARELHO OBEDECEU` porque o R2 ficou solto enquanto o L2 endurecia. Aquilo
+  provava a não-contaminação, não a obediência do lado direito. Ela pegou.
+- **A 12 é a mais silenciosa de todas.** O caderno não erra sozinho: ele fica
+  certo sobre o dia em que foi escrito. Toda medição que muda um veredito
+  **precisa virar linha em `ensaios.csv` no mesmo dia**, ou o instrumento passa a
+  mentir com autoridade.
 
 ---
 
@@ -236,3 +358,49 @@ inteiro funciona; **não sabemos de quantos o aparelho precisa**. É a poda que
 sobra — e o `HAPTICS_SELECT` tem urgência própria: a pesquisa de 10/08 registra
 que ele **mata os haptics de áudio do jogo**, e ninguém mediu se ele é preciso
 para vibrar.
+
+---
+
+## O segundo gabarito — 11/08/2026, a mesa cheia
+
+Quatro DualSense: **P2 e P3 no cabo, P1 e P4 no rádio**, identificados pelo
+padrão de LED de jogador lido no fonte do driver
+(`hid-playstation.c:1836-1842`) e conferidos contra a leitura dela — bateram
+quatro de quatro, inclusive o transporte. É o gabarito de como o checklist acima
+se percorre de verdade, e do que cada passo comprou.
+
+| passo | o que se fez | o que comprou |
+|---|---|---|
+| B2 | branco nos quatro lightbars, daemon parado | separou dois defeitos que pareciam um |
+| C1 | rumble disparado nos quatro na mesma janela (0,0 ms) | os quatro vibram juntos: `combinacao.rumble_simultaneo` deixou de estar muda |
+| C2 | falha em par → re-medido sozinho | evitou registrar *"o cabo mata o rádio"*, que era falso |
+| D1 | daemon parado → contínuo; religado → morre | a causa é o daemon, com ida e volta |
+| D2 | `OUT_REPORT_KEEPALIVE_SEC` de `0,5` para `8,0` | **oito segundos exatos**: é o keepalive, com número |
+| D3 | report com bits desligados e bytes trocados | o firmware obedece aos **bytes** — a premissa de uma cura inteira caiu |
+| E1 | o tremor troca de lado, em vez de *"quando parou?"* | fechou numa rodada o que duas não fecharam |
+| C3 | R2 solto enquanto o L2 endurece | provou que o comando agiu **e** que não vazou de lado |
+
+**Três features fecharam, e cada uma com dono diferente** — a lição de que o
+mesmo sintoma pode ter causas distintas, e de que tratá-las como uma só teria
+custado o dia:
+
+| feature | parar o daemon | dono do defeito |
+|---|---|---|
+| rumble por evdev no nó físico | **cura** | o keepalive do produto |
+| lightbar no rádio | não muda nada | fora do nosso código; **continua sem nome** |
+| gatilho adaptativo | não foi preciso | nenhum: obedeceu de primeira |
+
+### O que ficou aberto nesta sessão
+
+- **O gatilho está onde o rumble estava de manhã:** funciona, e ninguém sabe de
+  qual bit ou byte ele depende. E há uma previsão herdada de **D3** que nunca foi
+  medida: os blocos de gatilho (`common[10..20]` e `common[21..31]`) também são
+  escritos em todo report, fora de qualquer condicional — se o firmware os tratar
+  como trata os bytes de motor, **o keepalive apaga o efeito de gatilho que um
+  jogo aplicou**, pelo mesmo mecanismo e sem ninguém perceber.
+- **O lado direito do gatilho** e os **oito modos do firmware** seguem sem ensaio
+  próprio; só `Rigid` foi exercitado, com um único jogo de parâmetros.
+- **A causa da lightbar no rádio continua sem nome.** O `0x08` foi removido do
+  produto em 04/08 e a barra continuou morta por cinco dias e vinte adoções por
+  Bluetooth; a suspeita viva é **tempo desde a conexão**, dimensão que teste
+  unitário nenhum alcança.
