@@ -108,9 +108,9 @@ systemctl --user is-active --quiet hefesto-dualsense4unix.service && echo VIVO
   `RECUSO rodar com o daemon vivo` e sai, a menos que se passe
   `--confirmo-parar-o-daemon` (ele mesmo para e religa) ou `--com-o-daemon-vivo`
   (só a fase `gatilho`, cujo objeto **é** a disputa);
-- `scripts/ensaio_rumble_um_bit_por_vez.py:775-784` — mesma guarda, e com uma
-  segunda trava: em **775-784** o `modo_ensaio` recusa e manda *"Rode de novo
-  com --confirmo-parar-o-daemon"*, e em **791-793** ele aborta se o daemon
+- `scripts/ensaio_rumble_um_bit_por_vez.py:783-792` — mesma guarda, e com uma
+  segunda trava: em **783-792** o `modo_ensaio` recusa e manda *"Rode de novo
+  com --confirmo-parar-o-daemon"*, e em **799-801** ele aborta se o daemon
   **não parou de verdade** (*"escrever agora seria medir a briga"*). O detector
   que as duas usam é o `daemon_ativo()` da linha **356** — ele só responde
   sim/não; quem **recusa** são as linhas acima. O script ainda imprime a idade

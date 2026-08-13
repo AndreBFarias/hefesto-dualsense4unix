@@ -18,6 +18,12 @@
   **MEDIDO** aqui é o levantamento: cada `caminho:linha` abaixo foi aberto na
   árvore de 13/08/2026. O que a tela vai parecer é proposta, e a palavra é dela
   ([PROVA-DE-TELA-01](2026-07-27-PROVA-DE-TELA-01-dez-minutos-de-olho-antes-de-qualquer-leva.md)).
+- **O que já rodou hoje está noutro documento**, e ele não se sobrepõe a este em
+  arquivo nenhum:
+  [DOZE-LEVAS-01](2026-08-13-DOZE-LEVAS-01-o-que-ja-foi-feito-hoje-e-nao-se-refaz.md)
+  é **registro de execução** — as doze levas do commit `874fdda`, os trinta e um
+  itens fechados e os dez que a peneira derrubou por já estarem no código. Antes
+  de abrir qualquer item daqui, confira lá se ele já está feito.
 
 ## Como ler este índice
 
