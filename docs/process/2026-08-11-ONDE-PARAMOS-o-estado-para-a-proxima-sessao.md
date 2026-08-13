@@ -20,6 +20,29 @@
   ordem), depois este arquivo. Ele responde três coisas: **o que mudou**, **o
   que está aberto**, e **o que é dela**.
 
+> **ATENÇÃO — 13/08/2026: existe um dia inteiro de trabalho DEPOIS desta página,
+> e ela ainda não o descreve.** Esta página segue sendo o retrato de 12/08 à
+> noite. A sessão de 13/08 mediu o projeto inteiro, mediu as dez abas da janela,
+> pagou sete dívidas que a própria medição levantou e deixou onze sprints de
+> plano. Enquanto uma reescrita desta página não acontecer, **quem chega agora
+> lê estes quatro documentos logo depois dela**, nesta ordem:
+>
+> 1. [O projeto inteiro num mapa só](estudos/2026-08-13-o-projeto-inteiro-num-mapa-so.md)
+>    — o retrato de `cc768d4`, com o grau de cada afirmação. **A §6.1 já traz
+>    marcados os sete itens que o próprio commit de 13/08 fechou**; os oito
+>    restantes é que estão abertos.
+> 2. [O que ficou de fora — o crítico de completude](estudos/2026-08-13-o-que-ficou-de-fora-o-critico-de-completude.md)
+>    — o que aquele estudo **não** olhou. Ler antes de agir a partir dele.
+> 3. [O censo das dez abas](estudos/2026-08-13-o-censo-das-dez-abas-o-que-a-janela-faz-com-quatro-controles.md)
+>    — o que a janela faz com quatro controles na mesa, aba por aba. É a régua
+>    que derrubou duas afirmações minhas sobre o rumble no mesmo dia.
+> 4. [A mesa cheia — o índice das ondas](sprints/2026-08-13-INDICE-a-mesa-cheia-cada-jogador-na-cor-dele.md)
+>    — as três ondas, separadas por quem precisa estar presente, e as decisões
+>    que travam esperando a palavra dela.
+>
+> **O que é dela nesta página continua valendo** — nada da sessão de 13/08
+> revogou decisão dela. O que mudou foi o placar do que está feito.
+
 ---
 
 ## 0. Como ler os números desta página — e como atualizá-la barato
@@ -440,7 +463,9 @@ horas atrás**, e que dizia, corretamente para o momento, que aquela frente aind
 não estava na árvore.
 
 Ela entrou. As cinco curas de instrumento estão descritas no `CHANGELOG`, seção
-`[Unreleased]`, e a que mais importa para quem lê esta página é a primeira: **a
+`[0.9.4.2] — 2026-08-13` (elas estiveram em `[Unreleased]` até a versão fechar;
+hoje o `[Unreleased]` está vazio, e quem procurasse ali não acharia nada), e a
+que mais importa para quem lê esta página é a primeira: **a
 suíte estava saindo com código 1 desde 11/08** — a guarda da árvore congelada
 acusava como *"produto apagado"* um `.pyc` que o próprio teste criava dentro da
 cópia. Enquanto isso durou, *"a suíte passou"* **não era verificável nesta

@@ -243,6 +243,29 @@ TOTAL  27389 declarações  8038 sem cobrir  71%
 do piso de 70 do `ci.yml:271`. O lote A entra sem quebrar nada; os outros três
 precisam da medição do risco 3, logo abaixo, antes de sair do papel.
 
+> **PAGO — lote A, 13/08/2026.** Os seis arquivos ganharam `exigir_gi_real()` no
+> topo e saíram da `DIVIDA_GI_FALSO`, que passou de 17 para 11 nomes e ganhou o
+> `TETO_DA_DIVIDA` prometido abaixo. Medido nesta árvore, simulando o
+> `lint-test` com o `gi` bloqueado por um pacote que levanta `ImportError`:
+>
+> | | antes | depois |
+> |---|---:|---:|
+> | `pytest tests --collect-only` (sem PyGObject) | 5602 | **5572** |
+> | erros de coleta | 0 | **0** |
+> | `grep -rlE 'exigir_gi_real\|skip_sem_gi_real' tests/unit` | 45 | **51** |
+> | os seis, sem PyGObject | 32 passed | **6 skipped** |
+> | os seis, com o GTK real desta máquina | — | **32 passed** |
+>
+> O `5602` de base difere do `5502` medido em 31/07 porque a árvore cresceu; a
+> queda de 30 é o que importa, e a margem sobre o piso 5100 do `ci.yml:237`
+> continua folgada (472). **O risco 3 não se materializou para o lote A**: os 15
+> módulos que dependiam dos 17 seguem coletando, e os 291 testes deles passam.
+>
+> **Os lotes B, C e D continuam de pé, e não por falta de vontade:** o que trava
+> é o piso de cobertura de 70 (`ci.yml:271`), e medi-lo exige rodar a suíte
+> inteira — o que não se faz com os controles dela vivos na máquina. Enquanto
+> essa medição não existir, pagar mais um lote é apostar o `lint-test`.
+
 **Aceite:** ao fim de cada lote, o detector devolve `pagos: [os N do lote]`,
 `novos: []`; a `DIVIDA_GI_FALSO` fica com os nomes restantes e **só encolhe**; o
 `grep` do `ci.yml:387` passa de 39 para 39+N arquivos; e a suíte rodada **sem

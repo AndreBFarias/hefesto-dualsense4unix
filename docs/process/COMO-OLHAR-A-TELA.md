@@ -93,13 +93,21 @@ menos frágil que as alternativas, que já falharam assim:
 
 ---
 
-## Os três scripts desta pasta, e qual usar
+## Os cinco scripts desta pasta, e qual usar
 
 | script | o que faz | quando |
 |---|---|---|
 | **`retratar_abas.py`** | monta o glade **+ injeta o card do controle**, offscreen | **rotina, sempre** |
+| **`retratar_dialogos.py`** | fotografa os **diálogos** de confirmação, offscreen | quando a mudança está num diálogo — o `retratar_abas.py` não os alcança |
 | `retrato_offscreen.py` | monta só o glade cru | medir vão/altura, quando o card não importa |
 | `capturar_verificado.sh` | fotografa a tela **de verdade**, percorrendo por teclado | prova final, com a janela aberta e em foco |
+| `aba_ativa.sh` | diz **qual aba está ativa** num PNG, medindo o sublinhado rosa | é o sensor do `capturar_verificado.sh`; sozinho, só para conferir uma foto |
+
+Esta tabela tem portão: `tests/unit/test_a_tabela_dos_scripts_de_tela.py` cruza
+as linhas acima com o `ls` da pasta e reprova quando divergirem. Ela já
+envelheceu calada uma vez — dizia "os três scripts" com cinco no disco, e o que
+faltava era justamente o `retratar_dialogos.py`, cujas imagens o
+[`interface.md`](../usage/interface.md) publica.
 
 ### Por que o `retrato_offscreen.py` não basta
 
