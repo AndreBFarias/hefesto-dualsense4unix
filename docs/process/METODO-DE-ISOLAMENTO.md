@@ -258,7 +258,7 @@ chute contamina tudo o que vier depois.
 
 ---
 
-## As sete armadilhas, todas medidas
+## As doze armadilhas, todas medidas
 
 Cada uma custou tempo real. Nenhuma é hipotética.
 
