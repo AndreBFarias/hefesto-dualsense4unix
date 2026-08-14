@@ -235,6 +235,16 @@ descrito** — havia dois no BT e o aviso estava desligado —, mas **não o pro
 `false` também é o valor correto se nenhum dos dois estivesse frágil. Quem
 executar a 1.7 tem esse caso real para conferir.
 
+> **RESPONDIDA na execução da 1.7 (14/08/2026).** O mesmo payload traz
+> `native_mode: false` — com o Modo Nativo **desligado** não há fragilidade a
+> avisar, então aquele `false` era o valor **certo**, e a medição **não** era
+> uma amostra do defeito. O defeito existe do mesmo jeito, e a prova é outra:
+> ligando `native_mode` sobre **este mesmo payload** (primário no cabo, dois no
+> rádio), a regra antiga — `native_mode and transport == "bt"`, com o
+> `transport` do primário — continua devolvendo `False`. É o teste
+> `test_a_mordida_o_primario_no_cabo_calava_pelos_do_radio`, em
+> `tests/unit/test_mesa_cheia_11_a_janela_conta_quatro.py`.
+
 ---
 
 ## 7. O que esta medição NÃO mediu
