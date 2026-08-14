@@ -315,6 +315,20 @@ reabre uma decisão dela.
 Nada disto anda sem ela responder. **São perguntas, não tarefas** — e cada uma
 tem o preço dos dois lados.
 
+> **RESPONDIDAS EM 14/08/2026, POR DELEGAÇÃO.** Ela disse *"atue como PO por
+> mim"* e as onze foram respondidas em
+> [DECISÕES DE PO](../2026-08-14-DECISOES-DE-PO-as-onze-respostas-da-mesa-cheia.md),
+> cada uma com a evidência do repositório que a sustenta e o que custa desfazer.
+> **As perguntas abaixo ficam** — elas são o preço dos dois lados, e é o que
+> permite a ela vetar qualquer uma vendo o que a resposta custou. **A palavra
+> final sobre a tela continua sendo dela.**
+>
+> Em resumo: **D-1** cor viva + número · **D-2** requalificar · **D-3** um painel
+> com quatro marcas, clicáveis · **D-4** da peça · **D-5** do jogador, jogo como
+> padrão · **D-6** *(ela já tinha decidido: da máquina — o item cai)* ·
+> **D-7** inclui externo · **D-8** marca os quatro · **D-9** guardado ·
+> **D-10** quem comanda o PC · **D-11** quatro prévias numeradas.
+
 ## Por que a D-1 vem primeiro, e por que ela é urgente
 
 **Já existem DOIS donos da verdade sobre "a cor dele" dentro da janela**, e as
