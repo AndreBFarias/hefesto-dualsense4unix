@@ -115,6 +115,46 @@ número é.**
 
 ---
 
+## 3-bis. O que a FOTO mostrou e nenhum relatório disse: três nomes e duas ordens
+
+> **Esta seção foi escrita depois, olhando os PNGs.** O instrumento da seção 4
+> passou a existir horas depois desta medição, e o que ele revelou não estava em
+> relatório nenhum — **estava só na imagem**.
+
+**A mesma mesa tem TRÊS nomes na mesma janela:**
+
+| onde | como o mesmo controle aparece |
+|---|---|
+| **card da Status** | `Controle 4 — USB · Jogador 1` |
+| **card da Início** | `Controle 4 — P1` |
+| **fita do cabeçalho** | `Sony 1 · USB` |
+
+*"Jogador 1"* por extenso, *"P1"* abreviado, e *"Sony N"* — que **nem é o mesmo
+número**: a fita numera pelo `player_slot`, e o *"P1"* da Início numera pelo
+`player`.
+
+**E a mesma mesa tem DUAS ordens:**
+
+- a **fita** ordena `Sony 1 · Sony 2 · Sony 3 · Sony 4` — crescente por
+  `player_slot`;
+- os **cards** (Status e Início) ordenam `4 · 1 · 3 · 2` — que é a ordem em que
+  os controles chegaram no payload.
+
+**Ela vê a mesma mesa em duas ordens diferentes, com três nomes, sem sair da
+janela.**
+
+**Por que isto importa mais do que parece:** a leva inteira quer que ela
+*"escolha o personagem"*. Escolher personagem exige que o jogador **1 seja o
+mesmo em toda a tela**. Hoje, clicar em `Sony 2` na fita edita um controle que o
+card ao lado chama de `Controle 2 — P4`.
+
+**Isto não é entrega nova; é a D-12 com um segundo corpo.** A D-12 pergunta
+*qual número vai na marca*; esta seção mostra que **a pergunta vale para a janela
+inteira**, não só para a marca — e que a resposta tem de vir junto com **um nome
+só** e **uma ordem só**.
+
+---
+
 ## 4. O instrumento oficial não consegue fotografar a mesa cheia — e isso é decisão da casa
 
 **`scripts/gui-captura/retratar_abas.py` é cego aos quatro controles por
@@ -127,6 +167,20 @@ um card**.
 **Isso foi provado, não suposto:** rodado com os quatro na mesa, **nove dos dez
 PNGs saíram byte-idênticos** aos commitados em `874fdda`, de quando ela tinha
 **um** controle.
+
+> **RESOLVIDO NO MESMO DIA, horas depois desta medição.** O modo
+> `retratar_abas.py --mesa-cheia` passou a existir: ele alimenta o dublê com o
+> **fixture versionado**, e por isso **continua sem falar com o daemon** — a
+> garantia de privacidade fica intacta, porque a diferença entre os modos é
+> apenas a **fonte do dublê**. As doze fotos estão em
+> `docs/process/estudos/assets/mesa-cheia/`, e entre elas está a **primeira foto
+> do cabeçalho que esta casa já teve**. O parágrafo abaixo fica como registro do
+> que estava travado, e do porquê.
+>
+> **E ele mediu o que faltava:** os quatro cards pedem **1844 px** e a aba
+> inteira pede **2055 px**, contra os 1080 disponíveis. *(O número era 1774 nesta
+> página; foi **substituído** pelo medido no caminho de produção — a diferença é
+> o que o card real traz a mais.)* **Não cabem nem com a janela maximizada.**
 
 **A consequência para a ONDA 2 é grande e tem de ser dita antes de alguém tentar:
 não existe hoje instrumento que fotografe a janela dela com quatro controles.**
