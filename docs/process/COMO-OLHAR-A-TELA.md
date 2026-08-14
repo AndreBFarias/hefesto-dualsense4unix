@@ -34,6 +34,38 @@ Com um caminho como argumento, ele só olha:
 scripts/gui-captura/retratar_abas.py /tmp/olhar
 ```
 
+## A mesa cheia: fotografar QUATRO controles
+
+```bash
+scripts/gui-captura/retratar_abas.py --mesa-cheia
+```
+
+Sai em `docs/process/estudos/assets/mesa-cheia/` — **fora** das imagens do
+README, de propósito: isto é medição, não a interface que a documentação
+publica.
+
+**Por que existe** (medido em 14/08/2026): o modo padrão alimenta as abas com
+dublês fixos — Início e "No jogo" com dois controles, Status com um card.
+Rodado com os quatro controles dela na mesa, **nove dos dez PNGs saíram byte a
+byte idênticos** aos de quando havia um controle só. O instrumento é cego à
+mesa cheia por construção, e a leva inteira da mesa cheia depende de foto.
+
+**De onde vem o dado, e por que isso NÃO fura a privacidade:** de
+`tests/fixtures/state_full_quatro_controles.json`, arquivo **versionado** e já
+mascarado pelos portões de `tests/` (que são mais severos que a máscara de
+`docs/`). O script continua **sem falar com o daemon** — ler um arquivo do
+repositório não é pedir estado à máquina dela. Dois testes travam os dois
+lados: `test_a_mesa_cheia_na_foto.py` roda a montagem inteira com **toda porta
+de IPC do pacote `app` minada**, e `test_retrato_das_abas_nao_vaza_dado_real.py`
+exige que todo dado de entrada more em `tests/fixtures/`.
+
+**Duas fotos que só este modo produz, e que nenhuma foto desta casa tinha:**
+
+| foto | o que ela responde |
+|---|---|
+| `mesa_cheia_status_inteira.png` | a aba Status na altura que ela **pede** (2055 px) em vez da que **recebe** (1080). É a medida do problema de empilhar quatro cards |
+| `mesa_cheia_cabecalho.png` | a **fita do alvo** ("Ajustes vão para: …"), que mora no `header_bar` e que **nenhuma das dez fotos de aba alcança** — o `main` fotografa o `main_notebook`, e o cabeçalho fica fora do recorte |
+
 ## O logo e os ícones
 
 Mesma ideia, outro comando:
@@ -133,6 +165,11 @@ Seja honesto sobre isto ao usá-la:
 
 - **não passa pelo compositor** — não há sombra, canto arredondado nem o tema de
   janela do COSMIC;
+- **não mostra o cabeçalho** (14/08/2026): as dez fotos são do `main_notebook`,
+  que o script arranca do `root_box` — o `header_bar` fica **fora do recorte**.
+  A fita "Ajustes vão para: …" e o selo "Editando: …" moram lá, e por isso
+  nunca apareceram em foto nenhuma desta casa. Quem precisa delas usa o
+  `--mesa-cheia`, que fotografa o cabeçalho à parte;
 - **não prova que a janela abre** — prova o que tem dentro dela;
 - **não substitui o olho dela.** A regra da casa
   ([PROVA-DE-TELA-01](sprints/2026-07-27-PROVA-DE-TELA-01-dez-minutos-de-olho-antes-de-qualquer-leva.md))
@@ -146,6 +183,41 @@ Para *"o que tem nesta aba, e onde?"*, a foto é fiel. É para isso que serve.
 
 Estas não são sobre foto — são sobre **medir** a interface, e cada uma custou
 horas.
+
+### A foto pega a animação no meio, e o `git status` mente
+
+Registrado em **14/08/2026**. **GRAU: MEDIDO.**
+
+`readme_inicio.png` saía **diferente a cada execução** do script oficial —
+~3 mil pixels de 2,07 M, delta 1 a 2 por canal, sempre nas bordas dos dois
+botões segmentados **selecionados**. Quem rodasse o script antes de commitar,
+como o `CLAUDE.md` manda, via o `git status` sujar sem nada ter mudado na tela.
+
+A causa não é "ruído de gradiente": é **transição de CSS**. Um `GtkRadioButton`
+recém-marcado anima a mudança para `:checked` (o tema do sistema traz
+`transition` em `button:checked`), e a foto sai no meio da animação — o ponto
+dela depende do **relógio**, não do desenho. A aba Início era a única afetada
+porque é a **primeira** fotografada: as outras nove tinham tempo de assentar
+enquanto o laço percorria a tira.
+
+**A cura, e ela vale para qualquer instrumento de captura desta casa:**
+
+```python
+Gtk.Settings.get_default().set_property("gtk-enable-animations", False)
+```
+
+Com isso o GTK pinta o estado **final** na hora. Medido: as outras nove fotos
+saem byte a byte idênticas com ou sem a chave, e duas execuções seguidas
+passaram a sair idênticas nas dez.
+
+**A armadilha irmã, que a mesma medição encontrou:** `_assentar()` drena
+eventos **pendentes** e não deixa o relógio andar. Isso basta para layout, mas
+**não** para um redimensionamento de janela offscreen — a superfície só é
+recriada no tique do frame clock, que é temporizador. Pedindo 2055 px de altura
+e fotografando logo depois, o pixbuf saía com os 1080 **antigos**, sem erro
+nenhum. Quem precisa de resize espera tempo de parede
+(`_esperar_o_redimensionamento`) e **confere a altura do pixbuf** antes de
+acreditar na foto.
 
 ### Sob Xvfb não há gerenciador de janelas
 
