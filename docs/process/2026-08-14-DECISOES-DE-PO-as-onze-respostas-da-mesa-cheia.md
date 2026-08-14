@@ -316,6 +316,31 @@ entregas 2.1, 2.2, 2.3, 2.4 e 2.7 da ONDA 2 (a D-1 e a D-2 dão a cor e a fita).
 
 ---
 
+## A décima segunda, que nasceu horas depois — e é dela
+
+**A D-12 não estava aqui porque não podia estar.** Ela só existe desde que os
+quatro controles entraram na mesa, e a medição está em
+[A MESA CHEIA, MEDIDA](estudos/2026-08-14-A-MESA-CHEIA-MEDIDA-o-que-quatro-controles-revelaram.md).
+
+**A pergunta:** a marca carrega *"sempre cor E número"* pela D-1 — **mas qual
+número?** Com os quatro na mesa, `player` e `player_slot` **divergem em três dos
+quatro**: o controle **rosa** é *"Controle 4 — P1"* e o **azul** é *"Controle 1
+— P2"*.
+
+**Recomendação de PO, fraca de propósito:** a marca leva o **`player_slot`**,
+porque a cor **já é** o `player_slot` — pôr o outro número dentro faria o símbolo
+se contradizer sozinho. **Mas esta é a única das doze que eu devolvo a ela**, e o
+motivo é específico: é uma pergunta sobre **o que o aparelho mostra**, e a casa
+já registrou que **ela lê o aparelho melhor do que eu leio o código**. O LED de
+jogador aceso na frente de cada controle é a resposta, e ela tem os quatro na
+mão.
+
+**Enquanto ela não responde, nada trava:** a marca usa o número que a cor já
+afirma. Se a resposta for o contrário, muda uma função de resolução, num lugar
+só.
+
+---
+
 ## Como desfazer qualquer uma destas onze
 
 Cada decisão acima tem a coluna *"o que custa desfazer"* na tabela. **Nenhuma
