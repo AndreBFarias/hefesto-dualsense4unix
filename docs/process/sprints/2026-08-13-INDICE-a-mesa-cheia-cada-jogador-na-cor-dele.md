@@ -265,7 +265,7 @@ Cada item só vira commit com foto antes e depois, pela regra da
 | 2.2 | **A FITA CALAR** nas seis abas em que não vale | [MESA-CHEIA-10](2026-08-13-MESA-CHEIA-10-a-fita-que-nao-sabe-em-que-aba-esta.md) | escolher entre **esconder** e **requalificar** | **D-2** | 60 min |
 | 2.3 | **A "No jogo" ganha cor** — terminar a cópia do molde | [MESA-CHEIA-07/E2](2026-08-13-MESA-CHEIA-07-a-decima-aba-que-ninguem-mediu.md) | é a aba que ela olha **durante a partida**; com quatro e sem cor são quatro painéis iguais | 1.1 + **D-1** | 45 min |
 | 2.4 | **Os cards da Início ganham cor** — `lightbar_rgb` já chega no mesmo payload e é descartado em `_render_home_controllers` (`app/actions/home_actions.py:1646`); mais `Gtk.FlowBox` no lugar da `Gtk.Box` homogênea | *(neste índice, §7)* | ver se quatro cards cabem sob o tiling do COSMIC | **D-1** | 70 min |
-| 2.5 | **A Gatilhos DIZ o alvo dentro dela** — rótulo do controle corrente + swatch ao lado de cada moldura L2/R2, e o toast nomeando o controle | [MESA-CHEIA-02](2026-08-13-MESA-CHEIA-02-a-marca-de-quem-escolheu-na-aba-gatilhos.md) §1.1 | hoje a aba é **byte-idêntica** com um ou com quatro controles | 1.4 + **D-1** | 125 min |
+| 2.5 | **A Gatilhos DIZ o alvo dentro dela** — rótulo do controle corrente + swatch ao lado de cada moldura L2/R2, e o toast nomeando o controle | [MESA-CHEIA-02](2026-08-13-MESA-CHEIA-02-a-marca-de-quem-escolheu-na-aba-gatilhos.md) §1.1 | hoje **o botão aceso muda ao trocar de alvo, e nada na tela diz de quem ele é** | 1.4 + **D-1** | 125 min |
 | 2.6 | **"Quem comanda o PC agora: Controle N"** na Navegação, com a cor dele, e o aviso quando o comando troca de dono | *(neste índice, §7; medido na [MESA-CHEIA-04](2026-08-13-MESA-CHEIA-04-a-marca-vira-gesto.md) §2)* | é a informação que explica por que o controle do P2 *"não faz nada"* fora do jogo | **D-10** | 105 min |
 | 2.7 | **Marcar no card da Status qual é o alvo de edição** | *(neste índice, §7)* | com quatro cards e quatro chips, nada diz qual as outras abas estão editando | 2.1 | 45 min |
 | 2.8 | **AS QUATRO MARCAS na aba Gatilhos** — a grade mostra onde cada jogador está | [MESA-CHEIA-02](2026-08-13-MESA-CHEIA-02-a-marca-de-quem-escolheu-na-aba-gatilhos.md) | **é a aba em que ela estava olhando quando pediu** | 2.5 + **D-3** | 6 h |
@@ -291,9 +291,16 @@ reabre uma decisão dela.
 > forma que o scroll surgisse pra comportar os diferentes controles"*
 > (`app/actions/status_actions.py:1217-1233`).
 >
-> **O que mudou:** medido offscreen em 13/08, quatro cards pedem **1626 px** de
-> altura numa janela que abre com **830** (`gui/main.glade:110`), menos
-> cabeçalho, tira de abas e o frame Estado. **Ela veria ~1,5 card.**
+> **O que mudou:** quatro cards pedem **1774 px** de altura numa janela que abre
+> com **830** (`gui/main.glade:110`), menos cabeçalho, tira de abas e o frame
+> Estado. **Ela veria ~1,5 card.**
+>
+> *(O número era **1626** nesta nota, medido em 13/08. Foi **substituído** pela
+> medição de 14/08, que reproduziu o que o produto de fato monta com 2+
+> controles — `status_actions.py:1216,1239`, `compact=False` e
+> `mostrar_estado_global=False`: 439 px por card mais 6 de espaço. E **1774 é
+> piso**: não inclui o frame Estado, a fita de chips nem o seletor de número.
+> Detalhe em [A MESA CHEIA, MEDIDA](../estudos/2026-08-14-A-MESA-CHEIA-MEDIDA-o-que-quatro-controles-revelaram.md).)*
 >
 > **A decisão dela não se apaga** — a premissa (dois controles) é que mudou. Com
 > quatro, "uma coluna com rolagem" e "ver a mesa de relance" deixam de ser
@@ -624,9 +631,22 @@ Ela fixou quatro regras em 09/08. Cada uma, aqui:
 - **A janela não foi aberta.** Toda afirmação sobre interface vem de código, do
   `.glade` e dos PNG de `docs/usage/assets/`. O aceite continua sendo o olho
   dela.
-- **Nada foi provado com dois ou mais controles.** Ela tem **um** DualSense por
-  USB agora. Os veredictos de "mira certo" são leitura de código mais o ensaio
-  dela de 12/08 (`docs/data/ensaios.csv`).
+- ~~**Nada foi provado com dois ou mais controles.**~~ **CAIU EM 14/08/2026:**
+  ela conectou os **quatro** — dois no cabo, dois por Bluetooth — e o
+  `state_full` real está versionado em
+  `tests/fixtures/state_full_quatro_controles.json`. O que a mesa cheia revelou
+  está em
+  [A MESA CHEIA, MEDIDA](../estudos/2026-08-14-A-MESA-CHEIA-MEDIDA-o-que-quatro-controles-revelaram.md),
+  e **três coisas dali mudam esta leva**: (a) `player` e `player_slot`
+  **divergem em três dos quatro** — o card diria *"Controle 4 — P1"* no rosa e
+  *"Controle 1 — P2"* no azul, e isso atinge a 2.4 e abre a **D-12**; (b) o
+  `retratar_abas.py` **não consegue** fotografar a mesa cheia, por decisão de
+  privacidade da casa, e a ONDA 2 precisa de um caminho novo para as fotos que a
+  PROVA-DE-TELA-01 exige; (c) dois números deste índice estavam errados e foram
+  substituídos.
+- **Continua não provado com dois ou mais:** tudo que exige **escrita** no
+  aparelho. A medição de 14/08 foi leitura pura — ela diz o que o produto
+  **relata**, não o que ele **faz** quando ela clica.
 - **Nenhum número de custo foi medido.** Os custos são estimativa; as alturas e
   larguras vieram de medição **offscreen**, e estão marcadas onde aparecem.
 - **A aba "No jogo" não foi auditada — foi descoberta.** O item 1.1 existe para
