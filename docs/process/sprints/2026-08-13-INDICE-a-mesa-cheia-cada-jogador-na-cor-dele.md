@@ -291,16 +291,17 @@ reabre uma decisão dela.
 > forma que o scroll surgisse pra comportar os diferentes controles"*
 > (`app/actions/status_actions.py:1217-1233`).
 >
-> **O que mudou:** quatro cards pedem **1774 px** de altura numa janela que abre
-> com **830** (`gui/main.glade:110`), menos cabeçalho, tira de abas e o frame
-> Estado. **Ela veria ~1,5 card.**
+> **O que mudou:** quatro cards pedem **1844 px** e a aba inteira pede **2055 px**
+> — contra **1080** de tela útil. **Não cabem nem com a janela maximizada**, e a
+> janela abre com **830** (`gui/main.glade:110`). **Ela vê DOIS cards.**
 >
-> *(O número era **1626** nesta nota, medido em 13/08. Foi **substituído** pela
-> medição de 14/08, que reproduziu o que o produto de fato monta com 2+
-> controles — `status_actions.py:1216,1239`, `compact=False` e
-> `mostrar_estado_global=False`: 439 px por card mais 6 de espaço. E **1774 é
-> piso**: não inclui o frame Estado, a fita de chips nem o seletor de número.
-> Detalhe em [A MESA CHEIA, MEDIDA](../estudos/2026-08-14-A-MESA-CHEIA-MEDIDA-o-que-quatro-controles-revelaram.md).)*
+> *(O número passou por três medições no mesmo dia, e cada uma substituiu a
+> anterior: **1626** em 13/08, offscreen; **1774** em 14/08, reproduzindo o que o
+> produto monta; e **1844/2055** medidos **pelo caminho de produção**, com a
+> primeira foto real da mesa cheia. A diferença entre 1774 e 1844 é o que o card
+> real traz a mais. Detalhe em
+> [A MESA CHEIA, MEDIDA](../estudos/2026-08-14-A-MESA-CHEIA-MEDIDA-o-que-quatro-controles-revelaram.md);
+> a foto está em `docs/process/estudos/assets/mesa-cheia/mesa_cheia_status.png`.)*
 >
 > **A decisão dela não se apaga** — a premissa (dois controles) é que mudou. Com
 > quatro, "uma coluna com rolagem" e "ver a mesa de relance" deixam de ser
