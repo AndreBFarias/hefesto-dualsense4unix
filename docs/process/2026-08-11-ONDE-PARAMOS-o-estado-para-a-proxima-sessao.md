@@ -20,6 +20,36 @@
   ordem), depois este arquivo. Ele responde três coisas: **o que mudou**, **o
   que está aberto**, e **o que é dela**.
 
+> **ATENÇÃO — 15/08/2026, de madrugada: existem TRÊS dias inteiros de trabalho
+> depois desta página.** Esta página é o retrato de 12/08 à noite, e as duas
+> caixas abaixo apontam para o que veio depois. **Leia esta primeiro; a de 13/08
+> continua valendo e vem em seguida.**
+>
+> A sessão de 14/08 → 15/08 rodou mais de quarenta subagentes, fechou sete
+> commits, mediu a mesa cheia com **quatro DualSense resetados de fábrica e
+> re-pareados do zero**, e deixou sete sprints novas. Comece por:
+>
+> 1. [A madrugada que quase não virou página](sprints/2026-08-15-INDICE-a-madrugada-que-quase-nao-virou-pagina.md)
+>    — **registro de execução**: o que já rodou e não se refaz, as decisões
+>    novas dela com as palavras dela, e a seção **"o que quase se perdeu"**, com
+>    onze itens que estavam só no transcrito. É a página que responde
+>    *"posso reabrir isto?"* em um minuto.
+> 2. [O índice da leva da cor e do som](sprints/2026-08-14-INDICE-a-cor-do-controle-e-o-som-de-cada-jogador.md)
+>    — **plano**, com as dezessete perguntas **D-13 a D-29 dela, todas ainda em
+>    aberto**, e o desenho do **ENSAIO 2+2** (dois controles no cabo e dois no
+>    rádio, no mesmo minuto), que é decisão dela de 15/08.
+>
+> **Três coisas desta sessão estão na árvore e NÃO commitadas** — confira com
+> `git status --short` antes de qualquer coisa: as duas curas de Bluetooth
+> (`assets/systemd/hefesto-bt-agent.service`, `scripts/bt_bonds_restore.sh`), a
+> MESA-CHEIA-12 (`daemon/subsystems/coop.py` e vizinhos), e as correções do mapa
+> e da canônica.
+>
+> **E uma decisão dela de 15/08 está pendurada e trava código:** o número de
+> jogador deve seguir a **ordem de conexão do momento**, não o lugar gravado por
+> MAC — o oposto do que R-15 e R-23 fixaram em julho, com motivo medido. Está em
+> [ORDEM-DE-CHEGADA-01](sprints/2026-08-15-ORDEM-DE-CHEGADA-01-a-fila-que-ela-pediu-nao-e-a-fila-que-o-produto-guarda.md).
+
 > **ATENÇÃO — 13/08/2026: existe um dia inteiro de trabalho DEPOIS desta página,
 > e ela ainda não o descreve.** Esta página segue sendo o retrato de 12/08 à
 > noite. A sessão de 13/08 mediu o projeto inteiro, mediu as dez abas da janela,
