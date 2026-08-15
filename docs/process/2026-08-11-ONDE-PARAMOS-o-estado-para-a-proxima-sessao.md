@@ -101,7 +101,7 @@ dois é a medida do que a noite rendeu.
 | funções `def test_` em `tests/` | **7777** (era 7654) — **não** é o mesmo número, ver 0.2 | `[COLETA]` | `.venv/bin/python -m pytest -q tests/unit/test_emblemas_do_readme.py` |
 | `mypy` no pacote | **Success**, 171 arquivos | `[COLETA]` | `.venv/bin/mypy src/hefesto_dualsense4unix` |
 | linhas no mapa de canais | **293** | `[COLETA]` | `python3 scripts/gerar-mapa.py --check` |
-| células em `O APARELHO OBEDECEU` | **15** células em **8** linhas (era 11 em 6), e **nenhuma** sem ensaio no caderno | `[APARELHO]` | coluna `cabo_grau`/`radio_grau` de `docs/data/mapa-controles.csv` |
+| células em `O APARELHO OBEDECEU` | **15** células em **8** linhas (era 11 em 6), e **nenhuma** sem ensaio no caderno | `[APARELHO]` | coluna `cabo_ate_onde_foi`/`radio_ate_onde_foi` de `docs/data/mapa-controles.csv` (chamavam-se `cabo_grau`/`radio_grau` até a D-13) |
 | ensaios no caderno | **77** (eram 57), sendo **73** com `observado_por = olho-dela` | `[APARELHO]` | a linha `ensaios lidos do caderno` de `check_paridade_transporte.py` — o `wc -l` conta o cabeçalho e dá 78 |
 | vereditos do caderno | **19** (eram 11) — 6 `E-A-CAUSA`, 13 `INCONCLUSIVO` | `[COLETA]` | `.venv/bin/python scripts/eliminacao.py` |
 | dívida do mapa | **18 reprovações** `sem-mordida` e **21 avisos** (14 assimetria, 6 mordida-não-provada, 1 grau-sem-ensaio-que-obedeça); o portão sai **1** | `[COLETA]` | `python3 scripts/check_paridade_transporte.py` |
@@ -470,7 +470,7 @@ o retrato honesto do que se sabe (números refeitos em 12/08 à noite):
   arrancou a cura e viu reprovar. São as seis linhas do item 6 acima, agora com
   o portão dizendo o nome de cada uma.
 - **1 aviso** `grau-sem-ensaio-que-obedeca`, e ele merece leitura: a linha
-  `gatilho.direito.adaptativo` declara `cabo_grau = O APARELHO OBEDECEU` e o
+  `gatilho.direito.adaptativo` declara `cabo_ate_onde_foi = O APARELHO OBEDECEU` e o
   único ensaio de **cabo** dela diz *"não obedece"*. Ou o degrau está alto
   demais, **ou** o ensaio foi gravado com o `resultado` do **suspeito** em vez do
   que a **feature** fez. É `[COLETA]` de cinco minutos, e vale fazer antes de
@@ -600,13 +600,25 @@ configuração da máquina dela:**
 
 **As decisões antigas que continuam abertas:**
 
-- **A procedência da arte dos SVG.** Ela não lembra a origem e os desenhos foram
-  editados aqui. Fica como **risco aberto de licença**. Uma saída, sem pressa:
-  redesenhar os três do zero a partir dos aparelhos dela.
-- **O `1.0.0`** — quando o produto está pronto é decisão dela, e o critério é
-  ver funcionando num PC novo.
 - **As perguntas abertas nos índices de 07/08 e 08/08** continuam válidas;
   nenhuma foi respondida.
+
+**Duas que estavam nesta lista e FECHARAM em 15/08/2026.** Ficam escritas para
+ninguém as reabrir; a fonte de verdade é
+[AS-DECISOES-RESPONDIDAS](2026-08-15-AS-DECISOES-RESPONDIDAS.md):
+
+- **A arte dos SVG é dela, e não há risco de licença** (decisão **V-B**). Os
+  desenhos foram criados aqui e **editados por ela no Boxy SVG** — literal:
+  *"Os controles atuais fomos nós quem criamos (o claude mesmo), e eu alterei
+  via Boxy SVG, pode deixar como tá. isso não é mais problema."* Não há obra de
+  terceiro envolvida. A recomendação de redesenhar os três do zero **caduca**, e
+  a distribuição pública deixa de estar travada por este item.
+- **O `1.0.0` tem critério, e ele é contável** (decisão **V-A**). O critério
+  antigo — *"ver funcionando num PC novo"* — foi **substituído por um que a casa
+  sabe medir**: a `0.9.5` exige mapa completo, todos os canais construídos e
+  nenhuma sprint aberta; a `1.0.0` exige **duas semanas sem sprint nova** depois
+  disso; até lá a série é `0.9.x.x`. A tabela canônica mora no preâmbulo do
+  [`CHANGELOG.md`](../../CHANGELOG.md).
 
 E há uma coisa fora do código que continua de pé: **a senha dela está em cinco
 commits públicos desde 22/05**. Registrado em memória; só ela pode trocar.
