@@ -20,7 +20,17 @@
   **MEDIDO** foi lido do aparelho dela, do descritor vivo, do fonte do driver ou
   do socket do daemon **hoje**, e traz o comando que produziu o número. O que
   está marcado **PLANO** é proposta e não virou código. Nenhum byte foi escrito
-  em controle nenhum durante a medição desta leva.
+  em controle nenhum **na medição de 14/08**.
+- **ATUALIZADO EM 15/08/2026, de madrugada, e a atualização move linhas deste
+  índice de grau.** Na mesa 2+2 dela — dois controles no cabo e dois no rádio ao
+  mesmo tempo — **bytes foram escritos em controle, com ela presente e olhando a
+  lightbar**, e o firmware **executou** reports de output de 142 B (`0x32`) e
+  547 B (`0x39`) por rádio. O que isso prova e o que **não** prova está no
+  [estudo](../estudos/2026-08-15-A-ESCADA-QUE-RESPONDE-o-audio-por-radio-deixou-de-ser-impossivel.md),
+  e o próximo ensaio está desenhado na
+  [ESCADA-QUE-RESPONDE-01](2026-08-15-ESCADA-QUE-RESPONDE-01-do-degrau-que-obedece-ao-conteudo-do-payload.md).
+  **A frase honesta, e é a única a copiar daqui:** *o canal existe, o firmware
+  responde, e o conteúdo do payload ainda não foi identificado.*
 - **Seis frentes mediram em paralelo** para escrever este índice, e nenhuma
   editou a árvore. As duas leis de método delas estão na seção 3.
 - **A leva anterior continua aberta e não se sobrepõe a esta:**
@@ -47,7 +57,7 @@ fazer hoje à noite e o que espera ela sentar.
   tela** e o controle passa a navegar a janela. Fecha com foto e com a palavra
   dela ([PROVA-DE-TELA-01](2026-07-27-PROVA-DE-TELA-01-dez-minutos-de-olho-antes-de-qualquer-leva.md)).
 - **ONDA 4 — o que trava esperando decisão dela.** São perguntas, não tarefas:
-  **D-13 a D-29**, na seção 8.
+  **D-13 a D-33**, na seção 8. As **D-30 a D-33** nasceram em 15/08.
 
 **Uma frente pode aparecer em duas ondas**, com a entrega numerada — é o caso do
 áudio por rádio (o instrumento na 1, o som na 2) e da cor (o dado na 2, a
@@ -66,7 +76,7 @@ medição de hoje **confirmou** e o que ela **corrigiu**.
 | 1. **A guia de cada controle na cor física dele** | A **paleta** existe desde 10/08 (cinco cores nos SVG). A **leitura da cor a partir do aparelho nunca foi tentada** — nem uma linha, em lugar nenhum. Ela lembrou certo que *"tínhamos mapeado isso no passado"*: mapeamos **metade**. E a metade que falta é a que decide |
 | 2. **Navegar a interface pelo controle** | O controle **já navega** hoje, com o vocabulário trocado: `cross` é clique, `circle` é Enter, `square` é Esc, `r1` é Alt+Tab. Falta o verbo certo e o gate de foco — e o gate já existe e já está saudável |
 | 3. **Tudo salvo no perfil ativo, para cada controle** | Vale para todo **ajuste**. Mas a **cor do plástico não é ajuste, é fato da peça** — e o perfil já excluiu identidade visível de propósito. Isto é uma contradição real, não invenção minha: é a **D-16** |
-| 4. **Som SFX por jogador, "o canal 3"** | **O endereço está errado e a coisa que ela quer existe.** Os quatro canais do sink USB são 2 de som + 2 de motor — e isso mesmo **NÃO está medido**, é inferência. Por rádio não passa por canal PCM nenhum: é o bloco `0x13` do report `0x39`, cujo caminho está inteiro documentado e **nunca foi escrito** |
+| 4. **Som SFX por jogador, "o canal 3"** | **O endereço está errado e a coisa que ela quer existe.** Os quatro canais do sink USB são 2 de som + 2 de motor — e isso mesmo **NÃO está medido**, é inferência. Por rádio não passa por canal PCM nenhum: é o bloco `0x13` do report `0x39`, cujo caminho está inteiro documentado e **nunca foi escrito**. **15/08: o REPORT `0x39` já foi escrito e executado** — o **bloco `0x13`**, esse continua sem uma linha |
 | 5. **Mapear cientificamente mic, som, giro e acelerômetro, cabo e BT** | Das **oito** células (4 peças x 2 transportes), **duas** têm medição que sustenta o rótulo. **Uma foi medida hoje** (acelerômetro por BT, e passa). As outras cinco dizem `medido` sobre coisa diferente da que o rótulo promete |
 
 **A quarta é a que precisa de qualificação, e ela vai gostar do motivo.** O
@@ -142,10 +152,22 @@ Cada linha traz o comando ou o endereço. **Nada aqui é opinião.**
 
 ### 2.3 O que continua sendo PLANO, e não se disfarça de outra coisa
 
-- **O aparelho nunca disse sim ao `0x39`.** Tudo o que este índice afirma sobre
-  o alto-falante por rádio é **literatura de duas fontes independentes mais
-  aritmética do descritor dela**. A aritmética é forte — 545 necessários contra
-  546 declarados. Não é medição.
+- **O aparelho DISSE SIM ao `0x39` — em 15/08/2026, e a linha anterior desta
+  lista foi substituída por isto.** Até 14/08 ela dizia *"o aparelho nunca disse
+  sim ao `0x39`"*, e essa frase virou fato errado em horas: na mesa 2+2 o mesmo
+  `common` de 47 bytes pedindo cor foi mandado por `0x31` (78 B), `0x32` (142 B)
+  e `0x39` (547 B), e **ela viu a lightbar obedecer nos três**, com o `0x31`
+  apagando entre um e outro como controle positivo.
+  **O que isso prova:** o firmware lê e executa reports de output de 142 e 547
+  bytes por rádio, o canal os transporta (`ACL Data TX dlen 552` no `btmon`), e
+  o `common` vale igual em todos.
+  **O que isso NÃO prova, e é a metade que importa:** que os bytes **além** do
+  `common` sejam áudio. Continua **hipótese** — forte, e hipótese.
+  A aritmética de 14/08 (545 necessários contra 546 declarados) segue de pé como
+  aritmética, e continua **não sendo** medição do payload. Detalhe no
+  [estudo](../estudos/2026-08-15-A-ESCADA-QUE-RESPONDE-o-audio-por-radio-deixou-de-ser-impossivel.md);
+  o ensaio que decide, na
+  [ESCADA-QUE-RESPONDE-01](2026-08-15-ESCADA-QUE-RESPONDE-01-do-degrau-que-obedece-ao-conteudo-do-payload.md).
 - **Nenhuma linha desta leva virou código.**
 - **Nenhum custo em minutos foi medido.** Onde houver estimativa, ela está
   marcada como estimativa.
@@ -191,6 +213,18 @@ alguém recusou o salto**.
 | **`audio.leitura_de_volta`** | `existe = nao-tem`: *"não há report de entrada nem feature que devolva volume, rota, pré-amp ou o mudo"* | Medi: o descritor declara **dezessete** feature reports e o driver conhece **três**. **Catorze nunca foram lidos por ninguém** | `existe = desconhecido`. *"Descartados: os reports de ENTRADA `0x01` e `0x31`. **Não descartados: os catorze FEATURE que ninguém leu.** Medido em 14/08 nos dois controles dela"* |
 | **`toque.touchpad.escrita`** | `existe = nao-tem`, evidência: *"Não localizei report, offset nem bit de saída de touchpad em `src/`"* | **A busca foi no NOSSO código.** Ausência de implementação nossa não é ausência de capacidade do aparelho. É a forma de erro exata que a LEI 1 nomeia | `existe = desconhecido`, com a lista do que foi descartado (o `TouchpadColor` da pydualsense, que é a cor da lightbar) e do que não foi (os catorze features, os degraus altos da escada) |
 | **`movimento.imu.ligar`** | `existe = nao-tem` — **e a própria ressalva da célula diz:** *"Se houver feature report capaz de ligar ou desligar a IMU, ninguém procurou"* | A ressalva está certa e o veredicto da coluna a contradiz. **E hoje eu li a gravidade dos dois controles sem enviar um único byte** | `existe = desconhecido`, promovendo a ressalva já escrita ao lugar do veredicto |
+
+> **ATENÇÃO, 15/08/2026 — a redação de `audio.saida_dedicada`, rádio, PODE
+> SUBIR DE GRAU, e a subida é pequena de propósito.** A linha da tabela acima
+> termina em *"não implementado e não medido neste aparelho"*. Metade disso
+> caiu: **o degrau foi medido.** O `0x32` (142 B) e o `0x39` (547 B) foram
+> escritos por rádio e o firmware os executou, com ela olhando a lightbar. A
+> redação certa hoje acrescenta **uma** frase, e nenhuma a mais:
+> *"MEDIDO em 15/08/2026: o firmware ACEITA e EXECUTA os degraus `0x32` e `0x39`
+> por rádio, processando neles o mesmo `common` de 47 bytes. O conteúdo do
+> payload além do `common` NÃO foi identificado — que seja áudio continua
+> hipótese."* **Não escreva que o áudio por rádio foi descoberto, nem que a
+> ponte funciona: não funciona e não há ponte.**
 
 > **ATENÇÃO, 15/08/2026 — duas destas redações propostas JÁ ENVELHECERAM, e
 > quem for aplicá-las no mapa tem de atualizar antes.** As frases *"os catorze
@@ -291,7 +325,7 @@ se responde no cabo**, e metade **só se responde no rádio**.
 | peça | cabo | rádio |
 |---|---|---|
 | **Microfone** | `medido` — **mas a evidência é o arquivo do WirePlumber**. Rebaixar | **medido de verdade**: protocolo conferido byte a byte, Opus decodificado, A/B de taxa em três janelas. É a única célula desta família com medição que sustenta o rótulo |
-| **Saída de som** | medido o **nome do sink**. Qual canal faz o quê: **não medido** | declarado `nao-tem` por falácia do perfil ausente. **O caminho existe, está escrito neste repositório, e tem zero linhas de implementação** |
+| **Saída de som** | medido o **nome do sink**. Qual canal faz o quê: **não medido** | declarado `nao-tem` por falácia do perfil ausente. **O caminho existe, está escrito neste repositório, e tem zero linhas de implementação.** **15/08: o CANAL foi medido** — o firmware executa `0x32` e `0x39` por rádio. **O payload continua não identificado** |
 | **Giroscópio** | **legítimo**: 250,0 Hz por duas réguas independentes mais o `bInterval` 6 do descritor | **legítimo** (rajadas de 38 a 392 Hz), mas contradiz a célula irmã (3.5) |
 | **Acelerômetro** | `inferido-do-codigo`. **Continua não medido** — não há controle no cabo | **MEDIDO HOJE**: 0,9945 g e 0,9823 g. Funciona, chega calibrado, sem comando de ligar |
 | **Jack (fone plugado)** | curado por nós | o bit **chega** e o driver o descarta por política. Endereço conhecido: byte 55, bit 0 |
@@ -301,8 +335,9 @@ se responde no cabo**, e metade **só se responde no rádio**.
 mapa desenha. **Ele tem um caminho de áudio próprio, de saída E de entrada, que a
 documentação oficial não cobre porque a documentação oficial é focada no cabo —
 exatamente o que ela disse hoje.** A metade de entrada desse caminho **já roda em
-produção aqui desde 25/07**. A de saída tem o transporte provado pelo descritor e
-zero implementação.
+produção aqui desde 25/07**. A de saída tem o transporte provado pelo descritor
+**e, desde 15/08, a ACEITAÇÃO provada no firmware** — e **zero implementação, e
+zero conhecimento do formato do payload**.
 
 ---
 
@@ -433,6 +468,11 @@ instrumento**, com o cabeçalho declarando **qual biblioteca e qual transporte**
    evdev **não** consegue desempatar por causa do filtro `fuzz=16`).
 4. **Gerador dos quatro WAV de quatro canais** — um tom em um canal por vez.
 5. **EXP-SPK-01** — o montador do `0x39`, que **não roda sem a D-24**.
+   **Em 15/08 ele ganhou cinco irmãos mais baratos que vêm ANTES dele**, na
+   [ESCADA-QUE-RESPONDE-01](2026-08-15-ESCADA-QUE-RESPONDE-01-do-degrau-que-obedece-ao-conteudo-do-payload.md):
+   variar os bytes extras, subir os degraus `0x33`-`0x38`, decidir o byte `[2]`
+   do envelope, ler o `0xF6` e replicar no cabo. O instrumento dos seis mora em
+   `scripts/ensaios/`, ao lado dos quatro que já existem.
 
 **A mordida que vale para todos:** o instrumento tem de dizer **qual controle
 respondeu**, e o casamento `hidrawN` -> `uniq` vem do `uevent`, nunca da ordem de
@@ -572,6 +612,16 @@ Leitura pura, mas mexe no hidraw que o daemon segura. Era a medição **mais
 barata e mais decisiva** que ficou na mesa em 14/08.
 
 ### 2.7 EXP-SPK-01 — fazer o alto-falante tocar por Bluetooth. **Depende da D-24.**
+
+> **REDESENHADO EM 15/08/2026, e ele deixou de ser o primeiro passo.** O ensaio
+> desta seção continua válido inteiro e virou o **E-5** da
+> [ESCADA-QUE-RESPONDE-01](2026-08-15-ESCADA-QUE-RESPONDE-01-do-degrau-que-obedece-ao-conteudo-do-payload.md)
+> — o **último** de seis, e não o primeiro. O motivo é medido: o `0x39` já foi
+> escrito e **executado** pelo firmware em 15/08, e isso **não** disse nada
+> sobre o formato do payload. Escrever um codificador Opus antes de saber onde o
+> payload mora é gastar bancada dela contra um formato que ninguém sabe se está
+> naquela posição. Os cinco ensaios que vêm antes custam 55 minutos somados e um
+> deles (o `0xF6`) **não escreve byte nenhum**.
 
 Um script de bancada, **fora de `src/`**, que monta **um** report `0x39` de 547 B
 e o escreve a 50 Hz por 3 segundos.
@@ -936,9 +986,17 @@ parte que aguenta por jogador é a tabela de atalhos"*.
 
 ### D-24 — Autoriza o EXP-SPK-01, que escreve no controle?
 
+> **ATUALIZADA EM 15/08/2026: a frase "é a única proposta desta leva que escreve
+> no aparelho" deixou de ser verdade, e por decisão sua.** Na madrugada de 15/08
+> você autorizou parar o daemon e escrever output reports por rádio, e foi assim
+> que a escada foi medida — `0x31`, `0x32` e `0x39`, com você olhando a
+> lightbar. **A classe de escrita, portanto, já foi exercida e nada quebrou.**
+> O que a D-24 ainda pergunta é o que **muda** em relação àquilo: taxa (50 Hz
+> por 3 s, contra alguns pacotes soltos) e conteúdo (payload de áudio, contra
+> `common` de cor). É a **D-31**, que separa as duas coisas.
+
 Escrever em `/dev/hidraw` de um controle seu **em Bluetooth**, a 50 Hz por 3
-segundos, para tocar um seno de 440 Hz. **É a única proposta desta leva que
-escreve no aparelho.** O argumento de risco nulo está em 2.7.
+segundos, para tocar um seno de 440 Hz. O argumento de risco nulo está em 2.7.
 
 | resposta | o que muda |
 |---|---|
@@ -967,7 +1025,7 @@ segue o jack sozinho e pronto?**
 | resposta | o que muda |
 |---|---|
 | **do fone** | boa parte do caminho **já existe**: o registrador de rota é por controle, endereçado por `uniq`, já implementado |
-| **do alto-falante por rádio** | é o EXP-SPK-01 inteiro (D-24) |
+| **do alto-falante por rádio** | é o EXP-SPK-01 inteiro (D-24), hoje o **E-5** da [ESCADA-QUE-RESPONDE-01](2026-08-15-ESCADA-QUE-RESPONDE-01-do-degrau-que-obedece-ao-conteudo-do-payload.md) — e ele só começa depois que os ensaios de payload disserem onde o formato mora |
 
 E, na interface, isso deve aparecer como *"SFX do jogador 1"*, *"Alto-falante do
 controle 1"*, ou outro nome? **Você já me corrigiu que nome novo que não deriva
@@ -1012,6 +1070,95 @@ interface?"*. **Quer o número na tela, ou basta que ele chegue no jogo pelo vpa
    resposta muda se eu proponho conserto ou se eu proponho apagar a linha da
    regra.
 
+### D-30 — A ordem de jogador: a que o produto GUARDA, ou a de chegada do momento?
+
+**Acrescentada em 15/08/2026.** É decisão sua, você já a escreveu por extenso, e
+ela ainda não estava numerada em lugar nenhum — que é exatamente o defeito que
+esta casa nomeou como *"a casa sabe e a página não diz"*.
+
+Às 03:54 de 15/08, depois de resetar e re-parear os quatro na ordem vermelho,
+azul, branco, roxo, você escreveu:
+
+> *"não, to falando que deve ser lembrado por ordem de conexão daquele momento
+> apenas. **Não uma imagem fixa salva por mec**, o bond mesmo se desfaz com
+> facilidade. Mas por exemplo conectamos hoje. Vermelho, deveria ser o player 1,
+> azul, o player 2, branco o player 3, roxo o player 4. mas tá agora, vermelho
+> 1, branco 2, roxo 3, azul 4 e a nossa ordem deveria sobrescrever a parte da
+> steam inclusive igual quando descobrimos como fazer junto ao lightbar"*
+
+**Há DUAS ordens no produto, e elas não são a mesma coisa:**
+
+| ordem | onde mora | quando muda |
+|---|---|---|
+| **a persistida** (`rank`) | `controllers.json`, gravada **por MAC** na primeira vez que aquele endereço aparece | nunca, enquanto o arquivo existir |
+| **a de chegada da sessão** | não existe hoje | a cada conexão |
+
+**O produto guarda.** O que você viu — *"vermelho 1, branco 2, roxo 3, azul 4"* —
+é o produto funcionando exatamente como projetado, com uma imagem fixa salva por
+MAC. **Não é bug: é a decisão antiga que a sua decisão nova contradiz.**
+
+| resposta | o que muda |
+|---|---|
+| **ordem de chegada do momento, e só ela** | o `rank` persistido deixa de decidir o número; quem chega primeiro é P1 hoje e pode ser P3 amanhã. É a leitura literal do que você escreveu |
+| **ordem de chegada, com o arquivo só como desempate** | mesmo comportamento no caso comum, e o arquivo resolve empate de dois que conectam no mesmo instante |
+| **continua persistida** | nada muda, e a sua frase de 03:54 fica sem efeito |
+
+O mecanismo, lido no fonte, e o preço de cada caminho estão na
+[ORDEM-DE-CHEGADA-01](2026-08-15-ORDEM-DE-CHEGADA-01-a-fila-que-ela-pediu-nao-e-a-fila-que-o-produto-guarda.md).
+**E a terceira parte da sua frase — *"a nossa ordem deveria sobrescrever a parte
+da steam"* — é pergunta separada e ainda não medida nesta sessão.**
+
+### D-31 — A bateria de escritas da escada: autoriza?
+
+**Acrescentada em 15/08/2026, e ela separa o que a D-24 juntava.**
+
+Você já autorizou, nesta madrugada, escrever output report por rádio com o
+daemon parado — e foi assim que se mediu que o firmware **executa** o `0x32` e o
+`0x39`. O que os
+[seis ensaios da escada](2026-08-15-ESCADA-QUE-RESPONDE-01-do-degrau-que-obedece-ao-conteudo-do-payload.md)
+pedem agora é **mais do mesmo, em série**: cerca de 60 escritas de output, todas
+com CRC válido e tamanho declarado pelo descritor do próprio aparelho, mais uma
+rajada de 3 s a 50 Hz no ensaio final.
+
+| resposta | o que muda |
+|---|---|
+| **autoriza a série inteira** | os seis ensaios rodam numa sessão de bancada de 1 h 25, e a escada sai medida degrau a degrau |
+| **autoriza só o que NÃO manda payload** (E-1, E-2, E-3, E-6) | 45 minutos, e responde *"onde o payload mora"* sem tentar tocar som ainda |
+| **só o E-4** | 10 minutos, leitura pura, zero escrita — e mesmo assim a casa aprende o que é o `0xF6` |
+
+**O que não muda em resposta nenhuma:** nada disso é feature report, nada escreve
+NVS, nada toca firmware. O risco de brick continua sendo o mesmo da ponte do
+microfone, que roda aqui desde 25/07.
+
+### D-32 — O `0xF6` e a família `0xF0`-`0xF7`: até onde?
+
+**Acrescentada em 15/08/2026.** O `0xF6` é um FEATURE de 546 bytes que **só
+existe no rádio** e é o gêmeo exato do OUTPUT `0x39`. A suspeita é que ele seja
+**negociação** — dizer ao controle qual codec e qual taxa vêm a seguir.
+
+**Ele mora na família `0xF0`-`0xF7`, que é o canal de atualização de firmware.**
+
+| resposta | o que muda |
+|---|---|
+| **ler o `0xF6` (GET_FEATURE), e só ler** | é a minha recomendação. Leitura pura, sem escrita nenhuma, e responde se o conteúdo é constante (capacidade) ou por unidade (identidade) |
+| **ler a família inteira `0xF0`-`0xF7`** | mais informação, mesma classe de risco — **desde que continue sendo só leitura** |
+| **escrever (`SET_FEATURE`) em qualquer um deles** | **eu não faço isso sem a sua palavra explícita, e recomendo que você não a dê agora.** É o canal por onde o firmware é atualizado |
+
+### D-33 — O nome da falácia gêmea
+
+**Acrescentada em 15/08/2026, e é a mais barata da lista.** Esta casa nomeou em
+14/08 a **falácia do perfil ausente** (*não achei, logo não existe*), e o nome
+tem se pagado — foi ele que fez a palavra "impossível" cair da célula do áudio
+por rádio.
+
+A gêmea nasceu com o achado de hoje e eu proponho **FALÁCIA DO CANAL QUE
+RESPONDE**: *respondeu, logo faz o que eu queria*. O nome deriva do léxico que já
+existe, e as duas erram na mesma junta — confundir a medição estreita que se tem
+com a afirmação larga que se quer.
+
+**A palavra é sua**, e ela vale mais do que parece: nome errado não pega, e uma
+forma de erro sem nome volta a acontecer.
+
 ---
 
 ## 9. As armadilhas desta leva, cada uma com endereço
@@ -1050,9 +1197,28 @@ interface?"*. **Quer o número na tela, ou basta que ele chegue no jogo pelo vpa
 9. **Descritor prova DECLARAÇÃO, nunca ACEITAÇÃO.** A escada de OUTPUT existe no
    descritor dos dois controles dela; **isso não quer dizer que o firmware aceita
    qualquer degrau**. É a diferença entre a seção 2.1 e a seção 2.3 deste índice.
+   **Atualizado em 15/08:** a aceitação passou a ser medida para `0x31`, `0x32` e
+   `0x39`; `0x33` a `0x38` continuam **declarados e não testados** (é o E-2 da
+   [ESCADA-QUE-RESPONDE-01](2026-08-15-ESCADA-QUE-RESPONDE-01-do-degrau-que-obedece-ao-conteudo-do-payload.md)).
 10. **Este índice envelhece em minutos.** O de 31/07 registrou como pendente um
     item entregue **três minutos e vinte e dois segundos depois**, e a linha
     ficou nove dias na fila. **Quem entregar qualquer item daqui, volte aqui.**
+    Em 15/08 este índice envelheceu em **horas**: quatro linhas dele afirmavam
+    que ninguém tinha escrito no `0x39`.
+11. **ACEITAÇÃO prova execução, nunca FINALIDADE** — a gêmea da armadilha 9,
+    nascida em 15/08 junto com o achado. *"O firmware executou o report"* não é
+    *"o report faz o que a gente esperava dele"*. A forma de erro é a **FALÁCIA
+    DO CANAL QUE RESPONDE**, irmã da falácia do perfil ausente da seção 3.2: uma
+    **nega** demais a partir do silêncio, a outra **afirma** demais a partir do
+    eco. O nome está proposto na
+    [ESCADA-QUE-RESPONDE-01](2026-08-15-ESCADA-QUE-RESPONDE-01-do-degrau-que-obedece-ao-conteudo-do-payload.md)
+    e a palavra sobre ele é dela (**D-33**).
+12. **`os.write()` num hidraw devolve sucesso quando o KERNEL aceita a
+    entrega** — ele **não** espera veredito do firmware. Em 15/08 ele disse
+    "aceitou" para os quatro pacotes de um ensaio, **inclusive para o controle
+    negativo de tamanho errado**, que tinha de ser recusado. **Todo ensaio desta
+    família nasce com controle positivo E negativo**, e quem observa a lightbar é
+    ela — o `write` devolver 547 não prova coisa nenhuma.
 
 ---
 
@@ -1061,9 +1227,23 @@ interface?"*. **Quer o número na tela, ou basta que ele chegue no jogo pelo vpa
 **Escrito por extenso, porque nesta casa "não medi" é resposta legítima e "achei
 que" não é.**
 
-- **O aparelho obedecendo o `0x39`.** Nenhum byte foi escrito em controle nenhum.
-  Tudo sobre o alto-falante por rádio é literatura de duas fontes independentes
-  mais aritmética do descritor dela. **A aritmética é forte e não é medição.**
+- ~~**O aparelho obedecendo o `0x39`.**~~ **MEDIDO EM 15/08/2026**, na mesa 2+2
+  dela: o `0x32` (142 B) e o `0x39` (547 B) foram escritos por rádio e o firmware
+  **executou** o `common` de 47 bytes dos dois — ela viu a lightbar acender verde
+  e azul, com o `0x31` apagando entre um passo e outro.
+  **E a lista não encolhe por isso, ela TROCA de item.** O que continua não
+  medido, e é o que importa:
+  **o CONTEÚDO do payload além do `common`.** Nem um byte dos 469 excedentes foi
+  identificado. Que sejam áudio é **hipótese**, e o
+  [ensaio que a decide](2026-08-15-ESCADA-QUE-RESPONDE-01-do-degrau-que-obedece-ao-conteudo-do-payload.md)
+  está desenhado e não rodou. **Não se escreve, em documento nenhum desta casa,
+  que o áudio por rádio foi descoberto ou que a ponte funciona — não funciona, e
+  não há ponte.**
+- **Os degraus `0x33` a `0x38`.** Declarados no descritor do rádio, **nunca
+  tocados**. É o E-2 da sprint acima.
+- **O `0xF6`** — FEATURE de 546 B que **só** existe no rádio, gêmeo exato do
+  OUTPUT `0x39`, suspeito de negociação de codec e taxa. **Nunca lido.** É o
+  E-4, e é leitura pura: roda sem autorização nenhuma.
 - **Qualquer coisa que exija CABO.** No momento da medição não havia nenhum
   DualSense no cabo — os dois estão por rádio, e as três placas de áudio da
   máquina são NVidia, a webcam e a Generic. **A medição de "card1 com 4 canais FL
@@ -1191,6 +1371,15 @@ mostra a ausência dela, e a assimetria deixa de depender de memória de
 numeração. É o que separa *"o rádio não tem alto-falante"* de *"o rádio não tem
 **placa de som**, e o alto-falante, se existir, chega por outro degrau"* — que
 é a pergunta do canal 3 e do `0x39`.
+
+> **ESTE ITEM JÁ RENDEU, na primeira noite em que a mesa 2+2 existiu.** Com os
+> quatro na mesa, os descritores foram lidos lado a lado no mesmo minuto: **cabo
+> 289 bytes com UM output (`0x02`, 47 B); rádio 320 bytes com NOVE, em escada de
+> +64 B, mais um FEATURE `0xF6` de 546 B que o cabo não tem.** E, no mesmo
+> ensaio, o firmware **executou** o `0x32` e o `0x39` por rádio. **A assimetria
+> deixou de ser leitura de código e virou medição de transporte** — e é
+> literalmente o que este desenho dela existia para produzir. O que ele **não**
+> produziu: qualquer conhecimento sobre o **conteúdo** do payload.
 
 **3. A taxa do giroscópio e do acelerômetro, por transporte.** Já está medido
 que o cabo entrega **250,0 Hz exatos** e que o rádio entrega **em rajadas**, com
