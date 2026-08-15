@@ -192,6 +192,20 @@ alguém recusou o salto**.
 | **`toque.touchpad.escrita`** | `existe = nao-tem`, evidência: *"Não localizei report, offset nem bit de saída de touchpad em `src/`"* | **A busca foi no NOSSO código.** Ausência de implementação nossa não é ausência de capacidade do aparelho. É a forma de erro exata que a LEI 1 nomeia | `existe = desconhecido`, com a lista do que foi descartado (o `TouchpadColor` da pydualsense, que é a cor da lightbar) e do que não foi (os catorze features, os degraus altos da escada) |
 | **`movimento.imu.ligar`** | `existe = nao-tem` — **e a própria ressalva da célula diz:** *"Se houver feature report capaz de ligar ou desligar a IMU, ninguém procurou"* | A ressalva está certa e o veredicto da coluna a contradiz. **E hoje eu li a gravidade dos dois controles sem enviar um único byte** | `existe = desconhecido`, promovendo a ressalva já escrita ao lugar do veredicto |
 
+> **ATENÇÃO, 15/08/2026 — duas destas redações propostas JÁ ENVELHECERAM, e
+> quem for aplicá-las no mapa tem de atualizar antes.** As frases *"os catorze
+> FEATURE que ninguém leu"* (linhas de `audio.leitura_de_volta` e
+> `toque.touchpad.escrita`) descrevem um estado que acabou: **os dezessete foram
+> lidos, nos quatro controles dela, por rádio, em 15/08/2026** — ver a entrega
+> 2.6 e a
+> [canônica](../../protocol/dualsense-referencia-canonica.md). A redação certa
+> hoje é *"os dezessete features foram lidos em 15/08/2026 e nenhum devolve
+> volume, rota, pré-amp ou mudo; o que não foi descartado são os degraus altos
+> da escada de OUTPUT e as respostas da família `0x80`-`0x83` **com comando
+> prévio**"*. **Copiar a coluna antiga para o CSV põe um fato morto num portão.**
+> A célula em si é de outro agente desta leva; esta nota existe para que ele não
+> a aplique às cegas.
+
 **A regra que a redação nova obedece:** *"não encontramos o caminho, e aqui está
 o que já descartamos"* é informação útil e datável. *"É impossível"* fecha a
 porta e é afirmação forte sem prova. **A diferença entre as duas é a diferença
@@ -520,10 +534,42 @@ cor coincidem e os de cor diferente divergem?**
 bytes no `0x22`. **Faltam os outros dois e o rótulo de cor de cada um — que só
 ela pode dar.** É a **D-27**.
 
-### 2.6 O censo de GET_FEATURE: catorze reports que o aparelho declara e ninguém leu
+> **FEITO EM 15/08/2026, e a resposta foi "não" — com a ressalva que importa.**
+> Os quatro foram lidos, por rádio. **Nenhum byte de `0x20`, `0x22` ou `0x0b`
+> correlaciona com a cor.** O que parecia candidato tem explicação melhor: os
+> offsets 45-51 do `0x22` mudam com a **`sw_series`**, não com a cor (ASCII nos
+> dois de série 11, binário nos outros dois), e o `device_info[12]` do `0x20`
+> difere por unidade mas **ninguém no mundo decifrou** o que ele é.
+>
+> **E a ressalva é o achado:** *"não está no `0x20`/`0x22`/`0x0b`"* **não** é
+> *"não está no aparelho"*. Está — no serial, por `0x80`/`0x81`, com uma escrita
+> antes. Ver a **D-15** reescrita e a
+> [canônica](../../protocol/dualsense-referencia-canonica.md).
 
-Leitura pura, mas mexe no hidraw que o daemon segura. É a medição **mais barata e
-mais decisiva** que ficou na mesa hoje, e a que eu não pude fazer.
+### 2.6 O censo de GET_FEATURE: os dezessete reports que o aparelho declara
+
+> **ENTREGUE EM 15/08/2026.** Esta entrega dizia *"catorze reports que o
+> aparelho declara e ninguém leu"*. **Os dezessete foram lidos, nos quatro, por
+> rádio** — e a tabela do que cada um trouxe, com tamanho declarado pelo próprio
+> descritor, mora na
+> [canônica](../../protocol/dualsense-referencia-canonica.md), em *"Os feature
+> reports — o censo dos dezessete"*. Qualquer célula do mapa que ainda diga
+> *"catorze que ninguém leu"* está desatualizada a partir desta data.
+>
+> **Três coisas saíram de lá, e as três são caras:**
+>
+> 1. **Por rádio se REPETE a leitura.** O timeout de 3 s do BlueZ custa 3,2-3,7 s
+>    por falha, e **um dos quatro só respondeu na quinta tentativa**. Ler uma vez
+>    e concluir *"não tem"* é a FALÁCIA DO PERFIL AUSENTE com nome e endereço.
+> 2. **Valide `buf[0] == report_id`.** Um dos quatro devolveu `0x80` no lugar do
+>    `0x20` pedido — resposta trocada, não erro. Sem a validação se parseia o
+>    report errado com o layout certo, e o tamanho ainda bate.
+> 3. **`0x80`-`0x83` e `0xf0`-`0xf7` devolvem constante idêntica nos quatro
+>    quando lidos SEM comando prévio.** Não é que estejam vazios — é que essa
+>    família responde ao que foi pedido antes. É a chave da D-15.
+
+Leitura pura, mas mexe no hidraw que o daemon segura. Era a medição **mais
+barata e mais decisiva** que ficou na mesa em 14/08.
 
 ### 2.7 EXP-SPK-01 — fazer o alto-falante tocar por Bluetooth. **Depende da D-24.**
 
@@ -720,14 +766,79 @@ alto-falante no cabo, por exemplo). A regra da casa diz que sim, é para rebaixa
 
 ### D-15 — Que cor é "a cor física dele"?
 
+> **REESCRITA EM 15/08/2026, e a versão anterior estava ERRADA.** Até hoje esta
+> decisão dizia que a cor do plástico *"não existe em lugar nenhum do código"* e
+> que *"a leitura a partir do aparelho nunca foi tentada, e eu não achei campo
+> HID que a reporte"*. **A segunda metade é falsa desde 10/08/2026:** o caminho
+> foi achado naquele dia, ficou enterrado num transcrito de subagente, e nunca
+> virou página — a sprint UNIDADE-COR-01 está aberta e não começada desde
+> então. O censo dos dezessete feature reports, feito nos quatro aparelhos em
+> 15/08, fechou o resto. **Se você decidisse com a redação antiga na mesa,
+> decidiria com informação errada**, e é por isso que a linha foi substituída em
+> vez de anotada — número errado sai, medição cara leva data. Esta é a data.
+
 São **duas coisas diferentes** e você usou a palavra "física", o que aponta para
 a segunda:
 
 | resposta | o que muda |
 |---|---|
 | **a cor VIVA da lightbar** (o que a D-1 já decidiu para a marca do jogador) | **chega na janela a 2 Hz e é só pintar.** Mas dois controles com a mesma luz ficam com guias iguais |
-| **a cor do PLÁSTICO** (o colorway de fábrica) | **não existe em lugar nenhum do código.** A paleta existe nos SVG desde 10/08; a leitura a partir do aparelho **nunca foi tentada**, e eu não achei campo HID que a reporte — o que é *"não encontrei"*, não *"não existe"* (2.5) |
+| **a cor do PLÁSTICO** (o colorway de fábrica) | **o caminho existe e está identificado** — não é mais "não achei". O que falta é a sua palavra sobre percorrê-lo, e é isso que a pergunta abaixo pede |
 | **as duas, em superfícies diferentes** | a viva no **miolo** (D-1 intacta, mesmo dono da verdade) e o plástico no **contorno**. Cada uma responde a uma pergunta: *"que luz está acesa agora?"* e *"que peça é essa na minha mão?"* |
+
+#### O caminho da cor, como ele realmente está hoje
+
+A cor de fábrica está no **serial impresso na traseira**, de 17 caracteres, nos
+**caracteres 5 e 6**. Lê-se assim:
+
+```
+SET_FEATURE 0x80, payload [0x01, 0x13]     (base = 1, num = 19)
+GET_FEATURE 0x81 -> 64 bytes
+    buf[1] == 1, buf[2] == 19, buf[3] == 2      (senão é erro, não dado)
+    buf[4..20] = 17 caracteres ASCII = o serial da traseira
+    cor = serial[4:6]        '00' White · '02' Cosmic Red · '04' Galactic Purple
+                             '05' Starlight Blue · '09' Cobalt Blue · e mais dez
+```
+
+**Três fontes independentes concordam** (`dualshock-tools.github.io`, com o
+mantenedor confirmando na issue #210; `nsfm/dualsense-ts`; `TechAntohere/Senshi`).
+A tabela completa e os graus estão na
+[canônica](../../protocol/dualsense-referencia-canonica.md), em *"O caminho da
+cor do plástico"*.
+
+**E aqui está o preço, que é a parte que a decisão precisa ver:**
+
+1. **Ler exige ESCREVER.** O `GET_FEATURE 0x81` só devolve o serial depois de um
+   `SET_FEATURE 0x80`. Sem o comando prévio, `0x80` a `0x83` devolvem a mesma
+   constante nos quatro aparelhos — **medido em 15/08 nos seus quatro**.
+2. **A escrita é da família de comandos de FÁBRICA.** É a mesma família em que
+   `[1, 1]` **reseta o controle** e `[12, 1, ...]` **grava calibração na NVS**.
+   O par `[1, 19]` é leitura pura — mas **byte errado no payload escreve onde
+   não devia**, e não há desfazer.
+3. **Só está provado POR CABO.** O `dualshock-tools` **recusa Bluetooth de
+   saída**. Por rádio ninguém demonstrou — o que **não** é o mesmo que
+   impossível, e é justamente o que o **ENSAIO 2+2** (seção 11) mede.
+4. **O que já foi descartado**, para você não pagar de novo: PID, `info` do
+   BlueZ, `iSerialNumber` USB (é o MAC, não o serial do produto), part number,
+   prefixo de MAC, e os offsets 45-51 do `0x22` (mudam por `sw_series`, não por
+   cor). O `hardware_version` do sysfs **separa os seus quatro hoje, mas por
+   acaso de lote** — dois controles da mesma cor comprados juntos teriam o mesmo
+   valor.
+
+**A pergunta, então, não é mais "existe?". São três caminhos, e o preço de cada
+um:**
+
+| caminho | o que custa | o que entrega |
+|---|---|---|
+| **(a) não fazer** | **zero risco.** Você escolhe a cor de cada controle na interface **uma vez**, e ela fica salva por MAC (D-16 já decidiu que é da PEÇA) | a tela pinta certo hoje à noite, e nunca escreve nada no aparelho |
+| **(b) fazer POR CABO, um de cada vez** | é o **caminho provado**, e ainda assim é escrita na família de fábrica. Um controle no cabo por vez, com o daemon parado ou pelo broker | a cor sai do próprio aparelho, sem você digitar nada — inclusive para controle que você comprar depois |
+| **(c) tentar POR RÁDIO** | **território não demonstrado.** Some ao risco da escrita o transporte que já mostrou timeout e resposta trocada no censo de hoje | o mesmo de (b), sem cabo — se funcionar |
+
+**A minha recomendação é (a) agora e (b) depois**, nesta ordem e por este
+motivo: (a) entrega a tela hoje e não toca no aparelho; (b) vira melhoria
+opcional, medida no ENSAIO 2+2, **sem que a interface dependa dela**. Assim
+nenhuma escrita de fábrica fica no caminho crítico de um recurso visual.
+**A palavra é sua.**
 
 ### D-16 — A cor do plástico é do PERFIL ou da PEÇA?
 
@@ -959,8 +1070,10 @@ que" não é.**
   FR RL RR" que outro agente citou hoje é de outro momento, com outra numeração
   de placa** — o `card1` de agora é a webcam. Portanto: mic no cabo, SFX no cabo,
   giro no cabo e acelerômetro no cabo continuam exatamente como estavam.
-- **O censo de GET_FEATURE dos catorze desconhecidos.** É a medição mais barata e
-  mais decisiva que ficou na mesa, e ela precisa do hidraw pelo broker.
+- ~~**O censo de GET_FEATURE dos catorze desconhecidos.**~~ **FEITO EM
+  15/08/2026** — os dezessete lidos nos quatro, por rádio, com retry e validação
+  de id. Resultado na
+  [canônica](../../protocol/dualsense-referencia-canonica.md) e na entrega 2.6.
 - **Se o aparelho OBEDECE ao que escrevemos** no volume, na rota por rádio e no
   pré-amp. Os dez testes que rodam verdes nessas células **são todos de unidade**
   — aferem o nosso byte, nenhum toca controle.
@@ -972,8 +1085,14 @@ que" não é.**
 - **A cor de cada controle dela.** Ela tem quatro registrados e só dois estavam
   ligados, ambos por rádio. **Não sei qual endereço é o vermelho e qual é o
   azul**, e sem esse rótulo o censo não decide nada.
-- **O USB como via de identidade.** Não conferi `iSerial`/`iProduct` do descritor
-  USB — é uma via independente e **nunca olhada nesta casa**.
+  **Em 15/08 os quatro estavam ligados e foram lidos**, mas o mapeamento
+  endereço-cor daquele dia é **INFERÊNCIA pela ordem de pareamento**, não
+  rótulo dela. Continua sendo dela a palavra.
+- ~~**O USB como via de identidade.**~~ **RESPONDIDO EM 15/08/2026, e a resposta
+  é "não serve":** o `iSerialNumber` do descritor USB **não é o serial do
+  produto** — é o MAC em 12 dígitos hexadecimais (`SDL_hidapi_ps5.c:391-403`).
+  A via independente que sobrou é o serial de fábrica por `0x80`/`0x81`, que é
+  outra coisa e está na D-15.
 - **A cor renderizada sob o tema de alto contraste do sistema.** Li a regra; não
   provei quem vence.
 - **A latência de ponta a ponta "apertar X, a tela reagir".** Medi só o
@@ -981,8 +1100,15 @@ que" não é.**
 - **Se `next_page()` pula páginas escondidas.** Importa porque a aba "No jogo"
   some e volta em runtime: se não pular, R1 leva a uma página invisível e a
   interface trava sem explicação.
-- **Se a Sony grava a cor em algum lugar do aparelho.** Não achei fonte pública
-  que afirme **nem que negue**, e o console não é evidência acessível daqui.
+- ~~**Se a Sony grava a cor em algum lugar do aparelho.**~~ **RESPONDIDO EM
+  15/08/2026: grava, sim** — no serial de fábrica de 17 caracteres, caracteres 5
+  e 6, alcançável por `SET_FEATURE 0x80` + `GET_FEATURE 0x81`. Três fontes
+  independentes concordam. **Continua NÃO MEDIDO por nós**, porque exige uma
+  escrita da família de fábrica que só ela autoriza — ver a D-15.
+  *(A redação antiga — "não achei fonte pública que afirme nem que negue" — já
+  estava desatualizada quando foi escrita: o achado é de 10/08/2026 e ficou
+  enterrado num transcrito de subagente. É o custo de achado que não vira
+  página.)*
 
 ### O que precisa de equipamento que não há aqui, e o substituto de cada um
 
@@ -993,3 +1119,171 @@ que" não é.**
 | **Osciloscópio, para separar som de vibração no canal 3** | **a mão e a orelha dela** (2.1). Nesta casa a observação dela já corrigiu três leituras minhas de código num dia só |
 | **Segundo host, para isolar "é o daemon ou é o firmware"** | **parar o daemon** (2.2). Custa dez minutos e é o A/B que faltava desde 25/07 |
 | **Um DualSense Edge** | **não tem substituto.** A resposta honesta é *"não sabemos"*, e o mapa **não deve afirmar paridade Edge x padrão nesta família**. Lacuna, não igualdade presumida |
+
+---
+
+## 11. O ENSAIO 2+2 — dois no cabo e dois no rádio, no mesmo minuto
+
+**Acrescentado em 15/08/2026. É desenho dela**, decidido depois de ver o censo
+dos dezessete: em vez de medir a mesa toda por rádio hoje e a mesa toda por cabo
+outro dia, **medir os dois transportes ao mesmo tempo, com os mesmos quatro
+aparelhos, o mesmo instrumento e o mesmo relógio**.
+
+### 11.1 O que este desenho decide que a mesa toda-rádio NÃO decide
+
+A mesa de hoje mediu quatro unidades **e um transporte só**. Toda diferença que
+ela encontrar entre "o que se mediu hoje" e "o que se mediu em outro dia por
+cabo" tem **pelo menos quatro explicações concorrentes**, e nenhuma medição
+sequencial consegue separá-las:
+
+| explicação concorrente | por que a medição sequencial não a descarta |
+|---|---|
+| **o transporte** | é a hipótese que interessa, e é a única que o desenho 2+2 isola |
+| **o momento** | firmware, versão do daemon, carga do BlueZ e do host mudam entre um dia e outro. O daemon vivo desta casa é **mais velho que o código** — cura só vale no próximo start |
+| **a unidade** | os quatro **não são iguais**: três BDM-050 e um BDM-060M, com quatro `hardware_version` diferentes e duas `sw_series` diferentes |
+| **o instrumento** | *"medir contra a biblioteca errada produz alarme convincente e falso"* — o instrumento de terça pode não ser o de quinta |
+
+**O 2+2 mata as três últimas de uma vez:** mesmo minuto (mata o momento), mesmo
+processo de medição (mata o instrumento), e **dois aparelhos por braço** (dá
+réplica interna — uma diferença que aparece em **um** dos dois é efeito de
+unidade, não de transporte).
+
+**E o passo que fecha o desenho é a TROCA.** Rodar duas vezes, invertendo os
+braços: os dois que estavam no cabo vão para o rádio e vice-versa. Sem a troca,
+*"o transporte"* continua confundido com *"quais duas unidades foram para qual
+braço"* — que é exatamente o erro que o `hardware_version` deste censo deixou
+óbvio. **Com a troca, o efeito de unidade vira número em vez de dúvida.**
+
+**O que se segura fixo nas duas rodadas:** o host, o kernel, a versão do daemon
+(e ele **iniciado depois** da última edição de código), o instrumento com a
+biblioteca declarada no cabeçalho, e a bateria dos quatro acima do mesmo piso —
+controle em bateria baixa muda comportamento de rádio e não avisa.
+
+### 11.2 As quatro perguntas que este desenho responde, em ordem de valor
+
+**1. A cor, `0x80`/`0x81` lado a lado nos dois caminhos.** É a pergunta da
+**D-15**, e o 2+2 é a única forma de respondê-la sem ambiguidade. O
+`dualshock-tools` **recusa Bluetooth de saída**, e daí veio a leitura de que o
+caminho *"só funciona por cabo"* — mas **recusar não é medir**, e ninguém
+publicou a tentativa por rádio. Com dois no cabo e dois no rádio, o mesmo
+`SET_FEATURE 0x80 [0x01, 0x13]` seguido de `GET_FEATURE 0x81` sai nos dois
+braços no mesmo minuto, e há três resultados possíveis — **os três úteis**:
+
+- **funciona nos dois** -> a leitura de cor não precisa de cabo, e a alínea (c)
+  da D-15 deixa de ser território não demonstrado;
+- **só no cabo** -> a casa passa a poder escrever *"medido: o serial de fábrica
+  não atravessa o rádio"*, com data e amostra, em vez de repetir a leitura de
+  terceiro;
+- **falha nos dois** -> o problema não é o transporte, é o comando ou o firmware
+  destas unidades — e isso só se sabe **porque o braço do cabo estava lá**.
+
+**Depende da D-15**, porque envolve escrita da família de fábrica. **Sem a
+palavra dela, este item não roda** — os outros três rodam.
+
+**2. O áudio, que é a assimetria mais grosseira dos dois transportes.** O cabo
+expõe uma **placa de som USB de 4 canais** associada ao controle; o rádio **não
+expõe placa nenhuma**. Hoje isso é afirmado por literatura e por aritmética do
+descritor, e a seção 10 registra por escrito que *"a medição de card com 4
+canais que outro agente citou hoje é de outro momento, com outra numeração de
+placa"* — **o `card1` de agora é a webcam**. Com dois controles no cabo, a
+numeração de placa é conferida **no mesmo instante** em que o braço do rádio
+mostra a ausência dela, e a assimetria deixa de depender de memória de
+numeração. É o que separa *"o rádio não tem alto-falante"* de *"o rádio não tem
+**placa de som**, e o alto-falante, se existir, chega por outro degrau"* — que
+é a pergunta do canal 3 e do `0x39`.
+
+**3. A taxa do giroscópio e do acelerômetro, por transporte.** Já está medido
+que o cabo entrega **250,0 Hz exatos** e que o rádio entrega **em rajadas**, com
+taxa variável. O que **não** está medido é se isso vale para as quatro unidades
+ou se foi a unidade que estava no cabo naquele dia — e o driver desta máquina
+**não pede taxa nenhuma** ao DualSense, nem por cabo nem por rádio, então quem
+decide é o par aparelho + transporte. Com 2+2 e a troca, sai a tabela quatro por
+dois inteira, e ela responde de uma vez se a rajada do rádio é do transporte
+(esperado) ou se tem componente de unidade (que ninguém procurou). **Régua:
+`MSC_TIMESTAMP` do nó `Motion Sensors` — o relógio do controle — e a contagem de
+`SYN_REPORT` sobre tempo de parede, as duas juntas**, como em 11/08.
+
+**4. O custo e o comportamento da leitura de feature, medido nos dois braços.**
+O censo de hoje pagou 3,2-3,7 s por falha no braço do rádio, e um aparelho só
+respondeu na quinta tentativa. **Não se sabe qual é esse custo no cabo** — a
+suspeita óbvia é "nenhum", e suspeita óbvia é exatamente o que esta casa exige
+medir. Sai daqui o número que sustenta o `feature_retries` do DKMS, e sai a
+resposta para *"a resposta trocada (`0x80` no lugar de `0x20`) é do rádio ou é
+do aparelho?"* — se acontecer também no cabo, a validação de `buf[0]` vira regra
+de leitura em qualquer transporte, e não macete de Bluetooth.
+
+### 11.3 As armadilhas específicas deste ensaio
+
+1. **Plugar o cabo pode não trocar o transporte.** Um DualSense pareado por
+   Bluetooth que recebe o cabo pode continuar falando por rádio e só carregar.
+   **O braço de cada aparelho se confere no `uevent`/`hidraw`, nunca na
+   suposição de que "está plugado, logo é USB"** — e é uma conferência que entra
+   no relatório, não no comentário.
+2. **Quatro controles em dois transportes é o cenário em que o co-op mais
+   embaralha.** Os evdev físicos ficam **mudos** para leitor externo, porque o
+   co-op faz `EVIOCGRAB` neles — medido em 15/08, em dois ensaios, e é
+   comportamento **correto**. Instrumento ingênuo mede zero evento e conclui que
+   o aparelho está calado. **Meça no `hidraw`, ou meça no vpad sabendo que é o
+   vpad.**
+3. **O `state_full` não diz qual vpad é qual MAC** (seção 12). Enquanto essa
+   dívida existir, a correspondência vpad-aparelho neste ensaio se estabelece
+   **apertando botão**, um de cada vez, e se escreve no relatório como o que é:
+   um passo manual.
+4. **Escrita exige daemon parado ou o broker.** Vale para o item 1. Leitura
+   convive com o daemon; escrita, não.
+
+---
+
+## 12. Dívidas registradas nesta leva, e NÃO consertadas
+
+**Registro, não conserto.** Cada uma tem dono fora desta página, e mexer aqui
+atropelaria trabalho alheio. A regra da casa é que **dívida sem endereço vira
+retrabalho**, então elas ficam escritas.
+
+### 12.1 O `uhid_blueprint.py` fossiliza `hw_version = 0x0710` em TODO vpad
+
+`src/hefesto_dualsense4unix/integrations/uhid_blueprint.py` forja todo gamepad
+virtual com `hw_version = 0x0710`. **Medido em 15/08/2026:** esse é o
+`hardware_version` do DualSense **roxo** dela — os quatro vpads afirmam ao
+kernel serem a mesma placa daquela unidade.
+
+- **Não é defeito hoje.** Nada no produto lê esse campo do vpad, e nenhum jogo
+  observado o consulta.
+- **É impressão digital duplicada**, e o custo aparece no dia em que alguém usar
+  `hardware_version` como chave de diagnóstico — que é exatamente o uso que o
+  censo de hoje recomenda para os aparelhos **físicos**. Quatro vpads com o
+  mesmo valor, e um deles igual ao de um físico da mesa, é a receita de uma
+  medição que se acredita e está errada.
+- **Não consertar por aqui:** `src/` é de outro agente nesta leva.
+
+### 12.2 O `state_full` não publica qual vpad corresponde a qual MAC
+
+**Medido em 15/08/2026.** O campo `coop.players` é um **número** (`4`), não uma
+lista. Não há, no estado publicado, nada que ligue *"vpad Hefesto P2"* a um
+endereço.
+
+**A consequência é de método, e foi paga hoje:** a pergunta *"o vpad e o físico
+correspondem?"* **não pôde ser respondida por leitura** — foi respondida
+apertando o botão X em cada controle e vendo qual `/dev/input/event*` emitia
+(`EV_KEY`, code 304, value 1). A correspondência estava **certa** nos quatro,
+com o branco confirmado isoladamente em quatro eventos.
+
+Enquanto o `state_full` não publicar a lista, **todo ensaio com mais de um
+controle paga esse passo manual de novo** — inclusive o ENSAIO 2+2 da seção 11.
+Dono: `src/`, outro agente.
+
+### 12.3 O achado de 10/08 que ficou num transcrito de subagente
+
+O caminho da cor (`0x80`/`0x81`, serial nos caracteres 5 e 6) **foi achado nesta
+casa em 10/08/2026** e não virou página. Ficou no transcrito de um subagente, a
+sprint `UNIDADE-COR-01` abriu e não começou, e **a D-15 deste índice foi escrita
+em 14/08 afirmando o contrário** — *"a leitura a partir do aparelho nunca foi
+tentada, e eu não achei campo HID que a reporte"*.
+
+**Cinco dias de distância entre saber e a página dizer que não se sabia.** É a
+mesma classe de defeito que a casa já nomeou: *"a casa sabe e o produto não
+faz"*. Aqui foi *"a casa sabe e a página nega"*, que é pior, porque uma decisão
+dela quase foi tomada em cima da negação.
+
+**A dívida não é o achado — é o caminho do achado até a página.** Fica
+registrada aqui sem conserto proposto, porque a cura é de processo e é dela.
