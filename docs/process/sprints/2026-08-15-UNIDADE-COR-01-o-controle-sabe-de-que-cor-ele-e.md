@@ -1,7 +1,9 @@
 # UNIDADE-COR-01 — o controle sabe de que cor ele é
 
 - **Escrito em:** 15/08/2026, sobre `c8065d8`
-- **Grau:** **MEDIDO** no que descarta; **CAMINHO IDENTIFICADO, NÃO MEDIDO** no que propõe.
+- **Grau:** **MEDIDO** no que descarta; **MEDIDO NO CABO** no que propõe
+  (15/08/2026, dois controles — ver §1); **MEDIDO E RECUSADO NO RÁDIO**
+  (15/08/2026, duas tentativas, `EIO` nas duas — ver §4).
 - **Citada desde:** 10/08/2026, em três documentos, e nunca escrita até agora —
   o que é, ele mesmo, o defeito que esta sprint documenta.
 
@@ -54,8 +56,32 @@ cor = serial[4:6]
 (`js/controllers/ds5-controller.js:196-226` e `:404-414`), com o mantenedor
 confirmando na issue #210; `nsfm/dualsense-ts`; `TechAntohere/Senshi`.
 
-**Grau: CAMINHO IDENTIFICADO, NÃO MEDIDO por nós.** Nenhum dos quatro controles
-dela teve o serial lido — ver a seção 4, que é o motivo.
+**Grau: MEDIDO NO CABO, em 15/08/2026, depois da D-15.** Ela autorizou a
+escrita, e os dois controles que estavam no cabo responderam:
+
+| nó | `hardware_version` | código | cor lida do firmware |
+|---|---|---|---|
+| `hidraw4` | `0x00001111` | `05` | **Starlight Blue** |
+| `hidraw5` | `0x00000710` | `04` | **Galactic Purple** |
+
+Instrumento: `scripts/ensaios/cor_do_plastico.py`. Saída bruta:
+[`docs/data/ensaios-brutos/2026-08-15-E7-cor-do-plastico.txt`](../../data/ensaios-brutos/2026-08-15-E7-cor-do-plastico.txt).
+
+**A âncora bateu, e é isto que dá confiança à leitura.** A tabela da §3 desta
+mesma página registrava — sem saber a cor — que `0x00001111` era o controle
+*azul* e `0x00000710` o *roxo*. O serial, lido do firmware sem consultar aquela
+tabela, respondeu Starlight Blue e Galactic Purple. Duas confirmações
+independentes de que o campo é a cor do plástico, e não um número de lote.
+
+**Os dois controles continuaram sãos**: feature `0x20` idêntico byte a byte
+antes e depois, `hardware_version` idêntico, e reports de entrada continuando a
+sair. O comando foi enviado duas vezes a cada um, e as quatro provas fecharam.
+
+**No rádio, continua NÃO MEDIDO** — e por escolha, não por falta de aparelho:
+os dois de rádio voltaram à mesa durante o ensaio e mesmo assim nada foi
+escrito neles. Estrear envelope não demonstrado numa família de comandos de
+fábrica não é decisão de instrumento. O envelope está montado e conferido em
+hexadecimal — ver §4.
 
 ## 2. O que foi DESCARTADO, e com o quê
 
@@ -109,12 +135,36 @@ Ler o serial exige **uma escrita**: `SET_FEATURE 0x80`.
 não-volátil**. O nosso `[1,19]` é leitura pura — mas um byte errado no payload
 escreve onde não devia.
 
-E a leitura **só está provada por cabo**: o `dualshock-tools` recusa Bluetooth de
-saída. Por rádio o canal existe (`0x80`/`0x81` estão no descritor destes
-controles), mas ninguém demonstrou.
+E a leitura **só está provada por cabo** — inclusive por nós, em 15/08/2026, com
+os dois da §1. O `dualshock-tools` recusa Bluetooth de saída. Por rádio o canal
+existe (`0x80`/`0x81` estão no descritor destes controles), mas ninguém
+demonstrou.
 
 Por Bluetooth há ainda o CRC-32 semente `0xA3` nos quatro últimos bytes, que esta
 casa já sabe calcular (`core/ds_output_report.py`, `bt_crc32`).
+
+**O envelope de rádio, já montado e conferido** (`cor_do_plastico.py
+--radio-a-serio`, rodada seca de 15/08):
+
+```
+80 01 13 00 ... 00 93 0d 46 73
+                   ^^^^^^^^^^^ CRC-32, semente 0xA3, little-endian
+```
+
+O `seq` e o tag `0x10` do envelope de OUTPUT (report `0x31`) **não entram
+aqui**: aqueles são do canal de interrupção, e o feature report sai pelo canal
+de CONTROLE, com o id no byte 0 e mais nada de cabeçalho. Confundir os dois
+envelopes é o defeito que a BTREPORT-02 fechou.
+
+**A dúvida honesta que sobra**, e que só a medição resolve: não se sabe se o
+firmware **exige** o CRC num `SET_REPORT` de feature ou se apenas o **emite** nas
+respostas. Por isso o instrumento tem `--sem-crc` — é a *segunda* tentativa,
+depois da primeira, nunca em vez dela.
+
+E como ler a falha, se vier, antes de tentar qualquer variação: `EPIPE` na hora
+é *"não tenho esse report neste transporte"*; ~3 s e timeout é o
+`REPORT_REQ_TIMEOUT` do BlueZ, que é o rádio se perdendo; eco errado no `0x81` é
+o firmware respondendo outra coisa — e aí se **para**.
 
 ## 5. Os três caminhos, com o preço de cada um
 
@@ -124,9 +174,17 @@ casa já sabe calcular (`core/ds_output_report.py`, `bt_crc32`).
 | **(b)** | ler o serial **por cabo**, um de cada vez | desconectar o BT de um controle | baixo, e é o caminho provado |
 | **(c)** | ler o serial **por rádio** | nenhum gesto físico | território não demonstrado |
 
-**Recomendação: (a) agora, (b) depois.** A cor na tela não precisa esperar a
-leitura automática — o `controllers.json` já é indexado por `addr` e já lista os
-quatro. E o `hardware_version` serve de âncora enquanto isso.
+**Recomendação de quem escreveu esta página: (a) agora, (b) depois.**
+
+> **NOTA DATADA — 15/08/2026: ela escolheu o contrário, e o caminho (b) já
+> rodou.** A D-15 é *a cor do PLÁSTICO, lida do aparelho, por cabo E por
+> rádio*, e a D-16 é *da PEÇA, porque a cor mora no APARELHO — sem arquivo por
+> endereço*. Isso **derruba o caminho (a)**: um arquivo por `addr` foi
+> justamente o que ela recusou. A recomendação fica registrada porque
+> recomendação errada é dado, e porque a próxima pessoa precisa saber que a
+> escolha foi consciente — mas **não é o plano**. O plano é (b), feito, e (c),
+> desenhado. Fonte de verdade:
+> [AS-DECISOES-RESPONDIDAS](../2026-08-15-AS-DECISOES-RESPONDIDAS.md).
 
 **A palavra final é dela** ([PROVA-DE-TELA-01](2026-07-27-PROVA-DE-TELA-01-dez-minutos-de-olho-antes-de-qualquer-leva.md)).
 
