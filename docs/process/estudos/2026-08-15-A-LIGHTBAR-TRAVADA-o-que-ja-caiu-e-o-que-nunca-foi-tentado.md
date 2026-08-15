@@ -263,7 +263,7 @@ supressão incondicional hoje, e é ela que proíbe religar a escrita de LED no
    isso à KEEPALIVE-01.**
 4. **A cura dela entrou e o defeito continuou.** O `flag2` passou a sair zerado
    em 22/07; a barra seguiu apagada em 02/08, 03/08, 08/08, 11/08 e 12/08.
-5. **Não há um único ensaio no caderno com este suspeito.** As treze linhas de
+5. **Não há um único ensaio no caderno com este suspeito.** As quinze linhas de
    `luz.lightbar.cor@dualsense [radio]` não incluem *"o `flag2` de SETUP saindo
    no fluxo"*. Ele nunca entrou no caderno de eliminação.
 
@@ -283,7 +283,7 @@ o CSV de ensaios e as sprints foram varridos.
 
 **O estado do caderno, primeiro, porque ele enquadra tudo.** Rodando
 `scripts/eliminacao.py` hoje, a linha `luz.lightbar.cor@dualsense [radio]` tem
-**treze suspeitos**: **três** marcados `e-a-causa`, **três** `CONFUSO`, **sete**
+**quinze suspeitos**: **três** marcados `e-a-causa`, **três** `CONFUSO`, **nove**
 `inconclusivo` (um braço só) — e **ZERO inocentados**. Nenhum suspeito do rádio
 foi jamais fechado pelos dois lados. **A poda — que ela chamou de a metade que
 dá mais lucro — nunca foi feita nesta linha.**
@@ -449,13 +449,13 @@ já tem a cura no disco:** basta medir se o defeito muda de comportamento com o
 daemon de hoje contra o de ontem. GRAU da ligação: **SEM PROVA** — e é
 exatamente por isso que ela está aqui.
 
-### 5.9 Fechar os sete `inconclusivo` do caderno
+### 5.9 Fechar os nove `inconclusivo` do caderno
 
-Sete suspeitos da linha do rádio têm **um braço só**. Fechar cada um custa **um
+Nove suspeitos da linha do rádio têm **um braço só**. Fechar cada um custa **um
 ensaio de dez segundos**, e o caderno já diz qual falta, suspeito por suspeito.
 Entre eles: *"o daemon reescrevendo a cor DELE por cima de uma escrita externa"*,
 *"a Steam APAGAR a barra em regime"*, *"o broker de `hidraw` do próprio produto
-escondendo o nó"*. **Nenhum desses sete foi tocado desde 12/08.**
+escondendo o nó"*. **Nenhum desses nove foi tocado desde 12/08.**
 
 ### 5.10 Cruzar a lightbar com o estado do RÁDIO
 
@@ -479,24 +479,37 @@ medição, e a escavação do journal achou a barra **acesa** no rádio dentro
 daqueles cinco dias, **quatro vezes**, três delas com fala literal dela (ensaios
 `lightbar-bt-aceso-*`, `docs/data/ensaios.csv:31-34`).
 
-O `cli/cmd_lightbar_reset.py` foi corrigido em 13/08. **A frase falsa continua
-viva em outros três lugares do `src/`:**
+O `cli/cmd_lightbar_reset.py` foi corrigido em 13/08 e serviu de molde.
 
-| arquivo:linha | o que ainda diz |
-|---|---|
-| `src/hefesto_dualsense4unix/core/backend_pydualsense.py:2633-2634` | *"sem 0x08 nenhum a barra ficou morta por 5 dias e 20 adoções (medido 08/08)"* |
-| `src/hefesto_dualsense4unix/cli/app.py:149` | *"e sem 0x08 nenhum a barra ficou morta por 5 dias (08/08)"* |
-| `src/hefesto_dualsense4unix/daemon/ipc_server.py:134` | *"a medição de 08/08 (5 dias sem 0x08, barra morta)"* |
+**A dívida foi PAGA em 15/08, no mesmo dia em que esta página a cobrou.** Esta
+seção nasceu dizendo *"a frase falsa continua viva em outros três lugares do
+`src/`"* e listando os três por arquivo e linha. Os três foram corrigidos —
+`core/backend_pydualsense.py` (docstring de `enviar_release_leds`, onde está
+agora a correção inteira, com os endereços de ensaio), `cli/app.py` (docstring
+do comando `lightbar-reset`, que é o texto do `--help`) e
+`daemon/ipc_server.py` (o comentário do registro de `lightbar.reset`) —, e a
+quarta cópia, que a auditoria do `src/` não via, saiu do docstring de módulo de
+`tests/unit/test_lightbar_medir_o_0x08.py`.
 
-Durante a escrita deste documento, uma frente de pesquisa leu
-`backend_pydualsense.py:2633-2634`, tratou-o como medição e concluiu que o `0x08`
-estava refutado **por aquela evidência**. A conclusão é certa; a evidência é
-falsa. **Um fato errado no `src/` não fica parado: ele recruta.**
+Os endereços de linha da lista original **não** ficam registrados aqui: as
+próprias correções moveram as linhas, e esta página não é portão de citação
+(`scripts/validar-citacoes-de-linha.py` só cobre `docs/protocol/`), logo um
+`arquivo:linha` daqui apodrece sem nada reprovar. O que fica é a busca que
+refaz a conferência: `grep -rn "20 adoções" src/ tests/`. Ela é a que morde,
+porque *"20 adoções"* é a metade da frase que nenhuma das correções reescreveu
+— *"morta por 5 dias"* atravessa uma quebra de linha em
+`backend_pydualsense.py` e escapa da busca ingênua. Em 15/08 ela devolve **duas
+linhas, as duas em contexto de REFUTAÇÃO** (`backend_pydualsense.py` e
+`tests/unit/test_lightbar_medir_o_0x08.py`), e nenhuma afirmativa.
 
-A regra dela, de 11/08, decide o caso: *fato errado se SUBSTITUI*. **Estas três
-linhas são o exemplo puro** — não há custo já pago a preservar, só um número que
-a medição derrubou. A substituição é de outra leva; fica registrada aqui para
-não se perder.
+Por que a seção fica de pé mesmo paga: durante a escrita deste documento uma
+frente de pesquisa leu a frase no `backend_pydualsense.py`, tratou-a como
+medição e concluiu que o `0x08` estava refutado **por aquela evidência**. A
+conclusão é certa; a evidência era falsa. **Um fato errado no `src/` não fica
+parado: ele recruta** — e este é o caso medido que prova a regra.
+
+A regra dela, de 11/08, decidiu o caso: *fato errado se SUBSTITUI*. Não havia
+custo já pago a preservar, só um número que a medição derrubou.
 
 ---
 
@@ -554,7 +567,7 @@ não se perder.
 - **O caderno de eliminação está desatualizado na conclusão de topo:** marca
   `E-A-CAUSA` para a Steam, que ela derrubou hoje. **Não editei o CSV** — é
   território de outra frente, e o caderno é portão.
-- **Nenhum dos treze suspeitos do rádio está inocentado.** A poda nunca
+- **Nenhum dos quinze suspeitos do rádio está inocentado.** A poda nunca
   aconteceu nesta linha.
 
 ---

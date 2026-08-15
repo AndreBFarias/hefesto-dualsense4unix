@@ -1,13 +1,18 @@
 # ORDEM-DE-CHEGADA-01 — a fila que ela pediu não é a fila que o produto guarda
 
 - **Escrito em:** 15/08/2026, de madrugada, na branch `restauro/inicio-da-sessao`,
-  sobre `97c2cbf` com a árvore suja (a cura MESA-CHEIA-12 está escrita e **não
-  commitada**).
+  sobre `97c2cbf` com a árvore suja — a cura MESA-CHEIA-12 estava escrita e
+  ainda não commitada naquela hora (ela entrou depois, em `9441678`).
 - **Grau:** **MEDIDO** na bancada dela, com os quatro DualSense na mesa. A
   divergência foi observada por ela primeiro, e reproduzida em código depois.
 - **Índice da leva:** [a cor do controle e o som de cada jogador](2026-08-14-INDICE-a-cor-do-controle-e-o-som-de-cada-jogador.md)
-- **Depende de:** nada em código. **Depende inteira de uma palavra dela** — a
-  seção 5 diz qual, e por que ela não pode ser respondida por mim.
+- **Status (15/08, tarde):** **ela respondeu, e a E2 está ENTREGUE.** A palavra
+  dela é a **D-30** de
+  [AS-DECISOES-RESPONDIDAS](../2026-08-15-AS-DECISOES-RESPONDIDAS.md): *"(b)
+  ordem do momento, CONGELADA quando a mesa estabiliza. Quem cai e volta
+  recupera o número. O gravado não some: vira desempate."* A E2 saiu no commit
+  `feat(identidade): a fila do momento, e ela congela quando a mesa para de
+  mexer` (`86563c2`). A **E3** continua em aberto.
 - **O que esta sprint NÃO é:** ela não desfaz a MESA-CHEIA-12. A MESA-CHEIA-12
   está certa no que se propôs (unir dois números que divergiam) e está na
   árvore. Esta sprint é sobre **em qual dos dois eles foram unidos**.
@@ -31,11 +36,11 @@ do zero, um de cada vez, na ordem que eu pedi: **vermelho, azul, branco, roxo**
 
 São **três pedidos numa frase só**, e eles não são o mesmo pedido:
 
-| # | o pedido | estado hoje |
-|---|---|---|
-| **A** | o número sai da **ordem de conexão daquele momento** | **NÃO** — sai da ordem de **primeira aparição**, gravada por MAC |
-| **B** | **não** é uma imagem fixa salva por MAC | **NÃO** — é exatamente uma imagem fixa salva por MAC (`controllers.json`) |
-| **C** | a ordem da casa **sobrescreve a da Steam**, como já se fez com a lightbar | **não medido nesta sessão** — ver §6 |
+| # | o pedido | quando esta sprint foi escrita (03h54) | depois da E2 (`86563c2`) |
+|---|---|---|---|
+| **A** | o número sai da **ordem de conexão daquele momento** | **NÃO** — saía da ordem de **primeira aparição**, gravada por MAC | **SIM** — `_ordem_do_momento_locked` ordena por onda de chegada |
+| **B** | **não** é uma imagem fixa salva por MAC | **NÃO** — era exatamente uma imagem fixa salva por MAC (`controllers.json`) | **SIM, com a ressalva que ela mesma pôs:** o gravado não some, vira **desempate** e recebe a foto quando a mesa congela |
+| **C** | a ordem da casa **sobrescreve a da Steam**, como já se fez com a lightbar | **não medido nesta sessão** — ver §6 | **continua não medido** |
 
 E o que ela relatou — *"vermelho 1, branco 2, roxo 3, azul 4"* — é o produto
 funcionando **exatamente como projetado**. O defeito não é um bug: é uma decisão
@@ -93,7 +98,7 @@ decisão cara, e é por isso que ela tem de ser dela e não minha.
 
 ### 2.c O que a MESA-CHEIA-12 fez, e o que ela não podia decidir
 
-A cura de 15/08 01h00 (na árvore, não commitada) uniu dois números que
+A cura de 15/08 01h00 (`9441678`) uniu dois números que
 divergiam: a lâmpada acesa no plástico e o `player` publicado no `state_full`.
 `CoopManager.player_indexes()` passou a sair de
 `CoopManager.numeros_de_jogador()` (`daemon/subsystems/coop.py:1162-1212`), a
@@ -114,11 +119,34 @@ menos confuso e igualmente distante do que ela pediu.
 
 | # | entrega | grau | custo |
 |---|---|---|---|
-| **E1** | **A pergunta na mesa dela, com o preço dos dois lados** (seção 5). Nada em código antes disso | decisão | 10 min dela |
-| **E2** | **Se ela escolher a ordem do momento:** uma fila de SESSÃO, ao lado da fila persistida — não no lugar dela | PLANO | 90 min |
+| **E1** | **A pergunta na mesa dela, com o preço dos dois lados** (seção 5). Nada em código antes disso | **RESPONDIDA** (D-30, 15/08) | 10 min dela |
+| **E2** | **A ordem do momento, que ela escolheu:** uma fila de SESSÃO ao lado da fila persistida — não no lugar dela | **ENTREGUE** (`86563c2`) | 90 min |
 | **E3** | **O gesto "Renumerar agora" alcançável de onde ela está** — hoje é IPC (`identity.renumber`) e não tem botão nas abas onde a queixa nasce | PLANO | 40 min |
 
+### E2 — ENTREGUE em 15/08: o que foi escrito
+
+A E1 foi respondida com **(b) ordem do momento, congelada quando a mesa
+estabiliza**, e a E2 saiu no mesmo dia. O que está na árvore, em
+`daemon/subsystems/identity.py`:
+
+| peça | o que faz |
+|---|---|
+| `_chegada` (`identity.py:473`) | a **fila do momento**: o dicionário MAC -> número da onda em que aquele endereço chegou |
+| `JANELA_DE_ONDA_SEC = 0.5` (`identity.py:271`) | quem chega dentro da mesma janela **chega junto**, e o desempate cai para o gravado |
+| `_marcar_chegada_locked` (`identity.py:740`) | abre ou reaproveita a onda corrente quando um MAC conecta |
+| `_ordem_do_momento_locked` (`identity.py:762`) | ordena por `(chegada, rank gravado, chave)` — **a fila do momento manda, o gravado desempata**, que é a frase dela |
+| `JANELA_MESA_ESTAVEL_SEC = 4.0`, `_avaliar_mesa_locked` e `_congelar_locked` (`identity.py:290`, `:776`, `:792`) | quando a mesa passa quatro segundos sem ninguém entrar nem sair, a ordem do momento é **gravada** por PERMUTAÇÃO dos `rank` que os presentes já detêm — é o "CONGELADA" da resposta dela, e é o que faz quem cai e volta recuperar o número |
+| `_mesa_mexeu_locked` (`identity.py:728`) | descongela nos três pontos em que a mesa muda |
+| `snapshot_chegada` (`identity.py:827`) | a fila do momento, legível de fora, para o teste e para o IPC |
+
+Do lado do `CoopManager` **nenhuma linha de lógica mudou**: como a
+MESA-CHEIA-12 já tinha unido lâmpada e rótulo na mesma função, trocar a fonte
+do registro trocou os dois de uma vez (`coop.py:1222-1229` registra isso).
+
 ### E2 — por que uma fila NOVA, e não trocar a regra da que existe
+
+O raciocínio abaixo é o que a entrega seguiu, e continua valendo como a razão
+de o `rank` gravado não ter sido tocado.
 
 Trocar `_assign_locked` para reordenar por conexão **reabre R-15 e R-23 inteiras**:
 a cor automática, o LED do número, a reserva que os externos leem
@@ -150,7 +178,13 @@ resolve o caso dela — e é a entrega mais barata da sprint.
 
 ## 4. O teste que MORDE
 
-Arquivo novo, `tests/unit/test_ordem_de_chegada_01_a_fila_do_momento.py`. <!-- ref-externa: arquivo a CRIAR por esta entrega, ainda não existe -->
+**Escrito e na árvore:** `tests/unit/test_ordem_de_chegada_01_a_fila_do_momento.py`
+— 644 linhas, 19 casos em 6 classes, entregue junto com a E2 no `86563c2`. As
+três mordidas planejadas abaixo estão todas cobertas, e as classes dizem qual
+é qual: `TestOCasoDela` (mordida 1), `TestQuemCaiEVolta` e
+`TestOGravadoEDesempate` (mordida 2), `TestALampadaEORotuloSeguemJuntos`
+(mordida 3). `TestCongelarEGravar` e `TestAMesaMistaContinuaFechando` cobrem o
+congelamento e a mesa com externo, que a resposta dela acrescentou.
 
 ### Mordida 1 — a fila do momento não é a fila gravada (é a principal)
 
@@ -197,12 +231,12 @@ Que a ordem do momento é a resposta certa. Isso é dela, e é a seção 5.
 
 ## 5. O que é decisão dela, e o que é execução minha
 
-| decisão dela | execução minha |
+| decisão dela | resposta dela, 15/08 |
 |---|---|
-| **A pergunta central: o número de jogador segue a ordem de conexão DESTA sessão, ou o lugar gravado do endereço?** O preço de cada lado está abaixo, e é real nos dois | escrever a que ela escolher |
-| **Se a resposta for "a ordem do momento": o que acontece com um replug no meio da partida?** Renumerar ali é o defeito que R-15 mediu; NÃO renumerar significa "ordem de conexão" com um asterisco | propor "congela na primeira vez que a mesa fica estável", salvo palavra dela |
-| **O pedido C — "a nossa ordem deveria sobrescrever a parte da steam"** — é uma frente própria e não está medida nesta sessão (§6) | medir antes de prometer |
-| — | as três entregas, as três mordidas, e a fila de sessão sem tocar em `rank` |
+| **A pergunta central: o número de jogador segue a ordem de conexão DESTA sessão, ou o lugar gravado do endereço?** O preço de cada lado está abaixo, e é real nos dois | **RESPONDIDA (D-30): a ordem do momento.** *"O gravado não some: vira desempate"* |
+| **Se a resposta for "a ordem do momento": o que acontece com um replug no meio da partida?** Renumerar ali é o defeito que R-15 mediu; NÃO renumerar significa "ordem de conexão" com um asterisco | **RESPONDIDA (D-30): CONGELA quando a mesa estabiliza.** *"Quem cai e volta recupera o número"* — quatro segundos parados, e a ordem do momento é gravada |
+| **O pedido C — "a nossa ordem deveria sobrescrever a parte da steam"** — é uma frente própria e não está medida nesta sessão (§6) | **em aberto** — medir antes de prometer |
+| — | execução minha: as entregas, as mordidas, e a fila de sessão sem tocar em `rank` |
 
 **O preço de cada lado, na mesa:**
 
@@ -227,6 +261,9 @@ Que a ordem do momento é a resposta certa. Isso é dela, e é a seção 5.
    `boot_id` do arquivo é o do boot corrente (a máquina subiu em 14/08 02:44) e
    o arquivo foi escrito às 01:15 de 15/08 — mas o `rank` de um MAC não muda ao
    ser reescrito. O que está provado é o **mecanismo**; a data de cada rank, não.
-3. **O comportamento com externo na mesa** (Pro Controller, 8BitDo). A fila é
-   global e compartilhada com eles (`external_identity.py`), e nenhuma entrega
-   desta sprint foi conferida contra um externo ligado.
+3. **O comportamento com externo na mesa** (Pro Controller, 8BitDo), **no
+   aparelho**. A fila é global e compartilhada com eles
+   (`external_identity.py`), e a E2 cobriu isso **em teste**
+   (`TestAMesaMistaContinuaFechando`: a mesa mista continua fechando 1..N, e a
+   permutação não vaza para o `present_ranks` que o lado externo lê). Contra um
+   externo **ligado na bancada dela**, nada foi conferido.
