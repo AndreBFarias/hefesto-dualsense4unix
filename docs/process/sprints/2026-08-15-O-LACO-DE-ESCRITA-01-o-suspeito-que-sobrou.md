@@ -541,6 +541,16 @@ Nos dois desfechos a linha
 Nenhum dos dois foi tocado: `src/` é de outro agente nesta janela. Ficam com a
 mordida sugerida, para quem for consertar.
 
+> **CONSERTADOS no mesmo dia** —
+> [O-LACO-DE-ESCRITA-02](2026-08-15-O-LACO-DE-ESCRITA-02-os-dois-achados-viram-cura.md).
+> Os dois estavam certos. Uma correção de fato veio junto: a morte da thread
+> **não** seria totalmente calada — o `threading.excepthook` padrão imprime
+> traceback no stderr, e a unit não sobrescreve `StandardOutput`, então ele
+> chega ao journal. Calado era o que importa para o produto: sem log
+> estruturado, sem `connected = False`, sem ressurreição. E a pré-condição do
+> segundo achado **nunca disparou nesta máquina**: zero ocorrências em 30 dias
+> de journal.
+
 | achado | onde | mordida sugerida |
 |---|---|---|
 | **`_bt_seq` sem lock** — dois escritores no mesmo handle podem carimbar o mesmo `seq`; o firmware descarta e o log diz "escrito" | `writeReport`, `core/backend_pydualsense.py:1018-1033` | duas threads chamando `writeReport` num handle BT em paralelo têm de produzir `seq` **todos distintos**; arrancar o lock reprova |
