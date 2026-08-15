@@ -16,8 +16,9 @@ Leia esta página primeiro. Ela cabe em cinco minutos.
 2. **A mesa virou régua.** Com a porta aberta, os quatro controles responderam
    **dezoito células** que estavam mudas no mapa, e derrubaram duas suspeitas
    antigas.
-3. **Um defeito novo foi achado, medido e consertado** — um jogador em quatro
-   recebia input praticamente parado, e ninguém sabia.
+3. **Quatro defeitos novos foram achados, medidos e consertados** — o maior
+   deles: um jogador em quatro recebia input praticamente parado, e ninguém
+   sabia. Nenhum dos quatro vale antes do próximo start do daemon.
 
 ---
 
@@ -90,6 +91,9 @@ Nenhuma foto nova foi tirada. **A palavra final continua sendo sua.**
 | `feat(ensaios)` | três instrumentos novos, e o que a mesa respondeu |
 | `docs(mapa)` | dezoito células mudas viraram resposta |
 | `fix(co-op)` | o espelho que não nascia para quem perdia a corrida |
+| `fix(backend)` (fd) | o init que estoura deixava para trás descritor e thread |
+| `docs(protocolo)` | o laço de escrita virou hipótese falseável, com ensaio |
+| `fix(backend)` (rádio) | o carimbo de sequência sem lock, e a leitura vazia |
 
 ---
 
@@ -140,9 +144,16 @@ convincente e falso nesta sessão.
 
 ## 7. O que fica aberto
 
-- **O fd vazado.** O `pydualsense_init_timeout` das 06:29:45 deixou um
-  `/dev/hidraw8 (deleted)` aberto no daemon. Some no próximo start; a causa não
-  foi investigada.
+- **O laço de escrita** é o suspeito que sobrou depois de o barramento ser
+  inocentado, e virou hipótese falseável com ensaio desenhado
+  ([O-LACO-DE-ESCRITA-01](sprints/2026-08-15-O-LACO-DE-ESCRITA-01-o-suspeito-que-sobrou.md)).
+  **O ensaio escreve no aparelho, então a autorização é sua.** Não derruba a
+  mesa, mas precisa dela cheia.
+- **Um handle cuja thread de saída morre não volta sozinho.** A tela mostra
+  *desconectado* num controle que segue mandando input pelo evdev. Curar exige
+  derrubar e recriar handle vivo, e recriar tem preço já medido — por isso a
+  escolha é sua, e está escrita na §4 de
+  [O-LACO-DE-ESCRITA-02](sprints/2026-08-15-O-LACO-DE-ESCRITA-02-os-dois-achados-viram-cura.md).
 - **A máscara por jogador** ([sprint
   própria](sprints/2026-08-15-MASCARA-POR-JOGADOR-01-a-decisao-de-14-08-esbarra-na-de-10-08.md)):
   sua decisão de 14/08 esbarra na de 10/08, que está escrita no schema. É
