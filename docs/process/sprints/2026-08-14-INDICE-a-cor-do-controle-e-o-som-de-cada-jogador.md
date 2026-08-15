@@ -112,7 +112,7 @@ Cada linha traz o comando ou o endereço. **Nada aqui é opinião.**
 |---|---|---|
 | **O acelerômetro por Bluetooth funciona, e chega calibrado** | módulo do vetor em repouso = **0,9945 g** e **0,9823 g** nos dois controles (erro de 0,6% e 1,8% contra `DS_ACC_RES_PER_G` = 8192) | `python-evdev` do `.venv`, nós "DualSense Wireless Controller Motion Sensors", bus 0005. **Nenhum comando de "ligar IMU" foi enviado por ninguém** |
 | **A escada de OUTPUT por rádio** | `0x31`=77 B, `0x32`=141, `0x33`=205, `0x34`=269, `0x35`=333, `0x36`=397, `0x37`=461, `0x38`=525, `0x39`=**546** (teto). Passo de +64 | parser próprio sobre `/sys/class/hidraw/hidraw8/device/report_descriptor` e `hidraw10` — 320 B, **descritores idênticos**, firmware `0x0110002a` nos dois |
-| **A escada é de áudio, e o 0x39 é o degrau do alto-falante** | 1 (seq) + 8 (bloco `0x11`) + 130 (`0x12` duplo) + 402 (`0x13` duplo, dois quadros Opus de 200 B) + 4 (CRC) = **545 B**. Cabe nos 546 do `0x39` com **um byte de folga**, e **não cabe** nos 525 do `0x38` | aritmética sobre o Report Count medido acima. **Isto fecha sozinho a "contradição interna em aberto" de 11/08** |
+| **Um pacote de áudio HIPOTÉTICO cabe no `0x39`, e não cabe no `0x38`** — o título desta linha dizia *"a escada é de áudio, e o `0x39` é o degrau do alto-falante"*, e a frase foi **substituída em 15/08/2026**: ela afirma FINALIDADE a partir de ARITMÉTICA, dentro de uma tabela que promete *"nada aqui é opinião"* | 1 (seq) + 8 (bloco `0x11`) + 130 (`0x12` duplo) + 402 (`0x13` duplo, dois quadros Opus de 200 B) + 4 (CRC) = **545 B**. Cabe nos 546 do `0x39` com **um byte de folga**, e **não cabe** nos 525 do `0x38` | aritmética sobre o Report Count medido acima, **com o layout TLV que o nosso código do microfone nomeia** — nenhum byte de áudio foi mandado a aparelho nenhum, nem em 14/08 nem depois. O que a conta mostra é **compatibilidade de tamanho**, que é condição necessária e não é prova de função: é a FALÁCIA DO CANAL QUE RESPONDE esperando na porta |
 | **O CRC do 0x39 é o que a casa já tem** | as três formas devolvem `0xa238ce60` para a mesma amostra: `bt_crc32` com semente `0xA2`, a do SAxense, e `zlib.crc32(b"\xa2" + dados)` | comparação lado a lado no `.venv`. **Nenhuma linha de CRC nova a escrever** |
 | **O rádio dela comporta o report inteiro** | ACL MTU **1021:6**; o `0x39` no ar é 548 B com o cabeçalho HIDP `0xA2`. Cabe em **um** pacote ACL. Teto do kernel para escrita em hidraw: 16384 | `hciconfig -a`; `grep HID_MAX_BUFFER_SIZE` nos headers instalados |
 | **A libopus da máquina já tem o codificador** | libopus **1.4**, com `opus_encoder_create`, `opus_encode_float` e `opus_encoder_ctl` presentes. O produto hoje só usa o decodificador | `ctypes.CDLL("libopus.so.0")` |
@@ -634,12 +634,21 @@ e o escreve a 50 Hz por 3 segundos.
 3. **gravar pelo microfone da webcam C920** e conferir o pico em 440 Hz por FFT,
    em vez de confiar no ouvido.
 
-**Por que o risco de brick é nulo, e isto tem de estar escrito no cabeçalho do
+**Por que o risco conhecido é baixo, e isto tem de estar escrito no cabeçalho do
 script:** é um output report HID **de tamanho declarado pelo próprio descritor do
 aparelho**, pelo canal de interrupção, com CRC válido. Não é feature report, não
-escreve NVS, não toca firmware, e o firmware descarta em silêncio qualquer report
-BT com CRC errado. **É a mesma classe de escrita que a ponte do microfone já faz
-nesta casa desde 25/07.**
+é a família `0xF0`-`0xF7` da atualização de firmware, e o firmware descarta em
+silêncio qualquer report BT com CRC errado. **É a mesma classe de escrita que a
+ponte do microfone já faz nesta casa desde 25/07.**
+
+**A palavra "nulo" saiu desta página em 15/08/2026, e a troca é de honestidade,
+não de coragem:** *"não escreve NVS, não toca firmware"* é afirmação sobre o que
+os bytes excedentes acionam — e o que eles acionam é justamente o que a
+[ESCADA-QUE-RESPONDE-01](2026-08-15-ESCADA-QUE-RESPONDE-01-do-degrau-que-obedece-ao-conteudo-do-payload.md)
+admite **não** saber. "Risco nulo" sobre payload não identificado é a FALÁCIA DO
+CANAL QUE RESPONDE virada contra o aparelho dela. O que se escreve é: **não há
+caminho conhecido de brick por esta classe de escrita, e o argumento inteiro
+está acima.**
 
 **Critério de sucesso: a orelha dela.** Nada de log, nada de "aceito sem erro" —
 o `write` devolver 547 não prova coisa nenhuma. É exatamente o que
@@ -996,7 +1005,7 @@ parte que aguenta por jogador é a tabela de atalhos"*.
 > `common` de cor). É a **D-31**, que separa as duas coisas.
 
 Escrever em `/dev/hidraw` de um controle seu **em Bluetooth**, a 50 Hz por 3
-segundos, para tocar um seno de 440 Hz. O argumento de risco nulo está em 2.7.
+segundos, para tocar um seno de 440 Hz. O argumento de risco — baixo e conhecido, não "nulo" — está em 2.7.
 
 | resposta | o que muda |
 |---|---|
@@ -1116,25 +1125,32 @@ Você já autorizou, nesta madrugada, escrever output report por rádio com o
 daemon parado — e foi assim que se mediu que o firmware **executa** o `0x32` e o
 `0x39`. O que os
 [seis ensaios da escada](2026-08-15-ESCADA-QUE-RESPONDE-01-do-degrau-que-obedece-ao-conteudo-do-payload.md)
-pedem agora é **mais do mesmo, em série**: cerca de 60 escritas de output, todas
-com CRC válido e tamanho declarado pelo descritor do próprio aparelho, mais uma
-rajada de 3 s a 50 Hz no ensaio final.
+pedem agora é **mais do mesmo, em série**: da ordem de 50 a 60 escritas de
+output — contando os apagares de lightbar entre um passo e outro —, todas com
+CRC válido e tamanho declarado pelo descritor do próprio aparelho, mais uma
+rajada de 3 s a 50 Hz (cerca de 150 pacotes) **só** no ensaio final.
 
 | resposta | o que muda |
 |---|---|
 | **autoriza a série inteira** | os seis ensaios rodam numa sessão de bancada de 1 h 25, e a escada sai medida degrau a degrau |
 | **autoriza só o que NÃO manda payload** (E-1, E-2, E-3, E-6) | 45 minutos, e responde *"onde o payload mora"* sem tentar tocar som ainda |
-| **só o E-4** | 10 minutos, leitura pura, zero escrita — e mesmo assim a casa aprende o que é o `0xF6` |
+| **só o E-4** | 10 minutos, leitura pura, zero escrita — e o que ele decide é estreito: se o conteúdo do `0xF6` é constante entre unidades ou varia. Ele **não** diz para que serve o report; sem escrita antes da leitura, vazio continua sendo vazio |
 
-**O que não muda em resposta nenhuma:** nada disso é feature report, nada escreve
-NVS, nada toca firmware. O risco de brick continua sendo o mesmo da ponte do
-microfone, que roda aqui desde 25/07.
+**O que não muda em resposta nenhuma:** nada disso é feature report e nada toca
+a família `0xF0`-`0xF7` da atualização de firmware. O risco continua sendo o
+mesmo da ponte do microfone, que roda aqui desde 25/07 — **e "o mesmo risco de
+uma escrita que a casa já faz há três semanas" é a frase certa; "risco nulo" não
+é**, porque o que os bytes excedentes acionam é justamente o que não sabemos.
 
 ### D-32 — O `0xF6` e a família `0xF0`-`0xF7`: até onde?
 
 **Acrescentada em 15/08/2026.** O `0xF6` é um FEATURE de 546 bytes que **só
-existe no rádio** e é o gêmeo exato do OUTPUT `0x39`. A suspeita é que ele seja
-**negociação** — dizer ao controle qual codec e qual taxa vêm a seguir.
+existe no rádio** e tem exatamente o mesmo tamanho de payload do OUTPUT `0x39`
+— coincidência de tamanho, que é observação e não conclusão. A suspeita é que
+ele seja **negociação** — dizer ao controle qual codec e qual taxa vêm a seguir
+—, e **nada disso está medido**: lido sem estímulo, ele veio vazio nos quatro
+controles, e vazio não decide entre "responde depois de um pedido" e "não
+responde nunca".
 
 **Ele mora na família `0xF0`-`0xF7`, que é o canal de atualização de firmware.**
 
@@ -1158,6 +1174,13 @@ com a afirmação larga que se quer.
 
 **A palavra é sua**, e ela vale mais do que parece: nome errado não pega, e uma
 forma de erro sem nome volta a acontecer.
+
+**Duas frentes desta leva chegaram a esse mesmo nome separadamente, na mesma
+noite** — ele já está escrito na
+[canônica](../../protocol/dualsense-referencia-canonica.md) e na
+[ESCADA-QUE-RESPONDE-01](2026-08-15-ESCADA-QUE-RESPONDE-01-do-degrau-que-obedece-ao-conteudo-do-payload.md).
+Se você vetar, é um `sed` nos dois; se aprovar, ele vira vocabulário da casa
+como o outro virou.
 
 ---
 
@@ -1241,10 +1264,20 @@ que" não é.**
   não há ponte.**
 - **Os degraus `0x33` a `0x38`.** Declarados no descritor do rádio, **nunca
   tocados**. É o E-2 da sprint acima.
-- **O `0xF6`** — FEATURE de 546 B que **só** existe no rádio, gêmeo exato do
-  OUTPUT `0x39`, suspeito de negociação de codec e taxa. **Nunca lido.** É o
-  E-4, e é leitura pura: roda sem autorização nenhuma.
-- **Qualquer coisa que exija CABO.** No momento da medição não havia nenhum
+- **O `0xF6`** — FEATURE de 546 B que **só** existe no rádio, do mesmo tamanho
+  de payload do OUTPUT `0x39`, suspeito de negociação de codec e taxa.
+  ~~**Nunca lido.**~~ **CORRIGIDO em 15/08/2026: foi lido**, nos quatro
+  controles, no censo dos dezessete — e veio **vazio**, só o byte de id
+  diferente de zero. O que continua não medido é a **função**: vazio numa
+  leitura sem estímulo não decide entre *"responde depois de um pedido"* e
+  *"não responde nunca"*, e estímulo aqui é `SET_FEATURE` na família da
+  atualização de firmware, que é a **D-32**. O E-4 vale como réplica com o
+  instrumento novo; não vale como resposta.
+- **Qualquer coisa que exija CABO** — e esta linha vale para **14/08**.
+  **Em 15/08/2026 ela caducou em parte:** a mesa 2+2 dela pôs dois DualSense no
+  fio, e daí saíram o descritor do cabo (289 B, idêntico nos dois) e a varredura
+  de feature reports por cabo. O que segue sem medição por cabo é o resto desta
+  lista. No momento da medição de 14/08 não havia nenhum
   DualSense no cabo — os dois estão por rádio, e as três placas de áudio da
   máquina são NVidia, a webcam e a Generic. **A medição de "card1 com 4 canais FL
   FR RL RR" que outro agente citou hoje é de outro momento, com outra numeração

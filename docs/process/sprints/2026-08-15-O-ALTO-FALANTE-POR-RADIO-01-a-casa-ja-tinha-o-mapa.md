@@ -51,8 +51,13 @@ Nem tudo foi redescoberta. O que é novo:
 | descritor cabo 289 B × rádio 320 B, com a escada só no rádio | MEDIDO |
 | `os.write()` em hidraw **não valida** — aceita até tamanho errado | MEDIDO |
 
-O módulo de 25/07 provou o `0x32` (mic). **Hoje provou-se o `0x39`** — que é
-justamente o report do alto-falante, e o que ninguém tinha exercitado.
+O módulo de 25/07 provou o `0x32` (mic). **Hoje provou-se que o firmware
+executa o `common` de 47 bytes dentro do `0x39`** — e nada além disso.
+**Corrigido em 15/08/2026:** esta frase terminava em *"o `0x39`, que é justamente
+o report do alto-falante"*, e a segunda metade é a **FALÁCIA DO CANAL QUE
+RESPONDE** — que o `0x39` seja o report do alto-falante é o que o comentário do
+nosso módulo diz e o que o E2 existe para medir; a lightbar acendendo não prova
+isso. O que ninguém tinha exercitado, esse sim, é fato.
 
 ## O que falta, e é curto
 
@@ -100,7 +105,14 @@ para os motores voice-coil. **Não afirme nada sobre ele antes do E2.**
    `0x39` é **muito maior**, e o efeito de banda (medido para o mic: ligar custa
    ~35% dos reports de input) precisa ser remedido para a saída.
 3. **O daemon disputa o hidraw.** O ensaio do mic de 25/07 foi feito com o daemon
-   parado; o da lightbar de hoje, com ele rodando. Declare qual, sempre.
+   parado. **Para o ensaio da lightbar de hoje as duas páginas desta casa se
+   contradizem** — esta linha dizia *"com ele rodando"* e a
+   [canônica](../../protocol/dualsense-referencia-canonica.md), na seção da
+   escada, declara *"com o **daemon parado** e a autorização dela"*. As duas não
+   podem estar certas, e a canônica é a página de registro: **vale "daemon
+   parado"** até que alguém mostre o contrário. É por isso que a regra desta
+   linha existe: **declare qual, sempre** — e declare no mesmo documento em que
+   se publica o resultado.
 4. **Não confundir "o canal responde" com "o canal faz o que eu quero".** O
    `0x39` executa o `common` — isso está provado. Que ele toque som é o que o E2
    existe para descobrir.

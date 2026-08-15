@@ -128,8 +128,13 @@ exatamente assim que o achado da cor de 10/08 se perdeu por cinco dias.
   `DS_ACC_RES_PER_G` do driver. **Nenhum byte foi enviado ao controle.**
 - **O feature `0x22` nunca foi lido por este projeto** e carrega identidade: o
   MAC em little-endian e **dois blocos de 8 bytes distintos por unidade**.
-- **O feature `0xf6` tem 546 bytes — o gêmeo exato do OUTPUT `0x39`** do áudio
-  por rádio, e não é nomeado em documento nenhum.
+- **O feature `0xf6` tem 546 bytes — o mesmo tamanho de payload do OUTPUT
+  `0x39`**, e não é nomeado em documento nenhum. **Corrigido em 15/08/2026:**
+  esta linha dizia *"o gêmeo exato do OUTPUT `0x39` do áudio por rádio"*, e as
+  duas metades prometiam demais — igualdade de tamanho é observação, não
+  parentesco, e **nenhum degrau da escada está provado carregar áudio**. O que
+  se mediu foi o canal: o firmware executa o `common` de 47 bytes no `0x32` e no
+  `0x39`, e o conteúdo do payload segue não identificado.
 
 ### 1.g O que os agentes derrubados voltaram a fazer
 

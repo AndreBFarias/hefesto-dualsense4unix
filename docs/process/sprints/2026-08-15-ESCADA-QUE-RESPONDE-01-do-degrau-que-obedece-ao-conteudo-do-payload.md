@@ -21,7 +21,8 @@ madrugada de 15/08. É este quadro que separa o entusiasmo do achismo.**
 
 | a frase | grau, em 15/08/2026 |
 |---|---|
-| O firmware lê e **executa** reports de output de 142 B (`0x32`) e 547 B (`0x39`) por rádio | **MEDIDO.** Ela viu a lightbar obedecer, em três cores, com controle positivo e negativo |
+| O firmware lê e **executa** reports de output de 142 B (`0x32`) e 547 B (`0x39`) por rádio | **MEDIDO**, e em **UM** aparelho: o branco, `hw 0x0711`, por rádio. Ela viu a lightbar obedecer, em três cores, com controle positivo e negativo |
+| O **segundo** controle do rádio (vermelho, `hw 0x0811`) faz o mesmo | **NÃO MEDIDO.** Estava na mesa e não foi tentado — é o ensaio mais barato desta sprint |
 | O canal Bluetooth **transporta** 552 bytes num pacote | **MEDIDO.** `ACL Data TX dlen 552` no `btmon` |
 | O `common` de 47 bytes vale **igual** em todos os degraus testados | **MEDIDO** para `0x31`, `0x32` e `0x39` |
 | Os degraus `0x33` a `0x38` também executam | **NÃO MEDIDO.** Ninguém tentou |
@@ -32,8 +33,11 @@ madrugada de 15/08. É este quadro que separa o entusiasmo do achismo.**
 documento:**
 
 > **O canal existe, o firmware responde, e o conteúdo do payload ainda não foi
-> identificado.** Medido em 15/08/2026, nos quatro DualSense dela, com dois no
-> cabo e dois no rádio. O próximo ensaio que avança nisso é o E-1 desta sprint.
+> identificado.** Medido em 15/08/2026. **Os descritores** foram lidos nos
+> quatro DualSense dela, dois no cabo e dois no rádio — é a mesa 2+2 que faz
+> disso medição de transporte. **A obediência** foi vista em **um** aparelho, o
+> branco, por rádio, em `0x31`, `0x32` e `0x39`. O próximo ensaio que avança
+> nisso é o E-1 desta sprint.
 
 **Não se escreve, em lugar nenhum, que "descobrimos o áudio por Bluetooth" ou
 que "a ponte funciona".** Não funciona, e não há ponte. Há um canal que
@@ -66,6 +70,12 @@ O nome deriva do léxico que já existe aqui, e é por isso que ele é este e n�
 outro: as duas erram na mesma junta — **confundir a medição estreita que se tem
 com a afirmação larga que se quer.** O batismo é da casa, mas a palavra final
 sobre o nome é dela: é a **D-33** do índice.
+
+> **Duas frentes desta leva chegaram ao mesmo nome sozinhas, na mesma noite** —
+> ele também está registrado na
+> [canônica](../../protocol/dualsense-referencia-canonica.md), na seção da
+> escada. Convergência não é prova de que o nome é bom; é sinal de que a forma
+> de erro era visível de dois lugares diferentes.
 
 **Onde ela morderia hoje, se a deixássemos:** o `0x39` executou o `common`;
 disso **não** se segue que o bloco `0x13` toca som, nem que 469 bytes sejam
@@ -278,8 +288,19 @@ um byte fixo do envelope do `0x31`?
 
 ### E-4 — O `0xF6`, o feature de 546 B que só existe no rádio. **LEITURA PURA.**
 
-**A pergunta:** o gêmeo exato do `0x39`, do lado de FEATURE, é a negociação —
-"qual codec, qual taxa, quantos canais vêm a seguir"?
+**A pergunta:** o FEATURE que tem o mesmo tamanho de payload do `0x39` — e a
+igualdade de tamanho é observação, não parentesco — é a negociação: "qual codec,
+qual taxa, quantos canais vêm a seguir"?
+
+> **AVISO SOBRE ESTE ENSAIO, escrito em 15/08/2026 na passagem cética:** a
+> pergunta "constante ou por unidade" **já foi respondida** pelo censo dos
+> dezessete — o `0xF6` veio **vazio e idêntico nos quatro**. Repetir a leitura
+> pura devolve o mesmo vazio e não decide nada, porque vazio é compatível com
+> "só responde depois de um pedido" **e** com "não responde nunca". O que faria
+> este ensaio decidir alguma coisa é o **par** estímulo→leitura, e estímulo na
+> família `0xF0`-`0xF7` é `SET_FEATURE`, que é justamente o que a D-32 proíbe
+> sem a palavra dela. Rode-o assim mesmo se quiser a réplica com o instrumento
+> novo; só não espere dele uma resposta que a leitura pura não pode dar.
 
 - **Precisa:** nada além do que o `scripts/ensaios/censo_features.py` já faz. **É
   o único ensaio desta sprint que não escreve um byte** — e por isso é o único
@@ -338,13 +359,22 @@ deixássemos.
   tocou mas o report foi aceito (SAIU NO FIO, falta o formato do payload);
   report recusado (o degrau ou o bloco estão errados).
 - **Tempo:** 30 minutos, quase todo escrevendo o codificador.
-- **Por que o risco de brick é nulo, e isto vai no cabeçalho do script:** é um
+- **Por que o risco conhecido é baixo — e por que ele não é "nulo":** é um
   output report HID **de tamanho declarado pelo próprio descritor do aparelho**,
-  pelo canal de interrupção, com CRC válido. Não é feature report, não escreve
-  NVS, não toca firmware, e o firmware descarta em silêncio qualquer report BT
-  com CRC errado. **É a mesma classe de escrita que a ponte do microfone faz
-  nesta casa desde 25/07** — e é a mesma classe que a lightbar já obedeceu em
-  15/08, no `0x32` e no `0x39`.
+  pelo canal de interrupção, com CRC válido. Não é feature report, não é a
+  família `0xF0`-`0xF7` da atualização de firmware, e o firmware descarta em
+  silêncio qualquer report BT com CRC errado (medido nesta casa em 25/07 pela
+  via oposta: envelope errado, nada acontece). **É a mesma classe de escrita que
+  a ponte do microfone faz aqui desde 25/07**, e é a mesma classe que a lightbar
+  obedeceu em 15/08 no `0x32` e no `0x39`.
+  **A palavra "nulo" saiu em 15/08/2026, e o motivo é honestidade de escopo:**
+  *"não escreve NVS, não toca firmware"* é afirmação sobre o que os bytes
+  excedentes acionam — e o que eles acionam é **exatamente** o que esta sprint
+  admite não saber. Dizer "risco nulo" sobre o payload não identificado é a
+  FALÁCIA DO CANAL QUE RESPONDE aplicada à segurança do aparelho dela. O que se
+  pode escrever no cabeçalho do script é isto: **não há caminho conhecido de
+  brick por esta classe de escrita, o argumento está aqui inteiro, e ele vale
+  enquanto o CRC for válido e o tamanho vier do descritor.**
 
 ### E-6 — A réplica no cabo: o negativo de transporte
 
