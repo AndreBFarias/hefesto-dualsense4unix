@@ -77,11 +77,17 @@ independentes de que o campo é a cor do plástico, e não um número de lote.
 antes e depois, `hardware_version` idêntico, e reports de entrada continuando a
 sair. O comando foi enviado duas vezes a cada um, e as quatro provas fecharam.
 
-**No rádio, continua NÃO MEDIDO** — e por escolha, não por falta de aparelho:
-os dois de rádio voltaram à mesa durante o ensaio e mesmo assim nada foi
-escrito neles. Estrear envelope não demonstrado numa família de comandos de
-fábrica não é decisão de instrumento. O envelope está montado e conferido em
-hexadecimal — ver §4.
+**No rádio, MEDIDO E RECUSADO.** Ela autorizou a estreia do envelope de feature
+por Bluetooth, com o risco na mesa. O alvo foi o **vermelho** (`hidraw8`,
+`hardware_version 0x00000811`), escolhido por ser o são, e identificado pelo
+`HID_UNIQ` — não pela cor do LED — com a trava `--exigir-mac`, que foi testada
+contra o MAC errado e recusou. Duas tentativas, **`EIO` (errno 5) nas duas**, e
+a cor não saiu. O controle não se alterou. O que a recusa permite concluir — e
+o que ela ainda **não** responde — está na §4.
+
+No outro de rádio (`hidraw9`, o branco de lightbar travada) **nada foi
+escrito**: as duas execuções nele foram secas, porque outra frente mede aquele
+defeito ao vivo.
 
 ## 2. O que foi DESCARTADO, e com o quê
 
@@ -137,14 +143,15 @@ escreve onde não devia.
 
 E a leitura **só está provada por cabo** — inclusive por nós, em 15/08/2026, com
 os dois da §1. O `dualshock-tools` recusa Bluetooth de saída. Por rádio o canal
-existe (`0x80`/`0x81` estão no descritor destes controles), mas ninguém
-demonstrou.
+existe **no descritor** (`0x80`/`0x81` estão lá, nestes controles) — e em
+15/08/2026 ele **foi exercido, e recusou**. A medição está logo abaixo.
 
 Por Bluetooth há ainda o CRC-32 semente `0xA3` nos quatro últimos bytes, que esta
-casa já sabe calcular (`core/ds_output_report.py`, `bt_crc32`).
+casa já sabe calcular (`core/ds_output_report.py`, `bt_crc32` com
+`BT_FEATURE_CRC_SEED`).
 
-**O envelope de rádio, já montado e conferido** (`cor_do_plastico.py
---radio-a-serio`, rodada seca de 15/08):
+**O envelope de rádio, montado, conferido e ENVIADO** (`cor_do_plastico.py
+--radio-a-serio`, 15/08 — não foi rodada seca: este buffer foi ao `ioctl`):
 
 ```
 80 01 13 00 ... 00 93 0d 46 73
@@ -156,15 +163,53 @@ aqui**: aqueles são do canal de interrupção, e o feature report sai pelo cana
 de CONTROLE, com o id no byte 0 e mais nada de cabeçalho. Confundir os dois
 envelopes é o defeito que a BTREPORT-02 fechou.
 
-**A dúvida honesta que sobra**, e que só a medição resolve: não se sabe se o
-firmware **exige** o CRC num `SET_REPORT` de feature ou se apenas o **emite** nas
-respostas. Por isso o instrumento tem `--sem-crc` — é a *segunda* tentativa,
-depois da primeira, nunca em vez dela.
+### O rádio, medido em 15/08/2026: `EIO` nas duas tentativas
 
-E como ler a falha, se vier, antes de tentar qualquer variação: `EPIPE` na hora
-é *"não tenho esse report neste transporte"*; ~3 s e timeout é o
-`REPORT_REQ_TIMEOUT` do BlueZ, que é o rádio se perdendo; eco errado no `0x81` é
-o firmware respondendo outra coisa — e aí se **para**.
+**A dúvida honesta que sobrava** — se o firmware **exige** o CRC num
+`SET_REPORT` de feature ou se apenas o **emite** nas respostas — **foi
+respondida, e a resposta é que o CRC não é o discriminante.** As duas
+tentativas no `hidraw8` falharam **identicamente, no mesmo ponto**:
+
+| # | envelope | resposta do `ioctl` |
+|---|---|---|
+| 1 | `80 01 13 00 … 00 93 0d 46 73` — CRC-32, semente `0xA3`, **a mesma** de `core/ds_output_report.py::BT_FEATURE_CRC_SEED` | `EIO` (errno 5), imediato |
+| 2 | `80 01 13 00 … 00 00 00 00 00` — `--sem-crc` | `EIO` (errno 5), imediato |
+
+A recusa acontece **antes de o CRC importar**.
+
+**O controle não se alterou**, e a prova está nos transcritos 3 e 4: feature
+`0x20` idêntico byte a byte antes e depois de cada escrita, `hardware_version`
+idêntico, 3 de 3 reports de entrada continuando a chegar, e a lightbar intacta
+(`brightness=255`, `multi_intensity=[0 255 0]`, antes e depois das duas). Na
+mesma janela, **o cabo obedeceu**: `hidraw4` devolveu `05` e `hidraw5` devolveu
+`04`. Quem recusa é o canal, não o comando.
+
+**As quatro assinaturas de falha, e qual delas veio:**
+
+| assinatura | o que significaria | veio? |
+|---|---|---|
+| `EPIPE` na hora | *"não tenho esse report neste transporte"* — o stall que esta casa já mediu no cabo | **não** |
+| ~3 s e timeout | `REPORT_REQ_TIMEOUT` do BlueZ: o rádio se perdendo | **não** |
+| eco errado no `0x81` | o firmware respondendo outra coisa | **não** — não houve resposta a ecoar |
+| **`EIO` (errno 5) imediato** | o `ioctl` volta na hora com erro de E/S | **sim, nas duas** |
+
+**O que este negativo permite concluir** — e é isto que dá valor à página:
+
+- **não é `EPIPE`**, logo **o report EXISTE neste transporte**: não é o caso de
+  o descritor prometer um canal que o rádio não tem;
+- **não é o timeout de ~3 s do BlueZ**, logo **não é o canal de controle se
+  esgotando** nem o rádio se perdendo — a execução inteira levou **0,25 s**;
+- **sobra uma hipótese, e ela é HIPÓTESE, não medição:** o `SET_REPORT` de
+  feature é recusado na camada **HIDP/L2CAP** — pelo firmware ou pelo BlueZ —
+  independentemente do conteúdo. Separar *quem* recusou exige instrumentar o
+  canal de controle, e isso é uma **terceira** tentativa, que não foi feita: o
+  orçamento eram duas escritas, e ele acabou.
+
+Medição bruta:
+[`2026-08-15-E7-cor-do-plastico.txt`](../../data/ensaios-brutos/2026-08-15-E7-cor-do-plastico.txt),
+seção *"O RÁDIO: EXERCIDO, E RECUSADO"* e transcritos 3 e 4; linhas de resultado
+no
+[`.csv` irmão](../../data/ensaios-brutos/2026-08-15-E7-cor-do-plastico.csv).
 
 ## 5. Os três caminhos, com o preço de cada um
 
@@ -172,7 +217,7 @@ o firmware respondendo outra coisa — e aí se **para**.
 |---|---|---|---|
 | **(a)** | ela escolhe a cor de cada controle na interface, uma vez, salvo por MAC | um gesto por controle, uma vez | **zero** |
 | **(b)** | ler o serial **por cabo**, um de cada vez | desconectar o BT de um controle | baixo, e é o caminho provado |
-| **(c)** | ler o serial **por rádio** | nenhum gesto físico | território não demonstrado |
+| **(c)** | ler o serial **por rádio** | nenhum gesto físico | **demonstrado em 15/08 e NEGADO** — `EIO` nas duas tentativas, sem dano ao controle; ver §4 |
 
 **Recomendação de quem escreveu esta página: (a) agora, (b) depois.**
 
@@ -182,8 +227,10 @@ o firmware respondendo outra coisa — e aí se **para**.
 > endereço*. Isso **derruba o caminho (a)**: um arquivo por `addr` foi
 > justamente o que ela recusou. A recomendação fica registrada porque
 > recomendação errada é dado, e porque a próxima pessoa precisa saber que a
-> escolha foi consciente — mas **não é o plano**. O plano é (b), feito, e (c),
-> desenhado. Fonte de verdade:
+> escolha foi consciente — mas **não é o plano**. O plano é (b), **feito**; e
+> (c) foi **tentado no mesmo dia, e o rádio recusou** (§4) — a metade "por
+> rádio" da D-15 continua **sem caminho**, e o que falta medir é a camada
+> HIDP/L2CAP. Fonte de verdade:
 > [AS-DECISOES-RESPONDIDAS](../2026-08-15-AS-DECISOES-RESPONDIDAS.md).
 
 **A palavra final é dela** ([PROVA-DE-TELA-01](2026-07-27-PROVA-DE-TELA-01-dez-minutos-de-olho-antes-de-qualquer-leva.md)).
