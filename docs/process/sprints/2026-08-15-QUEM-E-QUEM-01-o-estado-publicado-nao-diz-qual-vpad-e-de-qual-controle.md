@@ -19,6 +19,37 @@
 
 ---
 
+## 0. ENTREGUE — 15/08/2026, na árvore
+
+As três entregas estão de pé, com os nomes que a §2 escolheu:
+
+| # | onde | o que ficou |
+|---|---|---|
+| **E1** | `daemon/subsystems/coop.py` (`CoopManager.mesa`) + `daemon/ipc_handlers.py` | `coop.mesa[]` — um item por jogador com `{uniq, player, is_primary, vpad_backend, vpad_uniq, vpad_nome, vpad_indice, aguardando_grab, nome_divergente}`. `coop.players` **ficou**, ao lado |
+| **E2** | `daemon/ipc_handlers.py`, bloco `rumble_ff.per_vpad[]` | `vpad_uniq`, `vpad_nome` e `vpad_indice`, da MESMA função (`coop.identidade_do_vpad`) que monta a E1 |
+| **E3** | `coop._item_da_mesa` | `nome_divergente` — `True` só quando os dois inteiros são conhecidos E diferem. É alarme, não afirmação simétrica |
+
+**Onde ISTO CHEGA NA TELA** (regra dela de 09/08, e é a única coisa que vai
+além do que a §5 previa): o rótulo do título de cada card da aba Status ganhou
+uma **dica** (`controller_card.dica_do_titulo`) — *"Alimenta o gamepad virtual
+do Jogador 2 (uhid · 02:fe:00:00:00:02)."*, mais o nome real do dispositivo
+quando `nome_divergente`. Escolhida como DICA, e não como linha do card, por
+duas razões: o endereço é **diagnóstico** e não vocabulário de interface (o
+alvo por MAC foi derrubado por ela em 13/08 e nada aqui o reabre), e o corpo do
+card tem altura amarrada — uma linha nova empurraria os quatro cards da mesa.
+**Custa zero pixel, e por isso não aparece em foto de aba: o fecho com o olho
+dela (PROVA-DE-TELA-01) é passar o cursor no título, e continua PENDENTE.**
+
+Testes: `tests/unit/test_quem_e_quem_01_o_estado_diz_qual_vpad.py` (18) e
+`tests/unit/test_quem_e_quem_01_na_tela.py` (3, GTK real — a fiação). Seis
+arrancadas conferidas, uma por cura.
+
+O instrumento `scripts/ensaios/quem_e_quem.py` teve o fato substituído: ele
+declarava *"o `state_full` publica `coop.players` como um NÚMERO, não como
+lista"*, o que deixou de ser verdade nesta data.
+
+---
+
 ## 1. O defeito, medido — e ele custou um passo manual esta madrugada
 
 Com quatro controles na mesa, ela perguntou se o gamepad virtual do jogador N
@@ -149,7 +180,10 @@ vpad recebeu o quê"*.
 
 ## 4. O teste que MORDE
 
-Arquivo novo, `tests/unit/test_quem_e_quem_01_o_estado_diz_qual_vpad.py`. <!-- ref-externa: arquivo a CRIAR por esta entrega, ainda não existe -->
+Arquivo novo, `tests/unit/test_quem_e_quem_01_o_estado_diz_qual_vpad.py` — mais
+o irmão `tests/unit/test_quem_e_quem_01_na_tela.py`, que trava a FIAÇÃO com GTK
+real (o precedente do rumble: um teste que chamava a peça e não a fiação passou
+com a cura arrancada). Os dois existem desde 15/08/2026.
 
 ### Mordida 1 — a lista que não nomeia ninguém (é a principal)
 
@@ -198,7 +232,8 @@ e foi provado hoje. O que eles provam é que **da próxima vez não vai precisar
 
 | decisão dela | execução minha |
 |---|---|
-| **Nada.** Esta sprint não muda uma palavra de tela, não muda comportamento e não escolhe entre dois caminhos | as três entregas e as três mordidas |
+| **Nada** no estado publicado: ele não muda comportamento e não escolhe entre dois caminhos | as três entregas e as três mordidas |
+| **A dica do card** (acrescentada na execução, pela regra dela de 09/08 — *tudo tem de chegar na interface*): a frase, e se ela basta. É PROVA-DE-TELA-01 e está **pendente** — a dica só aparece com o cursor no título, então nenhuma foto de aba a mostra | escrever a dica e a fiação; **não** mexer no layout do card |
 | *(fica de fora, e é da ORDEM-DE-CHEGADA-01)* **o nome do vpad passar a seguir a fila** — exigiria recriar o vpad no meio da sessão, e o jogo enxerga isso como desconectar | não fazer, e **dizer** que divergiu (E3) |
 
 ---
