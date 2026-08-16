@@ -19,6 +19,22 @@
   é **PLANO** (as dezessete perguntas dela). Este é o oposto: o que virou, e o
   que ficou aberto com dono.
 
+> ### Se você abriu esta página primeiro, ela NÃO é a mais recente
+>
+> Esta página fecha às **02h55 de 15/08** e não conhece nada do que veio depois.
+> No mesmo dia houve mais duas levas, e cada uma tem seu índice:
+>
+> - **[o índice da tarde](2026-08-15-INDICE-a-tarde-que-so-virou-commit-depois-de-morrer.md)**
+>   — as seis frentes de 13h30 às 14h50, a queda da sessão, os sete commits das
+>   16h55, e a leva de interface das 18h. **É por ele que a próxima sessão
+>   começa.**
+> - **[A QUEDA](../2026-08-15-A-QUEDA-o-que-sobreviveu-e-o-que-falta-materializar.md)**
+>   — o inventário do que ficou **aberto**, com a ordem de execução.
+>
+> Duas afirmações desta página caducaram dez minutos depois de ela ser escrita, e
+> **já estão corrigidas abaixo** (§1.c e §1.d). O registro do que a página dizia
+> antes está na §5 do índice da tarde.
+
 ---
 
 ## Como ler
@@ -62,7 +78,12 @@ As três refutadas continuam abertas e agora têm sprint —
 deu **9541 passed, 1 skipped, 4 xfailed, 0 failed em 276 s**, com `ruff` limpo,
 `mypy` em 174 arquivos, e acentuação/glifos/referências/anonimato saindo zero.
 
-### 1.c As curas de Bluetooth — na máquina dela, NÃO commitadas
+### 1.c As curas de Bluetooth — commitadas em `7c3a0c7`, 15/08 às 02:12:19
+
+> **Corrigido em 15/08 à noite.** Este título dizia *"na máquina dela, NÃO
+> commitadas"*, e era verdade quando foi escrito — o commit veio **dez minutos
+> depois**. Quem lesse o texto antigo iria procurar trabalho solto que não
+> existe. Conferido com `git merge-base --is-ancestor 7c3a0c7 HEAD`.
 
 Duas, e a segunda é um defeito nosso: `SuccessExitStatus` não cobria o
 `Result: timeout`, e o `bt_bonds_restore.sh` derrubava o agente de pareamento
@@ -73,7 +94,11 @@ re-pareados; os quatro estão com `LinkKey` no disco.
 Registro completo:
 [BONDS-QUE-SUMIAM-01](2026-08-15-BONDS-QUE-SUMIAM-01-o-agente-de-pareamento-que-nos-mesmos-derrubamos.md).
 
-### 1.d A MESA-CHEIA-12 — na árvore, NÃO commitada
+### 1.d A MESA-CHEIA-12 — commitada em `9441678`, 15/08 às 02:12:38
+
+> **Corrigido em 15/08 à noite**, pelo mesmo motivo da §1.c: este título dizia
+> *"na árvore, NÃO commitada"*. Conferido com
+> `git merge-base --is-ancestor 9441678 HEAD`.
 
 Medido em 15/08 às 01h00, com os quatro no rádio: o `state_full` publicava
 jogador **1/2/3/4** e as barras acendiam **1/4/2/3**. Três dos quatro diziam uma
@@ -369,10 +394,10 @@ Cada item da seção 1 foi reaberto na árvore de agora:
 | afirmação | como foi conferida |
 |---|---|
 | os sete commits | `git log --format='%h %ad %s'` e `git show --stat` nos seis de 19:40-19:41 |
-| as curas de BT estão na árvore e não commitadas | `git status --short` e `git diff` nos dois arquivos |
+| as curas de BT estão commitadas em `7c3a0c7` | `git merge-base --is-ancestor 7c3a0c7 HEAD` e `git show -s --format='%ad'` (15/08 às 02:12:19) — **conferido de novo em 15/08 à noite**, quando a linha antiga (*"na árvore e não commitadas"*, checada com `git status --short`) deixou de ser verdade |
 | as curas de BT estão **na máquina dela** | `systemctl cat hefesto-bt-agent.service` traz `KillSignal=SIGKILL`; `diff` contra a fonte sai limpo |
 | os quatro bonds com LinkKey | leitura de `/var/lib/bluetooth/*/*/info` |
-| a MESA-CHEIA-12 está na árvore | `git diff` de `coop.py`, `ipc_handlers.py`, `base.py` e o teste novo não rastreado |
+| a MESA-CHEIA-12 está commitada em `9441678` | `git merge-base --is-ancestor 9441678 HEAD` e `git show -s --format='%ad'` (15/08 às 02:12:38) — mesma reconferência de 15/08 à noite |
 | a citação inexistente (§4.1) | `grep` nas 1289 linhas do índice da leva |
 | a regra udev pegou (§4.5) | `udevadm info -q all -n /dev/hidraw6` |
 | os quatro físicos em `0600` sem ACL | `ls -la /dev/hidraw*` + `getfacl` nos doze nós |
