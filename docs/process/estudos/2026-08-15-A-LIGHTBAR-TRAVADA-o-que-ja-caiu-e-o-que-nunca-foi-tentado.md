@@ -52,6 +52,18 @@ causa proposta.
 a **última** de uma fila de conclusões que caíram. Aqui a Steam é **mais um item
 da tabela do §2**, não o estado da arte.
 
+> **NOTA DE 16/08/2026 — a Steam VOLTOU à mesa, e quem a trouxe foi ela.** Na
+> madrugada seguinte a este estudo, ela mediu o **par de eliminação completo**:
+> com a Steam aberta a barra fica apagada depois de cada comando nosso; sem a
+> Steam ela volta ao verde sozinha, e nada mais foi tocado entre os dois lados.
+> A hipótese foi dela (*"não é pq a steam tá aberta?"*). O aviso acima **fica**
+> — ele registra o custo já pago de tratar a Steam como conclusão fechada em
+> 12/08 —, mas o parágrafo NÃO descreve mais o estado da arte. O mecanismo, a
+> cura e o que continua aberto estão em
+> [ESCRITOR-CRU-01](../sprints/2026-08-16-ESCRITOR-CRU-01-a-steam-apaga-a-barra-e-o-produto-nao-reagia.md).
+> Isto também **fecha** um dos nove `inconclusivo` do §5.9 (*"a Steam APAGAR a
+> barra em regime"*).
+
 **Aviso 4 — o enunciado do defeito é mais velho que os fatos.** A linha
 `luz.lightbar.cor` do mapa (`docs/data/mapa-controles.csv:153`) carrega hoje
 **duas descrições que se contradizem na mesma célula**:
