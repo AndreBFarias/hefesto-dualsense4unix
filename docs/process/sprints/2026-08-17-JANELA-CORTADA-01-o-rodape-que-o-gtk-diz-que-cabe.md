@@ -14,12 +14,117 @@ e não conclua nada a partir dela.
 | # | o que ela escreveu | estado |
 |---|---|---|
 | 1 | *"remover guia dos status em tempo real"* | **feito** — commit `0153e9d` |
-| 2 | (retângulo azul em volta de **"Saída muda"**) | **aberto** |
-| 3 | *"altura e largura dos botões, em todas as abas, ficam quebrados e não aparecem corretamente em qualquer resolução que seja. nem com tela maximizada"* | **aberto** |
+| 2 | (retângulo azul em volta de **"Saída muda"**) | **aberto**, mas com a porta achada — ver §CAUSA/item 2 |
+| 3 | *"altura e largura dos botões, em todas as abas, ficam quebrados e não aparecem corretamente em qualquer resolução que seja. nem com tela maximizada"* | **CURADO** em 17/08 — ver §CAUSA/item 3 |
 
 O retângulo verde grande, no rodapé da foto, cerca a faixa em que os quatro
 botões (Aplicar / Salvar Perfil / Importar / Restaurar Default) aparecem
 **cortados ao meio**, junto com a statusbar.
+
+---
+
+## §CAUSA — o que foi achado em 17/08, e como
+
+**As hipóteses da §HIPÓTESES abaixo continuam escritas como estavam.** A H2 foi
+confirmada com uma correção; a H1 não precisou ser testada; a H3 caiu.
+
+### Os dois cegos que faziam o defeito parecer invisível
+
+**1. Nenhuma foto desta casa jamais mostrou o rodapé.** O `main` do
+`retratar_abas.py` arranca o `main_notebook` do `root_box` e fotografa pelo
+notebook (`scripts/gui-captura/retratar_abas.py:1058-1060`). O cabeçalho tinha
+o mesmo problema e ganhou o `_fotografar_o_cabecalho` em 14/08; **o rodapé
+continuou fora de todas as dez imagens**, e é justamente a região que ela
+marcou. Procurar o defeito nas fotos era impossível por construção.
+
+**2. `set_size_request()` funciona na `OffscreenWindow`; `resize()` é que não.**
+A §MEDIÇÃO concluiu "não conclua a partir da OffscreenWindow, ela não
+redimensiona" a partir de tentativas com `resize()`. Mas o próprio
+`retratar_abas.py` usa `set_size_request(1920, 1080)` e as fotos saem nesse
+tamanho. **A OffscreenWindow serve** — e serve ainda melhor com
+`size_allocate()`, que força a alocação diretamente e é o que fechou o caso.
+
+### Item 3 — CURADO: o miolo não cedia, e o rodapé saía pela borda
+
+Forçando a alocação da raiz (`root_box.size_allocate`), com o card na tela:
+
+| altura da janela | header | notebook | rodapé | veredito |
+|---|---|---|---|---|
+| 560 (o `height-request`) | 73 | 697 | 52 | **FORA por 262px** |
+| 650 | 73 | 697 | 52 | **FORA por 172px** |
+| 750 | 73 | 697 | 52 | **FORA por 72px** |
+| 822 (o mínimo real) | 73 | 697 | 52 | inteiro |
+| 830, 900, 1080 | 73 | 705/775/955 | 52 | inteiro |
+
+**É a H2, com uma correção que muda a cura:** o rodapé **não** é esmagado a
+zero. O `main_notebook` trava no mínimo dele (697px) e **empurra o rodapé para
+fora da borda de baixo, inteiro, com os 52px dele**. Daí o sintoma ser "cortado
+ao meio" e não "sumiu" — e daí a cura ser "fazer o miolo ceder", não "dar altura
+ao rodapé", que ele já tinha.
+
+**E o glade autorizava.** `height-request = 560` numa janela cujo conteúdo pedia
+822: ninguém mentiu para o GTK. Isso explica o *"em qualquer resolução"* — não
+depende da tela, depende da altura da JANELA, e qualquer valor abaixo de 822
+cortava.
+
+**Por que a §MEDIÇÃO viu 743 e não 822:** ela mediu **só o notebook**, pela
+mesma razão do cego nº 1. Os 73px do cabeçalho e os 52px do rodapé ficaram fora
+da conta.
+
+**A cura, decidida por ela (17/08), foi dupla:**
+
+1. cada página do notebook virou um `GtkScrolledWindow` (`scroll_tab_*`), com
+   `propagate-natural-height` — sem essa propriedade as dez fotos da
+   documentação sairiam cortadas, porque o `retratar_abas.py` estica cada aba
+   pela altura NATURAL dela;
+2. `height-request` de 560 → **620**, um piso honesto agora que o miolo cede: a
+   janela não corta mais em altura nenhuma, e este número existe só para ela não
+   nascer num tamanho inútil.
+
+Medido depois: rodapé inteiro em 560, 620, 650, 750, 822, 830 e 1080; o miolo
+acompanha (435 → 955); **nenhuma aba rola na janela de abertura** (a mais alta,
+Emulação, pede 646px e tem 705); e as dez fotos saíram idênticas em dimensão e
+peso.
+
+**Portão:** `tests/unit/test_janela_cortada_01_o_rodape_nao_sai_pela_borda.py`,
+4 testes. Ele mede ALOCAÇÃO, não tamanho preferido, e cobre alturas abaixo do
+mínimo do conteúdo — que é o regime em que o defeito vivia. Morde: desligados os
+scrollers, reprova em 560/620/650 nomeando quantos pixels o rodapé ficou fora.
+
+**E um portão que a própria cura quase deixou cego.** Com as páginas dentro de
+scrollers, `notebook.get_nth_page(i)` passou a devolver o scroller — cujo mínimo
+é pequeno de propósito. O `test_layout_orcamento_altura.py` continuou verde com
+uma aba engordada em 900px. Corrigido descendo ao conteúdo (`_conteudo_da_pagina`)
+e mantendo o cromo como subtração entre grandezas comparáveis; agora reprova com
+`Rumble (932px)` acima do teto de 654px. **A cura criou o portão cego e quase o
+entregou junto** — é o defeito que o `O-QUE-FICOU-ABERTO-01` chama de mais caro.
+
+### Item 2 — a porta foi achada; o defeito de layout, NÃO
+
+**A pergunta que a §HIPÓTESES deixou** (*"a condição que revela o selo está em
+`_update_speaker`, e descobri-la é parte da tarefa"*) tem resposta, e ela
+explica por que a bancada falhou:
+
+    speaker={"muted": True}          -> saida_muda_do_entry = None   (selo apagado)
+    speaker={"saida_muda": True}     -> saida_muda_do_entry = True   (selo ACESO)
+
+`muted` é a **camada 2** (o registrador HID); o selo lê a **camada 1** (o sink do
+PipeWire). Chaves diferentes, camadas diferentes. A docstring de
+`saida_muda_do_entry` afirmava que *"hoje nenhuma das duas fontes existe"*
+(medido em 01/08) e **isso caducou sem que ninguém percebesse**: o `MicMonitor`
+ganhou a thread supervisora do sink (`app/mic_monitor.py:461`, `:622`, `:510`) e
+a `LeituraMic` passou a carregar o campo. A docstring foi substituída.
+
+**O que eu NÃO consegui provar, e por isso não entreguei cura:** montei o card
+fora da aba para medir se o selo escapa do bloco, e a bancada não é fiel — o
+card pedia 1064–1145px de largura mínima onde o projeto o limita a 590, e o selo
+aparecia com alocação `x=-1 y=-1 1x1` (a assinatura de widget que nunca recebeu
+`size_allocate` de verdade), **aceso ou apagado**. Cheguei a escrever um
+`set_hexpand(True)` no selo e a reverti: não havia medição que a sustentasse.
+
+**O que falta, e agora é barato:** medir o selo aceso **dentro da aba Status
+montada**, pelo caminho do `retratar_abas.py`, com o card no limite de 590px —
+e não num `OffscreenWindow` avulso. A chave para acendê-lo está acima.
 
 ---
 
