@@ -82,7 +82,7 @@ célula para `medido` — ou registrar que caducou, com data.
 
 **Ideia dela**, e é a Pedra de Roseta aplicada ao par físico × virtual:
 
-> *"conseguimos parear o que o controle fisico manda e o que o virtual manda?"*
+> *"conseguimos parear o que o controle físico manda e o que o virtual manda?"*
 
 **Dá, e hoje foi meio caminho andado.** Já foram medidos lado a lado:
 
