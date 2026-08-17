@@ -89,6 +89,62 @@ O binário faltando é logado como `warning` e nunca é apresentado a ela.
   nisso (medido: `mouse_emulation.enabled=false`,
   `keyboard_emulation.despachando=false`).
 
+## A SEGUNDA rodada — o filtro não resolveu, e o número novo diz por quê
+
+**21:05, mesmo dia.** Com o filtro do bit de áudio já no daemon (reiniciado às
+21:04 — conferido, porque o daemon de antes rodava o código velho), subi a ponte
+de novo, vigiando para derrubar ao primeiro sinal.
+
+**Travou em 10 segundos.** 10 disparos, e a ponte foi derrubada na hora.
+
+O log trouxe o dado que faltava:
+
+```
+21:05:31.010  bt_mic_pedido      ligar=True no=/dev/hidraw5 seq=1
+21:05:31.672  ps_solo_released   held_ms=17.6
+21:05:31.915  ps_solo_released   held_ms=17.5
+21:05:32.106  ps_solo_released   held_ms=17.9
+```
+
+**`held_ms` de 17 ms, regular.** Mão nenhuma aperta um botão por 17 ms três
+vezes seguidas — e 17 ms é o intervalo entre reports a ~60 Hz. **O PS aparece
+pressionado por exatamente um ciclo de leitura, repetidamente.**
+
+### O que isso derruba, e o que aponta
+
+**Derruba:** a hipótese de que os bytes de Opus caindo sobre `buttons[2]`
+explicavam o travamento. O filtro está no lugar, provado por 13 testes, e o
+travamento voltou igual. O report contaminado **não** é de áudio — é um report
+de input legítimo com o byte de botões errado.
+
+*(O filtro continua certo e fica: áudio lido como input É um defeito, com ou sem
+este travamento. Ele só não era esta causa.)*
+
+**Aponta:** o suspeito que o próprio código já nomeava, e que eu ignorei ao subir
+a ponte —
+
+> *"a ponte disputa o contador de sequência do report `0x32` com o driver, e
+> ligá-la por padrão sem essa medição é o tipo de coisa que derruba a partida"*
+> — `app/widgets/controller_card.py`, no comentário do MIC-BT-01
+
+E o log mostra a ponte mandando **`seq=1`**, começando do zero, enquanto o daemon
+mantém a própria sequência por handle. Dois escritores, um contador.
+
+**Ainda é hipótese** — não medi a sequência dos dois lados no mesmo instante. Mas
+é a única que sobrou de pé, e tem endereço.
+
+### O veredito para a decisão dela
+
+Ela escolheu *"testar primeiro, decidir depois"*. **Testado: a ponte NÃO é segura
+ainda.** Não sobe sozinha, e não entra no caminho automático da interface,
+enquanto a sequência do `0x32` tiver dois donos.
+
+### O que o episódio ensina, de novo
+
+A casa **tinha o aviso escrito**, no comentário do widget, e eu subi a ponte
+assim mesmo — duas vezes. Um aviso que mora só no comentário de um widget não
+alcança quem está mexendo no módulo de integração três diretórios adiante.
+
 ## O que fazer, em ordem
 
 1. **Arbitrar o hidraw.** A ponte do mic e o `motion_reader` não podem abrir o
