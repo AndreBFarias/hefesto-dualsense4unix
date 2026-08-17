@@ -1,5 +1,28 @@
 # MIC-BT-01 — O medidor de microfone só funciona no cabo, e o alvo é Bluetooth
 
+> **Nota de 16/08/2026 — o interruptor da interface caducou, e voltou a ser
+> caixa aberta.** A caixa 2 desta sprint ("ligar e desligar a ponte pela
+> interface") foi paga em 07/08 com o interruptor **"Pelo rádio"** no card do
+> controle, e foi **desfeita hoje**. Dois motivos:
+>
+> 1. **desenho dela**, olhando a aba Status: *"esse botão de silenciar some. dá
+>    espaço a um slicer de microfone pra definir o volume do microfone real
+>    (independente de saber se tá via bt ou via cabo), o app deve ser
+>    inteligente pra saber qual caminho usar"*. Escolher o transporte é decisão
+>    do aplicativo, não dela;
+> 2. **a ponte não é segura** — medido duas vezes em 16/08. Com ela de pé, o
+>    botão PS dispara em pulsos de ~17 ms e o daemon abre a Steam em laço; ela
+>    desligou o controle com medo. Log e análise em
+>    [O PS preso](../estudos/2026-08-16-O-PS-PRESO-a-ponte-do-mic-e-o-laco-que-abria-a-steam-sozinho.md).
+>
+> **A ponte NÃO foi removida** — módulo, subsystem, `mic bt` e o gate
+> `HEFESTO_DUALSENSE4UNIX_BT_MIC` continuam de pé, e ela publicou o source no
+> PipeWire em 16/08. O que saiu foi o BOTÃO. A caixa 2 só reabre depois de
+> arbitrada a posse do `/dev/hidraw` entre a ponte e o `motion_reader`, e o
+> contador de sequência do report `0x32` ter um dono só. Portões que seguram
+> isso: `tests/unit/test_o_interruptor_do_mic_no_card.py` e
+> `tests/unit/test_o_interruptor_do_mic_por_bluetooth.py`.
+
 **Status:** ABERTA
 **Prioridade:** alta — o alvo declarado do projeto é **quatro controles por
 Bluetooth**, e nesse cenário o medidor **nunca** aparece.
