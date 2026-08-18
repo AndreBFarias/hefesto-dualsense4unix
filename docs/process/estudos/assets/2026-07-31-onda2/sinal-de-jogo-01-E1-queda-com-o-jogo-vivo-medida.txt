@@ -1,0 +1,43 @@
+SINAL-DE-JOGO-01 / E1 — A QUEDA COM O JOGO COMPROVADAMENTE VIVO, MEDIDA
+=======================================================================
+Medido em 31/07/2026 06h, só leitura, sem interferir no daemon (pid 3615).
+
+-- Steam: quando o processo do jogo nasceu e quando morreu (console_log.txt)
+[2026-07-28 23:16:54] Game process removed: AppID 3357650 , ProcID 303134
+[2026-07-29 01:47:27] Game process added : AppID 3357650 , ProcID 373816
+[2026-07-29 02:56:28] Game process removed: AppID 3357650 , ProcID 374141
+[2026-07-29 16:59:12] Game process added : AppID 3357650 , ProcID 11195
+[2026-07-29 17:13:41] Game process removed: AppID 3357650 , ProcID 11401
+[2026-07-29 18:52:51] Game process added : AppID 3357650 , ProcID 59865
+[2026-07-29 20:14:38] Game process removed: AppID 3357650 , ProcID 60171
+[2026-07-29 22:39:00] Game process added : AppID 3357650 , ProcID 122848
+[2026-07-30 02:29:03] Game process removed: AppID 3357650 , ProcID 123054
+[2026-07-31 01:37:43] Game process added : AppID 3357650 , ProcID 31705
+[2026-07-31 06:08:45] Game process removed: AppID 3357650 , ProcID 32069
+
+-- Daemon: as transições de autoridade do dia (journal da unit da usuária)
+2026-07-31T01:11:22.142189 [info     ] game_signal_transition         de=unknown evidencia=daemon_histerese_expirada para=daemon
+2026-07-31T01:37:58.428466 [info     ] game_signal_transition         de=daemon evidencia=game para=game
+2026-07-31T02:57:54.183413 [info     ] game_signal_transition         de=game evidencia=daemon_histerese_expirada para=daemon
+2026-07-31T02:59:42.832892 [info     ] game_signal_transition         de=daemon evidencia=game para=game
+2026-07-31T06:09:42.116014 [info     ] game_signal_transition         de=game evidencia=daemon_histerese_expirada para=daemon
+
+-- A janela 02:56-03:00, evento a evento
+2026-07-31T02:56:54.443067 [info     ] x11_focus_gate_no_x_focus      focus=0
+2026-07-31T02:56:55.297095 [info     ] steam_input_excecao_encerrada
+2026-07-31T02:57:54.183413 [info     ] game_signal_transition         de=game evidencia=daemon_histerese_expirada para=daemon
+2026-07-31T02:59:42.661026 [info     ] modo_jogo_padrao_adiado        estado=ignorado_sem_jogo motivo=sem_autoridade_de_jogo wm_class=steam_app_3357650
+2026-07-31T02:59:42.832892 [info     ] game_signal_transition         de=daemon evidencia=game para=game
+2026-07-31T02:59:43.664248 [info     ] steam_input_excecao_ativada    appid=3357650
+2026-07-31T02:59:43.764461 [info     ] emulacao_de_desktop_calada_no_jogo modo_jogo=False motivo=vpad_suspenso_pelo_steam_input mouse_ativo=False teclado_ativo=True
+
+LEITURA:
+  01:37:43 Steam poe o jogo no ar (ProcID 32069, apos update de 31705).
+  06:08:45 Steam remove o processo. UMA sessão só: não há add/remove no meio.
+  02:56:54 o gate de foco do xlib nega (focus=0).
+  02:57:54 a autoridade CAI para daemon, 60,0 s depois do gate — com o
+           processo do jogo vivo ha 1h20 e ainda 3h11 de vida pela frente.
+  02:59:42 a janela do jogo volta e o modo jogo padrão é RECUSADO
+           (motivo=sem_autoridade_de_jogo) porque a autoridade ainda era daemon.
+  02:59:42.832 a autoridade volta a game. Falso negativo: 108,65 s.
+  06:09:42 a queda seguinte e a VERDADEIRA (57 s depois do fim do processo).
