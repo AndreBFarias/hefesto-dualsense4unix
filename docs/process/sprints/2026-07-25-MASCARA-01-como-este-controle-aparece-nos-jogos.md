@@ -1,7 +1,17 @@
 # MÁSCARA-01 — "como este controle deve aparecer nos jogos"
 
-- **Status:** ABERTA
-- **Prioridade:** MÉDIA (depende de outras três)
+- **Status:** ABERTA. **E1 ENTREGUE em 07/08/2026** — mas **não como estava
+  escrita**: o *"bump de esquema"* foi medido como destrutivo e substituído por
+  arquivo próprio. Ver a nota datada no fim deste arquivo. Da **entrega 3** saiu,
+  no mesmo dia, só a **metade segura** — a função pura que compõe o valor a
+  partir de uma LISTA de pares, **não ligada**; a condição para ligá-la está na
+  última nota datada
+- **Prioridade:** **ALTA desde 07/08/2026** — deixou de ser sprint paralela e
+  virou **pré-requisito** da `E3`/`E4` da
+  [LUGAR-À-MESA-01](2026-08-06-LUGAR-A-MESA-01-tres-controles-ligados-e-um-jogador-so.md),
+  por decisão dela
+  ([as doze respostas](../2026-08-07-DECISOES-DELA-as-onze-respostas-do-painel.md),
+  resposta 3). Prioridade anterior: MÉDIA (dependia de outras três)
 - **Aberta em:** 25/07/2026 — desenho proposto pela mantenedora
 
 ## De onde veio
@@ -58,6 +68,165 @@ Como este controle deve aparecer nos jogos?
 **Cada opção diz o que custa.** É o que falta na interface hoje, e é metade do
 valor desta sprint.
 
+---
+
+## NOTA DATADA — 07/08/2026: este texto de tela está FALSO em três pontos medidos
+
+**O texto acima fica onde está, sem uma linha apagada.** Ele é a proposta que
+abriu a sprint, e quem escrever a `E4` precisa ver as **duas** versões para
+entender por que a segunda existe. Esta nota não reescreve a proposta: mede o
+que, dela, o produto de hoje **não pode prometer**. A razão de ela existir agora
+é concreta — **a `E4` vai copiar este bloco para a tela de verdade**, e um texto
+de tela é uma promessa que a pessoa lê antes de escolher.
+
+Escopo: as três opções falam do controle **EXTERNO** mascarado (o Nintendo Pro
+do exemplo). Nada aqui muda o que um DualSense recebe.
+
+### (a) "luz ... funciona" — a luz do externo está CALADA. GRAU: DECISÃO DELA
+
+`EXTERNAL_PLAYER_LED_ENABLED = False` (`external_identity.py:194`), lido no tick
+em `:1220`. É a `E0` da
+[LUGAR-À-MESA-01](2026-08-06-LUGAR-A-MESA-01-tres-controles-ligados-e-um-jogador-so.md)
+e **decisão dela de 07/08/2026** (resposta 12 do painel, em
+[as respostas](../2026-08-07-DECISOES-DELA-as-onze-respostas-do-painel.md)),
+mantida inteira neste mesmo dia. "Calar" é **zero escritas**, e explicitamente
+não é apagar (`external_identity.py:162-176`): apagar também seria afirmar. A
+condição de volta está escrita e é objetiva — quando o externo virar jogador de
+verdade, a `E3` da LUGAR-À-MESA-01 (`:184-186`), que ela autorizou **só depois
+desta sprint**. Enquanto isso, a tela não pode prometer luz: prometer é
+exatamente o que o interruptor recusa.
+
+### (b) "vibração funciona" — o rumble do externo vira BROADCAST. GRAU: MEDIDO
+
+A cadeia, lida e depois **executada**:
+
+1. `coop.py:495` — `target = None if identity.startswith("path:") else identity`:
+   identidade sem MAC já entra sem alvo;
+2. `gamepad.py:776-785` — com alvo, tenta `set_rumble_for`; **quando ele devolve
+   falso, cai no `controller.set_rumble`**. O próprio docstring nomeia o preço
+   (`:762-764`): *"com MAC que não casa nenhum handle, cai no broadcast
+   histórico — limitação documentada: TODOS os controles vibram juntos"*;
+3. `core/backend_pydualsense.py:2978-2985` — `set_rumble_for` acha o handle por
+   `_key_for_uniq`, que varre `self._handles`;
+4. `core/backend_pydualsense.py:1428-1430` — `self._handles` só recebe o que a
+   enumeração aceitou, e ela filtra `vendor_id=DUALSENSE_VENDOR` com
+   `product_id in DUALSENSE_PIDS`. **Endereço de externo nunca casa handle**,
+   por construção.
+
+A medição de 07/08 (sem aparelho, handles forjados, endereços na máscara da
+casa, código real do produto):
+
+| chamada | o que aconteceu |
+|---|---|
+| `set_rumble_for(MAC de DualSense)` | `True` — só aquele handle recebeu |
+| `set_rumble_for(MAC de externo)` | `False` — nenhum handle casou |
+| `apply_game_rumble(target=externo)` | caiu no broadcast: **os dois DualSense** receberam `left=200 right=60` |
+| `apply_game_rumble(target=DualSense B)` | broadcast vazio; só o B recebeu |
+
+**A mordida:** as duas últimas linhas são a MESMA chamada com a cura arrancada e
+devolvida. Com um endereço que não casa handle, a mesa inteira vibra; com o
+endereço que casa, vibra um só. O defeito foi reproduzido, não deduzido.
+
+E "todos" nem é o pior caso: `_for_each`
+(`core/backend_pydualsense.py:2090-2096`) respeita o seletor de controle da GUI
+quando ele aponta um handle vivo. Com o seletor apontado, quem vibra é **um**
+DualSense escolhido pela janela — não o controle de quem está jogando. As duas
+saídas erram de jeitos diferentes.
+
+### (c) "Entra na sua ordem de jogador" — proibido por escrito. GRAU: DECISÃO
+
+LUGAR-À-MESA-01, seção "O que fica ABERTO", item 1: *"Qualquer texto de tela ou
+de README que prometa 'o número aceso é o mesmo do jogo' está **proibido** por
+esta sprint"*. A razão é medida como SUSPEITA COM MECANISMO e está lá: o jogo
+escolhe o índice pela ordem em que abre os dispositivos, e **qual** número cada
+um recebe não é nosso — *"a luz pode dizer 2 e a tela do jogo dizer 3, e isso
+sobrevive à entrega inteira"*.
+
+O que a tela pode dizer sem mentir é o que esta própria sprint estabelece em
+"Por que isto é o que resolve a numeração": mascarado, o controle passa a fazer
+parte do **conjunto** que nós montamos. Conjunto não é ordem, e a diferença é a
+sprint inteira.
+
+### (d) o custo do Xbox está INCOMPLETO — GRAU: MEDIDO em 01/08/2026
+
+"Sem gatilhos adaptativos" é menos da metade: **perde giroscópio E touchpad**.
+Medido em 01/08 e escrito no código — com a máscara Xbox o vpad é uinput,
+*"que declara 8 eixos e 11 botões — não há onde pôr giroscópio nem touchpad"*, e
+`integrations/virtual_pad.py` recusa o uhid para qualquer sabor que não seja
+`dualsense` (`app/actions/home_actions.py:236-240`).
+
+A frase certa **já existe, com dono**: `TEXTO_CUSTO_MASCARA_XBOX`
+(`home_actions.py:245-250`), servida pela função pura
+`texto_do_custo_da_mascara` (`:253-260`) e já reusada pela
+[ESCOLHA-DELA-VENCE-01](2026-08-01-ESCOLHA-DELA-VENCE-01-a-mascara-do-perfil-e-o-tooltip-do-xbox.md)
+(E4, entregue em 01/08). **A `E4` desta sprint reusa essa função** em vez de
+escrever a segunda frase sobre o mesmo fato — dois donos da mesma frase derivam,
+e a regra já está escrita naquela sprint.
+
+**Armadilha ao reusar, e ela é do ponto (b):** aquela frase termina em
+*"Vibração, microfone e alto-falante continuam funcionando"*, e isso foi medido
+para o **DualSense físico** (`home_actions.py:242-244`). Num cartão de controle
+**externo** a cláusula da vibração é falsa hoje, pelo mesmo broadcast. Ou a
+função ganha o caso do externo, ou o cartão do externo não mostra essa cláusula
+— o que não pode é a frase do DualSense aparecer inteira debaixo de um Pro.
+
+### Um quarto ponto, achado ao conferir — "Gatilhos ... funcionam"
+
+**GRAU: MEDIDO no código.** A réplica de gatilho que o jogo escreve no vpad
+nunca chega a um externo, e falha **em silêncio**: `apply_game_trigger`
+(`gamepad.py:799-807`) *"nunca degrada para broadcast"* — de propósito, porque
+replicar gatilho em todo mundo pintaria o jogador errado —, e
+`set_game_trigger_for` com MAC sem handle **registra o bloco e devolve `True`**
+(`core/backend_pydualsense.py:3016-3020`: *"registrado; o hotplug aplica quando o
+controle voltar"*), esperando um handle que, para um externo, nunca vem.
+
+Se o plástico de um externo sequer tem gatilho adaptativo é outra pergunta, e
+esta nota **não a mede**.
+
+### A versão que a `E4` pode copiar
+
+Proposta, não decisão: interface fecha com o olho dela (PROVA-DE-TELA-01), com
+foto antes e depois.
+
+```
+Como este controle deve aparecer nos jogos?
+
+  ( ) Como ele mesmo — Nintendo Pro
+      Os botões batem com o que está escrito neles.
+      Quem numera este controle é o jogo, por conta dele.
+
+  ( ) Como DualSense
+      Este controle entra no conjunto que o jogo enxerga.
+      O jogo vai pedir o botão de triângulo onde o seu diz X.
+      A luz de jogador dele continua apagada.
+      A vibração do jogo ainda não chega neste controle.
+      Enquanto a ponte de movimento não existir, perde o giroscópio.
+
+  ( ) Como Xbox 360
+      Máxima compatibilidade.
+      Nesta máscara o jogo não recebe giroscópio nem touchpad.
+```
+
+Três cuidados para quem copiar:
+
+1. **não escreva o triângulo desenhado neste documento.** As lacunas das linhas
+   24 e 61 acima são um apagamento já consumado — conferido byte a byte em
+   07/08: na 24 sobrou um par de crases vazio, na 61 sobraram dois espaços. E o
+   culpado **não é o portão de glifos**: medido hoje, ele ACEITA U+25B3 e
+   U+25B2 (bloco Geometric Shapes, que o ADR-011 manda preservar) e só reprova
+   o triângulo de emoji, U+1F53A. Quem apagou foi o higienizador do ambiente,
+   que tem sprint própria e aberta
+   ([GATE-EMOJI-01](2026-07-27-GATE-EMOJI-01-o-higienizador-apaga-o-que-o-adr-protege.md)),
+   com a regra de escrita que esta nota segue: **glifo citado por codepoint,
+   nunca desenhado**. No documento, escreva a palavra ou o codepoint; no
+   widget, o desenho pode voltar;
+2. **cada linha nova precisa de dono no código**, como a do Xbox tem — texto de
+   tela sem função pura é a próxima frase a envelhecer sozinha;
+3. **as três linhas negativas de "Como DualSense" caducam juntas** com as
+   entregas que as causam: a luz volta com a `E3` da LUGAR-À-MESA-01, a vibração
+   com a rota de FF da mesma sprint, o giroscópio com a `E6` daqui. Quem entregar
+   qualquer uma delas apaga a linha correspondente **e escreve a nota datada**.
+
 ## Onde a máscara mora — a decisão, com o argumento
 
 A máscara é propriedade do **aparelho**, não da configuração do jogo.
@@ -94,6 +263,14 @@ Três coisas, todas encontradas no código:
 1. **Máscara por aparelho** no registro de identidade, com bump de esquema.
 2. **Descoberta por-jogador que aceite externos** — quando, e só quando, a
    máscara pedir. A descoberta atual continua existindo para o caminho DualSense.
+
+   > **NOTA DATADA — 07/08/2026: esta entrega, COMO ESTÁ ESCRITA, é
+   > INCOMPLETA — e saiu daqui.** Ela foi executada como a `E2` da
+   > [LUGAR-À-MESA-01](2026-08-06-LUGAR-A-MESA-01-tres-controles-ligados-e-um-jogador-so.md),
+   > que é a versão completa. O que sobra para a MÁSCARA-01 é o **portão**
+   > (*"só quando a máscara pedir"*), que é uma camada fina sobre a descoberta,
+   > não uma entrega paralela. Ver a nota datada *"a entrega 2 saiu daqui, e por
+   > que ela estava incompleta"*, no fim deste arquivo.
 3. **As variáveis que escondem os físicos deixam de ser constantes** e passam a
    ser montadas a partir dos controles mascarados.  A lista de variáveis
    permitidas é **espelhada no script de lançamento** — mudar de um lado exige
@@ -144,3 +321,249 @@ trocar a instabilidade que a NUM-01 acabou de curar por outra pior.
 4. Alt-tab não derruba nenhum vpad *(a máscara não mora no perfil)*.
 5. Trocar a máscara com jogo aberto → recusa ou avisa, mas não deixa a pessoa sem
    controle no meio da partida.
+
+---
+
+## NOTA DATADA — 07/08/2026: a E1 saiu, e o "bump de esquema" caducou
+
+**Decisão medida não se apaga.** O texto da `E1` acima continua onde estava —
+*"Máscara por aparelho no registro de identidade, com bump de esquema"* —, e a
+seção *"Onde a máscara mora"* continua inteira, porque o argumento dela (a
+máscara é do APARELHO, e trocá-la derruba o vpad) **não caducou**: é o que a
+entrega obedece. O que caducou é **onde** a máscara ia morar.
+
+### O que foi entregue
+
+`daemon/subsystems/external_mask.py` — módulo irmão de `external_identity.py`,
+com `ExternalMaskRegistry`: identidade de aparelho → máscara, em **arquivo
+próprio** (`controller_masks.json` em `config_dir()`), com **versão própria**.
+Chaveado pela identidade que `identity_for_entry` já carimba, que é a MESMA com
+que o daemon numera o externo. Sem bump, sem migração, sem renumerar ninguém.
+
+Testes em `tests/unit/test_external_mask.py` — função pura sobre arquivo
+forjado, na bancada de `test_external_identity.py` (faixa `aa:bb:cc:*`). Nenhum
+aparelho, nenhum GTK, nenhum Xvfb.
+
+**Isto é só o REGISTRO.** Não adota externo, não cria gamepad virtual, não
+esconde ninguém do jogo, não desenha tela. As `E2`, `E3`, `E4`, `E5` e `E6`
+seguem abertas, e a `E3` da LUGAR-À-MESA-01 (a adoção) continua atrás desta.
+
+### Por que o bump de esquema foi recusado — GRAU: MEDIDO
+
+Quatro fatos na árvore, os quatro já medidos um a um pela
+[REGRA-NAO-REGISTRO-01](2026-08-06-REGRA-NAO-REGISTRO-01-o-8bitdo-e-um-so-e-o-defeito-e-de-todo-mundo.md),
+seção *"O que muda no arquivo"*:
+
+1. **`identity.load` descarta a fila INTEIRA** quando a versão do arquivo
+   difere (`identity.py:858`). Um bump renumeraria a mesa dela — trocaria o
+   defeito dos rótulos de botão por outro que a `NUM-01` acabou de curar;
+2. **`identity._save_locked` só aproveita as entradas do outro lado quando a
+   versão bate** (`identity.py:940-950`). O primeiro save do lado DualSense
+   depois de um bump — que acontece a cada conexão de DualSense — **apagaria a
+   fila dos externos**;
+3. **`payload: dict[str, Any] = {}` é montado do zero** (`identity.py:951`):
+   chave nova de topo escrita pelo lado externo morre no primeiro save do outro;
+4. **`merged_order_payload` devolve exatamente `{addr, kind, rank}`**
+   (`identity.py:316`) e **`order_entries` descarta `kind` desconhecido**
+   (`identity.py:279`): campo novo POR ENTRADA morre nos DOIS escritores.
+
+O quarto fato sozinho já impede pendurar a máscara numa entrada da fila; os dois
+primeiros tornam o bump ativamente destrutivo.
+
+**E a lição do fato 3 foi aplicada contra nós mesmos:** o save do arquivo novo é
+read-modify-write e **preserva o que não entende** (chave de topo e campo por
+entrada de uma versão futura). Arquivo cuja versão não é a nossa não é lido
+**nem sobrescrito** — recusar a gravar é mais barato que destruir a escolha de
+alguém.
+
+### O que torna isto executável em 07/08 e não em 25/07
+
+O item 3 de *"O que hoje impede"* dizia que a identidade de externo *"não é
+endereço"*. **Isso caducou:** a chave estável existe hoje —
+`identity_for_entry` (`external_identity.py:348-362`) é fonte ÚNICA, é
+persistível quando é MAC de hardware (`_canonical`, `:415-431`), e MAC de
+hardware **nunca é podado** (D2/R-15, `_prune_volatile_locked`, `:550`). O que
+continua valendo do item 3 é o direcionamento por endereço nos outros quatro
+lugares — território da `E2`/`E3`.
+
+### Os dois limites, declarados — GRAU: MEDIDO
+
+1. **Identidade sintética, `dev:` ou `path:` é volátil.** Máscara pendurada ali
+   vale **só na sessão** e não vai ao disco: persistir seria gravar a escolha
+   numa chave que dois aparelhos diferentes podem dividir (CLONE-01);
+2. **Máscara é por ROSTO, não por grupo.** A `REGRA-NAO-REGISTRO-01` compartilha
+   **rank**, nunca identidade — a máscara pendurada num rosto do 8BitDo **não
+   vale no outro**. É o mesmo limite que aquela sprint já declara para
+   `Profile.controllers`, e a extensão (o lookup consultar os outros rostos do
+   grupo) está deliberadamente fora deste desenho.
+
+### O que NÃO mudou, e é de propósito
+
+`CONTROLLERS_SCHEMA_VERSION` continua **3**. `order_entries`,
+`merged_order_payload`, o portão de versão do `load` e o `payload = {}` do
+`identity.py` **não foram tocados** — nenhuma linha. É isso que garante que a
+fila dela sobrevive a esta entrega.
+
+---
+
+## NOTA DATADA — 07/08/2026: a entrega 2 saiu daqui, e por que ela estava incompleta
+
+**GRAU: MEDIDO no código.** A entrega 2 desta sprint e a `E2` da
+[LUGAR-À-MESA-01](2026-08-06-LUGAR-A-MESA-01-tres-controles-ligados-e-um-jogador-so.md)
+são **a mesma coisa** — e a `E2` é a versão correta. Ela foi executada em
+07/08/2026; a nota com o `caminho:linha`, o custo e as mordidas mora **lá**.
+
+### O item BLOQUEANTE que esta sprint não nomeava
+
+A entrega 2, como está escrita acima, pede *"descoberta que aceite externos"* e
+para por aí. Descobrir não basta: **o controle descoberto seria injogável.**
+
+`EvdevReader._handle_abs` fazia `value & 0xFF` **seis vezes seguidas**, supondo
+"DualSense, 0..255". Com o Nintendo Pro (-32767..32767) o **centro** do
+analógico vira `0`, que em 0..255 significa **talo à esquerda e para cima**: um
+Pro em *"Como DualSense"* andaria sozinho para o canto e não pararia. A `E2`
+traz o normalizador por `absinfo` que fecha isso, mais duas coisas que esta
+sprint também não pedia:
+
+- **síntese de gatilho digital** — o Pro não publica `ABS_Z`/`ABS_RZ` (o ZL/ZR
+  dele é botão), então sem síntese o gatilho fica **0 para sempre**;
+- **reencontro por identidade** — `_locate` só procurava DualSense, e o externo
+  nunca voltava de um replug.
+
+**Sem os três, a máscara "Como DualSense" entregaria um controle que a pessoa
+não consegue jogar** — e a tela desta sprint teria de dizer isso, junto com o
+preço dos rótulos.
+
+### O que fica com a MÁSCARA-01
+
+O portão *"quando, e só quando, a máscara pedir"* — que é uma **camada fina
+sobre a descoberta**, não uma entrega paralela: a descoberta já classifica cada
+node em `dualsense`/`external` e devolve identidade; o portão só decide quem
+recebe tratamento de jogador. Ele **não existe sem a entrega 1** (a máscara por
+aparelho), que é onde a pergunta *"esta máscara pediu?"* tem resposta.
+
+**Nada foi apagado:** o texto da entrega 2 fica onde estava, com a marca do que
+caducou. Quem for reconstituir a ordem em que as coisas foram sabidas lê os
+dois — e o motivo de a MÁSCARA-01 ter virado pré-requisito continua sendo o
+dela: *ela recusou o preço de ver botão de PlayStation na tela com o Pro
+Controller na mão.*
+
+### O que a saída da entrega 2 NÃO desbloqueia
+
+**A adoção continua vetada.** A `E2` não dá vpad, lugar na partida nem número a
+externo nenhum, e o `daemon/subsystems/coop.py` ficou **intocado** — há portão
+de texto que reprova se ele passar a enxergar a descoberta unificada. O veto de
+19/07 (*"externo não ganha controle virtual"*) foi **adiado com condição**, e a
+condição é esta sprint inteira, não a entrega 2 sozinha.
+
+---
+
+## NOTA DATADA — 07/08/2026: a METADE SEGURA da entrega 3, e o que falta para ligá-la
+
+**A entrega 3 continua BLOQUEADA**, e o motivo é o mesmo que a reavaliação de
+hoje mediu: *a função pura é escrevível hoje; LIGÁ-LA hoje tira controle do jogo
+dela.* O texto da entrega 3 acima **fica onde está**. O que saiu é a metade que
+não toca o jogo dela: **as duas variáveis deixaram de carregar um par cravado
+dentro da string e passaram a ser COMPOSTAS a partir de uma LISTA de pares —
+com a lista de hoje tendo um item só.**
+
+### O que foi entregue
+
+| onde | o que é |
+|---|---|
+| `daemon/launch_env.py:98` | `PAR_DUALSENSE_FISICO` — o par que estava cravado dentro das duas strings |
+| `daemon/launch_env.py:128` | `compor_lista_vidpid(pares, *, maiusculas)` — a função pura |
+| `daemon/launch_env.py:213` e `:222` | `valor_ignore_devices` / `valor_disable_hidraw` — a caixa de cada env, com o motivo |
+| `daemon/launch_env.py:232` e `:240` | `_IGNORE_VALUE`/`_DISABLE_HIDRAW_VALUE` passam a ser COMPOSTOS, com **um par só** |
+| `tests/unit/test_launch_env_lista_vidpid.py` | 13 testes: um par, três pares, zero pares, o formato, a agulha do consumidor, o lixo, e *"a lista não cresceu"* |
+
+**Nada foi ligado.** `compose_env` continua recebendo o par único do DualSense;
+nenhum externo, nenhuma máscara e nenhuma mesa alimentam a lista. Há teste que
+reprova se o valor emitido ganhar uma vírgula
+(`test_compose_env_continua_emitindo_um_par_so`).
+
+### A correção que BARATEOU esta entrega — GRAU: MEDIDO
+
+O aviso da entrega 3 acima (*"a lista de variáveis permitidas é espelhada no
+script de lançamento — mudar de um lado exige mudar do outro"*) **não caducou,
+mas foi delimitado**: ele vale para **NOME** novo de variável, e aqui não nasce
+nenhum.
+
+Lido no `assets/hefesto-launch.sh`:
+
+- `:85-91` — a allowlist do wrapper é um `case "$line" in
+  SDL_GAMECONTROLLER_IGNORE_DEVICES=*) ...`, isto é, filtra por **nome**, nunca
+  por valor;
+- `:309-313` — `while IFS= read -r kv; do set -- "$kv" "$@"` põe cada linha
+  **inteira** como **um** argumento do `env(1)`: o valor não sofre word-split.
+
+Logo, compor o VALOR a partir de uma lista exige **zero** mudança no wrapper. O
+que continuaria exigindo é uma variável nova.
+
+### O formato, e o grau de cada metade
+
+**`PROTON_DISABLE_HIDRAW` — GRAU: MEDIDO** (07/08/2026, no Proton 10 instalado
+na máquina dela). O `is_hidraw_enabled` de
+`files/lib/wine/x86_64-windows/winebus.sys` monta a agulha com o molde **wide**
+`0x%04X/0x%04X` e procura com **`wcscasestr`** — substring, sem caixa
+(`objdump -d --disassemble=is_hidraw_enabled`, mais `strings -el` para os
+moldes). Três consequências:
+
+1. o prefixo `0x` e os **quatro dígitos** são obrigatórios — fazem parte da
+   agulha, e um token curto (`0x1/0x2`) nunca casa;
+2. a **caixa é indiferente**;
+3. o **separador é livre** — a vírgula serve.
+
+E o próprio Proton escreve uma lista assim: `proton:1828` (contorno do God of
+War Ragnarok no Deck) grava
+`0x054C/0x05C4,0x054C/0x09CC,0x054C/0x0BA0,0x054C/0x0CE6,0x054C/0x0DF2`.
+
+**`SDL_GAMECONTROLLER_IGNORE_DEVICES` — GRAU: SUSPEITA COM MECANISMO** (forte;
+**nenhum parser do SDL foi executado**). Corroborações: o formato documentado
+do hint é lista separada por vírgula de `0xVID/0xPID`; a LaunchOptions **dela**
+já foi estendida por vírgula, e o repositório tem regra escrita para não
+quebrar isso (`integrations/steam_launch_options.py:147`); e o Proton usa
+exatamente esse formato na variável irmã. **Por que parou aqui:** medir o
+parser exigiria plantar um joystick falso em `/dev/input` na máquina dela, com
+três controles conectados e ela jogando. Recusado.
+
+**A caixa de cada valor não é enfeite — GRAU: MEDIDO.** O IGNORE sai em
+minúsculas porque `integrations/steam_launch_options.py:97` compara a
+LaunchOptions envenenada contra o token literal
+`SDL_GAMECONTROLLER_IGNORE_DEVICES=0x054c/0x0ce6`, byte a byte. Trocar a caixa
+faria o `has_poison` deixar de reconhecer o veneno que as versões antigas
+persistiram — e veneno com o vpad fora de cena é **zero controles**. Há teste
+amarrando as duas pontas.
+
+### A CONDIÇÃO para ligar, escrita — e ela não é hoje
+
+A lista só recebe um **segundo par** quando existir a **`E4` da
+[LUGAR-À-MESA-01](2026-08-06-LUGAR-A-MESA-01-tres-controles-ligados-e-um-jogador-so.md)**:
+a **cobertura POR PAR** — *"o par só sai no `IGNORE` se TODO aparelho daquele
+par na mesa tiver vpad vivo"*. E a `E4` vem **depois da `E3`** (a adoção dos
+externos), que ela **adiou** até a máscara existir.
+
+O que a condição protege, medido naquela sprint: `054c:05c4` é o par do 8BitDo
+em modo PS4 **e** o de um DualShock 4 Sony genuíno. Emitir esse par numa mesa
+onde o aparelho é um DS4 **sem** vpad some com o controle da pessoa. A mesma
+condição está escrita no código, no docstring da função — quem for ligar tropeça
+nela antes de conseguir.
+
+### A mordida
+
+A cura foi arrancada **seis** vezes, e as seis reprovaram:
+
+| o que foi arrancado | o que caiu |
+|---|---|
+| vírgula vira espaço no `join` | 4 testes |
+| o prefixo `0x` some do molde | 9 testes |
+| o zero à esquerda some (`%x` no lugar de `%04x`) | 9 testes |
+| a caixa do IGNORE invertida | 8 testes |
+| a faixa de 16 bits deixa de ser conferida | 1 teste |
+| o par repetido deixa de ser deduplicado | 1 teste |
+
+### O que esta nota NÃO faz
+
+Não liga a função, não adota externo, não cria vpad para ninguém, não desenha
+tela e **não começa a `E3`**. A adoção continua atrás da palavra dela, e o veto
+de 19/07 segue valendo enquanto a máscara não estiver inteira.

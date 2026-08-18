@@ -1,8 +1,11 @@
 # LEGIBILIDADE-01 — texto legível, alvo clicável, coisas no lugar certo
 
-- **Status:** ABERTA
+- **Status:** o **aceite da fonte +3 FECHOU** em 07/08/2026. O resto da
+  validação continua **ABERTO** — ver *"Como validar"*, onde só a caixa do
+  aceite está marcada
 - **Prioridade:** MÉDIA (alta em impacto de uso diário)
 - **Aberta em:** 25/07/2026
+- **Aceite da fonte +3:** 07/08/2026 — **GRAU: DECISÃO DELA**
 
 ## Os relatos
 
@@ -186,9 +189,40 @@ passam a ser aplicadas, ou saem do arquivo.
 
 ## Como validar
 
-- Nenhum par texto×fundo abaixo de 4,5:1 no teste novo.
-- Nenhum alvo clicável abaixo de 32 px.
-- Nenhum texto abaixo de 12 px.
-- A janela abre sem barra de rolagem em nenhuma aba, a 1180×830.
-- Os analógicos aparecem na mesma faixa do microfone e da lightbar.
-- E o teste que decide: **ela ler o rodapé sem se aproximar da tela.**
+- [ ] Nenhum par texto×fundo abaixo de 4,5:1 no teste novo.
+- [ ] Nenhum alvo clicável abaixo de 32 px.
+- [ ] Nenhum texto abaixo de 12 px.
+- [ ] A janela abre sem barra de rolagem em nenhuma aba, a 1180×830.
+- [ ] Os analógicos aparecem na mesma faixa do microfone e da lightbar.
+- [x] E o teste que decide: **ela ler o rodapé sem se aproximar da tela.**
+      **ACEITO em 07/08/2026 — GRAU: DECISÃO DELA.**
+
+As cinco caixas acima continuam **sem marca de propósito**: nenhuma delas foi
+conferida no dia do aceite, e marcar caixa por otimismo é o que faz sprint
+fechada mentir. Quem for fechá-las tem de medir cada uma e datar a marca.
+
+## NOTA DATADA — 07/08/2026: a fonte +3 está ACEITA
+
+**GRAU: DECISÃO DELA**, dada em 07/08/2026 como resposta 8 do
+[painel das nove](../2026-08-07-PAINEL-as-nove-decisoes-que-esperam-ela.md) e
+registrada em
+[as onze respostas](../2026-08-07-DECISOES-DELA-as-onze-respostas-do-painel.md).
+A pergunta era: *"a fonte +3 está aceita?"*, e a resposta foi **"sim, aceita"**.
+
+**O que isso fecha, exatamente:** o critério que esta sprint declarou como *o
+teste que decide*. A caixa é marcada **pela palavra dela**, não por medição nova
+— e é assim que ela tinha de fechar, porque o critério escrito aqui é ela ler, e
+ninguém lê no lugar dela. `ESCALA_PADRAO = 3` (`app/theme.py`) deixa de ser um
+número em produção esperando veredito e passa a ser a escala **escolhida**.
+
+**O que ela recusou ao escolher, e por isso não se repropõe:** o painel oferecia
+*"quero mais"* (o teto seguro é `ESCALA_MAXIMA = 8`, acima disso a janela deixa
+de caber em 1080p) e *"volto para +2"* (o degrau que esta sprint registrava como
+seguro na Fase 5). Nenhum dos dois foi escolhido. Mexer no degrau agora exige
+**medição que derrube o motivo**, não opinião.
+
+**O que esta nota NÃO fecha:** as cinco caixas de *"Como validar"* acima. O
+aceite é sobre a **fonte**; contraste, alvo clicável, piso de 12 px, orçamento
+de largura a 1180×830 e o lugar dos analógicos continuam sendo caixa aberta
+desta sprint, e a Fase 6 (os três pontos em Python, fora do alcance do CSS)
+segue com a decisão pendente sobre as 11 classes órfãs.

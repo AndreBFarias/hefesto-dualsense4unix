@@ -36,7 +36,7 @@ Isto **não precisa ser reaberto**. Cada linha tem onde conferir.
 | O microfone: o `doctor.sh` reprova fonte padrão que seja MONITOR e filtra entrada sem porta usável | `scripts/doctor.sh:605` (`check_default_source_monitor`), `:660` (`fix_default_source_monitor`), `:505` (classificação pelo sufixo `.monitor`) | `665aff7`, `84c0f83` |
 | A cura do `--fix-mic` de `84d9f4e`, que só existia na `main`, foi portada | `scripts/doctor.sh` mais 113 testes de microfone | `665aff7` |
 | Empacotamento: caminho de ativação do `.deb`, regras 82/83/84 no Arch e no Fedora, `hid-playstation` desregistrado na remoção, `%files` do Fedora, flake Nix, epoch nos três, Flatpak com versão no nome e semeando perfis, guarda de CI no release | `packaging/arch/PKGBUILD:129-131`, `packaging/fedora/hefesto-dualsense4unix.spec:137-139` e `:339-341`, `.github/workflows/release.yml` | `f319c6f` |
-| As fontes da identidade visual passaram a ser instaladas (bloco B1 da PROMESSA-NÃO-CUMPRIDA-01) | `install.sh:1966` e `:1969` chamam `scripts/install_fonts.sh`; `--no-fonts` documentado em `:130` | `665aff7` |
+| As fontes da identidade visual passaram a ser instaladas (bloco B1 da PROMESSA-NÃO-CUMPRIDA-01) | `install.sh:2085` e `:1969` chamam `scripts/install_fonts.sh`; `--no-fonts` documentado em `:130` | `665aff7` |
 | Portões: hook de acentuação lendo N arquivos, força 8 do gatilho deixando de virar 0, `--no-systemd` honrando a resposta dela, `--help` completo, lápide do `xlib_window`, paridade DKMS sem falso-verde, portão contra Gtk falso | `install.sh`, `integrations/xlib_window.py` (lápide), `tests/unit/test_guarda_gi_falso_precisa_de_exigir_gi_real.py` | `f319c6f`, `665aff7` |
 | Janela: três rótulos de gatilho em português, linha do detector na aba Sistema, texto do PS+Options, barras de vibração contidas, interruptor do teclado | `app/actions/trigger_specs.py:161`, `app/actions/daemon_actions.py:142-160`, `gui/main.glade:1281`/`:1374`/`:1400` | `2bbfa22` |
 | Documentação: README, quickstart e flatpak apontando para a tag; seção do controle no cabo USB | `README.md`, `docs/` | `665aff7` |
@@ -263,7 +263,7 @@ REAL").
 **Pagos NESTA sessão:**
 
 - **B1 — as fontes.** `grep -c install_fonts install.sh` devolve **9**, contra
-  zero em 29/07. As chamadas estão em `install.sh:1966` e `:1969`, com
+  zero em 29/07. As chamadas estão em `install.sh:2085` e `:1969`, com
   `--no-fonts` documentado em `:130` e o racional escrito em `:189-190` e
   `:1942-1943`. O bloco B1 está **fechado**.
 - **B3 — a ajuda truncada.** O `sed -n '2,128p'` saiu e o `--disable-usb-audio`
@@ -279,8 +279,8 @@ REAL").
   `uninstall.sh:250` e `:358-361` e por `scripts/doctor.sh:3101-3105`, que até
   ensina a instalar à mão.
 - **B4 — a janela de ordem no install.** As regras 82 e 83 são gravadas no passo 3
-  (`install.sh:1106-1107`) e os scripts que elas invocam chegam no passo 3e-bis
-  (`install.sh:1434`, `:1454`). Inócuo, mas real.
+  (`install.sh:1219-1220`) e os scripts que elas invocam chegam no passo 3e-bis
+  (`install.sh:1547`, `:1454`). Inócuo, mas real.
 - **C1 — as métricas sem chave.** `metrics_enabled` continua só como campo de
   dataclass (`daemon/lifecycle.py:190`); `grep -n metrics daemon/main.py` devolve
   **zero**. Não há flag, variável de ambiente nem arquivo que ligue.

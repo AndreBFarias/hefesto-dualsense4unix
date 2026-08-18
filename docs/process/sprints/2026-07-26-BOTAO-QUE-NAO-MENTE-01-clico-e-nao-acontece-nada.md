@@ -1,6 +1,13 @@
 # BOTÃO-QUE-NÃO-MENTE-01 — "clico e não acontece nada"
 
-- **Status:** ABERTA
+- **Status:** **PARCIAL — a E2 está ENTREGUE EM CÓDIGO, AGUARDANDO A PALAVRA
+  DELA; as E5 e E6 seguem ABERTAS.** Remarcada em 09/08/2026. A exceção do
+  Steam Input passou a decidir quem entrega o controle em `e96dea8`
+  (27/07/2026). **Rótulo anterior: ABERTA**, preservado aqui. Ver a nota datada
+  no fim
+- **O que falta ela validar, em uma linha (só da E2):** abrir a lista de jogos
+  da exceção do Steam Input, clicar no "Desfazer" de um deles e ver o jogo sair
+  da lista — sem terminal e sem ir na Steam
 - **Prioridade:** ALTA — é a queixa de uso mais ampla já registrada, e a primeira
   cuja causa foi medida botão por botão
 - **Aberta em:** 26/07/2026
@@ -205,3 +212,35 @@ certo, nem se o clique valeu.
 - **Não sei se os 42 controles da aba Gatilhos incomodam.** São 19 presets ×
   parâmetros, e a densidade pode ser correta para quem ajusta gatilho. A queixa
   dela não nomeou essa aba.
+
+---
+
+## NOTA DATADA — 09/08/2026: a entrega 2 saiu, e o `ABERTA` seco caducou
+
+**Nada acima foi apagado.** A medição botão por botão, os dez diferidos e as
+seis entregas continuam inteiros — inclusive as que **ainda devem**.
+
+**O que está de pé — GRAU: MEDIDO em 09/08/2026 contra a árvore de hoje.**
+
+| entrega | estado | onde está |
+|---|---|---|
+| **2. O desfazer do Steam Input passa a existir** | ENTREGUE EM CÓDIGO, aguardando a palavra dela | `src/hefesto_dualsense4unix/cli/cmd_gamepad.py:31` e `src/hefesto_dualsense4unix/cli/cmd_steam.py:3` — as duas linhas citam a entrega 2 por nome |
+
+**Commit:** `e96dea8`, 27/07/2026.
+
+### O que continua ABERTO nesta sprint — e não foi remarcado
+
+- **A entrega 5 — "Menos superfície".** A regra de informar quantos controles
+  cada sprint de interface adiciona ou remove **não virou portão**: nada no
+  repositório conta os 145 controles simultâneos.
+- **A entrega 6 — "Teste que morde".** Sem portão, sem cobertura medida.
+
+As entregas 1, 3 e 4 não foram reconferidas nesta remarcação e continuam com o
+estado que o corpo do documento descreve.
+
+### Por que o rótulo da E2 não é ENTREGUE e sim ENTREGUE EM CÓDIGO
+
+Porque o critério que a própria sprint escreveu é *"não existe clique cujo efeito
+seja invisível e não anunciado"* — e isso é a tela dela, que só fecha com o olho
+dela
+([PROVA-DE-TELA-01](2026-07-27-PROVA-DE-TELA-01-dez-minutos-de-olho-antes-de-qualquer-leva.md)).

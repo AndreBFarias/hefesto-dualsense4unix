@@ -1,6 +1,10 @@
 # NUM-01 — quem está na mesa é 1..N
 
-- **Status:** ABERTA
+- **Status:** **ENTREGUE.** Conferido no código em 07/08/2026 — as cinco
+  entregas, uma a uma, com `caminho:linha`, na nota datada no fim deste arquivo
+- **Status anterior:** ABERTA (assim desde 25/07/2026). O rótulo não se apaga:
+  ele é o próprio assunto da nota datada — sprint marcada como aberta é lida
+  como dependência viva, e isso já custou uma sprint travada
 - **Prioridade:** ALTA
 - **Aberta em:** 25/07/2026
 
@@ -157,3 +161,91 @@ duas metades são a mesma sprint.**
 6. Reiniciar a máquina: a ordem se mantém.
 
 O critério que resume tudo: **nunca deve existir um jogador 2 sem jogador 1**.
+
+---
+
+## NOTA DATADA — 07/08/2026: esta sprint está ENTREGUE, e o "ABERTA" caducou
+
+**Nada acima foi apagado.** O relato dela, o `controllers.json` medido, as três
+engrenagens, a tabela da inversão e o desenho do conserto ficam inteiros: foi
+esse material que produziu o código de hoje, e é por ele que se entende por que
+o código é assim. O que caducou é **uma linha** — o `Status: ABERTA` do
+cabeçalho, corrigido ali em cima com o rótulo anterior preservado.
+
+### Por que uma linha de cabeçalho merece nota datada — GRAU: MEDIDO
+
+Rótulo de sprint **é lido como dependência**. A
+[MÁSCARA-01](2026-07-25-MASCARA-01-como-este-controle-aparece-nos-jogos.md)
+ficou parada com a justificativa escrita *"IDENT-01 é pré-requisito duro"* na
+seção "Dependências" — e a nota datada de 07/08 daquela sprint mediu que o
+pré-requisito **já estava superado**: a identidade estável de externo existe e
+é fonte única — `identity_for_entry` (`external_identity.py:310-313`, *"FONTE
+ÚNICA da string com que este projeto numera um controle externo"*), persistível
+quando é MAC de hardware, e MAC de hardware nunca é podado
+(`_prune_volatile_locked`). Ninguém tinha percebido, porque a
+leitura parava no rótulo. **Sprint marcada como aberta bloqueia leitura de
+dependência** — e o custo não é uma linha, é uma sprint parada.
+
+### As cinco entregas, conferidas uma a uma em 07/08
+
+| entrega | onde está, conferido |
+|---|---|
+| **1.** Ordem de preferência no lugar do número absoluto | `identity.py:189-194` — `CONTROLLERS_SCHEMA_VERSION = 3`, com o porquê do bump escrito na constante; `:196-201` — `ORDER_FIELD = "order"`, e os campos `slots`/`externals` do schema 2 *"não são mais lidos nem escritos"*; `:279-313` — `order_entries`, fonte única de leitura da fila; `:646-664` — `_posicao_locked`, a posição exibida calculada sobre os presentes |
+| **2.** "Renumerar agora" muda de significado | `ipc_handlers.py:1288-1297` — *"o plano ordena e reescreve LUGARES NA FILA, não números de jogador. A consequência é que o item 1 deixou de ter efeito colateral"*; `identity.py:812-814` — `compact` grava lugar, não número exibido |
+| **3.** Compactação automática | `identity.py:691-693` — *"a compactação automática não é um passo, é consequência de contar só os presentes"*; `identity.py:666-678` — `mark_disconnected` guarda o LUGAR, não o número |
+| **4.** Espaço único com os externos | `identity.py:104-110` — uma fila só, com `kind` dizendo de quem é cada entrada; `external_identity.py:28-38` — o número exibido deixou de ser o lugar, e a parte DualSense da contagem chega por provider; `:452-462` e `identity.py:750-763` — os dois `present_ranks`, um espelho do outro |
+| **5.** Corrigir a documentação interna | a frase morta *"nenhum outro caminho toma os dois locks ao mesmo tempo"* **não existe mais na árvore**: em 07/08 o `grep` por ela em `src/` devolve zero, e as únicas ocorrências no repositório são a citação da entrega 5 aqui em cima e esta linha. No lugar dela há hierarquia de locks escrita — `identity.py:125`, `external_identity.py:36-38` e `:467-471` (*"NUNCA chamar com `self._lock` tomado"*, com o ciclo que isso fecharia nomeado) |
+
+Os **oito** pontos em que o código se declara NUM-01, todos abertos e lidos
+neste dia: `external_identity.py:28` (o número exibido deixou de ser o lugar),
+`:234` (`_present_ranks_of`, com a ordem de degradação quando o outro registro
+é antigo), `:393` (o mapa guarda LUGAR, não número), `:452` (`present_ranks`),
+`:465` (`_ds_present_ranks`, com a regra de lock) e `:518` (`slot_for` devolve
+colocação entre os presentes); `identity.py:279` (`order_entries`) e `:316`
+(`merged_order_payload`).
+
+### A prova, e onde ela morde
+
+`tests/unit/test_num01_quem_esta_na_mesa.py` — **15 testes, verdes em 07/08**
+(`0,22 s`, sem aparelho, sem GTK). Os seis cenários da seção "Como validar"
+desta sprint estão lá **um por um e na ordem**
+(`test_1_o_controle_sozinho_na_mesa_e_o_jogador_1` até
+`test_6_reboot_da_maquina_mantem_a_ordem`), mais três classes que amarram o
+resto: `TestNuncaJogador2SemJogador1` (o critério que resume tudo),
+`TestRenumerarAgoraNaoEstragaOAusente` (o defeito exato da tabela da inversão) e
+`TestMigracaoDoArquivoReal` (o arquivo schema 2 dela descartado uma vez).
+
+**A mordida desta nota não é em código** — nota datada não muda comportamento, e
+`src/` não foi tocado. Ela é dupla, e as duas metades rodaram em 07/08:
+
+- **no produto**, na nota da MÁSCARA-01 do mesmo dia: o alvo do rumble arrancado
+  e devolvido, com a mesa inteira vibrando de um lado e um controle só do outro;
+- **nos portões que guardam este arquivo**, um a um, com o defeito injetado em
+  cópia e o gate conferido depois de curado: `validar-acentuacao.py` reprovou
+  `decisao` sem til (saída 1), `validar-glifos.py` reprovou U+1F600 (saída 1) e
+  `validar-referencias-docs.py` reprovou um link para arquivo inexistente
+  (saída 1) — os três voltaram a 0 com o defeito removido. Portão que não morde
+  não guarda nota nenhuma.
+
+### O que esta nota NÃO afirma
+
+A seção "Corridas que agravam" nomeia três. **Só duas foram conferidas hoje:**
+
+- **RACE-PLAYER-01** (*"não existe Controle 1"*) — curada, e a cura está
+  descrita no próprio módulo: `identity.py:35-43` (R-24) tirou a atribuição do
+  caminho lazy e a pôs no `sync_connected`, que roda **antes** do tick dos
+  externos, *"quem está na mesa ocupa 1..N antes de qualquer externo pedir
+  número"*. GRAU: MEDIDO (leitura do código; o experimento com os quatro na
+  mesa é da CHECKLIST de hardware, não desta nota).
+- **RACE-COOP-LED-02** (*"o número que pisca"*) — a lâmpada do co-op deixou de
+  usar palpite: `coop.py:1044-1058` consulta `slot_for(..., assign=False)` do
+  registro e só cai no `player_index` do co-op quando não há registro
+  (`FakeController`, dublê, backend legado). GRAU: MEDIDO no código; que o
+  piscar tenha morrido AO VIVO é SEM PROVA — ninguém cronometrou o primeiro
+  segundo hoje.
+- **RACE-PLAYER-02** (a ordem de enumeração não é a ordem de conexão) — **não
+  conferida**. GRAU: SEM PROVA nos dois sentidos. Quem for atrás dela não deve
+  ler esta nota como "resolvida"; o identificador não aparece em `src/`.
+
+Nenhuma das três é condição para o `Status` mudar: o relato que abriu a sprint
+(*"ele sempre liga no player 2"*) é o que os seis cenários do teste cobrem.

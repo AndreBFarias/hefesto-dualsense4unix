@@ -30,11 +30,34 @@ várias mãos, em vários controles — o oposto de valor medido numa máquina s
 - [ ] **Formato independente do Hefesto** — as curvas publicadas num arquivo de
       dados legível (JSON ou TOML) que qualquer projeto consiga ler, sem
       depender do nosso esquema de perfil. O formato interno pode continuar o
-      que for melhor para nós; o publicado é para os outros.
-- [ ] **Licença explícita e permissiva no artefato**, separada da licença do
-      código. Dados de curva sob licença restritiva reproduziriam o problema que
-      esta série existe para resolver. Avaliar CC0 ou MIT — CC0 tem a vantagem
-      de eliminar qualquer dúvida sobre atribuição de dados factuais.
+      que for melhor para nós; o publicado é para os outros. **Este arquivo é
+      onde as curvas vão viver, e ele sai em `CC0-1.0`** (ver a entrega
+      seguinte).
+- [ ] **`CC0-1.0` explícita no artefato**, separada da licença do código. Dados
+      de curva sob licença restritiva reproduziriam o problema que esta série
+      existe para resolver.
+
+      **A deliberação está FECHADA — nota datada de 07/08/2026, grau: DECISÃO
+      DELA.** A sprint dizia "avaliar CC0 ou MIT"; não há mais o que avaliar. A
+      resposta 2 do
+      [painel das onze](../2026-08-07-DECISOES-DELA-as-onze-respostas-do-painel.md)
+      é **MIT no código, CC0 nas curvas**, e o motivo é o que a própria sprint
+      escreve acima: CC0 elimina qualquer dúvida sobre atribuição de dado
+      factual, e é isso que permite a outro projeto usar a curva sem advogado no
+      meio.
+
+      **A caixa continua aberta de propósito, e a distinção importa:** o que
+      estava aberto era a *decisão*, e ela veio; o que segue aberto é o
+      *artefato*, que não existe porque a CR-04 ainda não mediu nenhuma curva.
+      Marcar esta caixa hoje seria dizer que a licença está declarada dentro de
+      um arquivo que ninguém escreveu.
+
+      O que falta, concretamente, quando o artefato nascer: a linha
+      `"licenca": "CC0-1.0"` **dentro** do próprio arquivo de dados (não só ao
+      lado dele — dado que viaja sozinho perde o `README` no caminho), e o texto
+      canônico em `LICENSES/CC0-1.0.txt`, ao lado dos textos de terceiros que a
+      [CR-05](2026-07-25-CR-05-proveniencia-completa-do-notice.md) já colocou
+      lá.
 - [ ] **Documentar o método, não só o resultado** — como as curvas foram
       medidas, com que controle, e como reproduzir a medição. Quem quiser
       conferir ou estender precisa do procedimento, não apenas dos números.

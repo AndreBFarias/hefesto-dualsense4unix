@@ -1,6 +1,12 @@
 # PLAYER-01 — um número de jogador, e ele é editável
 
-- **Status:** ABERTA
+- **Status:** **ENTREGUE EM CÓDIGO — AGUARDANDO A PALAVRA DELA**, remarcada em
+  09/08/2026. O seletor "Número deste controle" existe, é editável e tem leitura
+  de volta desde `14cd31b` (25/07/2026). **Rótulo anterior: ABERTA**,
+  preservado aqui. Ver a nota datada no fim
+- **O que falta ela validar, em uma linha:** com dois ou mais controles ligados,
+  trocar o número de um deles na aba Estado e ver o LED do controle e os chips
+  do topo obedecerem — sem número repetido e sem jogador 2 sem jogador 1
 - **Prioridade:** MÉDIA
 - **Aberta em:** 25/07/2026
 - **Absorve:** UI-SELETOR-01 (ordem dos chips), aberta mais cedo em 25/07
@@ -144,3 +150,31 @@ Este é o mesmo defeito de fundo do MODO-01, noutra superfície: **um nome para
 várias coisas**. Lá são seis "modo jogo"; aqui, cinco números de jogador. Vale
 como regra da casa: quando a mesma palavra aparece em cinco camadas com sentidos
 diferentes, o próximo defeito já está escrito.
+
+---
+
+## NOTA DATADA — 09/08/2026: o seletor existe, e o `ABERTA` caducou
+
+**Nada acima foi apagado.** Os relatos dela, os cinco números de jogador e o
+desenho continuam inteiros. O que caducou é **uma linha** — o `Status: ABERTA`
+do cabeçalho, com o rótulo anterior preservado ali em cima.
+
+**O que está de pé — GRAU: MEDIDO em 09/08/2026 contra a árvore de hoje.**
+
+| o que a sprint pedia | onde está hoje |
+|---|---|
+| o seletor "Número deste controle", editável | `src/hefesto_dualsense4unix/app/actions/status_actions.py:412` |
+| o estado do seletor na janela | `src/hefesto_dualsense4unix/app/actions/status_actions.py:1108` |
+| a leitura de volta na tela (entrega 5) | `src/hefesto_dualsense4unix/gui/main.glade:1376` |
+| a ordem dos chips vira a do número exibido (absorve a UI-SELETOR-01) | `src/hefesto_dualsense4unix/app/actions/status_actions.py:1012` e `:1055` |
+
+**Commit:** `14cd31b`, 25/07/2026.
+
+### Por que o rótulo não é ENTREGUE e sim ENTREGUE EM CÓDIGO
+
+Porque o aceite desta sprint **é a mesa dela**: dois ou mais controles ligados,
+o LED de jogador obedecendo, os chips na ordem certa. Isso não fecha por teste —
+fecha com o olho dela
+([PROVA-DE-TELA-01](2026-07-27-PROVA-DE-TELA-01-dez-minutos-de-olho-antes-de-qualquer-leva.md)).
+
+**Nada ficou em aberto nesta sprint além dessa validação.**

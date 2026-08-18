@@ -1,6 +1,14 @@
 # EMULACAO-NO-JOGO-01 — o R1 troca de aplicativo em vez de jogar
 
-- **Status:** ABERTA — medida ponta a ponta, nenhuma linha de código escrita
+- **Status:** **PARCIAL — as E1, E1(b) e E2 estão ENTREGUES EM CÓDIGO,
+  AGUARDANDO A PALAVRA DELA; as E3 e E5 seguem ABERTAS.** Remarcada em
+  09/08/2026: entraram em `2bbfa22` (30/07/2026), com o interruptor do teclado
+  persistido. **Rótulo anterior: "ABERTA — medida ponta a ponta, nenhuma linha
+  de código escrita"**, preservado aqui, porque descrevia com exatidão a rodada
+  de abertura. Ver a nota datada no fim
+- **O que falta ela validar, em uma linha:** abrir o jogo, apertar R1 durante a
+  partida e ver que **não troca mais de aplicativo** — e que o interruptor do
+  teclado continua como ela deixou depois de fechar e reabrir a janela
 - **Prioridade:** CRÍTICA — não é cosmético e não é "estranho": o controle dela
   arranca o foco do jogo no meio da partida, e o único jeito que ela achou de
   parar é um botão que a própria janela deixa cinza na hora em que ele resolve
@@ -814,3 +822,36 @@ está de pé desde 16:50 e é ela que contém os 97 minutos medidos.
   `coop.disable()`), e todos os episódios medidos hoje têm
   `jogadores_coop=0`. O comportamento de E1 com quatro controles na mesa não foi
   raciocinado.
+
+---
+
+## NOTA DATADA — 09/08/2026: três entregas saíram, e o "nenhuma linha escrita" caducou
+
+**Nada acima foi apagado.** A medição ponta a ponta, o Alt segurado por 33
+segundos e as seis entregas continuam inteiros — inclusive as duas que **ainda
+devem**.
+
+**O que está de pé — GRAU: MEDIDO em 09/08/2026 contra a árvore de hoje.**
+
+| entrega | estado | onde está |
+|---|---|---|
+| **E1** — com o vpad suspenso pelo Steam Input, o desktop não entra | ENTREGUE EM CÓDIGO, aguardando a palavra dela | `src/hefesto_dualsense4unix/daemon/lifecycle.py:169` — *"o campo deixou de ser config MORTA"* |
+| **E1(b)** — o interruptor que o teclado nunca teve, na tela | ENTREGUE EM CÓDIGO, aguardando a palavra dela | `src/hefesto_dualsense4unix/gui/main.glade:3444` |
+| **E2** — generalizar para QUALQUER jogo, não só os da allowlist | ENTREGUE EM CÓDIGO, aguardando a palavra dela | `src/hefesto_dualsense4unix/daemon/lifecycle.py:423` — o motivo pelo qual a emulação de desktop fica calada |
+| a escolha dela sobrevive ao fechar a janela | ENTREGUE EM CÓDIGO, aguardando a palavra dela | `src/hefesto_dualsense4unix/utils/session.py:375` (`save_keyboard_emulation`) |
+
+**Commit:** `2bbfa22`, 30/07/2026.
+
+### O que continua ABERTO nesta sprint — e não foi remarcado
+
+- **E3** — a janela para de mentir durante a partida.
+- **E5** — revisitar o DEFAULT, que é a escolha de projeto por trás do sintoma.
+
+A **E0** é decisão de vocabulário dela e não é entrega de código. A **E4** é a
+mesma coisa que a E1(b) e sai junto com ela.
+
+### Por que o rótulo não é ENTREGUE e sim ENTREGUE EM CÓDIGO
+
+Porque a própria sprint escreveu, na seção *"Exige o olho dela na tela — três
+provas, e nenhuma é opcional"*, que **nenhuma delas é opcional** — e nenhuma foi
+feita. O sintoma que abriu esta sprint só se declara curado com ela jogando.

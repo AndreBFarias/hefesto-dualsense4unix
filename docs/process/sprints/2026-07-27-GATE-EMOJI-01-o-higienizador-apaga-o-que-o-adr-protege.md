@@ -1,6 +1,19 @@
 # GATE-EMOJI-01 — o higienizador apaga o que o ADR-011 manda preservar
 
-- **Status:** ABERTA
+- **Status (09/08/2026):** **ENTREGA 2 ENTREGUE EM CÓDIGO — AGUARDANDO A PALAVRA
+  DELA.** O portão existe, roda no CI e no pre-commit, e tem teste de
+  mordida. Entregue por `e96dea8` (27/07/2026) — **o mesmo commit que escreveu
+  esta sprint**. A **Entrega 1 continua ABERTA e é indeterminável daqui**: mora
+  no `$HOME` dela, fora do repositório. Conferência item a item na
+  [nota datada de 09/08/2026](#nota-datada-09082026--o-portão-que-esta-sprint-diz-faltar-nasceu-com-ela), no fim
+- **O que falta ela validar, em uma linha:** colar um emoji num arquivo do
+  projeto, salvar pelo editor dela, e ver se o higienizador do zsh **deixou** os
+  glifos que o ADR-011 protege em pé — é o lado de fora do repositório, e só a
+  máquina dela responde
+- **Status anterior:** ABERTA (assim desde 27/07/2026). O rótulo **não se
+  apaga**: ele é o próprio assunto da nota datada. Sprint marcada como aberta é
+  lida como dependência viva, e esta passou treze dias anunciando a falta de um
+  portão que nasceu junto com ela
 - **Prioridade:** ALTA
 - **Aberta em:** 27/07/2026, a pedido dela: *"temos a parte dos anti emojis que
   tá quebrando o projeto pq o zsh não tá funcionando corretamente"*
@@ -214,3 +227,56 @@ juntos, ele passa — e é essa passagem que prova que o teste atual não testa 
   troca `user.name` e `user.email` por `[REDACTED]` em qualquer arquivo que não
   seja de configuração. Não medi ocorrência nenhuma; fica registrado porque é a
   mesma classe — reescrita silenciosa de conteúdo escrito.
+
+---
+
+## NOTA DATADA (09/08/2026) — o portão que esta sprint diz faltar nasceu com ela
+
+Conferido no código de hoje, item a item. **O texto acima não foi reescrito** —
+ele é o roteiro como estava, e é justamente por isso que esta nota existe.
+
+**O achado que dói:** `git log` sobre os dois caminhos devolve **um único
+commit**, `e96dea8` (27/07/2026), e o `--name-status` marca `A` (adicionado)
+para os dois. O documento que acusa *"o portão que o projeto anuncia e nunca
+teve"* e o `scripts/validar-glifos.py` que o entrega **entraram na árvore no
+mesmo commit**. A acusação era verdadeira no instante anterior ao commit e falsa
+no instante em que ele pousou — e ninguém voltou para dizer isso.
+
+### Entrega 2 — o portão do repositório: PAGA, integral
+
+| # | o que a sprint pediu | onde está hoje |
+|---|---|---|
+| 2.1 | reprovar `Emoji_Presentation` | `scripts/validar-glifos.py:184` `tem_apresentacao_emoji`; tabela de 81 faixas em `:77-159` |
+| 2.2 | preservar os quatro blocos do ADR-011 | `scripts/validar-glifos.py:167-172` `BLOCOS_PRESERVADOS_ADR_011`, consultado antes da proibição em `:209-210` |
+| 2.3 | imprimir arquivo, linha, coluna e codepoint | `scripts/validar-glifos.py:416`; teste `tests/unit/test_validar_glifos.py:159` |
+| 2.4 | entrar no pre-commit | `.pre-commit-config.yaml:40-45`, `id: glifos` |
+| 2.5 | entrar num job do CI | `.github/workflows/ci.yml:65-80`, job `glifos`, com `--all` |
+| 2.6 | não reescrever arquivo, sair diferente de zero | `scripts/validar-glifos.py:419-429`; nenhuma escrita no módulo |
+| 2.7 | `split` em vez de `splitlines` | `scripts/validar-glifos.py:306`, com o porquê em `:302-305` |
+
+**A mordida existe e foi verificada:** `tests/unit/test_validar_glifos.py:255` e
+`:282` mutilam o próprio script (arrancam a cláusula de preservação marcada em
+`scripts/validar-glifos.py:204-210`) e exigem que o caso protegido passe a
+reprovar. É teste que morde, no sentido da casa.
+
+**Uma ressalva honesta, e ela é nova:** o `exclude` do pre-commit
+(`.pre-commit-config.yaml:45`) isenta `tests/fixtures/`, `docs/history/`,
+`docs/research/` e o `CHANGELOG.md` — enquanto o comentário do próprio script
+(`scripts/validar-glifos.py:227-228`) afirma que o proibido vale *"em qualquer
+arquivo de texto, inclusive fixture, CHANGELOG e registro histórico"*. O CI roda
+sem `exclude`, então a divergência não deixa buraco de verdade; mas o script e o
+gancho **discordam por escrito**, e isso é dívida de uma linha.
+
+### Entrega 1 — o higienizador do ambiente: ABERTA, e não dá para fechar daqui
+
+O alvo é `~/.config/zsh/scripts/universal-sanitizer.py` e o gancho global do
+git. **Nenhuma leitura deste repositório confirma ou refuta.** O item 0 — se o
+self-heal da Aurora sobrescreve a cura — está na mesma condição.
+
+Por isso esta sprint **não vira ENTREGUE inteira hoje**: metade dela mora numa
+máquina que o `git log` não enxerga.
+
+### O grau, como manda a casa
+
+**MEDIDO** para a Entrega 2 — há `grep`, teste e job de CI que fecham a conta.
+**SEM PROVA** para a Entrega 1: está dito e ninguém verificou.

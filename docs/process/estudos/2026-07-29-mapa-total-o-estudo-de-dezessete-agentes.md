@@ -116,7 +116,19 @@ retorno** de `set_gamepad_emulation` e devolve APLICADO incondicionalmente
 `daemon/lifecycle.py:1832-1833`, uma falha real de start é registrada como
 sucesso e **nunca mais tentada naquele episódio**.
 
-**Razão C — nos dois jogos dela o Hefesto sai de cena de propósito.**
+**Razão C — nos dois jogos dela o Hefesto entrega a ENTRADA de propósito.**
+
+> **NOTA DATADA — 07/08/2026.** Este parágrafo dizia *"o Hefesto sai de cena de
+> propósito"*, e a frase está **refutada pela metade** pela medição dela de
+> 06/08/2026
+> ([CONTROLE-SONY-MEDIDO-01](../sprints/2026-08-06-CONTROLE-SONY-MEDIDO-01-o-experimento-que-decide-metade-da-doutrina.md),
+> seção *A INVERSÃO*, **grau MEDIDO**): nesses appids o Hefesto entrega a
+> entrada e **mantém a saída** — cor, gatilhos e vibração continuam dele.
+> **A medição de código abaixo não muda uma linha**: os três mecanismos que
+> este parágrafo aponta (`.env` sem dedup, `mode` pulada no arming, vpads
+> suspensos) são todos de entrada, e é exatamente por isso que a frase antiga
+> generalizava demais.
+
 `steam_input_apps.txt` lista 2111190 (Mullet Mad Jack) e 3357650 (Pragmata), e o
 `localconfig.vdf` confirma `UseSteamControllerConfig="2"` nesses dois blocos.
 Por desenho: `daemon/launch_env.py:933-945` sobrescreve os `.env` desses appids
@@ -280,7 +292,7 @@ o `--fix-mic` aplicava a cura que a medição refutou — e silenciava o
 microfone"* — é ancestral de `main` e **não** é ancestral de `HEAD`. Ou seja: a
 cura está fora da árvore que roda.
 
-1. `install.sh:2192` chama `bash "${ROOT_DIR}/scripts/doctor.sh" --fix-mic
+1. `install.sh:2311` chama `bash "${ROOT_DIR}/scripts/doctor.sh" --fix-mic
    --quiet` a cada instalação, com a versão **sem** a cura — reaplicando o que a
    medição de 26/07 refutou (MIC-USB-01: o perfil analógico está
    `available: no` e nasce sem porta de captura; quem grava é o `iec958-stereo`).
@@ -689,7 +701,7 @@ v0.3.0 não tocou uma linha. O mapa de 27/07 continua **corrente** para esta ár
   (`daemon/launch_env.py:85-91`): o vpad se apresenta como Edge e **precisa** do
   hidraw. Esconder o 0df2 mataria rumble, gatilhos e lightbar vindos do jogo.
 - **Instalar o Hefesto muda a versão de Proton de toda a biblioteca dela.**
-  `install.sh:2303` roda `proton_pin.py --lock`, que trava o default **global**
+  `install.sh:2422` roda `proton_pin.py --lock`, que trava o default **global**
   (entrada "0") mais todos os appids de `appmanifest_*.acf`. O opt-out existe
   (`--no-proton-pin`), o default é ON, e o registro em `proton-pin-lock.json`
   guarda 12 jogos com `previous_name` preservado.
@@ -1034,7 +1046,7 @@ periódico do daemon que não é task asyncio e não tem parada no shutdown.
 - **Na máquina dela o catálogo que vale é o de `~/.local/share/locale`** —
   candidato 2 de `utils/i18n.py:60-61`, porque `XDG_DATA_HOME` está vazio.
   `_find_locale_dir` devolve o **primeiro** diretório com qualquer `.mo`, então a
-  cópia que o `install.sh:1874-1889` deixou ali **sombreia para sempre** a do
+  cópia que o `install.sh:1993-2008` deixou ali **sombreia para sempre** a do
   wheel: um upgrade por pip nunca troca o catálogo em uso.
 - **`init_locale()` na CLI não tem como produzir efeito visível:** zero `_()` em
   `cli/` e em `tui/`. O que sobra da chamada são dois efeitos colaterais reais —
@@ -1079,7 +1091,7 @@ periódico do daemon que não é task asyncio e não tem parada no shutdown.
   `localconfig.vdf`/`config.vdf` da Steam. **O formato do app é ortogonal**: quase
   toda essa camada roda em todos.
 - **`--no-systemd` NÃO impede a instalação da unit do daemon, e o "não" que ela
-  responde no passo 6 é ATROPELADO.** O passo 7a (`install.sh:2006-2027`) copia,
+  responde no passo 6 é ATROPELADO.** O passo 7a (`install.sh:2125-2146`) copia,
   dá `enable` **e** `restart` — sem gate de flag e sem olhar a resposta. O
   cabeçalho do próprio install (linha 140) ainda afirma "a unit é COPIADA mas NÃO
   habilitada", falso desde que o 7a nasceu.
@@ -1087,7 +1099,7 @@ periódico do daemon que não é task asyncio e não tem parada no shutdown.
   install DEFAULT NÃO aplica", mas o passo 3e é default e
   `kernel_cmdline.plan_tokens` sempre planeja os mesmos IDs
   (`integrations/kernel_cmdline.py:34`). E o **mesmo token tem duas políticas de
-  remoção opostas**: `uninstall.sh:1029` imprime "quirk preservado" e 30 linhas
+  remoção opostas**: `uninstall.sh:1141` imprime "quirk preservado" e 30 linhas
   depois o bloco do registro de posse o **retira**.
 - **Não há guarda contra rodar o install COM sudo, e o dano é silencioso.**
   `acquire_sudo` devolve 0 na hora se `EUID==0` (`install.sh:363`) — sem aviso. Com
@@ -1103,7 +1115,7 @@ periódico do daemon que não é task asyncio e não tem parada no shutdown.
   para evitar. O `install.sh` nunca instala essa unit e o `uninstall.sh` a remove:
   **asset órfão que só pode chegar à máquina pela mão do doctor.**
 - **A cura de autoswitch que o install oferece em COSMIC é medida como no-op pelo
-  próprio projeto.** `install.sh:1764-1786` chama `wlrctl` de "caminho recomendado
+  próprio projeto.** `install.sh:1883-1905` chama `wlrctl` de "caminho recomendado
   que cobre qualquer app Wayland"; `scripts/doctor.sh:1093` registra a medição
   contrária: o cosmic-comp não tem `wlr-foreign-toplevel-management` e "wlrctl
   instalado não ajuda aqui". **O veredito "saudável" do backend é hardcoded como
@@ -1133,7 +1145,7 @@ periódico do daemon que não é task asyncio e não tem parada no shutdown.
   nenhuma das duas curas:** cria até três backups numa só execução, sem comparar,
   e nunca limpa.
 - **`--help` do install é truncado por `sed -n '2,128p'` e o cabeçalho tem 143
-  linhas:** `--force-xwayland` fica invisível. Pior, `install.sh:1073` sugere
+  linhas:** `--force-xwayland` fica invisível. Pior, `install.sh:1186` sugere
   `--disable-usb-audio`, flag que o parser **não conhece** e que faz o install
   abortar com código 2.
 - **`purge.sh:37` só AVISA em argumento desconhecido e segue**, ao contrário de
@@ -1377,7 +1389,7 @@ Explícito, para ninguém tomar leitura por prova.
 
 | Achado | Onde tem dono |
 |---|---|
-| O cadeado congela a troca de perfil; o modo jogo solta no alt-tab; o cadeado cede a preset casado por título | [PERFIL-JOGO-01](../sprints/2026-07-27-PERFIL-JOGO-01-o-modo-jogo-que-liga-e-solta.md) — faixa 1, **zero linhas entregues**, e a entrega ZERO (o experimento de cinco passos com ela abrindo o jogo) nunca foi executada |
+| O cadeado congela a troca de perfil; o modo jogo solta no alt-tab; o cadeado cede a preset casado por título | [PERFIL-JOGO-01](../sprints/2026-07-26-PERFIL-JOGO-01-as-configs-somem-ao-abrir-o-jogo.md) — faixa 1, **zero linhas entregues**, e a entrega ZERO (o experimento de cinco passos com ela abrindo o jogo) nunca foi executada |
 | O detector só enxerga XWayland; `window_detect_seeing` existe e ninguém pergunta | JANELA-CEGA-01 (a "leva de uma linha" **não entrou**: `daemon/lifecycle.py:2952` ainda lê o trinco) + JANELA-CEGA-02, **sem documento** |
 | Os dois cadastros de Steam Input divergem | [DUPLO-REGISTRO-01](../sprints/2026-07-26-DUPLO-REGISTRO-01-o-steam-input-tem-dois-cadastros.md) — a cura R-D não entrou; o que segura hoje é o remendo de 26/07 |
 | O desfazer da allowlist existe no CLI e a tela nega | STEAM-INPUT-01 (item 0 e "o desfazer dentro da janela") — e agora com a correção mínima medida: `gui/main.glade:2069`, verbo "desmarcar" |
@@ -1388,7 +1400,7 @@ Explícito, para ninguém tomar leitura por prova.
 | Um número único de contagem de controle; co-op derrubado sem aviso | CONTAGEM-E-COOP-01 — **sem documento** |
 | **Segurar o PS: a janela promete o gesto que o default desliga** | **SEM DONO AINDA.** Não existe sprint sobre `ps_long_press_ms`; a única menção em `docs/process/` é um item de diagnóstico na BOTÃO-QUE-NÃO-MENTE-01:95. A queixa dela de hoje não está registrada em documento algum |
 | **O vpad destruído e recriado três vezes em 31 s por alt-tab, e uma delas por um único tique cego** | **SEM DONO AINDA.** A decisão de usar leitura crua está escrita (`daemon/launch_env.py:433-438`); o preço não está registrado em sprint alguma. Melhor candidato mecânico para "na hora do jogo tá um caos" |
-| **A cura do `--fix-mic` está fora da árvore que roda; a fonte padrão é o monitor do alto-falante** | **SEM DONO AINDA.** `84d9f4e` é ancestral de `main` e não de `HEAD`; `install.sh:2192` reaplica a cura refutada; `scripts/doctor.sh:438` dá pass |
+| **A cura do `--fix-mic` está fora da árvore que roda; a fonte padrão é o monitor do alto-falante** | **SEM DONO AINDA.** `84d9f4e` é ancestral de `main` e não de `HEAD`; `install.sh:2311` reaplica a cura refutada; `scripts/doctor.sh:438` dá pass |
 | **A aba Sistema pode marcar o jogo errado por evidência sticky** | **SEM DONO AINDA.** `app/actions/daemon_actions.py:961` lê `window_detect_last_class`, que o próprio projeto veta como evidência em dois outros lugares |
 | **O toast do Proton anuncia idempotência sobre uma recusa real** | **SEM DONO AINDA.** `integrations/proton_pin.py:837` |
 | **`sensor_hub.py`: descoberta pesada sem timeout, `stop_all()` sem chamador, TTL que nunca expira por causa do tray** | **SEM DONO AINDA.** Nem o mapa de 27/07 nem o de 28/07 produziram um fato sobre este módulo |

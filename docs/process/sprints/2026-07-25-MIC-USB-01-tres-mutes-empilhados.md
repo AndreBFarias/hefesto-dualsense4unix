@@ -1,6 +1,12 @@
 # MIC-USB-01 — três mutes empilhados, e nenhum deles se resolve pela janela
 
-- **Status:** ABERTA
+- **Status:** **ENTREGUE EM CÓDIGO — AGUARDANDO A PALAVRA DELA**, remarcada em
+  09/08/2026. As três camadas de mudo e a promoção/rebaixamento do microfone
+  entraram em `8f83897` (25/07/2026). **Rótulo anterior: ABERTA**, preservado
+  aqui. Ver a nota datada no fim
+- **O que falta ela validar, em uma linha:** com o controle no cabo, falar no
+  microfone do controle e ver o medidor da aba Estado se mexer — e o botão de
+  mudo calar de verdade
 - **Prioridade:** ALTA
 - **Aberta em:** 25/07/2026, com diagnóstico completo ao vivo
 
@@ -185,3 +191,35 @@ chega como quadros Opus dentro dos relatórios HID. As duas se encontram na
 entrega 2: **o mesmo botão e o mesmo medidor** devem servir aos dois transportes,
 dizendo a verdade em cada um. Fazer duas superfícies separadas seria repetir a
 divisão que já causou o problema dos cinco números de jogador.
+
+---
+
+## NOTA DATADA — 09/08/2026: as três camadas existem, e o `ABERTA` caducou
+
+**Nada acima foi apagado.** O relato dela, o empilhamento das três camadas de
+mudo e o desenho continuam inteiros. O que caducou é **uma linha** — o
+`Status: ABERTA` do cabeçalho, com o rótulo anterior preservado ali em cima.
+
+**O que está de pé — GRAU: MEDIDO em 09/08/2026 contra a árvore de hoje.**
+
+| o que a sprint pedia | onde está hoje |
+|---|---|
+| o mudo no firmware do controle (camada 3) | `src/hefesto_dualsense4unix/cli/cmd_mic.py:139` |
+| promover o microfone do controle a entrada padrão | `src/hefesto_dualsense4unix/cli/cmd_mic.py:61` |
+| o backend diz se ALGUMA camada está muda | `src/hefesto_dualsense4unix/core/backend_pydualsense.py:2666` |
+| e diz o que o Hefesto afirmou no firmware | `src/hefesto_dualsense4unix/core/backend_pydualsense.py:2695` |
+
+**Commit:** `8f83897`, 25/07/2026.
+
+### Por que o rótulo não é ENTREGUE e sim ENTREGUE EM CÓDIGO
+
+Porque **microfone é aparelho**, e nenhuma suíte de teste ouve. O aceite desta
+sprint é ela falar e o medidor se mexer — e isso só fecha com o controle na mão
+dela. Enquanto isso não acontecer, o rótulo declara as duas coisas: *entregue no
+código*, *ainda não validado por ela*.
+
+**O que fica de fora, e por quê:** o medidor **por Bluetooth** não é desta
+sprint — é a
+[MIC-BT-01](2026-07-25-MIC-BT-01-o-medidor-do-microfone-por-bluetooth.md), que
+segue **ABERTA** porque o áudio do controle ainda não atravessa o rádio
+([CONTROLE-INTEIRO-NO-RADIO-01](2026-08-07-CONTROLE-INTEIRO-NO-RADIO-01-o-mic-e-o-fone-que-nao-atravessam.md)).

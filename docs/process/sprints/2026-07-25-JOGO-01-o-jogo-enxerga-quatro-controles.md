@@ -88,6 +88,27 @@ quatro em jogos da allowlist é loteria.**
 O princípio: **um controle físico deve produzir exatamente um dispositivo de
 jogo**. A allowlist muda *qual* dispositivo, nunca *quantos*.
 
+> **NOTA DATADA — 07/08/2026, sobre "o Hefesto sai do caminho" nesta seção.**
+> O princípio acima **continua valendo inteiro** — ele é sobre a ENTRADA, e a
+> entrega 1 fez exatamente o que prometeu. O que caducou é o alcance da frase:
+> a medição dela de 06/08/2026
+> ([CONTROLE-SONY-MEDIDO-01](2026-08-06-CONTROLE-SONY-MEDIDO-01-o-experimento-que-decide-metade-da-doutrina.md),
+> seção *A INVERSÃO*, **grau MEDIDO**) mostrou que na exceção o Hefesto
+> **entrega a entrada e mantém a saída**: com o Mullet Mad Jack aberto, os
+> gatilhos que **ela** aplicou seguraram duros e o vermelho **dela** ficou na
+> lightbar. Nenhum caminho da exceção fecha o handle de saída do daemon.
+>
+> Duas frases desta página ficam onde estão, com esta nota apontando:
+>
+> | Onde | O que diz | O que a medição corrigiu |
+> |---|---|---|
+> | Entrega 1, logo abaixo | *"o Hefesto sai do caminho **inclusive** retirando o gamepad virtual"* | *"inclusive"* dá a impressão de um afastamento maior que o vpad. O afastamento **é** o vpad (mais o grab e o hidraw) — e para por aí |
+> | Entrega 2, o texto proposto para a tela | *"Gatilhos e luz vêm da Steam"* | **está invertido.** Durante a exceção gatilho e luz vêm do **Hefesto**; quem os perde para o jogo é quem está **fora** da lista (medido no Sackboy, 19:55) |
+>
+> A entrega 2 nunca chegou à tela com esse texto — quem for escrevê-la lê
+> primeiro `daemon/subsystems/gamepad.steam_input_vpad_suspenso`, que carrega a
+> mesma correção na docstring.
+
 ### Entrega 1 — allowlist desliga o vpad daquele jogo, não só o dedup
 
 Quando o app está na allowlist, o caminho correto é o físico ser o único

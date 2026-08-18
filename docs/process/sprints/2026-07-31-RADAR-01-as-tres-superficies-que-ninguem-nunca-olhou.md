@@ -1,11 +1,17 @@
 # RADAR-01 — as três superfícies que ninguém nunca olhou
 
-- **Status:** ABERTA — documento de MEDIÇÃO. Na rodada de abertura (31/07,
-  madrugada) nenhuma linha de código, teste ou configuração foi tocada. Na
-  rodada de 31/07 06h (seção final, "O que a medição de 31/07 06h achou")
-  entrou **uma** mudança de código, e só ela: o cabeçalho de
-  `compact_window.py`, que descrevia o gating antigo e contradizia o próprio
-  arquivo — o único conserto que a E3 admite sem decisão dela
+- **Status:** **PARCIAL — a E4 está ENTREGUE EM CÓDIGO (é portão, e portão se
+  valida sozinho); as E1, E2 e E3 seguem ABERTAS, e o D1 continua ABERTO por
+  medição do próprio teste.** Remarcada em 09/08/2026: o portão de vocabulário
+  das quatro superfícies entrou em `c10adaf` (01/08/2026). **Rótulo anterior:
+  "ABERTA — documento de MEDIÇÃO. Na rodada de abertura (31/07, madrugada)
+  nenhuma linha de código, teste ou configuração foi tocada. Na rodada de 31/07
+  06h entrou uma mudança de código, e só ela: o cabeçalho de
+  `compact_window.py`"**, preservado aqui integralmente. Ver a nota datada no
+  fim
+- **O que falta ela validar, em uma linha:** abrir o applet do painel e a
+  bandeja e dizer se eles falam a mesma língua da janela — é a única superfície
+  que ela usa todo dia e que nunca teve o olho dela por cima
 - **Prioridade:** ALTA — não pelo tamanho do conserto, que ainda não sabemos
   qual é, mas porque a superfície que ela usa TODO DIA no painel nunca entrou em
   índice nenhum, e o custo disso é exatamente o que está escrito abaixo
@@ -484,7 +490,7 @@ concluir que está tudo certo e continuar sem janela nenhuma além da principal.
 
 O item 2 da mesma seção (linhas 129-134), por outro lado, está **certo** e é o
 que de fato a salvou: diz que o projeto traz um applet COSMIC nativo instalado
-por padrão em sessões COSMIC — e o `install.sh:2232` confirma (passo 9/11,
+por padrão em sessões COSMIC — e o `install.sh:2351` confirma (passo 9/11,
 *"applet COSMIC nativo (padrão em COSMIC; --no-cosmic-applet desativa)"*).
 
 E vale a nota de honestidade: **isto não é uma das nove contradições da
@@ -793,7 +799,7 @@ frase nova nunca aparece e a validação reprova por engano.
   decisão registrada contra uma queixa dela (`tray.py:196-203`), e esta sprint
   não os discute.
 - **A decisão de instalar o applet por padrão em COSMIC.** Está no
-  `install.sh:2232` com identificador próprio
+  `install.sh:2351` com identificador próprio
   (`BUG-INSTALL-APPLET-OPT-IN-SKIPPED-01`, `:2225-2229`) e é o que faz o painel
   dela funcionar hoje. Não é alvo.
 - **Compilar o applet no CI (G2).** É entrega de infraestrutura, custa minutos
@@ -1142,3 +1148,43 @@ achado para quem for medir o custo da janela parada. Log em
   de arquivos desta frente. Registrado: **a correção do cabeçalho entrou sem
   teste que a guarde** — hoje nada impede alguém de escrever o gating antigo
   de volta. É exatamente o portão que a E4 propõe, e ele continua devendo.
+
+---
+
+## NOTA DATADA — 09/08/2026: a E4 saiu, e o D1 continua aberto POR MEDIÇÃO
+
+**Nada acima foi apagado.** As três superfícies medidas, as quatro entregas e os
+quatro achados continuam inteiros — inclusive o parágrafo logo acima, que dizia
+que a E4 devia. **Esta nota é a resposta a ele.**
+
+**O que está de pé — GRAU: MEDIDO em 09/08/2026 contra a árvore de hoje.**
+
+| entrega | estado | onde está |
+|---|---|---|
+| **E4.** Uma regra que impeça a próxima renomeação de esquecer as outras três superfícies | ENTREGUE EM CÓDIGO | `tests/unit/test_vocabulario_das_quatro_superficies.py:1` — *"a mesma coisa tem de ter o mesmo nome nas QUATRO superfícies"*; a mensagem de reprovação em `:268` diz, por extenso, o que fazer quando *"RADAR-01 foi curada"* |
+
+**Commit:** `c10adaf`, 01/08/2026.
+
+### Por que a E4 é ENTREGUE EM CÓDIGO e não ENTREGUE EM CÓDIGO — AGUARDANDO A PALAVRA DELA
+
+Porque **portão não pede validação dela**: ele reprova ou não reprova, e quem o
+valida é o CI. Este é o único caso desta remarcação em que a distinção entre
+*entregue no código* e *validado por ela* não se aplica.
+
+### O D1 continua ABERTO — e quem registra isso é o próprio teste
+
+O `tests/unit/test_vocabulario_das_quatro_superficies.py:230` grava, em
+comentário: *"D1 da RADAR-01, remedida em 01/08/2026 e AINDA ABERTA"* — e a
+remedição achou **uma terceira lista** que esta sprint não tinha aberto: a aba
+**Perfis** concorda com o applet e discorda da aba **Início**. Não é o applet
+contra a janela; é a janela contra si mesma.
+
+**Quem decide a ordem canônica das máscaras é ela, com o painel aberto na
+frente** — o teste diz isso com todas as letras, e é por isso que o D1 não
+entra nesta remarcação como entregue.
+
+### E as E1, E2 e E3 continuam ABERTAS
+
+O applet, a bandeja e o destino da janela compacta seguem sem decisão. A E3
+recebeu, em 31/07, apenas o conserto de cabeçalho já registrado no corpo deste
+documento — e **sem teste que o guarde**, como o parágrafo acima diz.
