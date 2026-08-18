@@ -1,0 +1,55 @@
+PROVA DE MORDIDA — CR-02 (formato que recusa valor sem proveniência)
+Gerada em: 2026-07-31 06:29:48 -03
+Arquivo sob teste: src/hefesto_dualsense4unix/profiles/curva_propria.py
+sha256 INTACTO: 76dc392250389087c2fc49d12c9d8d153ea9ddea885e5f77d81e86065fcfd938
+
+Método: cada bloco abaixo ARRANCA um validador de verdade do arquivo,
+roda a suíte, e restaura. Teste que passa com a cura arrancada não testa nada.
+
+=== LINHA DE BASE (cura no lugar) ===
+..................................................                       [100%]
+50 passed in 0.23s
+
+=== ARRANCADA: _proveniencia_nao_vazia ===
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestAProveniencaEObrigatoria::test_campo_de_proveniencia_vazio_reprova[medido_por]
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestAProveniencaEObrigatoria::test_campo_de_proveniencia_vazio_reprova[controle]
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestAProveniencaEObrigatoria::test_campo_de_proveniencia_so_com_espaco_reprova[medido_por]
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestAProveniencaEObrigatoria::test_campo_de_proveniencia_so_com_espaco_reprova[controle]
+4 failed, 46 passed in 0.23s
+
+=== ARRANCADA: _nome_proprio_e_nao_do_dsx ===
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestAGuardaDeNomes::test_os_doze_nomes_do_dsx_reprovam
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestAGuardaDeNomes::test_a_recusa_ignora_caixa_e_espaco[hard]
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestAGuardaDeNomes::test_a_recusa_ignora_caixa_e_espaco[HARD]
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestAGuardaDeNomes::test_a_recusa_ignora_caixa_e_espaco[hArD]
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestAGuardaDeNomes::test_a_recusa_ignora_caixa_e_espaco[  Hard  ]
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestAGuardaDeNomes::test_rigid_reprova_apesar_de_ser_preset_nosso
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestAGuardaDeNomes::test_a_mensagem_explica_a_regra_em_vez_de_so_negar
+7 failed, 43 passed in 0.23s
+
+=== ARRANCADA: _data_valida_e_sob_o_processo ===
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestADataEDatada::test_data_fora_do_iso_reprova
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestADataEDatada::test_data_anterior_ao_processo_reprova
+2 failed, 48 passed in 0.28s
+
+=== ARRANCADA: _curva_com_a_largura_do_hardware ===
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestACurvaTemALarguraDoHardware::test_curva_com_tamanho_errado_reprova[0]
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestACurvaTemALarguraDoHardware::test_curva_com_tamanho_errado_reprova[1]
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestACurvaTemALarguraDoHardware::test_curva_com_tamanho_errado_reprova[6]
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestACurvaTemALarguraDoHardware::test_curva_com_tamanho_errado_reprova[8]
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestACurvaTemALarguraDoHardware::test_curva_com_tamanho_errado_reprova[12]
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestACurvaTemALarguraDoHardware::test_byte_fora_da_faixa_reprova[-1]
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestACurvaTemALarguraDoHardware::test_byte_fora_da_faixa_reprova[256]
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestACurvaTemALarguraDoHardware::test_byte_fora_da_faixa_reprova[1000]
+8 failed, 42 passed in 0.24s
+
+=== ARRANCADA: _nota_diz_alguma_coisa ===
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestAProveniencaEObrigatoria::test_campo_de_proveniencia_vazio_reprova[nota]
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestAProveniencaEObrigatoria::test_campo_de_proveniencia_so_com_espaco_reprova[nota]
+FAILED tests/unit/test_cr02_curva_propria_proveniencia.py::TestAProveniencaEObrigatoria::test_nota_cerimonial_reprova
+3 failed, 47 passed in 0.23s
+
+=== RESTAURADO ===
+sha256 após restaurar: 76dc392250389087c2fc49d12c9d8d153ea9ddea885e5f77d81e86065fcfd938
+..................................................                       [100%]
+50 passed in 0.21s
