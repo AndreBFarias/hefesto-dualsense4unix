@@ -1,7 +1,8 @@
 # CR-05 — O NOTICE lista tudo que vem de fora, ou não vale nada
 
-**Status:** ENTREGUE em 2026-07-31, com **uma caixa aberta** e **uma hipótese
-refutada** (as duas nomeadas ao final)
+**Status:** ENTREGUE em 2026-07-31 e **FECHADA em 2026-08-07**, quando a única
+caixa aberta (a cópia do texto das licenças) foi entregue. A **hipótese
+refutada** segue registrada ao final — não se apaga decisão medida.
 **Depende de:** CR-01
 **Processo:** [CLEAN-ROOM.md](../CLEAN-ROOM.md)
 
@@ -125,9 +126,9 @@ acidente e sem alcance". Distribuiu em cinco dos sete alvos, dizendo `MIT` no
 `LICENSE` e no `README`, sem ressalva. Por isso o texto entrou nos três
 arquivos, e não só no `NOTICE`.
 
-## A caixa que ficou ABERTA
+## A caixa que ficou ABERTA — e foi FECHADA em 07/08/2026
 
-- [ ] **Nenhuma cópia do texto da GPL-2.0 acompanha os fontes.** Medido: uma
+- [x] **Nenhuma cópia do texto da GPL-2.0 acompanha os fontes.** Medido: uma
       busca por `COPYING`/`*GPL*` na árvore não encontra nada — os únicos
       resultados estão dentro do `.venv`, que não é distribuído. A GPL-2.0, na
       seção 1, pede que quem distribui o fonte *"dê a qualquer outro
@@ -139,7 +140,48 @@ arquivos, e não só no `NOTICE`.
       modificação) referenciado pelo `NOTICE`, mais uma linha em cada um dos
       cinco alvos de empacotamento que já copiam `assets/dkms/`.
 
-      **Por que não foi feito aqui:** criar `LICENSES/` estava fora da lista de
-      arquivos desta frente, e tocar nos cinco alvos de empacotamento também. É
-      trabalho de outra frente, com o `check_packaging_parity.sh` para cobrar a
-      simetria.
+      **Por que não foi feito em 31/07:** criar `LICENSES/` estava fora da lista
+      de arquivos daquela frente, e tocar nos cinco alvos de empacotamento
+      também. Ficou para outra frente, com um portão para cobrar a simetria.
+
+### O que foi entregue em 07/08/2026
+
+`LICENSES/` existe, com o texto **canônico e sem modificação** de cada licença.
+Nada foi escrito à mão — a regra aqui é que não se inventa texto de licença, e
+os dois arquivos foram tirados de cópias autoritativas presentes na própria
+máquina, com o `SHA-256` registrado para quem quiser conferir:
+
+| arquivo | cobre | procedência (MEDIDO em 07/08) |
+|---|---|---|
+| `LICENSES/GPL-2.0.txt` | `hid-nintendo`, `hid-playstation` e a metade GPL do `rtw88-usb` | cópia byte a byte de `/usr/share/common-licenses/GPL-2` (pacote `base-files`, confirmado por `dpkg -S`) |
+| `LICENSES/BSD-3-Clause.txt` | a **outra metade** do `rtw88-usb` | estrofe `License: BSD-3-Clause` de `/usr/share/doc/libbpf1/copyright`, desindentada mecanicamente conforme o DEP-5 |
+| `LICENSES/README.md` | — | o que cada texto cobre, o `SHA-256` de cada um e o comando que confere |
+
+`SHA-256` do `GPL-2.0.txt`:
+`8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643` (339 linhas).
+
+**Uma correção ao remédio como estava escrito.** A sprint pedia só
+`LICENSES/GPL-2.0.txt`. Isso teria deixado metade do `rtw88-usb` sem texto: o
+módulo é `GPL-2.0 OR BSD-3-Clause` — licença **dupla**, como a própria CR-05
+corrigiu no enunciado original —, e quem redistribui **escolhe** um dos dois
+termos. Mandar só o texto da GPL é mandar só um dos dois caminhos. Por isso o
+`BSD-3-Clause.txt` entrou junto. Grau: MEDIDO — `assets/dkms/rtw88-usb/usb.c:1`
+traz o SPDX duplo e `usb.c:1504` traz `MODULE_LICENSE("Dual BSD/GPL")`.
+
+Os cinco alvos que carregam `assets/dkms/` passaram a carregar `LICENSES/`:
+
+| alvo | linha |
+|---|---|
+| sdist `.tar.gz` | automático (o `hatchling` inclui o que está versionado) — **medido** com `SdistBuilder.recurse_included_files` |
+| `.deb` | `scripts/build_deb.sh` |
+| `.flatpak` | `flatpak/br.andrefarias.Hefesto.yml` |
+| Arch | `packaging/arch/PKGBUILD` |
+| Fedora | `packaging/fedora/hefesto-dualsense4unix.spec` |
+
+O portão que cobra a simetria é
+`tests/unit/test_cr05_licencas_de_terceiros_viajam.py`, e ele **morde**: cada
+afirmação foi provada arrancando a cura e vendo o vermelho (transcrição na
+própria docstring do arquivo). Ele não ficou no `check_packaging_parity.sh`
+porque aquele script cobra outra coisa (unit, ícone, regra udev, broker) e
+porque o teste precisa ler o `LICENSE` e o `NOTICE` também — que não são
+empacotamento.

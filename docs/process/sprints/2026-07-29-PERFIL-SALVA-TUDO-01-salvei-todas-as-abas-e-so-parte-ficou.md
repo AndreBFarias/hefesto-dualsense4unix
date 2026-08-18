@@ -1,6 +1,17 @@
 # PERFIL-SALVA-TUDO-01 — salvei em todas as abas e só parte ficou
 
-- **Status:** ABERTA — medida ponta a ponta, nenhuma linha de código escrita
+- **Status:** **PARCIAL — a E3 está ENTREGUE EM CÓDIGO, AGUARDANDO A PALAVRA
+  DELA; as E1, E2, E4, E5 e E6 seguem ABERTAS.** Remarcada em 09/08/2026: as
+  abas Emulação e Início ganharam escritor de rascunho em `2bbfa22` e `665aff7`
+  (30/07/2026), com o gesto de máscara acrescentado em `ae32c10` (06/08/2026).
+  **Rótulo anterior: "ABERTA — medida ponta a ponta, nenhuma linha de código
+  escrita"**, preservado aqui. Ver a nota datada no fim
+- **O que falta ela validar, em uma linha (só da E3):** mexer no seletor de Modo
+  e na máscara, salvar o perfil, fechar e reabrir a janela — e ver os dois
+  valores voltarem como ela deixou
+- **ATENÇÃO — a queixa-mãe NÃO está curada.** A E1 (o gate que rebaixa) e a E2
+  (o 5 mágico) continuam abertas, e são elas que respondem por *"salvei e só
+  parte ficou"*
 - **Prioridade:** CRÍTICA — é a queixa-mãe *"a configuração que eu deixo nunca é
   respeitada"* na sua forma mais direta: ela mexe, ela salva, e o arquivo nasce
   com metade do trabalho e com valores de fábrica no lugar da outra metade
@@ -196,7 +207,7 @@ chamado em `:87`) — e ele nunca recebe a seção, porque `to_ipc_dict` a gatei
   "mic": null,
   "mode": null,
   "suppress_desktop_emulation": false,
-  "controllers": {"a0fa9cc311f0": {"leds": {"lightbar": [97, 53, 131]}}}  <-- PREENCHIDO
+  "controllers": {"a0fa9c0000f0": {"leds": {"lightbar": [97, 53, 131]}}}  <-- PREENCHIDO
 }
 ```
 
@@ -575,7 +586,7 @@ do `DraftConfig` sem escritor **nem** leitor.
 
 **Risco:** MÉDIO-BAIXO, com uma armadilha nomeada: **não logar caminho de perfil
 com MAC dentro**. O mapa `controllers` é indexado por MAC (o override dela é
-`a0fa9cc311f0`) e há purga de MAC no histórico deste repositório. O log da janela
+`a0fa9c0000f0`) e há purga de MAC no histórico deste repositório. O log da janela
 tem de nascer com o mesmo higienizador do resto.
 
 ### E6 — a janela passa a MOSTRAR o que está no arquivo
@@ -639,7 +650,7 @@ JSON e ressuscita "testei os motores e o jogo não vibra mais"
 
 `app/actions/profiles_actions.py:1597-1605` e `app/draft_config.py:500-510`
 avisam, os dois, que `model_dump` marca os defaults do esquema como explícitos e
-**apaga a lightbar do controle**. O override dela — `a0fa9cc311f0`, com **só**
+**apaga a lightbar do controle**. O override dela — `a0fa9c0000f0`, com **só**
 `leds.lightbar` — é exatamente uma entrada parcial em risco.
 
 ### NÃO tocar nos três perfis que dependem do que têm
@@ -697,3 +708,39 @@ conteúdo do JSON**.
   `fps` carregam `mode: {"kind": "gamepad", "gamepad_flavor": "xbox"}` da migração
   de 25/07 18:28 (já registrada na PERFIL-JOGO-01, entrega 6, e ainda **aberta**).
   Não avaliei a interação disso com E3.
+
+---
+
+## NOTA DATADA — 09/08/2026: a E3 saiu, e a queixa-mãe continua devendo
+
+**Nada acima foi apagado.** A medição ponta a ponta e as seis entregas continuam
+inteiras — inclusive as cinco que **ainda devem**, que são a maioria e são as
+que respondem pela queixa que abriu a sprint.
+
+**O que está de pé — GRAU: MEDIDO em 09/08/2026 contra a árvore de hoje.**
+
+| entrega | estado | onde está |
+|---|---|---|
+| **E3** — dar escritor de rascunho às abas Emulação e Início | ENTREGUE EM CÓDIGO, aguardando a palavra dela | `src/hefesto_dualsense4unix/app/actions/home_actions.py:529` (*"o gesto de MODO chega ao RASCUNHO"*) e `src/hefesto_dualsense4unix/app/actions/profiles_actions.py:592`, `:803`, `:829` — as quatro linhas citam a sprint por nome |
+
+**Commits:** `2bbfa22` e `665aff7` (30/07/2026); a máscara como gesto de modo
+(`profiles_actions.py:803`) entrou em `ae32c10` (06/08/2026).
+
+### O que continua ABERTO nesta sprint — e não foi remarcado
+
+- **E1** — fechar o gate que rebaixa.
+- **E2** — tirar o 5 mágico.
+- **E4** — decidir o destino de `Profile.mic`.
+- **E5** — rastro e limpeza.
+- **E6** — a janela passa a MOSTRAR o que está no arquivo.
+
+**Isto importa mais que a marca:** a E1 e a E2 são a causa direta de *"salvei em
+todas as abas e só parte ficou"*. Enquanto elas não entrarem, **a queixa dela
+continua de pé**, e esta sprint não pode ser lida como resolvida.
+
+### Por que a E3 não é ENTREGUE e sim ENTREGUE EM CÓDIGO
+
+Porque a própria sprint tem uma seção chamada *"Exige o olho dela na tela —
+quatro provas"*, e nenhuma das quatro foi feita. Os cinco perfis dela são
+catch-all: a sprint mediu risco **ALTO** e disse, por escrito, que precisa do
+olho dela.

@@ -190,7 +190,7 @@ Todos materializados em
 2. `assets/hefesto-dsx-recover.service` é **órfão**: removido pelo uninstall,
    instalado por ninguém.
 3. `--help` truncado por `sed -n '2,128p'`; `--no-snd-quirk` invisível;
-   `install.sh:1073` sugere uma flag que aborta com código 2.
+   `install.sh:1186` sugere uma flag que aborta com código 2.
 4. Regras 82, 83 e 84 **não empacotadas** no PKGBUILD nem no spec do Fedora.
 5. `check_packaging_parity.sh` (312 linhas) **não roda em workflow nenhum**.
 6. Janela de ordem: as regras 82 e 83 chegam antes dos scripts que invocam.

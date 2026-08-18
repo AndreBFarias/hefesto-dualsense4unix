@@ -53,10 +53,10 @@ hardware na hora.
 ### O journal da máquina dela, 26/07
 
 ```
-02:49:26  game_output_aplicado        campos=['player_leds'] destino=sysfs_preferido uniq=143a9a13ebab
-02:49:26  game_output_retido_sem_jogo campos=['led']                                 uniq=143a9a13ebab
-02:49:26  game_output_aplicado        campos=['player_leds'] destino=sysfs_preferido uniq=a0fa9cc311f0
-02:49:26  game_output_retido_sem_jogo campos=['led']                                 uniq=a0fa9cc311f0
+02:49:26  game_output_aplicado        campos=['player_leds'] destino=sysfs_preferido uniq=143a9a0000ab
+02:49:26  game_output_retido_sem_jogo campos=['led']                                 uniq=143a9a0000ab
+02:49:26  game_output_aplicado        campos=['player_leds'] destino=sysfs_preferido uniq=a0fa9c0000f0
+02:49:26  game_output_retido_sem_jogo campos=['led']                                 uniq=a0fa9c0000f0
 03:04:19  game_output_aplicado        campos=['player_leds','led'] ...
 03:09:08  game_output_aplicado        campos=['player_leds','led'] ...
 ```
@@ -72,8 +72,8 @@ conjunto de `backend_pydualsense.py:122`. Logo estas duas linhas só podem ter
 sido escritas pelo código do rollback:
 
 ```
-03:24:09  game_output_retido_sem_jogo campos=['player_leds'] uniq=143a9a13ebab
-03:27:29  game_output_retido_sem_jogo campos=['player_leds'] uniq=143a9a13ebab
+03:24:09  game_output_retido_sem_jogo campos=['player_leds'] uniq=143a9a0000ab
+03:27:29  game_output_retido_sem_jogo campos=['player_leds'] uniq=143a9a0000ab
 ```
 
 Isto data a troca sem inferência: a `main` esteve no ar de ~02:49 a ~03:23, e o

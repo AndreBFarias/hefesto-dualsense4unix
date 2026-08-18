@@ -76,7 +76,7 @@ aqui só depois de eu abrir o arquivo na linha citada.
 
 É a única assimetria nova de verdade, e ela viola diretamente a regra da casa.
 
-**O que o install faz.** O passo 4e (`install.sh:1940`, bloco em `:1957-1972`)
+**O que o install faz.** O passo 4e (`install.sh:2059`, bloco em `:1957-1972`)
 roda por default — o opt-out é `--no-fonts`, documentado no cabeçalho em `:130`,
 com a variável nascendo em `:195` e o parse em `:228`. A chamada é best-effort
 por decisão escrita em `:1951-1956` (*"Fonte é acabamento, não requisito"*), e
@@ -547,13 +547,13 @@ E dentro dessa janela quase nada pode acontecer, por três motivos medidos:
    `assets/83-hefesto-bond-snapshot.rules:22-23`: *"o udev não pode ficar
    esperando o systemd, sob pena de segurar a criação do device"*.
 
-**O que sobra do achado, e é isso que paga a entrega:** `install.sh:1455-1456` —
+**O que sobra do achado, e é isso que paga a entrega:** `install.sh:1568-1569` —
 se o `sudo -n true` falhar no 3e-bis, o passo só **avisa** e o install continua.
 As regras ficam apontando para alvos que nunca chegaram, permanentemente, até
 alguém reexecutar. É o estado da E2, alcançado por outra porta.
 
 **Entrega.** Mover a instalação dos 7 `bt_*.sh` e das units (3e-bis,
-`install.sh:1459` e `:1470-1474`) para **antes** do passo 3. O comentário de
+`install.sh:1572` e `:1470-1474`) para **antes** do passo 3. O comentário de
 ordem em `:1451-1452` só exige que o 3e-bis venha antes do 3f, porque o postinst
 do backport reinicia o `bluetoothd` — nada o prende depois do 3.
 

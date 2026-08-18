@@ -334,7 +334,7 @@ Medido: `navegacao.json` tem `"steam"` e `"Steam"` em `window_class`,
 prioridade 50, `"mode": null`. Com o cadeado apagado, cada alt-tab para a
 Steam ativa **Navegação** — que reescreve gatilhos (`Pulse`/`Pulse`), lightbar
 (`[40, 80, 180]`, brilho 0.4), LEDs de jogador, e ainda carrega overrides
-por-MAC para dois controles dela (`143a9a13ebab` e `a0fa9cc311f0`). É
+por-MAC para dois controles dela (`143a9a0000ab` e `a0fa9c0000f0`). É
 literalmente "a config que eu deixo nunca é respeitada", agora automatizado.
 
 O journal mostra que isso aconteceria **18 vezes em três dias**, e a última
@@ -689,3 +689,64 @@ Sou explícito: o que está abaixo eu **não medi**, e não vou fingir que medi.
   exigidos, sobre este documento.
 - **Não estimei prazo de nenhuma entrega.** Preço é relativo (E0 < E1 < E2 <
   E3 < E4), não absoluto.
+
+---
+
+## Nota de medição — 03/08/2026: seis dias depois, e agora COM `daemon.state_full`
+
+Esta nota paga duas das lacunas que a seção acima declarou ("não chamei
+`daemon.state_full`", "não vi com meus olhos"). Medido com o daemon dela vivo,
+os dois DualSense conectados por Bluetooth, e a mão dela nos controles.
+
+### O cadeado continua ligado — agora há seis dias
+
+```
+autoswitch_locked: True                                    (daemon.state_full)
+/home/vitoriamaria/.config/hefesto-dualsense4unix/autoswitch_locked.flag
+```
+
+A sprint mediu o arquivo em **28/07 18:18**. Em 03/08 ele continua lá e o
+**store vivo confirma** o que antes era inferência do arquivo-flag: o valor no
+processo em execução é `True`. A lacuna *"não vi com meus olhos"* está paga
+para o `autoswitch_locked`.
+
+### E o perfil ativo é NENHUM
+
+```
+active_profile: None
+```
+
+Com **15 perfis salvos** no disco (`acao`, `aventura`, `bow`, `coop_local`,
+`corrida`, `esportes`, `fallback`, `fps`, `meu_perfil`, `navegacao`,
+`point_and_click`, `pragmata`, `pragmata2`, `sackboy_nativo`, `vitoria`).
+
+Isto reforça o veredito da sprint por um ângulo que ela não tinha: não é só que
+o autoswitch **não troca** de perfil — é que, na conexão, **nenhum perfil
+assume**. O daemon sobe, adota os controles, e o `active_profile` fica `None`.
+
+### A consequência que ELA percebeu, e que motivou esta nota
+
+Ela perguntou, olhando os controles recém-conectados:
+
+> *"Quando eu conecto eles de início, qual o perfil assume?"* — e, sobre as
+> cores que viu: *"só queria saber se o vermelho e azul eram dos perfis"*.
+
+**Não eram.** As cores vinham da **paleta automática por slot** (`COR-03`):
+P1 nasce azul, P2 nasce vermelho. Com `active_profile: None`, é ela que pinta.
+
+Isso importa para o desenho da cura: **a paleta automática mascara o
+automatismo morto.** O controle nasce colorido, parece configurado, e o
+usuário não tem como distinguir "meu perfil entrou" de "nenhum perfil entrou,
+e isto é o padrão de fábrica". A E4 desta sprint (dizer na tela o que está
+valendo) deveria cobrir também este caso — hoje não há nada na interface que
+diga *"nenhum perfil ativo; a cor que você vê é automática"*.
+
+### O que esta nota NÃO mediu
+
+- **não desliguei o cadeado**, e portanto não sei se, desligado, o autoswitch
+  passaria a trocar. A sprint sustenta que **não** passaria (as duas portas
+  estão quebradas independentemente do cadeado); isso continua sem prova ao
+  vivo;
+- **não abri jogo nenhum** nesta medição. A sessão foi de conexão de controles;
+- **`pragmata.json` × `pragmata2.json` continuam os dois lá**, e a hipótese do
+  "salvou duas vezes pelo rodapé" segue sem confirmação.

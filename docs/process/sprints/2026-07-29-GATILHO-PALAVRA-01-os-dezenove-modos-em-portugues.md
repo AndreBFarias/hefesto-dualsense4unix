@@ -1,7 +1,15 @@
 # GATILHO-PALAVRA-01 — os dezenove modos em português
 
-- **Status:** ABERTA — esta sprint entrega a LISTA para ela escolher. Nenhum
-  rótulo foi renomeado em código nesta rodada.
+- **Status:** **PARCIAL — a separação dos dois campos e o portão da E2 estão
+  ENTREGUES EM CÓDIGO, AGUARDANDO A PALAVRA DELA; a escolha das dezenove
+  palavras segue ABERTA, porque é dela.** Remarcada em 09/08/2026: a mecânica
+  entrou em `2bbfa22` (30/07/2026). **Rótulo anterior: "ABERTA — esta sprint
+  entrega a LISTA para ela escolher"**, preservado aqui. Ver a nota datada no
+  fim
+- **O que falta ela validar, em uma linha:** olhar a lista das dezenove palavras
+  neste documento e **dizer quais ficam** — nenhuma renomeação entra sem essa
+  escolha, e o código já está pronto para receber qualquer palavra que ela
+  escolher
 - **Prioridade:** MÉDIA — é texto de tela, reversível linha a linha, e não toca
   em nada que o controle sinta. O que a torna barata é justamente o que está
   medido abaixo: o nome que ela vê e o nome que o disco guarda são campos
@@ -501,3 +509,31 @@ Na tela, depois que a lista for escolhida e aplicada:
   dezenove, que é contrato do DSX e está travado por teste
   (`tests/unit/test_trigger_effects.py:217`).
 - **Nada foi renomeado nesta rodada.** Esta sprint é a lista. A escolha é dela.
+
+---
+
+## NOTA DATADA — 09/08/2026: a mecânica saiu, a escolha continua sendo dela
+
+**Nada acima foi apagado.** A lista dos dezenove, os três sinônimos de cada um e
+o teto de 22 caracteres continuam inteiros — são exatamente o material sobre o
+qual ela decide.
+
+**O que está de pé — GRAU: MEDIDO em 09/08/2026 contra a árvore de hoje.**
+
+| o que a sprint pedia | onde está hoje |
+|---|---|
+| dois campos, dois donos: o `name` é contrato, o `label` é texto de tela | `src/hefesto_dualsense4unix/app/actions/trigger_specs.py:67` |
+| o portão que cobra os dois contratos (a E2) | `tests/unit/test_gatilho_palavra_rotulos.py`, citado no próprio código |
+
+**Commit:** `2bbfa22`, 30/07/2026.
+
+### O que continua ABERTO — e é dela, não nosso
+
+**As dezenove palavras.** Nenhum rótulo foi trocado, e não deve ser: a sprint
+existe para ela escolher, e o código de hoje só garante que a escolha, qualquer
+que seja, **não quebra os perfis que ela já salvou** e **não estoura o botão**.
+
+### Por que o rótulo é PARCIAL e não ENTREGUE
+
+Porque a entrega que importa para quem joga — ver a palavra certa no botão —
+depende de uma decisão que só ela toma. O que entregamos foi o encanamento.

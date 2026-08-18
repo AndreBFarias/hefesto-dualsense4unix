@@ -1,6 +1,13 @@
 # LARGURA-01 — a mesma largura em todas as abas
 
-- **Status:** ABERTA — documento de medição e plano. Nada de código nesta rodada
+- **Status:** **PARCIAL — as E1 a E4 e a E9 estão ENTREGUES EM CÓDIGO,
+  AGUARDANDO A PALAVRA DELA; as E5 a E8 seguem ABERTAS.** Remarcada em
+  09/08/2026: entraram em `cd5eaf1` (31/07/2026). **Rótulo anterior: "ABERTA —
+  documento de medição e plano. Nada de código nesta rodada"**, preservado
+  aqui. Ver a nota datada no fim
+- **O que falta ela validar, em uma linha:** abrir a janela maximizada e passar
+  pelas abas — nenhuma linha de texto deve atravessar a tela inteira, e a barra
+  de bateria não pode ter meio metro de vazio de cada lado do número
 - **Prioridade:** MÉDIA — é pedido de leitura sobre uma entrega que ela aprovou,
   não correção de defeito
 - **Aberta em:** 29/07/2026, depois de ela olhar a aba Status entregue pela
@@ -489,3 +496,36 @@ qualquer layout. É a mesma nota que a SOM-01 deixou.
 - **Validação na tela dela.** Todas as medidas deste documento são de
   `Gtk.OffscreenWindow` renderizada em PNG e conferida com o olho. O aceite é o
   dela.
+
+---
+
+## NOTA DATADA — 09/08/2026: cinco entregas saíram, e o "nada de código" caducou
+
+**Nada acima foi apagado.** A medição aba por aba, a tabela dos 1242px e as nove
+entregas continuam inteiras — inclusive as quatro que **ainda devem**.
+
+**O que está de pé — GRAU: MEDIDO em 09/08/2026 contra a árvore de hoje.**
+
+| entrega | estado | onde está |
+|---|---|---|
+| **E1.** Teto por widget nos controles que não merecem largura | ENTREGUE EM CÓDIGO, aguardando a palavra dela | `src/hefesto_dualsense4unix/gui/main.glade:1151` |
+| **E2.** O miolo do frame Estado | ENTREGUE EM CÓDIGO, aguardando a palavra dela | `src/hefesto_dualsense4unix/gui/main.glade:335` e `:536` |
+| **E3.** Comprimento de linha do texto corrido | ENTREGUE EM CÓDIGO, aguardando a palavra dela | `src/hefesto_dualsense4unix/gui/main.glade:1195` — teto de cerca de 100 caracteres |
+| **E4.** O teto elástico nas duas abas de coluna única | ENTREGUE EM CÓDIGO, aguardando a palavra dela | entrou junto, na mesma leva |
+| **E9.** Gatilhos: os botões de ação no rodapé da coluna | ENTREGUE EM CÓDIGO, aguardando a palavra dela | `src/hefesto_dualsense4unix/gui/main.glade:761` e `:913` |
+
+**Commit:** `cd5eaf1`, 31/07/2026.
+
+### O que continua ABERTO nesta sprint — e não foi remarcado
+
+- **E5.** O teto elástico nas quatro abas de duas colunas.
+- **E6.** Sistema, com o log de fora.
+- **E7.** Emulação: os dois cartões do topo com a mesma largura.
+- **E8.** Gatilhos: usar a largura em vez de devolvê-la.
+
+### Por que o rótulo não é ENTREGUE e sim ENTREGUE EM CÓDIGO
+
+Porque a sprint termina dizendo, com todas as letras, que *"o aceite é o dela"*.
+Medida de `Gtk.OffscreenWindow` prova geometria; não prova que ficou bom de
+olhar
+([PROVA-DE-TELA-01](2026-07-27-PROVA-DE-TELA-01-dez-minutos-de-olho-antes-de-qualquer-leva.md)).

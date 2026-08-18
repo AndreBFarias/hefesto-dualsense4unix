@@ -1,6 +1,12 @@
 # STEAM-INPUT-01 — ela nunca mais precisa decidir quando ligar a entrada Steam
 
-- **Status:** ABERTA
+- **Status:** **PARCIAL — as E1, E3 e E9 estão ENTREGUES EM CÓDIGO, AGUARDANDO
+  A PALAVRA DELA; a E2 e as E4 a E8 seguem ABERTAS.** Remarcada em 09/08/2026.
+  Entraram em `e96dea8` (27/07/2026) e `c10adaf` (01/08/2026). **Rótulo
+  anterior: ABERTA**, preservado aqui. Ver a nota datada no fim
+- **O que falta ela validar, em uma linha (das E1/E3/E9):** abrir a janela e ver
+  que ela **não pergunta mais** quando ligar a entrada Steam — e que o texto que
+  o doutor imprime é o mesmo que o botão diz
 - **Prioridade:** ALTA — é decisão técnica empurrada para quem só quer jogar, e
   já voltou depois de ter sido dada por resolvida
 - **Aberta em:** 26/07/2026, junto com o rollback da leva da madrugada
@@ -24,11 +30,26 @@ Antes de qualquer entrega, o que está escrito hoje, em uma frase:
 > clique **"Este jogo não funciona"**: o Hefesto liga o Steam Input só naquele
 > jogo e sai inteiro da frente dele.
 
+> **NOTA DATADA — 07/08/2026: "sai INTEIRO da frente dele" está refutado.**
+> A palavra é *inteiro*, e é justamente ela que a medição derruba. Em
+> 06/08/2026, das 19:34 às 19:56, com um DualSense físico e três jogos abertos
+> ([CONTROLE-SONY-MEDIDO-01](2026-08-06-CONTROLE-SONY-MEDIDO-01-o-experimento-que-decide-metade-da-doutrina.md),
+> seção *A INVERSÃO*, **grau MEDIDO**), o Hefesto **entregou a entrada** do
+> jogo da lista e **manteve a saída inteira**: os gatilhos dela seguraram
+> duros e o vermelho dela ficou na lightbar, com o jogo no menu. A frase certa
+> é *"o Hefesto entrega a entrada daquele jogo à Steam"* — a cor, os gatilhos
+> e a vibração continuam dele.
+>
+> O resto do bloco **não** caduca: o padrão desligado, o guarda, o global que
+> sempre morre e o per-app como exceção continuam como estão — e o M-04
+> (*"a exceção per-app pode ser decorativa"*) fechou **POSITIVO** na mesma
+> medição, o que **abre o portão zero declarado em `:244-250`** desta página.
+
 Cada pedaço tem endereço:
 
-- **Padrão desligado, sem perguntar.** `install.sh:2181` (passo 11/11) roda
+- **Padrão desligado, sem perguntar.** `install.sh:2300` (passo 11/11) roda
   `scripts/disable_steam_input.sh --apply`. O opt-out é `--keep-steam-input`.
-- **Um vigia permanente.** `install.sh:2199` e `install.sh:2204` instalam e
+- **Um vigia permanente.** `install.sh:2318` e `install.sh:2323` instalam e
   habilitam `hefesto-steam-input-guard.path` + `.timer` (30 min), que reaplicam o
   desligamento se a Steam reescrever o `localconfig.vdf`.
 - **O global sempre morre; o per-app é a exceção.**
@@ -225,6 +246,9 @@ Tudo olhando a tela, sem terminal.
    a tela avisa que só o controle 1 vai funcionar naquele jogo.
 6. Com um jogo da allowlist aberto, a aba Emulação **não** parece desligada
    sozinha: diz que saiu da frente de propósito, e por qual jogo.
+   *(**07/08/2026:** o texto desta linha 6 mudou — ver a NOTA DATADA no topo.
+   A aba diz que o **controle virtual foi recolhido** naquele jogo, e não que
+   o Hefesto saiu: cor e gatilhos continuam valendo lá dentro.)*
 7. Em nenhum ponto da interface aparece a instrução de ir na Steam mexer em
    Propriedades → Controle.
 
@@ -248,3 +272,36 @@ resposta dela sobrevive ao próximo boot.
   suporte global de PlayStation desligado, **a exceção é decorativa e falha em
   silêncio** — e o botão "Este jogo não funciona" nunca funcionou de verdade.
   Precisa de um teste com jogo aberto, e é o primeiro passo desta sprint.
+
+---
+
+## NOTA DATADA — 09/08/2026: três das nove saíram, e o `ABERTA` seco caducou
+
+**Nada acima foi apagado.** O relato dela, o diagnóstico dos dois cadastros e as
+nove entregas continuam inteiros — inclusive as seis que **ainda devem**.
+
+**O que está de pé — GRAU: MEDIDO em 09/08/2026 contra a árvore de hoje.**
+
+| entrega | estado | onde está |
+|---|---|---|
+| **1. Tirar do produto a instrução de ir na Steam** | ENTREGUE EM CÓDIGO, aguardando a palavra dela | `src/hefesto_dualsense4unix/app/actions/daemon_actions.py:580` — *"aqui morava a única frase do produto que..."* |
+| **3. O botão de desfazer, que já está escrito** | ENTREGUE EM CÓDIGO, aguardando a palavra dela | `src/hefesto_dualsense4unix/cli/cmd_steam.py:3` |
+| **9. Corrigir os dois ponteiros errados** | ENTREGUE EM CÓDIGO, aguardando a palavra dela | `src/hefesto_dualsense4unix/integrations/storm_doctor.py:187` e `:280` |
+
+**Commits:** `e96dea8` (27/07/2026) e `c10adaf` (01/08/2026).
+
+### O que continua ABERTO nesta sprint — e não foi remarcado
+
+- **2.** Uma linha por jogo, com nome, no lugar da contagem.
+- **4.** Divergência vira pergunta, não repreensão.
+- **5.** O aviso de co-op no clique.
+- **6.** A frase durante o jogo (`steam_input_vpad_suspenso` chegando à janela).
+- **7.** Consertar o vigia e mostrar que ele está vivo.
+- **8.** Documentar o guarda, ou parar de instalá-lo em silêncio.
+
+### Por que o rótulo das três não é ENTREGUE e sim ENTREGUE EM CÓDIGO
+
+Porque a seção "Como validar" desta sprint diz, por extenso, *"tudo olhando a
+tela, sem terminal"* — e ninguém olhou a tela dela desde a entrega. É a regra da
+casa
+([PROVA-DE-TELA-01](2026-07-27-PROVA-DE-TELA-01-dez-minutos-de-olho-antes-de-qualquer-leva.md)).

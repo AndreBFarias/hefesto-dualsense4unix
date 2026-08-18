@@ -1,7 +1,14 @@
 # JANELA-FIEL-01 — a janela que para de reconciliar, e o botão morto no pacote
 
-- **Status:** ABERTA — documento de medição e plano. **Nenhuma linha de código,
-  de teste ou de configuração foi tocada nesta rodada**
+- **Status:** **PARCIAL — as E1 a E4 estão ENTREGUES EM CÓDIGO, AGUARDANDO A
+  PALAVRA DELA; a E5 (TUI) e a E6 (bandeja) seguem ABERTAS.** Remarcada em
+  09/08/2026: entraram em `cd5eaf1` (31/07/2026). **Rótulo anterior: "ABERTA —
+  documento de medição e plano. Nenhuma linha de código, de teste ou de
+  configuração foi tocada nesta rodada"**, preservado aqui, porque descrevia com
+  exatidão a rodada de abertura. Ver a nota datada no fim
+- **O que falta ela validar, em uma linha:** deixar a janela aberta por uns
+  minutos com um perfil ativo e ver se ela **não troca sozinha** o que está na
+  tela — e clicar em "Restaurar Padrão" para ver se ele acha o arquivo
 - **Prioridade:** **ALTA** nas entregas E1 e E4 — as duas mexem no perfil dela
   sem perguntar e sem avisar. MÉDIA na E2, E3 e E5. BAIXA na E6
 - **Aberta em:** 31/07/2026, a partir da auditoria de nove áreas rodada contra o
@@ -56,7 +63,7 @@ duas conclusões precisaram de reenquadramento**, e é por isso que a regra exis
 | `tray.py:191` e `compact_window.py:122` | **sim** | os dois `timeout_add` com o id descartado |
 | `rumble_actions.py:322-326` (o precedente de cancelar timer) | **ajustado** | a função é `:322-327`; o comentário que explica o porquê é `:317-320` |
 | `constants.py:34-38` | **ajustado** | o aviso é `:34-36` e `ROOT_DIR` é `:37` |
-| `install.sh:1049` (instala `-e`) | **sim** | `-e "${ROOT_DIR}[${_extras}]"` está em `:1049` |
+| `install.sh:1162` (instala `-e`) | **sim** | `-e "${ROOT_DIR}[${_extras}]"` está em `:1049` |
 | "o .deb não embala `profiles_default`" | **REFUTADO** | `scripts/build_deb.sh:133` faz `cp -r assets/. .../usr/share/hefesto-dualsense4unix/assets/` — o `profiles_default` **vai junto**, e cai exatamente no terceiro candidato do loader |
 | "morto no AppImage e no Flatpak" | **REFUTADO como causa** | `scripts/build_appimage_gui.sh:112-117` e `flatpak/br.andrefarias.Hefesto.yml:170-183` (FIX-FLATPAK-PRESET-SEED-01, de 30/07) instalam o `profiles_default` **de propósito**, no segundo candidato do loader. O botão morre mesmo assim — mas por causa do resolvedor, não do pacote |
 
@@ -276,7 +283,7 @@ próprio arquivo avisa, em `:34-36`: *"Em instalação real esses paths podem n�
 existir — sempre verifique `.exists()` antes de usar."* O rodapé verifica
 (`footer_actions.py:464`) e desiste com um toast (`:465-474`).
 
-Na máquina dela funciona porque `install.sh:1049` instala com `-e` (editável), e
+Na máquina dela funciona porque `install.sh:1162` instala com `-e` (editável), e
 aí `parents[3]` cai na raiz do repositório. Num `.deb`, o pacote vive num venv em
 `/opt/hefesto-dualsense4unix/venv`, o módulo em `.../site-packages/hefesto_dualsense4unix/app/`,
 e `parents[3]` vira `.../venv/lib/python3.X` — um diretório onde `assets/` nunca
@@ -368,6 +375,77 @@ são 15 arquivos, e cinco deles têm nome que colide por acento ou por caixa:
 
 Digitar `Navegacao`, ou `navegação`, ou `fps` em minúsculas — qualquer variação
 de acento ou de caixa — passa direto pelo gate e regrava o arquivo.
+
+> **NOTA DATADA — 06/08/2026, 22:53. O NÚMERO CADUCOU; A FRASE, NÃO.**
+>
+> A tabela acima e o parágrafo que a segue **não se apagam**: medem um defeito
+> real e são a prova de disco que sustenta a E4. O que caducou é a **contagem**,
+> por três razões — e nenhuma delas é *"não havia colisão"*.
+>
+> **Primeiro, o sentido — para ninguém reler errado.** *"Colidir por acento ou
+> caixa"* nesta casa **nunca** quis dizer um perfil colidir com OUTRO perfil.
+> Quer dizer o que o parágrafo acima já explica: o `name` de exibição e o slug do
+> arquivo divergem, então **uma variante digitada cai em cima do arquivo que já
+> existe** — digitar `Navegacao` grava em `navegacao.json`, que é a `Navegação`
+> dela. É o mesmo vocabulário de
+> [JOGOS-QUE-ELA-TEM-01](2026-08-06-JOGOS-QUE-ELA-TEM-01-escolher-da-biblioteca-em-vez-de-adivinhar-o-numero.md):390
+> — *"o `slugify` faz `Navegacao` e `Navegação` caírem no mesmo `.json`"*. Par a
+> par, os arquivos dela sempre tiveram slugs distintos, e isso **nunca** foi o
+> que se afirmou aqui. **Quem medir "colisão par a par" vai encontrar zero e
+> concluir que a frase é falsa — e vai concluir errado.** (Conferido em
+> 06/08/2026, 22:53: nenhum par de perfis dela compartilha slug. GRAU: MEDIDO.)
+>
+> **Segundo, o número já era subcontagem em 31/07.** Pelo critério da própria
+> tabela — nome de exibição cujo slug difere do nome —, `pragmata.json`
+> (`Pragmata`) e `pragmata2.json` (`Pragmata2`) também divergiam por caixa e
+> estavam em disco naquela semana; estão listados no
+> [mapa da sessão de 29/07](../estudos/2026-07-29-mapa-da-sessao-e-o-que-os-agentes-mediram.md):85-86.
+> A tabela recortou os cinco perfis **com regra de janela**, recorte legítimo
+> para o que a E4 precisa mostrar; foi a frase *"cinco dos quinze"* que
+> generalizou o recorte para o disco inteiro.
+>
+> **Terceiro, o disco dela mudou.** Medido em **06/08/2026, 22:53**, só leitura,
+> com `ls ~/.config/hefesto-dualsense4unix/profiles/*.json` e o `slugify` de
+> `src/hefesto_dualsense4unix/profiles/slug.py`: são **13 arquivos**, não 15.
+> `pragmata2.json`, `meu_perfil.json` e `sackboy_nativo.json` **não existem
+> mais** — do trio sobraram apenas três `.lock` órfãos, sem `.json` ao lado
+> (`meu_perfil.json.lock`, `pragmata2.json.lock`, `sackboy_nativo.json.lock`).
+> Dos 13, **nove** têm nome cujo slug difere do nome: `Ação`, `Aventura`,
+> `Corrida`, `Esportes`, `FPS`, `Navegação`, `Pragmata`, `Sackboy` e `Vitoria`;
+> os outros quatro já estão escritos em forma de slug (`bow`, `coop_local`,
+> `fallback`, `point_and_click`). Os cinco da tabela continuam todos em disco —
+> só a prioridade de `esportes.json` mudou, de 55 para **57**. **GRAU: MEDIDO em
+> 06/08/2026, 22:53.**
+>
+> **Não trocar "cinco" por "nove" e parar por aí.** Número de disco dela
+> envelhece em dias: o *"nove em treze"* vale para 06/08/2026, 22:53, e quem
+> reconferir tem de escrever a data **e** o comando, como está acima.
+>
+> **O que NÃO caducou:** o defeito, o mecanismo, o estrago em dois tamanhos e a
+> regra R-10 — que é anterior a esta tabela (auditoria de 23/07, citada logo
+> acima), e não nasceu dela. E o defeito vizinho I-1 foi **curado** em 06/08:
+> [NUNCA-TROCA-O-ALVO-01](2026-08-06-NUNCA-TROCA-O-ALVO-01-a-janela-trocava-o-nome-e-o-salvar-ia-para-o-arquivo-errado.md):276-306
+> fez o `on_import_profile` perguntar por `find_by_slug` nas **duas** metades
+> (importar **e** o nome novo do renomear), com `TestOImportarPerguntaPeloSlug`
+> em `tests/unit/test_nunca_troca_o_alvo_01_o_salvar_que_mirava_outro_perfil.py:781`.
+>
+> **Onde a mesma frase está escrita, e que herda esta nota** (cinco lugares, não
+> quatro — o quinto é a docstring que transforma a frase em teste):
+> [ÍNDICE de 05/08](2026-08-05-INDICE-a-leva-dos-perfis-que-se-reescreviam-sozinhos.md):148,
+> [GRAVA-POR-UM-FUNIL-01](2026-08-04-GRAVA-POR-UM-FUNIL-01-o-rodape-gravava-e-o-rascunho-nao-ficava-sabendo.md):461,
+> [SALVAR-NÃO-REBAIXA-02](2026-08-05-SALVAR-NAO-REBAIXA-02-o-novo-perfil-desligava-as-proprias-guardas.md):337,
+> [estudo dos dezessete agentes](../estudos/2026-08-05-o-sistema-de-perfis-o-que-dezessete-agentes-mediram.md):103
+> e `tests/unit/test_footer_actions.py:281`.
+>
+> **De quebra, para quem for até o ÍNDICE:** a linha imediatamente abaixo
+> daquela, `:149`, carrega um segundo número caducado, e mais caro — *"o perfil
+> ATIVO dela: `sackboy_nativo`, prioridade 191"*. Em 06/08/2026, 22:53,
+> `sackboy_nativo.json` não existe mais (sobrou só o `.lock`), enquanto
+> `~/.config/hefesto-dualsense4unix/session.json` ainda aponta
+> `last_profile: sackboy_nativo` — ou seja, quem for atrás do 191 vai atrás de um
+> arquivo que sumiu, e o ponteiro do perfil ativo dela está pendurado no vazio.
+> **GRAU: MEDIDO em 06/08/2026, 22:53.** Aquela linha merece a sua própria nota
+> datada, que esta página não pode escrever no lugar dela.
 
 **E o estrago tem dois tamanhos.** Se o perfil ATIVO for o mesmo que está sendo
 sobrescrito, `to_profile` reconhece pelo slug (`draft_config.py:506-508`) e
@@ -647,3 +725,34 @@ e ela é explicitamente exigida aqui.
 - **Se o número 15 é o certo.** A prioridade que o rodapé calcula ao salvar
   (`max(catch-all) + 10`) dá 15 com o disco dela de hoje. Que 15 seja o número
   certo é decisão da PERFIL-NASCE-CERTO-01 e não foi reavaliada aqui — só medida.
+
+---
+
+## NOTA DATADA — 09/08/2026: quatro entregas saíram, e o "nada tocado" caducou
+
+**Nada acima foi apagado.** A auditoria de nove áreas, o diagnóstico do reload
+que não volta e as seis entregas continuam inteiros — inclusive as duas que
+**ainda devem**.
+
+**O que está de pé — GRAU: MEDIDO em 09/08/2026 contra a árvore de hoje.**
+
+| entrega | estado | onde está |
+|---|---|---|
+| **E1.** O reload que não volta trava a janela no perfil anterior | ENTREGUE EM CÓDIGO, aguardando a palavra dela | `src/hefesto_dualsense4unix/app/app.py:60` (o prazo do latch), `:101`, `:292` e `:852` — as quatro linhas citam `JANELA-FIEL-01/E1` por nome |
+| **E2.** Os dois relógios mais rápidos apontam para a aba pelo número | ENTREGUE EM CÓDIGO, aguardando a palavra dela | mesma leva |
+| **E3.** "Restaurar Padrão" só acha o arquivo na máquina de quem programou | ENTREGUE EM CÓDIGO, aguardando a palavra dela | `src/hefesto_dualsense4unix/app/actions/footer_actions.py:54` — o caminho deixou de ser `ROOT_DIR / "assets" / ...` |
+| **E4.** "Navegacao" sem acento come a "Navegação" dela sem perguntar | ENTREGUE EM CÓDIGO, aguardando a palavra dela | mesma leva |
+
+**Commit:** `cd5eaf1`, 31/07/2026.
+
+### O que continua ABERTO nesta sprint — e não foi remarcado
+
+- **E5.** A TUI desenha gatilho zerado e analógico centrado como se estivesse
+  medindo.
+- **E6.** Os relógios continuam correndo com a janela guardada na bandeja.
+
+### Por que o rótulo não é ENTREGUE e sim ENTREGUE EM CÓDIGO
+
+Porque a E1 e a E4 **mexem no perfil dela**, e a prova de que pararam de mexer
+não é um teste verde: é a janela dela aberta, com os perfis dela, sem trocar
+sozinha o que está na tela. Só ela pode dizer que parou.

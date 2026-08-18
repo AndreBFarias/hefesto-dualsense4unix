@@ -1,0 +1,872 @@
+# PROTOCOLO — o controle que cai sozinho
+
+- **Escrito em:** 07/08/2026, depois de ela relatar *"o controle desconectou
+  sozinho, conectei novamente"*. Relato, **não** queixa de defeito — e este
+  documento não o promove a defeito.
+- **Destino desta medição:** **nenhuma sprint nova de defeito**, e **nenhuma
+  nota dizendo "é o hardware dormindo"**. As duas conclusões estão erradas, e a
+  seção 2 mostra por quê com número.
+- **O que este documento é:** o protocolo que **decide** o que sobra, com o
+  controle na mão dela.
+- **Formato:** o da fila de 06/08
+  ([o que só fecha com o controle na mão dela](2026-08-06-o-que-so-fecha-com-o-controle-na-mao-dela.md))
+  — **P0** tranca o cenário (com o destrancar embutido), **ANTES** é a foto
+  numérica, **CONTRASTE** é o caso sem o qual nada se conclui, **PREVISÃO** é
+  falsificável e derivada do código, **LEITURA** é a tabela escrita **antes** de
+  medir.
+
+---
+
+## 1. O que já está MEDIDO, e não precisa dela
+
+Entre 01/08 e 07/08 o daemon registrou **18** `controller_disconnected`, **todos**
+com `reason=probe_offline` — não há outro motivo no journal. GRAU: MEDIDO
+(contagem sobre o journal do serviço do usuário).
+
+E os 18 **não são um fenômeno só**. São três, empilhados sob um nome só:
+
+| quantos | o que é, de verdade | assinatura no kernel | GRAU |
+|---|---|---|---|
+| **8** | o **cabo USB saindo** | `USB disconnect` nos 40 s anteriores, com replug limpo 3 a 12 s depois na mesma porta | MEDIDO |
+| **1** | o **`bluetoothd` morrendo** com core dump (03/08 23:58:07, `malloc_consolidate(): unaligned fastbin chunk`) | `code=dumped, status=6/ABRT` 2 s antes | MEDIDO |
+| **9** | **perda de link Bluetooth com o kernel mudo** | nada: sem `USB disconnect`, sem `error -71`, sem reset de xhci, sem frame L2CAP corrompido | MEDIDO |
+
+As **três** quedas de 05/08 são todas cabo — naquela madrugada o mesmo cabo saiu
+três vezes em 37 minutos. GRAU: MEDIDO. E 05/08 tem **zero** reconexões de rádio
+no kernel, o que confirma a classificação por outro caminho.
+
+Três coisas que a contagem **não** diz, e precisam ficar escritas:
+
+- **`primary_changed` (49) e `retarget` (20) não são motivos de desconexão.** São
+  logs de reabertura do leitor de movimento (`motion_reader_reopen_requested`),
+  emitidos em `core/backend_pydualsense.py` e `core/evdev_reader.py`, e nunca
+  chegam a `CONTROLLER_DISCONNECTED`. GRAU: MEDIDO (só dois pontos do código
+  publicam esse tópico: `daemon/connection.py:468` e `daemon/lifecycle.py:3618`).
+- **`probe_offline` é o daemon PERCEBENDO, não causando.** O evento só nasce na
+  borda `not is_connected and was_connected`, e `is_connected()` é apenas *"algum
+  handle aberto tem `connected`"*. Na queda de 07/08 o kernel já devolvia ENODEV
+  nos evdev às 14:37:11 e o daemon batizou o fato **1 segundo depois**, às
+  14:37:12. ENODEV no evdev quer dizer que o **kernel removeu** o device — o
+  broker escondendo daria EACCES ou ENOENT no hidraw, nunca ENODEV no evdev.
+  GRAU: MEDIDO.
+- **18 é PISO, não total.** Há **dois** DualSense nesta máquina e `is_connected()`
+  é um `any()` sobre os handles: `probe_offline` só dispara quando o **último**
+  some. Pelo kernel foram **26** (re)conexões Bluetooth de DualSense no mesmo
+  período. GRAU: MEDIDO.
+
+**Nenhum defeito do Hefesto foi medido na queda.** GRAU: MEDIDO para a ausência
+de evidência; SEM PROVA para a afirmação forte de que não existe — ver a Q-2.
+
+---
+
+## 2. NOTA DATADA, 07/08/2026 — o sono por inatividade está REFUTADO
+
+Registrado aqui para **ninguém gastar uma leva investigando isto de novo**.
+
+A hipótese era: *"o controle dorme sozinho depois de alguns minutos parado"*.
+Ela está **morta por medição**, por dois caminhos independentes.
+
+**Caminho 1 — as durações de sessão não têm agrupamento nenhum.** Ancoradas no
+kernel (registro do device Bluetooth até a queda do daemon):
+
+| sessão | duração |
+|---|---|
+| 06/08 00:29:09 até 06/08 16:19:23 | **15h50m14s** |
+| 06/08 21:06:01 até 07/08 13:30:12 | **16h24m11s** |
+| 07/08 14:34:43 até 07/08 14:37:11 | 2m28s |
+| 07/08 14:38:04 até 07/08 14:38:29 | 25s |
+
+De **25 segundos a 16h24m**, sem nada perto de dez minutos. GRAU: MEDIDO. **Duas
+sessões Bluetooth contínuas passaram de quinze horas** — impossível se o controle
+desligasse por ficar ocioso, porque uma noite inteira é ociosa por definição.
+
+**Caminho 2 — o host não manda ninguém dormir.** O `IdleTimeout` do perfil HID do
+BlueZ está no **default 0 (desabilitado)** e **nenhum arquivo o sobrescreve**: as
+duas únicas ocorrências em `/etc/bluetooth/` estão **comentadas**. GRAU: MEDIDO.
+O `main.conf` efetivo tem três linhas vivas, e nenhuma é de tempo ocioso.
+
+**E a distribuição pela hora do relógio é espalhada** — 00h:1, 02h:5, 03h:1,
+13h:1, 14h:2, 16h:1, 17h:1, 19h:1, 20h:2, 21h:1, 23h:2. As cinco das 02h são a
+madrugada dela, não um ciclo de hardware. GRAU: MEDIDO.
+
+### O dado útil que esta nota **não** pode dar
+
+Não há **nenhum** tempo ocioso medido em que este controle durma nesta máquina, e
+o que existe **refuta** a existência de um dentro de 16h24m. Quem for repetir a
+pergunta precisa saber disto: **medir "em quantos minutos ele dorme" é medir um
+número que a evidência de 06/08 e 07/08 diz não existir** nessas condições. Se
+alguém quiser medir mesmo assim, a única forma honesta é a Q-1 abaixo, porque a
+carga é a variável que sobra.
+
+**O que caduca com esta nota:** a hipótese de sono por inatividade, e só ela.
+Nada mais deste projeto muda. Nenhuma decisão medida anterior é apagada — a
+[RADIO-BOMBARDEADO-01](../sprints/2026-08-04-RADIO-BOMBARDEADO-01-quarenta-mil-frames-corrompidos-em-meia-hora.md)
+continua valendo para o que ela mediu em 03/08; o que esta nota diz é que **ela
+não alcança as nove quedas de link deste período**, porque o rádio destes dias
+está limpo: **nove** frames corrompidos em ~43 horas de boot inteiro, e **zero**
+na janela da queda de 07/08, contra os 44.718 em meia hora de 03/08. GRAU:
+MEDIDO.
+
+---
+
+## 3. Por que isto não virou sprint de defeito
+
+Quatro razões, e cada uma sozinha já bastaria:
+
+1. **Ela relatou sem chamar de defeito.** Transformar relato em defeito sem prova
+   cria trabalho que ninguém pediu, e a regra da casa é explícita: *não entregue
+   mudança que ela não pediu*.
+2. **O relato não é novo, e a casa já decidiu o que fazer com ele.** A
+   [BORDA-DE-QUEDA-01](../sprints/2026-08-03-BORDA-DE-QUEDA-01-o-que-fica-para-tras-quando-um-controle-cai.md)
+   registra, de 03/08, a frase dela *"desliga sozinho e o controle branco segue
+   vibrando"*, e declara por escrito que **cair por Bluetooth é rotina** — a
+   sprint trata as **consequências** (rumble preso), não a causa. Uma sprint nova
+   não pode fingir que descobriu o fenômeno. GRAU: MEDIDO (leitura do documento).
+3. **A [ESTADO-QUE-MENTE-01](../sprints/2026-08-03-ESTADO-QUE-MENTE-01-o-daemon-afirma-controle-conectado-com-a-mesa-vazia.md)
+   é outro assunto.** Lá o `probe_offline` é só carimbo de hora; o defeito é o
+   `daemon.state_full` continuar dizendo `connected: True` e `battery_pct: 85`
+   **depois** da queda. É o estado obsoleto na descida, não a descida. GRAU:
+   MEDIDO.
+4. **A queda de 03/08 23:58:09 já tem dono:** o crash do `bluetoothd`, coberto
+   pela
+   [BT-SNAPSHOT-SANDBOX-01](../sprints/2026-08-04-BT-SNAPSHOT-SANDBOX-01-o-salva-vidas-que-falhava-so-no-naufragio.md).
+   GRAU: MEDIDO.
+
+O que **sobra** como custo de produto real, e não precisa de sprint para ser
+nomeado: **`probe_offline` é um nome só para três coisas diferentes**, e é isso
+que faz "três por dia" parecer um defeito único quando são cabo, `bluetoothd` e
+link, em proporções diferentes.
+
+---
+
+## 4. A fila — três medições, nesta ordem
+
+Convenção: **P0** tranca (com o destrancar embutido); **ANTES** é foto numérica;
+**CONTRASTE** é o caso sem o qual nada se conclui; **PREVISÃO** é falsificável e
+derivada do código; **ELA** / **ASSISTENTE** é a divisão de trabalho; **LEITURA**
+é a tabela escrita antes de medir.
+
+---
+
+### Q-1. A bateria no fim explica as nove quedas de link? *(a que decide)*
+
+**Pergunta.** Nas quedas em que o kernel fica mudo, a carga do controle estava no
+fim?
+
+**Por que é a primeira.** É a **única hipótese viva** para as nove, e hoje ela é
+indecidível por falta de instrumento — não por falta de análise. Custo: uma noite
+dela, sem atenção nenhuma durante.
+
+**A hipótese, com o mecanismo.** O `upower` marcou o controle a 100%
+`fully-charged` em 06/08 20:23:45; a sessão Bluetooth seguinte durou **16h24m** e
+terminou em queda às 13:30:12 de 07/08; as duas retomadas depois duraram **2m28s**
+e **25s**, e até 14h48 ele não voltou. Sessão longuíssima seguida de retomadas
+cada vez mais curtas é a curva de uma carga acabando — e casa com a outra sessão
+de 15h50m que também terminou em queda. GRAU: SUSPEITA COM MECANISMO.
+
+E há uma consequência de produto embutida, que vale mesmo se a hipótese cair:
+**nada nesta máquina deixa o controle dormir** (seção 2), então ele fica ligado a
+noite inteira; a única pista que ela recebe é *"desligou sozinho"*.
+
+> **NOTA DATADA — 07/08/2026, 15h45: o instrumento passou a existir.** O que
+> caduca aqui é **só** a frase *"ninguém grava carga ao longo da sessão"* — e
+> nada mais desta página. O daemon agora escreve a carga no journal
+> (`src/hefesto_dualsense4unix/daemon/battery_journal.py`); a leitura das duas
+> réguas, a cadência e a linha da queda estão na seção 8, escrita abaixo. A
+> lista de ausências que segue fica registrada porque é o **antes** desta
+> medição: sem ela, ninguém entende por que a Q-1 nasceu indecidível.
+
+**O estado do instrumento, conferido na escrita desta página (07/08, começo da
+tarde) — o ANTES.** Ninguém gravava carga ao longo da sessão:
+
+- o daemon **lê** a bateria por controle (`core/backend_pydualsense.py`, no
+  handle do pydualsense) e publica `BATTERY_CHANGE` em `daemon/lifecycle.py:3744`
+  e `:3825`, com debounce de `daemon/subsystems/poll.py`;
+- e **não escreve uma linha no journal**: não há chamada de log de bateria em
+  `daemon/lifecycle.py`, só o contador `battery.change.emitted` no store. GRAU:
+  MEDIDO (busca direta no arquivo; e zero linhas de bateria no journal do daemon
+  desde 06/08);
+- o `upower` guardou **4 amostras** para este controle, nenhuma no fim da sessão,
+  e o arquivo tem 116 bytes. GRAU: MEDIDO. **Não serve como régua.**
+
+**P0 — trancar.**
+
+1. Parar o `hefesto-bt-health-watchdog.timer`. Ele está `active` e dispara a cada
+   ~2 min (GRAU: MEDIDO, 07/08 às 14h54), mexe em **trust e bond**, e chama
+   `scripts/bt_active_mode.sh` a cada rodada. **Destrancar no fim:** religar o
+   timer e conferir que voltou a `active`. Isto é passo do protocolo, não
+   apêndice.
+2. Garantir que a **suíte de testes não está rodando** — ela escreve no journal
+   do sistema
+   ([SUITE-QUE-SUJA-O-JORNAL-01](../sprints/2026-08-04-SUITE-QUE-SUJA-O-JORNAL-01-os-testes-escrevem-no-journal-do-sistema.md))
+   e contamina a contagem.
+3. **Não** parar o `hefesto-dualsense4unix.service`: aqui ele é o instrumento. O
+   A/B com o daemon parado é a **Q-2**, e é outra janela, outra noite.
+4. O controle **fora do cabo**. Com cabo, a medição responde outra pergunta — e
+   oito das 18 quedas já são cabo.
+
+**ANTES.** Com o controle recém-conectado por Bluetooth, gravar as **duas**
+leituras no mesmo instante — regra da casa: todo instrumento declara contra o que
+mede.
+
+```bash
+date -Is
+hefesto-dualsense4unix battery
+cat /sys/class/power_supply/ps-controller-battery-<mac>/capacity
+cat /sys/class/power_supply/ps-controller-battery-<mac>/status
+```
+
+**O amostrador — não existe na árvore, e é uma linha.** Roda na janela `OS`, e
+grava até o nó sumir:
+
+```bash
+mac=<o endereco real, sem mascara, SO na maquina dela>
+no=/sys/class/power_supply/ps-controller-battery-$mac
+while :; do
+  printf '%s\t%s\t%s\n' "$(date -Is)" \
+    "$(cat "$no/capacity" 2>/dev/null || echo AUSENTE)" \
+    "$(cat "$no/status"   2>/dev/null || echo AUSENTE)"
+  sleep 60
+done | tee ~/queda-bateria-$(date +%F).tsv
+```
+
+**O arquivo resultante NÃO entra no repositório**: ele contém o endereço real. Se
+virar evidência de documento, mascarar os octetos 4 e 5 — há portão, e ele
+reprova.
+
+**CONTRASTE.** Duas sessões, e sem as duas não se conclui nada:
+
+- **(c1) carga cheia** — controle carregado até `fully-charged`, tirado do cabo, e
+  deixado no rádio até cair;
+- **(c2) carga baixa** — o **mesmo** controle deixado no rádio a partir de 20% ou
+  menos.
+
+Sem a (c1), uma queda com bateria baixa não distingue *"acabou a carga"* de *"cai
+de qualquer jeito"*.
+
+**PREVISÃO, falsificável.** Se a explicação for bateria: em (c1) a última amostra
+antes da queda vem **abaixo de ~10%**, o `status` fica `Discharging` a sessão
+inteira, e a duração de (c2) é **muito menor** que a de (c1). Se **não** for
+bateria: (c1) cai com a última amostra **acima de 40%**, e as durações de (c1) e
+(c2) ficam na mesma ordem de grandeza.
+
+**A previsão que mata a hipótese de uma vez:** **uma** queda com `capacity` acima
+de 40% na amostra imediatamente anterior **refuta** a bateria como explicação das
+nove. Um caso basta — e por isso esta medição pode fechar numa noite.
+
+**ELA.** Carrega o controle até o fim antes de (c1); tira do cabo; usa a noite
+como sempre; e **avisa a hora** em que percebeu que caiu. **Não religa até
+avisar** — o instante da volta é dado da Q-3.
+**ASSISTENTE.** Deixa o amostrador rodando na janela `OS`, e **no instante** do
+aviso dela colhe três coisas: `daemon.state_full`, as últimas 30 linhas do
+amostrador, e o journal do kernel de -60 s a +10 s em torno da queda.
+
+**LEITURA.**
+
+| desfecho | leitura | consequência |
+|---|---|---|
+| última amostra abaixo de 10% e `Discharging`, e (c2) muito mais curta | bateria confirmada | a hipótese vira MEDIDA; a entrega passa a ser **avisar antes**, não curar queda |
+| última amostra acima de 40% em (c1) | bateria REFUTADA | uma causa a menos; a **Q-2** sobe para primeira, e vira a única viva |
+| última amostra entre 10% e 40% | inconclusivo | repetir a (c1); duas sessões, não uma |
+| o nó `capacity` some **antes** da queda do daemon | o instrumento morre junto com o objeto | trocar para amostragem por `daemon.state_full`, que sobrevive ao sumiço do nó |
+| não existe `ps-controller-battery` para este controle por Bluetooth | instrumento inexistente | usar só o `daemon.state_full` e **dizer isso no registro**; sem a segunda leitura, o resultado é de uma biblioteca só |
+| nenhuma queda em duas noites | o fenômeno não apareceu | a janela é curta demais; **não concluir nada** — ausência aqui não é prova |
+
+**Nota de instrumento.** O nó do kernel e o do daemon medem por caminhos
+diferentes: o primeiro é do driver `hid-playstation`, o segundo é leitura própria
+do handle. Se os dois discordarem em mais de um degrau, **o resultado é sobre o
+instrumento**, não sobre a bateria — e a medição se refaz antes de qualquer
+conclusão.
+
+---
+
+### Q-2. O daemon contribui para a instabilidade do link? *(hoje SEM PROVA)*
+
+**Pergunta.** Com o Hefesto **parado**, o controle cai com a mesma frequência?
+
+**Por que existe.** É a **única** pergunta desta lista em que o Hefesto pode ser
+culpado, e hoje ela não tem medição nenhuma que a isole. GRAU: SEM PROVA — e é
+assim que fica registrada, não como achado.
+
+**O que se sabe, e não decide.** O daemon segura o hidraw físico aberto pelo
+broker, reescreve o esconde a cada 30 s — `hidraw_broker_hidden` é o evento
+**mais frequente** do journal, 14.105 ocorrências desde 01/08 — e escreve estado a
+60 Hz. GRAU: MEDIDO. Mas na sessão que morreu em 07/08 o último re-esconde foi
+**21 s antes** da morte, e os 19 a 21 s finais são de **silêncio total** no
+journal. O desalinhamento **não apoia** a hipótese; também **não a mata**, porque
+as escritas de 60 Hz não são logadas. GRAU: SEM PROVA, dos dois lados.
+
+**NOTA DATADA, 07/08/2026 18h55 — a Q-2 ganhou meio A/B de graça, e ele riscou
+um suspeito.** O
+[E-1 do protocolo dos externos](2026-08-07-ISOLAR-os-externos-o-metodo-da-lightbar-no-pro-e-no-8bitdo.md#e-1-fechado--07082026-18h55)
+fechou hoje, e um pedaço do resultado é desta página. Às 15:27:48 o daemon
+passou a rodar com `EXTERNAL_PLAYER_LED_ENABLED = False` (decisão 12 dela) —
+isto é, **uma fonte de tráfego de rádio do próprio Hefesto foi desligada** sem
+que o daemon parasse. O que se mediu nas 3h27m seguintes:
+
+| métrica | com a escrita de LED ligada (18h20m) | com ela desligada (3h27m) | GRAU |
+|---|---|---|---|
+| recusas `joycon_enforce_subcmd_rate` no kernel | 348 | **0** | MEDIDO |
+| links Bluetooth novos do **DualSense** | 5 (**0,27/h**) | 1 (**0,29/h**) | MEDIDO |
+
+**A leitura, e ela é estreita de propósito.** O daemon estava, até hoje,
+martelando o rádio com subcomando de LED no Pro Controller — 348 recusas de
+kernel em dois dias, MEDIDO. Isso era um candidato óbvio para a Q-2, porque
+tráfego de subcomando no mesmo rádio é mecanismo plausível para queda de link
+do vizinho. **Desligar esse tráfego não mudou a taxa de queda do DualSense.**
+Logo esse candidato específico **sai** da lista de suspeitos da Q-2. GRAU:
+MEDIDO, com a ressalva de que o lado B tem **3h27m** e **uma** queda — é sinal
+fraco, e não fecha nada sozinho.
+
+**O que esta nota NÃO faz:** não responde a Q-2. O daemon continua segurando o
+hidraw físico pelo broker, continua reescrevendo o esconde a cada 30 s e
+continua escrevendo estado a 60 Hz — nada disso foi desligado, e a Q-2 mede
+justamente isso, com o produto **parado**. A nota tira **um** suspeito da lista;
+a noite sem o produto continua sendo o que decide.
+
+**Por que é a SEGUNDA.** Custa uma noite **sem o produto**. Se a Q-1 fechar em
+bateria, esta janela não precisa existir.
+
+**P0 — trancar.**
+
+1. Parar o `hefesto-dualsense4unix.service` (do usuário) **e** o
+   `hefesto-hidraw-broker.socket`. Sem o segundo, o broker sobe por ativação de
+   socket no primeiro acesso e a janela deixa de ser limpa — o `.service` está
+   `disabled` justamente porque quem o acorda é o `.socket`, que está `enabled`.
+   GRAU: MEDIDO.
+2. Parar também o `hefesto-bt-health-watchdog.timer`, pelo mesmo motivo da Q-1.
+3. **Destrancar no fim:** religar os três e conferir `active` em cada um. Se
+   algum não voltar, isso é o resultado mais importante da noite e vira sprint
+   sozinho.
+
+**ANTES.** A régua **não** é 18. É **9** — só as quedas de link, porque as de
+cabo e a do `bluetoothd` não têm nada com o daemon. Nove em sete dias dá **1,3
+por dia**. GRAU: MEDIDO.
+
+**Instrumento, e ele MUDA de lado para lado.** Com o daemon parado **não existe**
+`probe_offline`. A contagem passa a ser do **kernel**: cada volta registra uma
+instância nova de device Bluetooth, e o número final sobe sempre (`.000C`,
+`.000D`, `.0014`, `.001C`, `.001D`). GRAU: MEDIDO. Isso só é a mesma régua se o
+lado **com** daemon for contado do mesmo jeito. **Contar pelo kernel nos dois
+lados** — comparar `probe_offline` de um lado com registro de kernel do outro é o
+erro que inventa o resultado.
+
+**CONTRASTE.** A mesma duração de janela com o daemon **ligado**, no mesmo dia da
+semana e na mesma faixa de horário. Sem isso, *"não caiu"* pode ser só uma noite
+calma — e as quedas não são uniformes: 1, 1, 4, 3, 3, 3, 3 por dia. GRAU: MEDIDO.
+
+**PREVISÃO, derivada do código.** Se o daemon contribui, com ele parado a taxa de
+re-registro do kernel cai **para perto de zero** numa janela comparável. Se não
+contribui, fica na mesma faixa — cerca de uma por noite.
+
+**ELA.** Concorda com uma noite sem o produto, e usa o controle como sempre.
+**ASSISTENTE.** Executa o P0, conta pelo kernel nos dois lados, e religa tudo no
+fim conferindo o estado.
+
+**LEITURA.**
+
+| desfecho | leitura | consequência |
+|---|---|---|
+| zero re-registros sem o daemon, e 1 ou mais com ele, em janelas comparáveis | o daemon contribui | **vira sprint de defeito**, com faixa e causa; é o único caminho para isso |
+| a mesma faixa dos dois lados | o daemon não contribui | a Q-2 fecha REFUTADA e sai da fila para sempre |
+| zero dos dois lados | a janela não pegou o fenômeno | não concluir; repetir com janela maior ou esperar a Q-1 |
+| o controle cai **mais** sem o daemon | o daemon estabiliza | registrar; é achado, e muda a conversa sobre o broker |
+| algum serviço não volta no destrancar | defeito de ciclo de systemd | para tudo; o alvo passa a ser esse, e a regra da CURA-QUE-FERE-01 se aplica |
+
+---
+
+### Q-3. Quem reconecta — ela, ou o sistema? *(pega carona na Q-1)*
+
+**Pergunta.** A volta do controle é ela apertando o PS, ou algo do host acordando
+o aparelho?
+
+**O estado, conferido agora.** O daemon **não tem caminho** para acordar controle
+desligado: não há uma única chamada a `org.bluez` no código do daemon nem do
+core, e o `connect()` que alimenta o probe é um `hidapi.enumerate()` puro. GRAU:
+MEDIDO.
+
+**Mas o host tem um caminho, e ele precisa ser contado.** O
+`scripts/bt_health_watchdog.sh` **chama** `org.bluez.Device1.Connect()` — e só
+atrás do portão `Connected == true` (`scripts/bt_health_watchdog.sh:161`), isto é,
+com o ACL **já de pé**. GRAU: MEDIDO. Consequência exata: **não** é caminho para
+acordar controle desligado, mas **é** caminho para completar uma volta que o
+controle começou. Por isso ele é P0 na Q-1 — e por isso a Q-3 não pode ser
+respondida com ele solto.
+
+**O que se mede hoje, e não fecha.** Os tempos entre a queda e o próximo
+`controller_connected` vão de **20 s a 15h29m**, com mediana perto de 2 min. GRAU:
+MEDIDO. Que essa mediana seja *"o tempo de ela perceber e apertar o PS"* é GRAU:
+SUSPEITA COM MECANISMO — o daemon **não registra a origem da volta**, e o
+`ps_solo_released` só aparece com o controle **já** conectado, então o aperto que
+o acorda é invisível.
+
+**P0.** Nenhum além do da Q-1, com a qual esta compartilha a janela. O timer do
+watchdog **já** está parado ali, e é isso que torna a Q-3 respondível.
+
+**ANTES.** Anotar a hora do aviso dela e a hora do último `controller_connected`.
+
+**CONTRASTE.** Uma queda em que ela **não encosta no controle por 10 minutos**.
+Este é o passo inteiro: sem ele, "é ela" e "é o sistema" ficam colados.
+
+**PREVISÃO, derivada do código.** Com ela sem tocar e o watchdog parado, **nenhuma**
+volta acontece nesses 10 min — nenhum `BLUETOOTH HID` novo no kernel. Se aparecer
+uma, a explicação *"quem reconecta é ela"* está **refutada**, e o próximo alvo é
+descobrir quem chamou.
+
+**ELA.** Ao perceber a queda, **avisa e não toca** por 10 min cronometrados.
+**ASSISTENTE.** Observa o kernel na janela dos 10 min e registra o instante exato
+do primeiro `BLUETOOTH HID` depois dela apertar.
+
+**LEITURA.**
+
+| desfecho | leitura | consequência |
+|---|---|---|
+| nada em 10 min, e a volta só depois do aperto | é ela | a suspeita vira MEDIDA; e o registro da borda de subida com origem passa a valer a pena |
+| volta sozinho dentro dos 10 min, com o watchdog parado | não é ela | há um terceiro reconectando; achar quem é vira o alvo |
+| volta sozinho **e** o watchdog estava vivo | medição inválida | o P0 falhou; refazer |
+| ela não aguenta os 10 min | dado, não fracasso | anotar o tempo real esperado e repetir noutra queda |
+
+---
+
+## 5. O que falta de instrumento — e por que não virou entrega hoje
+
+Três buracos, todos **MEDIDOS como ausência**, todos baratos. Ficam aqui como
+**pendência**, não como entrega: a regra da casa é *não entregue mudança que ela
+não pediu*, e ela relatou sem pedir conserto.
+
+1. ~~**Nenhuma linha de bateria no journal.**~~ **ENTREGUE em 07/08/2026, 15h45
+   — ver a seção 8.** O texto original fica registrado porque é o diagnóstico
+   que gerou a entrega: *"`daemon/lifecycle.py:3744` e `:3825` publicam
+   `BATTERY_CHANGE` e incrementam `battery.change.emitted`, e nada loga. GRAU:
+   MEDIDO. É por isso que a hipótese mais forte deste documento não pode ser nem
+   fechada nem morta sem um amostrador externo."* O amostrador externo da Q-1
+   **continua valendo** — ele é a segunda leitura independente do mesmo nó, e
+   sobrevive a um reinício do daemon.
+2. **Um nome só para três fenômenos.** `daemon/connection.py:468` carimba
+   `probe_offline` em cabo que saiu, `bluetoothd` que morreu e link que se perdeu.
+   GRAU: MEDIDO. Separar os nomes é o que faria "três por dia" parar de parecer um
+   defeito único — e nenhuma leva futura teria de refazer a classificação da seção
+   1 à mão.
+3. **A borda de subida não registra a origem.** GRAU: MEDIDO (ausência). É a única
+   coisa que falta para a Q-3 fechar sem cronômetro.
+4. **Nada no produto avisa que o daemon vivo é mais velho que o código.** GRAU:
+   MEDIDO (ausência: `grep -n "ExecMainStartTimestamp" scripts/doctor.sh` devolve
+   zero linhas em 07/08). É a pré-condição da seção 8.1, e hoje ela depende de
+   alguém lembrar. O desenho está na **seção 9** — desenho, não entrega: mexe em
+   `scripts/doctor.sh`, que estava com outra leva em cima no dia em que isto foi
+   escrito, e a regra da casa é *não entregue mudança que ela não pediu*.
+
+---
+
+## 6. Notas de instrumento — as armadilhas desta medição
+
+- **O MEDIDOR PODE ESTAR INERTE — confira o relógio do processo ANTES da noite.**
+  O install é *editable*: cura de daemon escrita hoje só vale no **próximo
+  start**, e um daemon velho não escreve, não falha e não avisa. O diário da
+  bateria passou 5h49m no disco sem produzir uma linha, por isso. A pré-condição,
+  o comando que confere e a mordida medida estão na **seção 8.1**; a lição
+  genérica está em
+  [COMO-OLHAR-A-TELA.md](../COMO-OLHAR-A-TELA.md). Esta nota é a primeira da
+  lista de propósito: se ela falhar, **nenhuma** das outras importa. GRAU:
+  MEDIDO.
+- **`journalctl` sempre com data completa.** `--since "23:20"` sem data devolve
+  zero em todas as janelas, e zero em todas é sinal de instrumento quebrado, não
+  de ausência de defeito. GRAU: MEDIDO (custou uma medição inteira, registrado na
+  fila de 06/08). Combinado com a nota acima, é a armadilha em cascata: **duas
+  causas diferentes produzem o mesmo zero**, e o zero é o valor que uma noite
+  bem-sucedida também produziria se o controle não caísse.
+- **18 é piso.** Ver a seção 1. Quem repetir a contagem sem isto vai achar que
+  mediu quedas de controle e terá medido quedas do **último** controle.
+- **Endereços com a máscara da casa** — octetos 4 e 5 zerados — em **tudo** que for
+  para o repositório. Há portão, e há furo conhecido: a forma compacta de 12
+  dígitos corridos passa pelos dois portões (registrado na seção 6.4 da fila de
+  06/08). GRAU: MEDIDO. O `.tsv` do amostrador da Q-1 **não é versionável** como
+  está.
+- **O `upower` não é régua.** Quatro amostras para este controle, nenhuma no fim
+  da sessão. GRAU: MEDIDO.
+- **E o `upower` tem um SÓSIA — a armadilha nova de 07/08.** O gamepad virtual do
+  Hefesto tem `power_supply` próprio, sob um endereço forjado que começa em
+  `02:fe`, e o `upower` guarda o histórico dele **ao lado** do histórico do
+  controle de verdade, com o nome `DualSense Wireless Controller (Hefesto P1)`.
+  A carga dele **não é a do controle**: nenhum ponto do daemon chama
+  `forward_battery`, e o padrão do vpad, escrito na docstring do método
+  (`integrations/uhid_gamepad.py`), é anunciar carga fixa. GRAU: MEDIDO para o
+  nó existir e para a ausência de caller; SEM PROVA para o que produziu cada
+  amostra daquele arquivo. Consequência prática: **quem ler o `upower` sem
+  conferir o endereço pode medir o vpad e concluir "bateria no fim" com o
+  controle cheio.** O diário da seção 8 não cai nisto — ele lê o nó pelo
+  endereço do controle FÍSICO que o backend reporta.
+- **O `bluetoothctl` está mudo nesta máquina** — `show`, `list` e `devices`
+  devolvem vazio com saída 0 enquanto o D-Bus responde tudo. GRAU: MEDIDO para o
+  sintoma, SEM PROVA para a causa. Nenhum passo pode depender dele; usar `busctl`.
+- **`scripts/bt_active_mode.sh` não toca o DualSense** — só o Pro genuíno (OUI
+  `e0:f6:b5`). GRAU: MEDIDO. Ele não é suspeito destas quedas; entra no P0 apenas
+  porque o watchdog o chama junto com as vigias de bond.
+- **A suíte de testes suja o journal do sistema.** Se ela estiver rodando, a
+  contagem não vale.
+
+---
+
+## 7. O placar
+
+- **18** quedas por `probe_offline` entre 01/08 e 07/08 — **piso**, não total; pelo
+  kernel foram **26** (re)conexões Bluetooth de DualSense no mesmo período.
+- **8** são o cabo USB saindo. **1** é o `bluetoothd` morrendo. **9** são perda de
+  link com o kernel mudo.
+- **0** defeitos do Hefesto medidos na queda. O daemon **percebe** um segundo
+  depois do kernel.
+- **1** hipótese refutada e datada nesta página: o sono por inatividade.
+- **1** hipótese viva, com mecanismo e sem prova fechada: a bateria.
+- **3** medições nesta fila; **1** delas decide, e cabe numa noite.
+- **1** entrega de instrumento fechada no mesmo dia: o daemon grava a bateria
+  (seção 8). A Q-1 deixou de ser indecidível **por falta de instrumento**.
+- **1** suspeito da Q-2 riscado de graça em 07/08, 18h55: o storm de subcomando
+  de LED no Pro parou (348 recusas para **0**) e a taxa de queda do DualSense
+  **não** mudou (0,27/h para 0,29/h). MEDIDO, com janela curta — a nota datada
+  está na Q-2, e a medição inteira está no E-1 do protocolo dos externos.
+
+E a regra que este documento serve para lembrar: **hipótese tem de explicar o que
+JÁ funcionava**. Duas sessões de mais de quinze horas são exatamente isso — o que
+já funcionava — e é por elas que a explicação mais cômoda morreu.
+
+---
+
+## 8. O diário da bateria — entrega 1, fechada em 07/08/2026
+
+**O que mudou.** O daemon passou a escrever a carga no journal. Código em
+`src/hefesto_dualsense4unix/daemon/battery_journal.py`, fiado no tique lento do
+poll loop (`daemon/lifecycle.py`) e nas **duas** bordas de desconexão
+(`daemon/connection.py`, `probe_offline`; e o caminho de erro de leitura do
+próprio poll loop). Testes em `tests/unit/test_bateria_no_journal.py`.
+
+### 8.1 As duas réguas, sempre na mesma linha
+
+Regra da casa: todo instrumento declara contra o que mede. Cada amostra sai com
+`pct_kernel` (o nó `capacity` do `hid-playstation`, com o `status` irmão) e
+`pct_handle` (a leitura própria do handle da pydualsense, a mesma que alimenta a
+janela), mais `fonte=kernel|handle` dizendo qual das duas mandou na faixa. Se as
+duas discordarem em mais de um degrau, **o resultado é sobre o instrumento** — a
+nota de instrumento da Q-1 continua valendo palavra por palavra, e agora ela é
+verificável sem ninguém na cadeira.
+
+#### A terceira régua é o RELÓGIO — e sem ela as outras duas não existem
+
+**PRÉ-CONDIÇÃO DA MEDIÇÃO, e ela não é opcional: enquanto o daemon não
+reiniciar, esta medição NÃO MEDE NADA.** O `install.sh` deste projeto é
+*editable* — o `.pth` da venv aponta para o `src/` do repositório —, então **todo
+código de daemon escrito hoje só entra em vigor no PRÓXIMO start do processo**.
+Um daemon vivo mais velho que o `battery_journal.py` não escreve uma linha, não
+falha e não avisa: ele simplesmente não tem o diário dentro dele.
+
+E o modo como isso engana é o pior possível: **o resultado de uma noite inteira
+de medição é um journal vazio, e journal vazio é indistinguível de "não houve
+queda"**. Quem for ler amanhã lê zero e conclui "estável".
+
+Confira **antes** de deixar a noite correr, e de novo pela manhã:
+
+```bash
+# 1) desde quando o processo que está no ar existe
+systemctl --user show hefesto-dualsense4unix.service \
+  -p ExecMainStartTimestamp --value
+
+# 2) o diário está escrevendo? (a janela precisa começar DEPOIS do start acima)
+journalctl --user -u hefesto-dualsense4unix.service \
+  --since "2026-08-07 21:34:39" --no-pager | grep -c bateria_amostra
+```
+
+**Zero na linha 2 é instrumento morto, não ausência de defeito.** Se der zero
+com o controle conectado há mais de 30 s, a medição está inerte: o start da
+linha 1 é anterior ao código, e a noite vai render nada. A cura é o restart —
+que é **decisão dela**, porque derruba os handles de uma partida em curso.
+
+Duas armadilhas dentro da própria conferência, as duas MEDIDAS em 07/08:
+
+- **`journalctl` sempre com data completa.** `--since "21:34:39"` sem data
+  devolve zero em toda janela, e aqui zero é exatamente o valor que significa
+  "instrumento morto" — o comando quebrado imita o defeito que ele deveria
+  detectar. Ver a seção 6.
+- **A janela tem de começar depois do start**, não antes. Uma janela que
+  atravesse o restart mistura o daemon velho (mudo) com o novo (falante), e a
+  contagem passa a depender de quanto tempo cada metade durou.
+
+**A MORDIDA desta pré-condição — arrancada e verificada em 07/08/2026.** O
+`battery_journal.py` foi escrito às **16:06:07** (mtime do arquivo) e o daemon
+vivo naquele momento era o **PID 797312, no ar desde as 14h34** — anterior ao
+código. Contando na janela em que o código já estava no disco e o daemon ainda
+era o velho:
+
+```
+--since "2026-08-07 15:45:00" --until "2026-08-07 21:34:39"  ->  0
+```
+
+**Zero.** Cinco horas e quarenta e nove minutos com o arquivo no disco, 474
+linhas de código e 49 testes verdes, o controle dela conectado o tempo todo — e
+o diário não existia. Depois do restart das **21:34:39** (autorizado por ela),
+com o `ExecMainStartTimestamp` em `Fri 2026-08-07 21:34:39 -03` e o PID
+**3523225**, a primeira amostra saiu **35 segundos depois**:
+
+```
+2026-08-07T21:35:10.700811 [info] bateria_amostra borda=None
+  controle=14:3a:9a:00:00:ab faixa=70 fonte=kernel motivo=abertura
+  pct_handle=75 pct_kernel=75 status=Discharging
+2026-08-07T21:35:10.700992 [info] bateria_amostra borda=None
+  controle=a0:fa:9c:00:00:f0 faixa=90 fonte=kernel motivo=abertura
+  pct_handle=95 pct_kernel=95 status=Discharging
+```
+
+Os dois DualSense, faixa 70 e faixa 90, as duas réguas concordando degrau por
+degrau (`pct_handle` = `pct_kernel` nas duas linhas). E às **21:40:10** o diário
+já tinha pegado a primeira borda sozinho — `faixa=80 borda=queda motivo=faixa`
+no controle da faixa 90. GRAU: **MEDIDO** (journal desta máquina, endereços com
+a máscara da casa como a seção 8.4 exige).
+
+O mesmo comando, portanto, dá **0** e **2** sobre o mesmo código no disco, no
+mesmo dia, no mesmo controle. A única variável é o start do processo. É por isso
+que o relógio é régua.
+
+### 8.2 A cadência, e por que ela é esta
+
+| opção | o que dá | por que não |
+|---|---|---|
+| a cada tique (60 Hz) | ~5,2 milhões de linhas/dia | a bateria some no ruído do journal |
+| no `BATTERY_CHANGE` que já existe | ~17 mil linhas/dia | o debounce dispara a cada 5 s **mesmo sem mudança** |
+| só na queda | 1 linha por queda | **perde a CURVA**, que é o que decide entre bateria e link |
+
+O que ficou: **sonda a cada 30 s** e **linha só quando há o que dizer** —
+`abertura` (a primeira leitura de cada controle), `faixa` (mudou de faixa, com
+`borda=queda` ou `borda=subida`), `status` (o `status` do kernel mudou: é a
+borda do cabo entrando ou saindo) e `ancora` (a cada 30 min mesmo parado, para
+que *"curva reta"* não se confunda com *"o daemon parou de olhar"*).
+
+As faixas são de 10 pontos no alto e de **5 embaixo** — os limiares que a Q-1
+usa para decidir são 10% e 40%, e é embaixo que a curva decide. O
+`hid-playstation` reporta o DualSense em degraus de 10 deslocados de 5 (5, 15,
+25 … 95): com estas faixas **todo** degrau do hardware cruza uma fronteira, e
+nenhum se perde. GRAU: MEDIDO (valores lidos do nó desta máquina).
+
+Volume medido em teste para uma descida inteira de 16 h: **menos de 60 linhas**,
+contra as 1.920 sondas do mesmo período. O evento mais frequente do journal dela
+tem 14.105 ocorrências em 7 dias — o diário é ~0,3% disso.
+
+### 8.3 A linha da queda, e o que ela enxerga a mais
+
+`bateria_na_queda` sai com a última capacidade conhecida e com `idade_s` — e
+`idade_s=0.0` quer dizer que o nó do kernel **ainda estava vivo** no instante da
+queda e foi lido ali mesmo (é a linha da tabela de LEITURA da Q-1 sobre o nó
+sumir antes do daemon: agora ela se responde sozinha).
+
+E há um caso que o `probe_offline` **nunca** viu: um controle sumir com outros
+ainda de pé. O `is_connected()` é um `any()` sobre os handles — por isso "18
+quedas" é **piso**, não total (seção 1). O diário registra esse sumiço com
+`motivo=sumiu_do_backend`, por controle.
+
+Uma queda de verdade passa pelas **duas** bordas: primeiro o `poll_read_failed`
+(o poll loop perdendo a leitura), segundos depois o `probe_offline` (o probe
+confirmando). Só a primeira tem a carga — a segunda encontra o cache já
+consumido, e escreveria *"ninguém tinha medido"* logo abaixo da linha que acabou
+de dizer 5%. Por isso, uma segunda queda **sem leitura nenhuma** cala dentro de
+60 s. Quem contar quedas pelo diário deve contar por episódio, não por linha.
+
+### 8.4 O endereço não vai cru
+
+Toda linha sai com a **máscara da casa** (octetos 4 e 5 zerados), a mesma
+convenção que o portão do repositório cobra. O journal dela publica `uniq=` cru
+hoje em outros eventos; este não. O teste que garante isso usa o **regex do
+próprio portão** e uma fixture com OUI real desta bancada montada em tempo de
+execução — sem OUI real, o portão não reconheceria o endereço e o teste passaria
+vazio. Mordida verificada: com a máscara arrancada, quatro testes reprovaram
+apontando o endereço inteiro.
+
+### 8.5 Como ler
+
+```bash
+journalctl --user -u hefesto-dualsense4unix.service \
+  --since "2026-08-07 00:00:00" --no-pager | grep -E 'bateria_(amostra|na_queda)'
+```
+
+Contadores no `daemon.state_full`: `battery.journal.sample` e
+`battery.journal.drop`.
+
+### 8.6 O PRIMEIRO DADO REAL — 07/08/2026
+
+Ela relatou *"o dualsense está desligando"*, pôs para carregar, e a leitura
+mostrou **cinco por cento**.
+
+| hora (07/08) | o que foi medido | GRAU |
+|---|---|---|
+| 13:30:12 | `controller_disconnected reason=probe_offline` — fim da sessão de 16h24m | MEDIDO (journal) |
+| 14:34:48 → 14:37:12 | retomada de **2m24s**, e cai | MEDIDO (journal) |
+| 14:38:08 → 14:38:30 | retomada de **22s**, e cai | MEDIDO (journal) |
+| 15:22:11 → 15:22:59 | retomada de **48s**, e cai | MEDIDO (journal) |
+| 15:23:29 → 15:23:39 | retomada de **10s**, e cai | MEDIDO (journal) |
+| 15:23:59 | conecta e **fica** — segue conectado desde então, `transport=bt` | MEDIDO (journal) |
+| 15:32:47 | o nó `capacity` do DualSense dela: **5**; `status`: **Charging** | MEDIDO (leitura direta do sysfs) |
+
+Duas ressalvas de instrumento, para ninguém ler a tabela como mais do que ela é:
+
+- **A hora exata em que o cabo entrou NÃO foi medida.** O que está medido é que
+  às 15:32:47 o nó dizia `Charging`, e que a estabilidade voltou às 15:23:59.
+  Que uma coisa seja causa da outra é SUSPEITA COM MECANISMO, apoiada no relato
+  dela de ter posto para carregar.
+- **`transport=bt` com o `status=Charging`** é o que o journal diz, e não foi
+  investigado aqui. GRAU: MEDIDO para os dois valores; SEM PROVA para a
+  explicação.
+
+Ainda assim é a curva que a Q-1 previu: **sessão longuíssima seguida de
+retomadas cada vez mais curtas** — 2m24s, 22s, 48s, 10s —, e a estabilidade só
+voltando depois. A hipótese da bateria sai de SUSPEITA COM MECANISMO para
+**quase fechada**.
+
+**E não fecha aqui, de propósito.** Falta o CONTRASTE da Q-1: a sessão **(c1)**,
+com carga cheia, para separar *"acabou a carga"* de *"cai de qualquer jeito"*.
+Sem ela, este dia mostra um controle que caiu com a bateria no fim — e não prova
+que foi a bateria que o derrubou. A previsão que mata a hipótese continua de pé
+e agora é barata de verificar: **uma** queda com a amostra imediatamente
+anterior acima de 40% refuta a bateria como explicação das nove.
+
+O que este dia **já** entregou para a próxima noite: quem for ler não precisa
+mais do amostrador em `tee`, nem de ninguém acordado. O `bateria_na_queda` da
+próxima queda responde à pergunta sozinho.
+
+---
+
+## 9. O aviso que o PRODUTO devia dar — desenho, não entrega
+
+**Nome proposto para a sprint: `MEDIDOR-INERTE-01`.** Não implementado. A cura
+mora em `scripts/doctor.sh`, que tinha outra leva em cima no dia em que isto foi
+escrito, e a regra da casa é *não entregue mudança que ela não pediu*. O que
+segue é para quem for pegar.
+
+### 9.1 Por que isto é do produto, e não de um documento
+
+A seção 8.1 resolve o caso de quem **lê o protocolo antes de medir**. Não
+resolve o caso real: alguém instala o Hefesto, atualiza (`git pull` num clone
+editable, ou `pipx upgrade`), abre a janela e o produto se comporta como a
+versão antiga. **O Hefesto é produto — cura que só funciona na máquina dela não
+está pronta**, e conhecimento que só existe num `.md` de processo não chega a
+quem instalou.
+
+E a casa já foi mordida duas vezes pela mesma coisa, com custo medido:
+
+| quando | o que aconteceu | onde está registrado |
+|---|---|---|
+| **05-06/08/2026** | O daemon vivo era o **PID 1670, de 04/08 23:39:46**; as curas de perfil eram de 05/08 00:38:41. Ela trocava de perfil e a cor/gatilho/rumble não entravam — **o defeito JÁ CURADO no disco** —, e a sprint teve de abrir com um aviso em negrito de que nada dela estava rodando lá | [PERFIL-REESCRITO-NA-PARTIDA-01](../sprints/2026-08-05-PERFIL-REESCRITO-NA-PARTIDA-01-o-perfil-dela-era-reescrito-sozinho-no-meio-da-partida.md), linhas 43-47 e 540-541 |
+| **07/08/2026** | O diário da bateria passou **5h49m** inerte. Zero linhas. Ver a mordida na seção 8.1 | esta página |
+
+Nos dois casos o disco estava certo, os testes verdes, e **a mantenedora estava
+olhando para o produto de anteontem**. Em 05/08 ela perdeu tempo achando que a
+cura não funcionava; em 07/08 quase perdeu uma noite de medição.
+
+### 9.2 O mecanismo: dois relógios, exatamente como o `bluetoothd`
+
+O doctor já sabe fazer isto. A cura do
+[SELO-VERDE-CEDO-DEMAIS-01](../sprints/2026-08-06-SELO-VERDE-CEDO-DEMAIS-01-o-doctor-afirmava-o-que-so-valia-nesta-bancada.md)
+compara o `mtime` do `main.conf` com o `ActiveEnterTimestamp` do
+`bluetooth.service`: config mais nova que o start do daemon significa que o
+disco ainda não é o que o daemon carregou (`scripts/doctor.sh:1831-1867`). O
+aviso proposto aqui é **o mesmo desenho, com os dois relógios trocados**:
+
+```
+relógio A = ExecMainStartTimestamp de hefesto-dualsense4unix.service
+relógio B = mtime mais novo entre os *.py do pacote que o daemon importaria
+
+B > A  ->  [WARN] o daemon vivo é mais velho que o código instalado
+```
+
+Três diferenças em relação ao irmão do BlueZ, e as três são o trabalho de
+verdade:
+
+1. **`ExecMainStartTimestamp`, não `ActiveEnterTimestamp`.** O que interessa é o
+   relógio do **processo**, não o da unidade: com `Restart=`, o processo pode ter
+   trocado sem a unidade sair de `active`. GRAU: **SEM PROVA** de que os dois
+   divergem nesta máquina — em 07/08 os dois marcavam `Fri 2026-08-07 21:34:39
+   -03`, então esta bancada não distingue. O argumento é o contrato do systemd,
+   não uma medição; quem implementar **tem de morder isso na bancada** com
+   injeção, como o `HEFESTO_BT_ATIVO_DESDE` faz hoje.
+2. **O relógio B não é um arquivo, são 165.** O pacote tem 165 `.py` em 44
+   diretórios. O `stat -c %Y` do irmão não serve; é `find -newermt`.
+3. **Achar o pacote é parte do problema, e é a parte que faz isto ser produto.**
+   Não se pode assumir o `src/` do repositório: numa instalação por `.deb` ou
+   `pipx` o código mora em `site-packages`. O caminho honesto sai do **próprio
+   interpretador que a unidade executa**:
+
+```bash
+# o ExecStart aponta para o console-script; o shebang dele diz o interpretador
+_py="$(head -1 "$(command -v hefesto-dualsense4unix)" | sed 's|^#!||')"
+_pkg="$("${_py}" -c 'import importlib.util as u
+s = u.find_spec("hefesto_dualsense4unix")
+print(s.submodule_search_locations[0])' 2>/dev/null || true)"
+```
+
+`find_spec` **não executa** o `__init__` do pacote — resolve e devolve o
+caminho, sem efeito colateral. É de propósito: o doctor não pode importar o
+produto para diagnosticá-lo.
+
+### 9.3 As quatro armadilhas que este desenho tem de evitar
+
+Cada uma já custou em outro lugar. Quem implementar sem elas reescreve um
+defeito conhecido.
+
+1. **`date -d ""` devolve MEIA-NOITE DE HOJE, com `rc=0`.** É o *defeito 2* do
+   SELO-VERDE-CEDO-DEMAIS-01, e ele nasceu exatamente ao escrever esta mesma
+   comparação. Capturar a saída do `systemctl` **primeiro**, testar se está
+   vazia, e **calar** quando não houver relógio — serviço parado, mascarado,
+   container sem systemd. Sem essa guarda, toda máquina sem systemd acusa o
+   daemon de velho por qualquer arquivo tocado hoje.
+2. **`*.py`, nunca o diretório inteiro.** Há **18** `__pycache__` DENTRO do
+   pacote, e os `.pyc` são escritos **pelo próprio daemon**, no primeiro import
+   de cada módulo. Um deles, medido em 07/08, tem mtime **dois minutos depois**
+   do `.py` que o gerou. Um `find -newer` sem filtro veria import preguiçoso
+   posterior ao start e acusaria o daemon de ser mais velho que si mesmo, para
+   sempre. GRAU: MEDIDO para os `.pyc` existirem e para a defasagem; SUSPEITA
+   COM MECANISMO para o alarme falso — não o produzi.
+3. **Serviço parado não é serviço velho.** Se o `is-active` não diz `active`, a
+   comparação não se faz: o doctor já tem uma linha para serviço parado
+   (`scripts/doctor.sh:122-126`) e duas mensagens sobre o mesmo estado é ruído.
+4. **Mtime normalizado por empacotador.** Builds reproduzíveis carimbam mtime
+   fixo (`SOURCE_DATE_EPOCH`); o código instalado pareceria antiquíssimo e o
+   aviso **calaria**. GRAU: **SEM PROVA** — não medi nenhum empacotador deste
+   projeto. Fica registrado porque a **direção do erro é a boa**: falso silêncio,
+   nunca falso alarme. Um aviso que grita à toa é pior que um que não grita.
+
+### 9.4 O custo, medido
+
+Três chamadas por execução do doctor, cronometradas nesta máquina em 07/08
+(20 repetições cada, exceto o `find_spec`, 10):
+
+| chamada | custo |
+|---|---|
+| `systemctl --user show -p ExecMainStartTimestamp --value` | **3,1 ms** |
+| `find <pkg> -name '*.py' -newermt <start> -print -quit` | **10,7 ms** |
+| `find_spec` no interpretador da unidade | **11,9 ms** |
+| **total** | **~26 ms** |
+
+O `-print -quit` é o que segura o custo: ele para no **primeiro** arquivo mais
+novo, não varre os 165. Contra as **38** chamadas de `systemctl` que o doctor já
+faz em 4011 linhas, 26 ms é ruído. GRAU: MEDIDO.
+
+O custo caro não é o de execução — é o de **bancada**: o `systemctl` de mentira
+da bancada não tem relógio (foi por isso que o SELO-VERDE-CEDO-DEMAIS-01 precisou
+do `HEFESTO_BT_ATIVO_DESDE`), então este aviso precisa da mesma porta de injeção,
+com dois valores, e de uma árvore de mentira com `.py` e `__pycache__` para morder
+a armadilha 2. Estimativa: a bancada é maior que a cura. GRAU: SEM PROVA (não
+escrevi nem uma linha dela).
+
+### 9.5 O que este aviso NÃO pega
+
+Seja honesto ao implementar:
+
+- **não prova que o daemon carregou o que está no disco** — prova que o disco não
+  mudou depois do start. Um arquivo alterado e revertido no intervalo passa
+  limpo, e está certo;
+- **não distingue mudança que importa de mudança que não importa.** Numa árvore
+  de desenvolvimento com agentes editando `src/`, o aviso vai sair quase sempre —
+  e vai estar **certo** todas as vezes. Numa máquina de usuária, sai depois de
+  atualizar e some no restart seguinte, que é o comportamento desejado. Não tente
+  filtrar por "só os arquivos do daemon": a fronteira não existe, e a tentativa
+  troca um aviso barulhento e correto por um silencioso e errado;
+- **não age.** Ele nomeia o arquivo mais novo e o intervalo, e oferece
+  `systemctl --user restart hefesto-dualsense4unix.service`. **Reiniciar é
+  decisão dela** — derruba os handles de uma partida em curso, exatamente como o
+  restart do `bluetoothd` derruba os controles conectados. O doctor avisa; quem
+  reinicia é quem está na cadeira.
