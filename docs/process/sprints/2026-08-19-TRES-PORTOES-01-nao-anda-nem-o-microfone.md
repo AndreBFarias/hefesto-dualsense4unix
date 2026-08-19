@@ -765,6 +765,21 @@ implementar.
 
 ### 7.4 A prova de que isto não é opinião — a mordida do portão
 
+> **NOTA DATADA — 19/08/2026, à tarde.** A primeira saída desta seção **não se
+> reproduz mais**, e a razão é boa: os dois degraus ENTRARAM no domínio na
+> mesma tarde, e `scripts/check_paridade_transporte.ESCADA` passou a ser o dono
+> único do vocabulário (o `bancada.py` importa de lá; antes tinha a própria
+> cópia, e era por isso que o portão podia aceitar um degrau que o formulário
+> não oferecia).
+>
+> A medição abaixo **fica** porque explica por que a célula ficou em `MONTOU`
+> naquele dia, e porque é ela que sustenta o desenho do que veio depois: hoje o
+> portão exige ensaio no caderno para os dois degraus novos, igual aos de saída,
+> e `O JOGO REAGIU` só fecha com `observado_por = olho-dela` — não existe régua
+> nesta casa que leia o estado interno de um jogo sob Proton.
+>
+> A segunda saída (a do `grau-sem-ensaio`) continua valendo palavra por palavra.
+
 Não basta afirmar que o degrau novo não cabe: dá para **ver o portão recusar**.
 Escrevi `O JOGO RECEBEU` na linha `plataforma.vpad@dualsense` e rodei
 `scripts/check_paridade_transporte.py`. Saída literal:
