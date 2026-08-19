@@ -267,7 +267,9 @@ chute contamina tudo o que vier depois.
       (Passo 1). Liste tudo que é escrito para aquele elemento: bits de
       autorização, bytes de valor, e quem mais escreve no mesmo lugar.
 - [ ] **A3.** **Que grau esta feature tem hoje?** Se está em `MONTOU`, ninguém
-      provou que o aparelho obedece — e essa é a pergunta, não um detalhe.
+      provou que o aparelho obedece — e essa é a pergunta, não um detalhe. E se
+      a feature é da direção de ENTRADA (o jogo lendo o nosso vpad), o grau mais
+      alto da ida não diz nada sobre ela: pergunte pelos degraus da volta.
 
 ### B — Provar que a peça responde
 
@@ -365,7 +367,10 @@ chute contamina tudo o que vier depois.
 - [ ] **F2. O teste que MORDE** (Passo 8), arrancado **de verdade** do arquivo
       de produção, visto reprovar, devolvido.
 - [ ] **F3. O grau, e ele é honesto por construção:** `MONTOU` → `SAIU NO FIO` →
-      `O APARELHO OBEDECEU`. Só o olho dela sustenta o terceiro.
+      `O APARELHO OBEDECEU` → `O JOGO RECEBEU` → `O JOGO REAGIU`. Só o olho dela
+      sustenta o terceiro e o quinto; o quarto um instrumento vê, se declarar
+      qual régua usou. A escada inteira, com o critério de cada degrau, está na
+      seção *A escada de `ate_onde_foi`*.
 - [ ] **F4. A PODA** (Passo 7): o que foi inocentado pode parar de ser acionado.
 - [ ] **F5. A pergunta que ela faz e que fecha o assunto:** *"o elemento
       específico que faz ele funcionar de fato está isolado?"* Funcionar **não
@@ -858,13 +863,118 @@ As `A-13` a `A-25` são de 12 e 13/08, e a maioria também é erro meu:
 
 | coluna | o que é |
 |---|---|
-| `grau` | **MONTOU** (montou o report) → **SAIU NO FIO** (o byte saiu, algo voltou) → **O APARELHO OBEDECEU** (acendeu, girou, saiu som) |
-| `provado_por` | `ci` / `bancada` / `olho-dela` — só `olho-dela` sustenta *O APARELHO OBEDECEU* |
+| `ate_onde_foi` | **a escada**, definida na seção seguinte. Cinco degraus, duas direções |
+| `provado_por` | `ci` / `bancada` / `olho-dela` — só `olho-dela` sustenta *O APARELHO OBEDECEU* e *O JOGO REAGIU* |
 | `provado_em` | a data. Sem ela a prova não vence nunca, e prova que não vence vira mito |
 | `teste_que_morde` | o nó do pytest que reprova se aquilo quebrar |
 | `mordida_provada_em` | quando alguém **de fato** arrancou a cura e viu reprovar |
 
 Tratar **MONTOU** como **funciona** é a mentira mais cara desta casa.
+
+> A coluna se chamava `grau` até 15/08/2026 (D-13, decisão dela). O nome velho
+> não é aceito em lugar nenhum: quem o escrever leva `integridade` do portão.
+
+---
+
+## A escada de `ate_onde_foi` — cinco degraus, duas direções
+
+**Esta seção é a definição.** O vocabulário executável mora num lugar só —
+`scripts/check_paridade_transporte.py`, a tupla `ESCADA` — e é de lá que o
+domínio do portão e a legenda do `specs.html` saem. Ninguém redigita a lista:
+até 19/08/2026 o portão tinha os degraus num `frozenset` e o gerador os tinha
+escritos à mão na legenda, duas listas do mesmo vocabulário.
+
+### Os três degraus da IDA — produto → aparelho
+
+```
+MONTOU  →  SAIU NO FIO  →  O APARELHO OBEDECEU
+```
+
+| degrau | o critério, e é isto que se tem de OBSERVAR | quem fecha |
+|---|---|---|
+| `MONTOU` | o byte existe na memória do produto e a suíte o lê. **Nada saiu do processo.** | a suíte, sem aparelho |
+| `SAIU NO FIO` | a escrita no nó do transporte não errou e houve resposta do outro lado. Diz que o canal está aberto — **não** diz que o aparelho fez coisa alguma com o que recebeu | a bancada, com o aparelho na mão |
+| `O APARELHO OBEDECEU` | alguém **viu** o aparelho fazer o que foi pedido, e gravou o ensaio no caderno com `observado_por = olho-dela` | a mão dela |
+
+### Os dois degraus da VOLTA — aparelho → vpad → JOGO (19/08/2026)
+
+```
+…  →  O JOGO RECEBEU  →  O JOGO REAGIU
+```
+
+**Por que eles faltavam, e o que isso custou.** Os três degraus de cima são
+**todos** da direção de saída, e dá para conferir no dado: `O APARELHO OBEDECEU`
+só aparece em linha de saída — alto-falante, rumble, gatilho adaptativo,
+lightbar. A volta não tinha uma palavra, e o mapa **admitia o buraco por
+escrito**, em duas linhas suas:
+
+- `toque.touchpad`: *"quem ler `radio_aciona = sim` aqui está lendo 'o vpad
+  ENTREGA', não 'o jogo REAGE'"*;
+- `movimento.giroscopio.jogo`: *"o repasse está íntegro e o jogo não reage: a
+  falha, se existir, é DEPOIS do vpad, e ninguém a localizou"*.
+
+Enquanto isso, o mapa inteiro podia ficar verde **enquanto ela não conseguia
+jogar** — porque nenhuma célula falava do jogo. O desenho dos dois degraus é o
+da `sprints/2026-08-19-TRES-PORTOES-01-nao-anda-nem-o-microfone.md`, §7.
+
+| degrau | o critério | quem fecha |
+|---|---|---|
+| `O JOGO RECEBEU` | o **inode** do nó do nosso vpad aparece em `/proc/<pid>/fd` de um processo da árvore do jogo | um instrumento, de fora |
+| `O JOGO REAGIU` | o personagem andou, o gatilho endureceu **dentro** do jogo, o grito entrou | **a mão dela, e mais ninguém** |
+
+#### O critério de `O JOGO RECEBEU`, com as quatro armadilhas já medidas
+
+Este degrau é observável **sem a pessoa**, e é isso que o separa do de cima.
+Quatro coisas já foram medidas nesta casa, e todas as quatro derrubam a leitura
+ingênua:
+
+1. **A árvore de processos do contêiner do jogo é visível do hospedeiro.** Não é
+   preciso entrar em lugar nenhum para enxergar quem abriu o quê.
+2. **Quem segura o vpad é o `winedevice`, não o `.exe`.** Procurar pelo nome do
+   jogo devolve "ninguém abriu" com o jogo lendo o controle na sua frente.
+3. **Identidade de nó é o INODE** (`stat -c %i`), **nunca o caminho.** O minor é
+   reciclado: `event22` foi vpad DualSense às 01:40 e vpad Xbox às 01:50. Casar
+   por caminho é casar com o número de um nó que já morreu.
+4. **Nunca o carimbo de tempo do fd.** Ele marca quando alguém **olhou**, não
+   quando abriu, e fica cacheado — medido: dois fds do **mesmo** nó com carimbos
+   separados por 1m36s.
+
+E os dois instrumentos que a casa já tem **mentem exatamente no cenário que
+interessa**, o que quer dizer que nenhum dos dois fecha este degrau como está:
+
+- `scripts/ensaios/quem_o_jogo_abre.py` conta **handle morto** como fd vivo;
+- a sonda de "quem segura o nó" do produto varre **só os PIDs da Steam** — e o
+  `winedevice` não está lá.
+
+Quem for fechar `O JOGO RECEBEU` tem de dizer, no ensaio, **qual régua usou** e
+como ela escapa dessas quatro. Um instrumento que não declara isso é o defeito
+mais caro deste projeto repetido: *o instrumento mente mais que o produto*.
+
+#### O critério de `O JOGO REAGIU`, e por que só a mão dela o fecha
+
+**Não existe instrumento.** Nenhuma régua desta casa lê o estado interno de um
+jogo Unreal sob Proton, e nenhuma vai ler. O único sensor deste degrau é ela.
+
+É por isso que o gesto **`PS + R3`** não é conveniência de interface: ele é **o
+instrumento de medida** deste degrau. Ele mede sem tirar a mão do controle (um
+instrumento que exige Alt+Tab destrói o que mede), custa uma vez por jogo, e o
+que fica gravado no perfil não é o que o produto **pediu** e sim o que
+**funcionou** — que é a mesma diferença entre `MONTOU` e `O APARELHO OBEDECEU`,
+aplicada ao jogo.
+
+O portão cobra isso, e cobra **duro**: `reagiu-sem-olho-dela` é FALHA desde o
+primeiro dia, ao contrário da regra irmã `grau-sem-olho-dela`, que avisa. A
+diferença é **legado, não princípio** — a regra da lightbar nasceu com células
+já escritas por outra régua, e esta nasceu com zero.
+
+### O que NÃO foi feito nesta leva, de propósito
+
+**Nenhuma célula do CSV foi preenchida com os dois degraus novos.** `◌ ninguém
+respondeu` é verdade; preencher por analogia destrói o valor do arquivo. Nada
+do que a onda de 19/08 construiu — o aviso na lightbar por modo, o gesto
+`PS + R3`, a ponte confirmada por jogo — foi visto em **hardware**: foi tudo
+dublê. O grau tem de refletir isso, e reflete: o censo do portão imprime
+`desses, na direção de ENTRADA (o jogo)` e o número de hoje é **zero**.
 
 ---
 

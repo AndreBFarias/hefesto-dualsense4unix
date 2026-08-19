@@ -406,6 +406,28 @@ usa** `busctl` e tem `_dbus_device_prop`) em vez de ao binário obsoleto. Ou, ma
 barato ainda e honesto, rebaixar o texto do conselho para condicional enquanto a
 fonte for o `sdptool`.
 
+**FECHADO em 19/08/2026 (MIGRACAO-BLUEZ-DEPRECIADOS-01), e com uma correção ao
+que está escrito acima.** A cura barata sugerida — "perguntar ao BlueZ pelo
+D-Bus" — **não existe** para esta pergunta: browse SDP sob demanda num device
+não tem equivalente vivo. O `bluetoothctl` devolve os UUIDs do **cache**, que é
+justamente o que acabou de falhar, e o `btmgmt find-service` é varredura por
+UUID no ar, não pergunta a um aparelho já conectado (conferido nos `--help` dos
+dois, bluez 5.86, 19/08/2026). Então o que entrou foi a segunda opção, e um
+terceiro ramo que o censo não tinha visto: o `else` daquele `if` escrevia *"o
+device responde ao browse direto"* **também quando o `sdptool` não estava
+instalado** — ou seja, afirmava saúde sem ter perguntado nada. Isso vale para
+qualquer distribuição que já tenha movido as três para `bluez-deprecated` /
+`bluez-deprecated-tools`; nesta máquina elas ainda estão, e por isso o defeito
+não aparecia aqui. Agora são três ramos, e o terceiro **diz que não sabe**.
+
+Na mesma leva, as outras chamadas às três depreciadas nos scripts de
+diagnóstico passaram a ter fonte viva primeiro (sysfs do kernel e D-Bus do
+BlueZ para *"qual é o adaptador"* e *"quem está conectado"*), depreciada como
+plano B — e, nas três perguntas **sem sucessor vivo** (contadores RX/TX errors,
+link policy do adaptador e da conexão, browse SDP), o diagnóstico passou a
+dizer que não sabe em vez de sumir da saída. Trava:
+`tests/unit/test_migracao_bluez_depreciados.py`.
+
 ---
 
 ### A-7 — 163 citações de linha que nenhum portão consegue conferir
