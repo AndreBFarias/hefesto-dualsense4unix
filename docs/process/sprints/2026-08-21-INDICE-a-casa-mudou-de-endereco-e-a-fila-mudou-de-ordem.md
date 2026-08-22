@@ -261,5 +261,18 @@ mudança de código.
 de hardware anda enquanto o hardware não está na mesa. O que depende espera — e
 esperar não é ficar parado, é fazer a outra fila.
 
+### Fora da fila da aba, e esperando decisão dela
+
+[**IDENTIDADE-01**](2026-08-21-IDENTIDADE-01-o-projeto-ainda-se-chama-pelo-nome-dele.md)
+— o repositório mudou de dono e o **aplicativo** não foi junto: ele ainda se
+chama `br.andrefarias.Hefesto`, em 46 arquivos. A Fase 1 (os endereços que
+apontavam para a conta pessoal) **já foi executada em 21/08**. As Fases 2 e 3
+esperam uma decisão dela: **qual é o app-id novo**. Trocar por um e depois por
+outro paga a migração duas vezes.
+
+Não é `sed`: o app-id é a identidade do aplicativo para o sistema. Um id novo é
+um **aplicativo diferente** para o flatpak, e sem a fase de migração quem já
+usava perde os perfis.
+
 O que **não** entra nesta ordem, e é decisão dela quando entrar: o microfone da
 TRES-PORTOES-01, e as duas medidas de janela da JANELA-CORTADA-01.
