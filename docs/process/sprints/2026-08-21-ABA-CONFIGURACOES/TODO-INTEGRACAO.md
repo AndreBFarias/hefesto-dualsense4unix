@@ -63,10 +63,12 @@ Nenhuma bloqueia a leva; todas melhoram o que a aba consegue afirmar.
 6. **O RGB de cada nome de cor.** O aparelho entrega `05`, a tabela entrega
    *Starlight Blue*, e ninguém entrega um tom. É pergunta aberta da própria
    `ONDE-A-COR-MORA-01`, e a borda dos cards depende dela.
-7. **O conflito do jogador 4.** Ele é rosa na paleta de lightbar
-   (`core/led_control.py:146`), e rosa é reservado para marca e aba ativa. Ou a
-   paleta de identidade da interface é uma remapeagem da paleta de hardware, ou o
-   jogador 4 vira exceção escrita.
+7. **O conflito do jogador 4 — DECIDIDO em 21/08.** Ele é rosa
+   `(255, 0, 128)` na paleta de lightbar (`core/led_control.py:146`), e rosa é a
+   cor da marca e da aba ativa. **A paleta da interface passa a ser remapeagem
+   da de hardware**, não cópia: a tela deriva os tons de identidade sem herdar a
+   colisão. O hardware não muda — as cores que ela já viu na bancada continuam
+   as mesmas.
 
 ## A dívida que a aba não pode aumentar
 

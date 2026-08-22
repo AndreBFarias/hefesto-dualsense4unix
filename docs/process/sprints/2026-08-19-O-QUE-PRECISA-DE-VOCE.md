@@ -46,7 +46,11 @@ sozinha. Se alguma não servir, é trocar uma linha.
 
 ---
 
-## 4. Decisão: o «Parar» dentro do Modo Nativo
+## 4. ~~Decisão: o «Parar» dentro do Modo Nativo~~ — DECIDIDO em 20/08
+
+**Recusar, igual aos outros dois.** Curado em `d614d04` e `d1dd9dc`: o daemon
+recusa e diz por quê. Fechado.
+
 
 Medi que `(0,0)` **não** é `None`, e por isso o «Parar» desarmava a cura que
 impede o controle de sair vibrando — a porta mais traiçoeira das três, porque
@@ -62,7 +66,15 @@ alternativa é **recusar igual aos outros dois**.
   que um par fixado ANTES do modo continua armado apesar de você ter pedido
   silêncio.
 
-## 5. Decisão: ligar a allowlist do Steam Input sozinho, em quais jogos?
+## 5. Decisão: ligar a allowlist do Steam Input sozinho, em quais jogos? — DECIDIDO em 21/08
+
+**Só quando a escada pedir.** É o mais lento e o que não surpreende: a escada
+descobre a necessidade com o jogo aberto, e a allowlist só se escreve com a
+Steam fechada — então vale da próxima abertura. Descarta ligar nos 63, que
+faria o Steam Input espelhar em Xbox cada controle que vê, o nosso vpad
+incluído. Falta o chamador: `ligar_no_texto` segue sem quem a chame fora do
+próprio módulo.
+
 
 O produto **sabe** ligar (`ligar_no_texto`, testada) e **nunca liga** — mais um
 caso de cura escrita e nunca chamada. Liguei nos quatro à mão hoje.
@@ -76,7 +88,10 @@ Para virar automático no install, falta você dizer em quais:
   descobre que precisa com o jogo aberto, e a allowlist só se escreve com a
   Steam fechada. Na prática vira "da próxima vez que você abrir".
 
-## 6. Confirmação: "abrir mão de outras distros"
+## 6. Confirmação: "abrir mão de outras distros" — CONFIRMADO em 21/08
+
+**Era parar de investir, não arrancar.** Fedora e Arch ficam e seguem no CI.
+
 
 Você disse *"vamos abrir mão de outras distros. só cósmic e gnome por hora"*.
 Li de forma conservadora: **parei de investir** em Fedora e Arch, mas **não
@@ -85,7 +100,7 @@ job do Arch que revelou o travamento do install que atingia qualquer distro.
 
 Se a intenção era arrancar, eu arranco. Se era só parar de investir, está feito.
 
-## 7. O PR #114 continua aberto no repo dele
+## 7. ~~O PR #114~~ — MERGED
 
 Dezessete commits mais tudo de hoje. Os portões passam. Falta a palavra dele —
 ou a sua, se você quiser que eu peça.
