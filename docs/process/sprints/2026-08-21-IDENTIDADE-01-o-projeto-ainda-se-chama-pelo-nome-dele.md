@@ -88,14 +88,27 @@ nenhuma é obviamente melhor:
 Enquanto ela não escolher, **nada nesta sprint começa** — trocar por um id e
 depois por outro é pagar a migração duas vezes.
 
-### Inclinação registrada em 21/08/2026 — e NÃO é decisão fechada
+### DECIDIDO em 21/08/2026 — `io.github.hefesto_team.hefesto_dualsense4unix`
 
-Dela, textual: *"por mim fechava nesse [`io.github.HefestoTeam.Hefesto`]. mas
-vamos aguardar"*.
+**A decisão está fechada e a sprint está liberada para executar.**
 
-Fica registrado como **inclinação**, não como decisão: ela pediu para aguardar,
-e a sprint continua parada. Está aqui para que a próxima sessão não reabra a
-discussão do zero nem execute achando que foi fechado.
+O caminho até ela, porque as duas primeiras formas eram armadilha: a inclinação
+inicial dela foi `io.github.HefestoTeam.Hefesto`, e depois `Hefesto_Team`. As
+duas reprovam — a conferência está logo abaixo. A forma escolhida é a única das
+três que passa em todos os critérios sem exigir mexer em mais nada.
+
+Conferida componente a componente contra a regra publicada:
+
+| Critério | Resultado |
+|---|---|
+| Componentes | 4 (o Flathub exige ao menos 4 para `io.github.*`, e no máximo 5) |
+| Cada componente casa `[A-Za-z_][A-Za-z0-9_]*` | os quatro passam |
+| Porção de domínio em minúsculas | `io.github.hefesto_team` — sim |
+| Hífen convertido em `_`, não removido | `Hefesto-Team` -> `hefesto_team` |
+| Mapeia para repositório existente | `github.com/hefesto-team/hefesto-dualsense4unix` — **existe** |
+
+**O preço aceito:** o id fica amarrado ao nome atual do repositório. Renomear o
+repositório um dia obriga a repetir esta migração inteira.
 
 **E há um detalhe técnico que precisa entrar antes de fechar:** o nome da
 organização é `Hefesto-Team`, **com hífen** — e hífen **não é válido** num
