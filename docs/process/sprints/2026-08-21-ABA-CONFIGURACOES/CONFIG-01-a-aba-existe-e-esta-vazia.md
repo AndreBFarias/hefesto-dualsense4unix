@@ -18,9 +18,9 @@ custam caro se vierem depois do conteúdo pronto.
 
 | Arquivo | O quê |
 |---|---|
-| `src/hefesto_dualsense4unix/gui/main.glade` | Página nova no `GtkNotebook id="main_notebook"` (linha 212), depois da última `<child type="tab">`. A página é um `GtkBox` vazio, `spacing=12`, `margin=12` — igual ao molde da Início (`:219-222`) |
+| `src/hefesto_dualsense4unix/gui/main.glade` | Página nova no `GtkNotebook id="main_notebook"` (abre em `:218`), depois da última `<child type="tab">`. A página copia o molde da Início (`:234-247`): um `GtkScrolledWindow` próprio em volta de um `GtkBox` vazio com `spacing=12` e `margin=12` — e o `id` no box interno **não é opcional** |
 | **A CRIAR** — src/hefesto_dualsense4unix/app/actions/config_actions.py | `ConfigActionsMixin` com `install_config_tab()`. Molde verificado: `home_actions.py` |
-| `src/hefesto_dualsense4unix/app/app.py` | Importar o mixin (bloco de imports, linhas 29-42) e chamar `install_config_tab()` no bloco de `install_*` do `show()` |
+| `src/hefesto_dualsense4unix/app/app.py` | TRÊS edições: importar o mixin (bloco de imports, `:29-42`), acrescentá-lo às bases de `class HefestoApp` (`:155-167`) e chamar `install_config_tab()` nos **dois** blocos de `install_*` — o do `show()` e o do `run()` com `start_hidden` |
 
 > **Confira as linhas antes de editar.** Os relatórios de reconhecimento
 > divergiram em ±1 nas linhas dos `<child type="tab">` (243/244, 657/658, …).
@@ -30,8 +30,9 @@ custam caro se vierem depois do conteúdo pronto.
 
 1. **Largura é o recurso escasso, não a altura.** A janela nasce com 1180px e a
    rolagem horizontal é `NEVER` — o mínimo da página mais larga vira o mínimo da
-   janela. A aba mais larga hoje é Lightbar, com 1110px. **Teto para a aba nova:
-   ~1166px de largura mínima.**
+   janela. A aba mais larga hoje é Lightbar, com 1138px. **Teto para a aba nova:
+   1180px de largura mínima**, que é a largura com que a janela abre; o teto de
+   altura por aba é 657px.
 2. **Nada de `homogeneous` em caixa com rótulo longo.** Já custou caro: uma
    fileira de quatro botões do Rumble respondeu por 1004 dos 1066px de largura
    mínima da janela.
@@ -44,12 +45,14 @@ custam caro se vierem depois do conteúdo pronto.
    não pode derrubar a janela.
 5. **Todo rótulo explicativo:** `set_xalign(0.0)` + `set_line_wrap(True)` +
    `set_max_width_chars(84..100)` + `dim-label`.
-6. **Cor:** só as 26 oficiais, escritas como `@token` — nunca hex solto. Rosa é
-   só marca e aba ativa. Aviso de rádio congestionado é **amarelo** (alerta
-   reversível), não vermelho.
+6. **Cor:** só os 20 tokens de `theme.css:21-54`, escritos como `@token` — nunca
+   hex solto. Rosa é só marca e aba ativa. Aviso de rádio congestionado é
+   **amarelo** (alerta reversível), não vermelho.
 7. **Texto:** `translatable="yes"` no Glade, `_("...")` no Python. Rótulo pela
-   consequência, não pela tecnologia — jargão banido inclui "daemon",
-   "systemd", "uinput", "JSON", "polling", "throttle".
+   consequência, não pela tecnologia — a lista viva de jargão banido é a
+   `JARGAO_BANIDO` de `scripts/validar-palavra-de-tela.py:85`, e o portão
+   também recusa palavra como "daemon", "systemd", "uinput", "JSON",
+   "polling" e "throttle".
 
 ## Prova de trabalho
 
@@ -67,8 +70,13 @@ GDK_PIXBUF_MODULE_FILE=/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders.c
 
 **Aceite:**
 
-- As onze abas fotografam sem erro, e as dez antigas saem **idênticas** às de
-  hoje (diff de PNG contra `docs/usage/assets/`).
+- As onze abas fotografam sem erro, e as dez antigas mudam **só no retângulo do
+  rótulo novo**. O "idênticas" que estava escrito aqui não era alcançável: a
+  tira de abas aparece em TODAS as fotos, então um rótulo a mais muda todos os
+  onze arquivos por construção. Medido em 21/08/2026, comparando pixel a pixel
+  contra uma captura do commit anterior: a diferença cabe em `x 994..1106`,
+  `y 19..32` — exatamente onde "Configurações" é desenhado — e mais nada se
+  move em nenhuma das dez.
 - A tira de abas não ganha rolagem horizontal em 1180px de largura.
 - A largura mínima da janela não sobe: `Gtk.Window.get_preferred_width()` antes e
   depois dá o mesmo número.
