@@ -1,14 +1,16 @@
-# ÍNDICE — a casa mudou de endereço, e o rádio é a próxima parada
+# ÍNDICE — a casa mudou de endereço, e a fila mudou de ordem
 
 **21/08/2026.** Este é o índice aberto mais recente: o que o `CLAUDE.md` manda
 ler antes de começar qualquer coisa. Substitui, como ponto de entrada, o
 [ÍNDICE da bancada de oito horas](2026-08-16-INDICE-a-bancada-de-oito-horas.md),
 que continua valendo para o que ele mediu — não foi apagado, foi ultrapassado.
 
-O dia teve duas metades. A primeira foi infraestrutura: o repositório saiu de uma
+O dia teve três partes. A primeira foi infraestrutura: o repositório saiu de uma
 conta pessoal, o histórico foi reescrito, o CI voltou ao verde e a 0.9.4.5 foi
 republicada contendo o que faltava. A segunda chegou de fora: o desenho da
-décima primeira aba, com nove sprints prontas para executar.
+décima primeira aba, com nove sprints prontas para executar. A terceira foi uma
+decisão revista — a fila começa pela aba, não pela bancada, porque o hardware
+da bancada chega amanhã.
 
 ---
 
@@ -24,15 +26,42 @@ Três coisas mudaram e afetam **todo** trabalho a partir de agora:
    cofre de literais em `~/.config/git/segredos-literais`. Se você trocar a senha
    da máquina, troque lá também.
 
-E a próxima parada de bancada está na seção 2, não na 3.
+E a ordem de execução está na seção 2 — ela mudou no meio do dia, e o
+motivo está escrito lá.
 
 ---
 
-## 2. A PRÓXIMA PARADA — a medição do rádio, para parear o BT em definitivo
+## 2. A ORDEM, decidida por ela em 21/08 — e por que ela mudou no meio do dia
 
-Decisão dela, 21/08: *"vamos focar na parte da medição do specs pra parearmos o
-bt em definitivo"*. Esta seção existe porque a régua já está construída e o
-resultado dela hoje é **zero**.
+A primeira decisão foi a bancada de rádio primeiro. **Ela reviu, e a revisão
+está certa:** o hardware que a bancada exige — os cabos e três adaptadores
+Bluetooth novos — **chega amanhã, 22/08**. Começar por ali seria parar o dia
+esperando entrega.
+
+A ordem passou a ser:
+
+| Quando | O quê | Por quê |
+|---|---|---|
+| **Agora** | `CONFIG-01` — a aba nasce, com placeholders | Não toca em hardware nenhum. É o portão que bloqueia as outras oito |
+| **Amanhã**, com o hardware na mesa | Montagem da sala pelo `GUIA-RADIO-DA-SALA.md`, e a bancada da seção 2.1 | É o que produz a matéria-prima que falta ao mapa |
+| Depois | `CONFIG-02`, que consome a leitura de rádio | Só então a aba pode declarar o que foi medido |
+
+**A decisão dela, textual:** *"talvez o certo seja começarmos a sprint order
+através da criação dessa nova aba mesmo que com os botões mockados, com
+placeholders e afins"*.
+
+Isso encaixa com o desenho que já veio pronto: `CONFIG-01` entrega exatamente a
+aba vazia, com as cinco seções só como títulos e a fita de alvo esmaecida. Os
+botões mockados são o passo natural em cima dela — desenho na tela antes de
+haver o que medir por trás, e nenhuma promessa de número enquanto o número não
+existir.
+
+---
+
+## 2.1. A bancada de rádio — amanhã, quando o hardware chegar
+
+Esta seção existe porque a régua já está construída e o resultado dela hoje é
+**zero**.
 
 ### O que já existe
 
@@ -219,12 +248,18 @@ mudança de código.
 
 ## 7. Ordem de execução, daqui para frente
 
-1. **A bancada de rádio da seção 2** — é o que ela decidiu, e destrava a coluna
-   de rádio do mapa de canais.
-2. **CONFIG-01**, o portão da aba nova. Pequeno (~330 a 420 linhas) e bloqueia
-   as outras oito.
+1. **CONFIG-01**, o portão da aba nova, com placeholders. Pequeno (~330 a 420
+   linhas), não toca em hardware, e bloqueia as outras oito. **É o que começa
+   agora.**
+2. **A bancada de rádio da seção 2.1**, amanhã, quando os cabos e os três
+   adaptadores chegarem. Destrava a coluna de rádio do mapa de canais.
 3. **CONFIG-02**, que consome a leitura de rádio que a bancada tiver produzido.
+   Antes da bancada ela nasceria declarando o que ninguém mediu.
 4. O resto da ordem da seção 3, com `CONFIG-08` sempre por último.
+
+**A regra que decide empate, e vale para os próximos dias:** o que não depende
+de hardware anda enquanto o hardware não está na mesa. O que depende espera — e
+esperar não é ficar parado, é fazer a outra fila.
 
 O que **não** entra nesta ordem, e é decisão dela quando entrar: o microfone da
 TRES-PORTOES-01, e as duas medidas de janela da JANELA-CORTADA-01.
