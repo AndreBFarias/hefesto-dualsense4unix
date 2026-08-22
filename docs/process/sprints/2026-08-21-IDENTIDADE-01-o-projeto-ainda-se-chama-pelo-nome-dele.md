@@ -88,6 +88,37 @@ nenhuma é obviamente melhor:
 Enquanto ela não escolher, **nada nesta sprint começa** — trocar por um id e
 depois por outro é pagar a migração duas vezes.
 
+### Inclinação registrada em 21/08/2026 — e NÃO é decisão fechada
+
+Dela, textual: *"por mim fechava nesse [`io.github.HefestoTeam.Hefesto`]. mas
+vamos aguardar"*.
+
+Fica registrado como **inclinação**, não como decisão: ela pediu para aguardar,
+e a sprint continua parada. Está aqui para que a próxima sessão não reabra a
+discussão do zero nem execute achando que foi fechado.
+
+**E há um detalhe técnico que precisa entrar antes de fechar:** o nome da
+organização é `Hefesto-Team`, **com hífen** — e hífen **não é válido** num
+componente de app-id. A regra (D-Bus e AppStream) é que cada componente case
+`[A-Za-z_][A-Za-z0-9_]*`:
+
+| Componente | Vale? |
+|---|---|
+| `Hefesto-Team` | **INVÁLIDO** — o hífen derruba |
+| `HefestoTeam` | válido |
+| `Hefesto_Team` | válido |
+
+Então `io.github.Hefesto-Team.Hefesto` **não existe como opção**. Se a escolha
+for essa família, o id é `io.github.HefestoTeam.Hefesto` ou
+`io.github.Hefesto_Team.Hefesto`.
+
+**O que falta conferir antes de executar, e eu não conferi:** a regra do Flathub
+para `io.github.*` exige que o componente corresponda ao dono do repositório, e
+é preciso saber **como o Flathub trata o hífen** nessa correspondência — se
+aceita a remoção, se exige underscore, ou se pede outra forma. Escolher errado
+aqui custa a migração duas vezes, que é exatamente o que esta seção existe para
+evitar. Confirmar na documentação do Flathub antes de qualquer linha de código.
+
 ---
 
 ## O roteiro
