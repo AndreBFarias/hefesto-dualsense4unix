@@ -1,5 +1,10 @@
 # DOZE-LEVAS-01 — o que já foi feito hoje, e não se refaz
 
+- **Estado:** CONCLUÍDA — dez dos artefatos citados foram reabertos e estão na
+  árvore (`bancada.py:190`, os quatro portões em `scripts/`, a ADR-020, os três
+  testes e os estudos FAKE-QUE-DESVIA-01); ressalva: os hashes citados aqui,
+  `874fdda` entre eles, já não existem — o histórico foi reescrito depois
+  (verificado em 21/08/2026)
 - **Escrito em:** 13/08/2026, na branch `restauro/inicio-da-sessao`
 - **Grau:** **REGISTRO DE EXECUÇÃO.** Não é plano e não é proposta: as doze
   levas **já rodaram** e estão no commit `874fdda`. Cada `caminho:linha` deste

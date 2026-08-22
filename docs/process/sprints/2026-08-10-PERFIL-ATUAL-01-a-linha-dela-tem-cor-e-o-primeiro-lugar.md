@@ -1,5 +1,6 @@
 # PERFIL ATUAL — a linha dela ganha cor e o primeiro lugar
 
+- **Estado:** CONCLUÍDA — `tests/unit/test_perfil_atual_01_a_linha_dela_tem_cor_e_o_primeiro_lugar.py:293` traz a mordida `test_a_cor_nao_volta_a_ser_um_foreground_de_celula`, commit `90d77d2`; o *Status* abaixo ainda pedia o olho dela (verificado em 21/08/2026)
 - **Escrito em:** 10/08/2026, na branch `restauro/inicio-da-sessao`
 - **Nasceu de:** *"esse perfil inclusive precisa ter uma linha de cor de destaque
   e aparecer primeiro na guia de perfil pra sempre evidenciar o perfil atual"*

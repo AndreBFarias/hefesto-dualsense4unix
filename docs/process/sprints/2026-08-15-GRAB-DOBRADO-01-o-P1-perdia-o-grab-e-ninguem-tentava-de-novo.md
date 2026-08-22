@@ -1,5 +1,11 @@
 # GRAB-DOBRADO-01 — o P1 perdia o `EVIOCGRAB` e ninguém tentava de novo
 
+**Estado:** CONCLUÍDA — a retomada periódica do `EVIOCGRAB` está em
+`daemon/lifecycle.py:84`, `:4203` e `:4393`, a detecção do P1 dobrado em
+`daemon/subsystems/gamepad.py:440`, e o portão em
+`tests/unit/test_grab_dobrado_01_o_primario_nao_tentava_de_novo.py`
+(verificado em 21/08/2026)
+
 **15/08/2026.** É a **D-29.1** do índice de 14/08, a que ela mandou abrir frente
 própria: *"o grab do controle primário está FALHANDO agora"*.
 

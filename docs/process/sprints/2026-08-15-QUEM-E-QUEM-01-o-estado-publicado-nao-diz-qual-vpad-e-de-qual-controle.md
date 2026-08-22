@@ -1,5 +1,11 @@
 # QUEM-É-QUEM-01 — o estado publicado não diz qual vpad é de qual controle
 
+**Estado:** CONCLUÍDA — as três entregas estão no fonte
+(`coop.identidade_do_vpad:135`, `_item_da_mesa:162` publicando `coop.mesa[]`,
+`nome_divergente:196`, e `rumble_ff.per_vpad[]` pela MESMA função), a dica na
+tela em `app/widgets/controller_card.py:1049`, com as duas mordidas; segue
+pendente só o fecho com o olho dela na dica (verificado em 21/08/2026)
+
 - **Escrito em:** 15/08/2026, de madrugada, na branch `restauro/inicio-da-sessao`,
   sobre `97c2cbf` com a árvore suja (a cura MESA-CHEIA-12 está escrita e **não
   commitada**).

@@ -1,5 +1,12 @@
 # A-PORTA-QUE-A-CASA-CONSTRUIU-01 — os instrumentos batem na porta errada
 
+- **Estado:** CONCLUÍDA — a porta está declarada em
+  `integrations/hidraw_broker_client.py:150` e usada por toda a bancada
+  (`scripts/ensaios/comum.py`, `censo_features.py:201`, `capture_blueprint.py`,
+  `record_hid_capture.py`, `doctor.sh`, `disable_steam_input.sh`), com portão em
+  `tests/unit/test_a_porta_que_a_casa_construiu_01.py` e uso ao vivo no cabeçalho
+  de `docs/data/ensaios-brutos/2026-08-15-E1-corpo-do-0x32.txt`
+  (verificado em 21/08/2026)
 - **Escrito em:** 15/08/2026, de madrugada, na branch `restauro/inicio-da-sessao`,
   sobre `97c2cbf`.
 - **Grau:** **MEDIDO** na máquina dela, agora, com os quatro controles ligados —

@@ -1,8 +1,13 @@
 # APLICAR-VERDADE-01 — o rodapé não mente mais, a ponte ainda mente
 
-- **Status:** ENTREGUE EM CÓDIGO, com **um resto medido**. Medido em
-  01/08/2026: a cadeia daemon -> IPC -> rodapé está completa e coberta por
-  teste; o que ficou de fora é o segundo caminho da mesma chamada, o
+- **Estado:** CONCLUÍDA — **o resto medido FOI CURADO**:
+  `apply_draft_detalhado()` (`app/ipc_bridge.py:597`) devolve a resposta inteira
+  do daemon e a aba Lightbar já a consome (`app/actions/lightbar_actions.py:675`
+  e `:785`); o `apply_draft` bool fica em `:659` por decisão escrita em
+  `:603-611` (verificado em 21/08/2026)
+- **Status em 01/08/2026, preservado:** ENTREGUE EM CÓDIGO, com **um resto
+  medido**. Medido em 01/08/2026: a cadeia daemon -> IPC -> rodapé está
+  completa e coberta por teste; o que ficou de fora é o segundo caminho da mesma chamada, o
   `ipc_bridge.apply_draft()`, que **estreita a verdade de volta para um `bool`**
   antes de ela chegar na aba Lightbar
 - **Prioridade:** MÉDIA — nada aqui desfaz trabalho dela, mas o resto reproduz,

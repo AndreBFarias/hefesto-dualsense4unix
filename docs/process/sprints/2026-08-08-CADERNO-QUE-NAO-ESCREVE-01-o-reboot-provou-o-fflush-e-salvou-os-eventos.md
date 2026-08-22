@@ -1,5 +1,6 @@
 # CADERNO-QUE-NÃO-ESCREVE-01 — o reboot provou o `fflush`, e os eventos sobreviveram
 
+- **Estado:** CONCLUÍDA — e o *"nenhuma linha de código foi tocada"* abaixo caducou: `scripts/storm_watch.sh:63` sonda `awk -W interactive` em tempo de execução, e `:81` registra que a cura é o `-W interactive`, não o `fflush()` do título; `tests/unit/test_caderno_que_nao_escreve_01.py` trava as duas metades (verificado em 21/08/2026)
 - **Escrito em:** 08/08/2026, madrugada, na branch `restauro/inicio-da-sessao`
 - **O que esta sprint fecha:** o item **`OQ-1`** da **LEVA 0** da
   [ordem de execução de 07/08](2026-08-07-INDICE-a-ordem-de-execucao-do-que-o-diagnostico-abriu.md),

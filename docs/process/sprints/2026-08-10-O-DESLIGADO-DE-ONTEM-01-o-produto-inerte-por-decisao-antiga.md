@@ -1,5 +1,6 @@
 # O DESLIGADO DE ONTEM — o produto inerte por uma decisão antiga, em silêncio
 
+- **Estado:** CONCLUÍDA — cinco marcas em `app/actions/home_actions.py`, `tests/unit/test_o_desligado_de_ontem_01.py` de pé, commit `86f1b23` e release `d0cbbcc` (0.9.3); o *Status* abaixo ainda pedia a palavra dela sobre a tela (verificado em 21/08/2026)
 - **Escrito em:** 10/08/2026, na branch `restauro/inicio-da-sessao`
 - **Nasceu de:** *"o touchpad não tá funcionando e o giroscópio não funciona
   também e se tão no modo nativo ou hefesto dualsense, deveriam funcionar por

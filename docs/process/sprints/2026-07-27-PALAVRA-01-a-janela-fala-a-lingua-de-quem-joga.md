@@ -1,7 +1,13 @@
 # PALAVRA-01 — a janela fala a língua de quem joga
 
-- **Status:** **PARCIAL — as palavras entraram; a E5 continua ABERTA**
-  (conferido em 31/07: `.pre-commit-config.yaml` declara quatro hooks —
+- **Estado:** **CONCLUÍDA — a E5 ENTROU** (verificado em 21/08/2026:
+  `scripts/validar-palavra-de-tela.py` é hook `palavra-de-tela` no
+  `.pre-commit-config.yaml`, com `--all` e `always_run`, e tem job próprio no CI
+  — `.github/workflows/ci.yml:88` e `:109`; o jargão banido está travado por
+  `tests/unit/test_palavra_a_janela_fala_a_lingua.py:239`)
+- **Status em 31/07/2026, preservado:** **PARCIAL — as palavras entraram; a E5
+  continua ABERTA** (conferido em 31/07: `.pre-commit-config.yaml` declarava
+  quatro hooks —
   `acentuacao-strict`, `glifos`, `anonimato` e `ruff-check` — e **nenhum** olha
   capitalização ou jargão de texto de tela; é o portão que impediria a próxima
   leva de desfazer a janela em português)

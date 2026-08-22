@@ -1,5 +1,6 @@
 # MONITOR-QUE-VENCE-01 e QUEM-DÁ-O-JOGADOR-2-01 — a regra que não podia disparar, e o dono que ninguém declarava
 
+- **Estado:** CONCLUÍDA nas duas Partes — a I em `scripts/fix_wireplumber_default_source.sh:87` (o drop-in `51-…`, invertido no commit `55e3c61`) com `tests/unit/test_monitor_que_vence_01.py`; a II em `app/actions/profiles_actions.py` e `app/actions/home_actions.py` (verificado em 21/08/2026)
 - **Escrito em:** 08/08/2026, madrugada, na branch `restauro/inicio-da-sessao`
 - **O que esta sprint responde:** as duas frentes que ficaram abertas no
   [índice da madrugada](2026-08-08-INDICE-a-madrugada-em-que-o-produto-era-o-reu.md),

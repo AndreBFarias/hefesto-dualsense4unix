@@ -1,5 +1,6 @@
 # CICLO-QUE-PROVA-01 — desinstalar, instalar, e comparar o que o produto recria sozinho
 
+- **Estado:** CONCLUÍDA — o achado mais caro do ciclo (12 snapshots de bond viravam 1) tem cura em `uninstall.sh:807`, que MOVE os bonds para `bt-bonds.pre-uninstall-<timestamp>` em vez de apagar, com `tests/unit/test_ciclo_que_prova_01.py` lendo o script e `scripts/retrato_do_estado.sh` de pé (verificado em 21/08/2026)
 - **Escrito em:** 08/08/2026, madrugada, na branch `restauro/inicio-da-sessao`
 - **O que esta sprint é:** o resultado do ciclo que ela pediu, **executado**
 - **Natureza:** medição de ponta a ponta, na máquina dela, com o ciclo real

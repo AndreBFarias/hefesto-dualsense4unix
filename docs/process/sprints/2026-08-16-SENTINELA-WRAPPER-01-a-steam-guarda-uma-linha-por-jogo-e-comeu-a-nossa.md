@@ -1,5 +1,13 @@
 # SENTINELA-WRAPPER-01 — a Steam guarda uma linha por jogo, e comeu a nossa
 
+**Estado:** CONCLUÍDA — as três camadas estão em
+`integrations/sentinela_do_wrapper.py` (`censo_do_wrapper:302`,
+`frase_do_aviso:393`, `reparar_ou_adiar:448`), chegam ao `scripts/doctor.sh:1599`
+e ao `install.sh:3325` sem flag, mordem em
+`tests/unit/test_sentinela_do_wrapper_01_a_steam_comeu_o_hefesto_launch.py`, e a
+ligação com a janela fechou em `app/actions/carona_do_wrapper.py`
+(verificado em 21/08/2026)
+
 **16/08/2026.** Defeito pego ao vivo, no processo do jogo rodando.
 
 ## O que ela viu

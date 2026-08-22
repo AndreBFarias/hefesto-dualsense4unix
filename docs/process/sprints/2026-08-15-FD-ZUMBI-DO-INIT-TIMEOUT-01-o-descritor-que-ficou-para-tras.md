@@ -1,5 +1,10 @@
 # FD ZUMBI DO INIT TIMEOUT 01 — o descritor que ficou para trás
 
+**Estado:** CONCLUÍDA — a cura está em `core/backend_pydualsense.py:1857`, ao lado
+do warning `pydualsense_init_timeout` em `:1939`, com portão em
+`tests/unit/test_backend_init_timeout_nao_vaza_fd.py` e commit `7f9a303`
+(verificado em 21/08/2026)
+
 **15/08/2026.** Defeito **visto na máquina dela** durante a investigação do
 co-op, confirmado no `/proc` do daemon vivo, rastreado no fonte, medido no
 journal e **curado com teste que morde**. Nenhuma unit foi parada, nada foi

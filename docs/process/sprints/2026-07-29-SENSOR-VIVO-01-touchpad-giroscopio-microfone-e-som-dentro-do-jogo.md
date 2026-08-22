@@ -1,7 +1,13 @@
 # SENSOR-VIVO-01 — touchpad, giroscópio, microfone e som dentro do jogo
 
-- **Status:** LEVANTAMENTO MEDIDO — nenhuma linha de código nesta rodada. O que
-  esta página faz é responder, com caminho e linha, quais dos quatro já chegam
+- **Estado:** CONCLUÍDA — quatro das seis entregas viraram código: E1/E2 em
+  `scripts/doctor.sh:1023` e `:1100` (chamada em `:1515`), E4 em
+  `daemon/ipc_handlers.py:2816`, E5 em `app/widgets/controller_card.py:802` e
+  `:1935` com `tests/unit/test_saida_muda_camada1.py`, e a E6 é "nada a fazer"
+  por medição (verificado em 21/08/2026)
+- **Status em 29/07/2026, preservado:** LEVANTAMENTO MEDIDO — nenhuma linha de
+  código nesta rodada. O que esta página faz é responder, com caminho e linha,
+  quais dos quatro já chegam
   ao jogo e o que falta para os outros
 - **Prioridade:** ALTA para o item 3 (o microfone da máquina dela **não grava
   ela agora**, e a medição está abaixo); MÉDIA para o item 2; nenhuma para o

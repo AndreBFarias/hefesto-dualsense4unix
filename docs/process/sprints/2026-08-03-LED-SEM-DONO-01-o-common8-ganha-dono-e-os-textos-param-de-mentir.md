@@ -1,5 +1,6 @@
 # LED-SEM-DONO-01 — o `common[8]` ganha dono, e os textos param de mentir
 
+- **Estado:** CONCLUIDA — o "Status: PROPOSTA" abaixo caducou: a cura saiu sob outro nome (AUDIO-OWNER-01) em `core/backend_pydualsense.py:1098-1100` (`mic_led is None` limpa o `VALID_FLAG1_MIC_MUTE_LED_CONTROL_ENABLE`), e `set_microphone_led()` em `:942` deu dono ao `common[8]` (verificado em 21/08/2026)
 - **Status:** PROPOSTA, escrita em 03/08/2026
 - **Prioridade:** ALTA — e por um motivo que não é o tamanho do defeito: **ela é
   pré-requisito de ACEITE das outras duas sprints do microfone**

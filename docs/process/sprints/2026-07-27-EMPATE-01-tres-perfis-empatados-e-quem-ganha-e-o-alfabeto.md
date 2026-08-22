@@ -1,5 +1,14 @@
 # EMPATE-01 — três perfis empatados, e quem ganha é o alfabeto
 
+- **Estado:** CONCLUÍDA — a E2 fechou: `perfis_em_disputa` e
+  `vencedor_da_disputa` (`app/actions/profiles_actions.py:240` e `:245`) fiados
+  na coluna *Quando usar* (`:859`, `:902`, `:2925`), e o incumbente vence em
+  `profiles/manager.py:1055`. Morde:
+  `tests/unit/test_empate01_a_coluna_diz_quem_ganha.py` e
+  `test_empate01_o_incumbente_vence.py`. **Corrige o status abaixo:** a
+  justificativa dele é fato errado hoje — `profiles_actions.py:139` não traduz
+  `"any"` para `"Sempre"`, trata de perfil SEM a seção `mode`
+  (verificado em 21/08/2026)
 - **Status:** **PARCIAL — o desempate por incumbente entrou em `8d7fd45`; a E2
   continua ABERTA** (conferido em 31/07: `app/actions/profiles_actions.py:139`
   traduz `"any"` para `"Sempre"` e a coluna *Quando usar* termina aí — a aba não

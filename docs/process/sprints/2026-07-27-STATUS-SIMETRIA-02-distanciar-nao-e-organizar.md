@@ -3,8 +3,9 @@
 - **Status:** **ENTREGUE — o teto elástico e a repartição da sobra entraram em
   `8d7fd45`** (conferido em 31/07: `STATUS-SIMETRIA-02` está citada em
   `app/widgets/controller_card.py` e em `gui/main.glade`; o aceite dos 200px de
-  vão é cobrado por `test_status_faixa_blocos.py:251`, com
-  `VAO_MAXIMO_ENTRE_BLOCOS = 200` em `:59`). **Duas heranças continuam abertas em
+  vão é cobrado por `test_status_faixa_blocos.py:297-302`, com
+  `VAO_MAXIMO_ENTRE_BLOCOS = 200` em `:65` — linhas reconferidas em
+  21/08/2026). **Duas heranças continuam abertas em
   outras sprints, e não aqui:** o miolo do frame Estado (E2 da
   [LARGURA-01](2026-07-29-LARGURA-01-a-mesma-largura-em-todas-as-abas.md)) e os
   desenhos que não cresceram junto com o teto

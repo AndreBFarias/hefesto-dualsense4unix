@@ -1,5 +1,7 @@
 # METODO-01 — amplitude máxima na primeira tentativa
 
+**Estado:** CONCLUIDA — registro de método, sem código: a curva medida virou `SP_PREAMP_GAIN_MASK`/`SP_PREAMP_GAIN_PADRAO` em `core/ds_output_report.py:183-184`, e a lição está no CLAUDE.md (verificado em 21/08/2026)
+
 Data: 2026-08-01. Escopo: método de medição, não código. Nada aqui altera a
 SOM-02; o que ele registra é COMO quase se publicou um diagnóstico errado sobre
 ela, e a medição instrumental que reabilitou a entrega.

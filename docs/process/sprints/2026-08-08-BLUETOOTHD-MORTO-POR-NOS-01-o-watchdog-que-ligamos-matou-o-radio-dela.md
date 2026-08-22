@@ -1,5 +1,6 @@
 # BLUETOOTHD-MORTO-POR-NÓS-01 — o watchdog que nós ligamos matou o rádio dela
 
+- **Estado:** CONCLUÍDA — a cura está no `install.sh:2215` (`WatchdogSec=0`, com o nome da sprint dentro) e no drop-in de resiliência anunciado em `:2264`; `scripts/bt_health_watchdog.sh` e `tests/unit/test_bt_resilience_assets.py` de pé (verificado em 21/08/2026)
 - **Escrito em:** 08/08/2026, madrugada, na branch `restauro/inicio-da-sessao`
 - **O que esta sprint responde:** a frase dela, dita no meio da noite —
   *"o bt tá se auto desligando"* — e a perda dos quatro pareamentos

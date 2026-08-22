@@ -1,5 +1,6 @@
 # POR UNIDADE — o override por peça deixa de ser só luz e gatilho
 
+- **Estado:** CONCLUÍDA — oito arquivos de `src/` citam a sprint (a maior dispersão das de 10/08) e `tests/unit/test_por_unidade_01_todas_as_abas.py` está de pé, commit `90d77d2`; o *Status* abaixo ainda pedia o olho dela (verificado em 21/08/2026)
 - **Escrito em:** 10/08/2026, na branch `restauro/inicio-da-sessao`
 - **Nasceu de:** *"se eu quiser fazer uma guia específica do perfil x pro
   controle branco e outra pro mesmo perfil mas pra um controle preto ele vai

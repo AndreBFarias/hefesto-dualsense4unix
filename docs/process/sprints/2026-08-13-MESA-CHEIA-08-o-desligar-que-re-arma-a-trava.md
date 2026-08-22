@@ -1,9 +1,14 @@
 # MESA-CHEIA-08 — o "Desligar" que re-arma a trava que acabou de soltar
 
+- **Estado:** CONCLUÍDA — a cura está em `app/actions/triggers_actions.py:641`,
+  dentro do `_reset_trigger` (`:621`), e as mordidas em
+  `tests/unit/test_triggers_actions.py:260`, `:307` e `:623`
+  (verificado em 21/08/2026)
 - **Escrito em:** 13/08/2026, na branch `restauro/inicio-da-sessao`, sobre
   `cc768d4` (tag `v0.9.4.2`)
 - **Índice da leva:** [as ondas da mesa cheia](2026-08-13-INDICE-a-mesa-cheia-cada-jogador-na-cor-dele.md)
-- **Status:** **PLANO — nada escrito em código**
+- **Status:** ~~**PLANO — nada escrito em código**~~ — **caducou em
+  21/08/2026:** era verdade em 13/08; a cura entrou. Ver **Estado**, acima.
 - **Depende de:** nada. **É a primeira coisa a consertar depois de medir.**
 - **Custo mínimo:** 40 min
 - **É regressão de cura**, não defeito novo: a **R-19** está desfeita, e o teste

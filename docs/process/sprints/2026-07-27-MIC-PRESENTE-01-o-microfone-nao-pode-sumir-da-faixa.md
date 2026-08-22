@@ -1,9 +1,11 @@
 # MIC-PRESENTE-01 — o microfone não pode sumir da faixa
 
-- **Status:** **ENTREGUE** (conferido em 31/07: `MIC-PRESENTE-01` aparece **sete
-  vezes** em `app/widgets/controller_card.py`; os dois `hide()` viraram estado
-  apagado com o motivo em palavras, e a largura do bloco é reservada por campo
-  fixo — `_MIC_ESTADO_CHARS`, `:369`)
+- **Status:** **CONCLUÍDA** (conferido em 31/07, reconferido em 21/08/2026:
+  `MIC-PRESENTE-01` aparece **oito vezes** em `app/widgets/controller_card.py`;
+  os dois `hide()` viraram estado apagado com o motivo em palavras, e a largura
+  do bloco é reservada por campo fixo — `_MIC_ESTADO_CHARS`, `:461`, usado em
+  `:3021`, `:3022` e `:3055`. Teste que morde:
+  `tests/unit/test_status_faixa_blocos.py`)
 - **Prioridade:** MÉDIA
 - **Aberta em:** 27/07/2026, olhando a aba Status
 - **Frase dela, literal:** *"na aba status falta a presença permanente do

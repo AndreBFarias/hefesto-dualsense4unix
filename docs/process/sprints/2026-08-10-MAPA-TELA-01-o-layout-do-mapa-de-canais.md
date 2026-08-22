@@ -1,5 +1,6 @@
 # MAPA-TELA-01 — o layout do mapa de canais
 
+- **Estado:** CONCLUÍDA — `specs.html` (1215 linhas) abre sem servidor, `scripts/gerar-mapa.py` o gera do CSV, `bancada.py` está na raiz e o portão `scripts/check_paridade_transporte.py` já tem chamador (verificado em 21/08/2026)
 - **Escrito em:** 10/08/2026, na branch `restauro/inicio-da-sessao`
 - **Nasceu de:** *"a ideia aqui é termos um mapa rápido que nos permita ver por
   qual canal via bluetooth acionamos o lightbar e por qual canal via cabo

@@ -1,5 +1,11 @@
 # O LAÇO DE ESCRITA 02 — os dois achados viram cura
 
+**Estado:** CONCLUÍDA — Defeito A curado pelo `with self._write_lock:` que
+envolve carimbo e entrega em `writeReport` (`core/backend_pydualsense.py:1249`),
+Defeito B por `LEITURA_VAZIA_AVISO_SEC = 1.0` (`:275`) e os três eventos novos
+(`:804`, `:828`, `:844`), com mordida em `tests/unit/test_laco_de_escrita_02.py`
+(verificado em 21/08/2026)
+
 **15/08/2026.** Sucessor direto da §8 de
 [O-LACO-DE-ESCRITA-01](2026-08-15-O-LACO-DE-ESCRITA-01-o-suspeito-que-sobrou.md),
 que nomeou dois defeitos por leitura de código e não pôde tocá-los (`src/` era

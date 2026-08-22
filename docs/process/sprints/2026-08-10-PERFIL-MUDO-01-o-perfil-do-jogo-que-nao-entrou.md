@@ -1,5 +1,6 @@
 # PERFIL-MUDO-01 — o perfil daquele jogo que não entrou, e a janela que não dizia
 
+- **Estado:** CONCLUÍDA — `profiles/porque_nao_entrou.py` nasceu desta sprint, seis arquivos de `src/` e quatro de `tests/` a citam, e o `if perfil.e_catch_all: continue` que passava arrancado MORREU de `profiles/simple_match.py` (verificado em 21/08/2026)
 - **Escrito em:** 10/08/2026, na branch `restauro/inicio-da-sessao`
 - **Nasceu de:** *"mas sumiu na interface fui jogar pragmata pra testar o
   touchpad, o giroscopio e ele tá duplicado"*

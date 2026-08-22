@@ -1,5 +1,6 @@
 # TRES-CONTROLES-01 — o espelho do espelho, e o jogo com três controles
 
+- **Estado:** CONCLUÍDA — `PAR_STEAM_INPUT_VIRTUAL` em `daemon/launch_env.py:140` entra no VALOR de `SDL_GAMECONTROLLER_IGNORE_DEVICES`, com `tests/unit/test_tres_controles_no_pragmata_01.py` travando o par; o *Status* abaixo ainda pedia a contagem dela no Pragmata (verificado em 21/08/2026)
 - **Escrito em:** 10/08/2026, na branch `restauro/inicio-da-sessao`
 - **Nasceu de:** *"ok inputs ainda tão duplicado na hora do pragmata mesmo
   clicando lá em entregar o controle pra steam"*

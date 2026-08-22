@@ -1,13 +1,19 @@
 # BONDS-QUE-SUMIAM-01 — o agente de pareamento que nós mesmos derrubamos
 
+- **Estado:** CONCLUÍDA — as duas curas estão commitadas (`KillSignal=SIGKILL` em
+  `assets/systemd/hefesto-bt-agent.service:130` e o `reset-failed` em
+  `install.sh:2472`, commits `888724a` e `a20b898`), e a E1 que faltava existe:
+  três mordidas em `tests/unit/test_o_install_ressuscita_o_agente_de_pareamento.py`
+  (verificado em 21/08/2026)
 - **Escrito em:** 15/08/2026, de madrugada, na branch `restauro/inicio-da-sessao`,
   sobre `97c2cbf`.
 - **Grau:** **MEDIDO e CURADO.** As duas curas estão **na árvore de trabalho e na
   máquina dela**, e **NÃO estão commitadas** — conferir com `git status --short`.
   Este documento é o registro que falta para elas.
+  **Caducou em 21/08/2026:** as duas curas estão commitadas.
 - **Depende de:** nada.
 - **O que sobra:** um portão. A cura roda; o que não existe é o teste que impede
-  ela de voltar.
+  ela de voltar. **Caducou em 21/08/2026:** o portão existe.
 
 ---
 

@@ -1,5 +1,10 @@
 # ESPELHO-QUE-NÃO-NASCEU-01 — o jogador que perde a corrida do hotplug fica mudo
 
+**Estado:** CONCLUÍDA — a cura está em `daemon/subsystems/coop.py:1064`, no bloco
+"ESPELHO-QUE-NÃO-NASCEU-01 (15/08/2026) — POR QUE NÃO SE OLHA O HANDLE", com as
+mordidas em `tests/unit/test_motion_wiring.py:11`, `:221` e `:264`
+(verificado em 21/08/2026)
+
 **15/08/2026.** Mesa de quatro DualSense. Um dos quatro vpads entregava ao jogo
 entre **0,3 e 27,5 Hz** enquanto os outros três entregavam **165-196 Hz** — duas
 a três ordens de grandeza abaixo, com o controle físico correspondente

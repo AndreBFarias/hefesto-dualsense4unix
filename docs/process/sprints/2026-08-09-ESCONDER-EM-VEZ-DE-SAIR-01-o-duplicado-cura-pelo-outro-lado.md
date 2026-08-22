@@ -1,5 +1,6 @@
 # ESCONDER EM VEZ DE SAIR — o controle duplicado curado pelo outro lado
 
+- **Estado:** CONCLUÍDA — o rótulo de 09/08 abaixo tem coordenadas velhas; hoje `esconder_o_fisico_para_o_jogo` está em `gamepad.py:544` (chamada em `:517`) e a caixinha em `main.glade:2359`, com doze arquivos de `tests/` citando a sprint (verificado em 21/08/2026)
 - **Escrito em:** 09/08/2026, madrugada, na branch `restauro/inicio-da-sessao`
 - **Grau:** o defeito é **MEDIDO**; o desenho é **DECISÃO DELA**, tomada hoje
 - **O que é:** a caixinha *"Deixar a Steam entregar o controle neste jogo"* passa

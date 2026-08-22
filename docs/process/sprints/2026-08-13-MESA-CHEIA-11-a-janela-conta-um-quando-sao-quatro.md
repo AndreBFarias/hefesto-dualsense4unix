@@ -1,9 +1,16 @@
 # MESA-CHEIA-11 — a janela conta um quando são quatro
 
+- **Estado:** CONCLUÍDA — as quatro entregas estão de pé: `native_bt_fragil_controles`
+  (`daemon/ipc_handlers.py:2355` → `app/actions/home_actions.py:404`), o banner do
+  co-op que nomeia quem caiu (`_COOP_DEGRADED_UM` em `home_actions.py:323`), o
+  denominador honesto em `controles_no_cabo` (`integrations/storm_doctor.py:325`)
+  e a ordem da frase em `:283`, com portões em
+  `tests/unit/test_mesa_cheia_11_*.py` (verificado em 21/08/2026)
 - **Escrito em:** 13/08/2026, na branch `restauro/inicio-da-sessao`, sobre
   `cc768d4` (tag `v0.9.4.2`)
 - **Índice da leva:** [as ondas da mesa cheia](2026-08-13-INDICE-a-mesa-cheia-cada-jogador-na-cor-dele.md)
-- **Status:** **PLANO — nada escrito em código**
+- **Status:** ~~**PLANO — nada escrito em código**~~ — **caducou em
+  21/08/2026:** era verdade em 13/08; a cura entrou. Ver **Estado**, acima.
 - **Depende de:** nada
 - **Custo mínimo:** 3 h 20 (quatro entregas, a mais cara de 65 min)
 - **Zero pixel novo.** É a sprint mais barata da leva e a que mais frases
@@ -82,7 +89,7 @@ refazer da leva inteira.
 
    DEPOIS
    ┌──────────────────────────────────────────────────────────┐
-   │ ⚠ Modo Nativo com os Controles 2, 3 e 4 em Bluetooth:    │
+   │ ! Modo Nativo com os Controles 2, 3 e 4 em Bluetooth:    │
    │   alguns jogos não os enxergam.                          │
    └──────────────────────────────────────────────────────────┘
 

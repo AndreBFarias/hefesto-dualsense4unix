@@ -1,5 +1,6 @@
 # JOGO-COMPLETO-01 — os nove recursos dentro do jogo
 
+- **Estado:** CONCLUIDA — o "Status (02/08/2026): ABERTA" abaixo caducou: a E4 está no `install.sh:3369` (passo 11b-bis, sem flag, ordem broker→wrapper em `:3386-3394`), com teste em `tests/unit/test_launch_options_apply_cli.py` (verificado em 21/08/2026)
 - **Status (02/08/2026):** ABERTA. A E1 desta sprint foi absorvida pela
   PAINEL-DA-VERDADE-01 e pela PARIDADE-SONY-01 (o `visto_ha_s` é o
   instrumento que ela pedia). A **E4 — os dois interruptores no install —

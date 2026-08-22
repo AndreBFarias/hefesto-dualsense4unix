@@ -1,5 +1,12 @@
 # CONTAGEM-01 — a tela diz "2 jogadores" com quatro controles na mesa
 
+- **Estado:** CONCLUÍDA — uma contagem só em `_contagem_de_controles`
+  (`app/actions/status_actions.py:2467`), externos como LISTA (`:417`) e o
+  rótulo "N detectados pelo sistema" fora (`app/actions/emulation_actions.py:49`);
+  a entrega 3 foi superada pela EXT-COUNT-01 (numerar não é adotar). Morde:
+  `tests/unit/test_contagem_um_numero_na_janela.py`. O "Status: ABERTA" logo
+  abaixo caducou — preservado por ser o rótulo que valeu de 25/07 a 21/08
+  (verificado em 21/08/2026)
 - **Status:** ABERTA
 - **Prioridade:** ALTA — atinge diretamente o objetivo dos quatro jogadores
 - **Aberta em:** 25/07/2026, por inspeção visual da janela

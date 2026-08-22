@@ -1,9 +1,15 @@
 # MESA-CHEIA-09 — "aplicado" sem byte nenhum
 
+- **Estado:** CONCLUÍDA — as três entregas estão de pé: `apply_output_for`
+  devolve `ResultadoDeSaida` (`core/backend_pydualsense.py:4022`), o par
+  `(aplicado_em, guardado_em)` sai em `daemon/ipc_handlers.py:935`, e
+  `app/textos_de_aplicacao.py` existe, com portões em
+  `tests/unit/test_mesa_cheia_09_*.py` (verificado em 21/08/2026)
 - **Escrito em:** 13/08/2026, na branch `restauro/inicio-da-sessao`, sobre
   `cc768d4` (tag `v0.9.4.2`)
 - **Índice da leva:** [as ondas da mesa cheia](2026-08-13-INDICE-a-mesa-cheia-cada-jogador-na-cor-dele.md)
-- **Status:** **PLANO — nada escrito em código**
+- **Status:** ~~**PLANO — nada escrito em código**~~ — **caducou em
+  21/08/2026:** era verdade em 13/08; a cura entrou. Ver **Estado**, acima.
 - **Depende de:** nada
 - **Custo mínimo:** 2 h 15 (E1 45 min + E2 30 min + E3 60 min)
 - **É a raiz de quatro mentiras da janela, e todas as quatro pioram com quatro
