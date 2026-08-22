@@ -240,10 +240,65 @@ leva — esta seção não é registro do que se achou, é fila do que falta.
 
 ---
 
-## 5. O QUE PRECISA DELA
+## 4.1. AS 28 PARCIAIS TRIADAS — e por que NENHUMA é barata
 
-84 das 127 sprints estão marcadas `DELA` na seção 3. Elas se reduzem a quatro
-gestos:
+Das 87 parciais, 28 não dependem dela. Quatro agentes mediram o custo real de
+fechar cada uma, e um cético conferiu as seis que pareciam baratas.
+
+| Classe | Quantas |
+|---|---|
+| `CONSTRUIR` — falta código de verdade | **12** |
+| `SO_TESTE` — a cura existe, falta teste que morda | 5 |
+| `NAO_FECHA_SEM_HARDWARE` — o censo não viu que precisa da bancada | 4 |
+| `SO_LIGAR` — código pronto, falta chamador | 4 |
+| `JA_FECHADA` — o censo teria errado | 2 |
+| `SO_DOC` | 1 |
+
+**O cético derrubou as SEIS.** As duas `JA_FECHADA` continuam abertas e as
+quatro `SO_LIGAR` não são "só ligar":
+
+| Sprint | Era | É | Por quê |
+|---|---|---|---|
+| PROMESSA-NAO-CUMPRIDA-01 | `SO_LIGAR` | faxina cara | O item que a sustentava (C1, métricas sem chave) está **fechado desde 01/08**, com código, teste, doc e nota de ADR. A página acusa nove coisas já feitas |
+| JOGO-01 | `SO_LIGAR` | **caducada** | `vpad_suspenso` **nunca fica `True`** num daemon de hoje. O dado que se mandaria "ligar" está morto, e o vocabulário foi invertido por decisão dela depois da sprint |
+| PERFIL-NASCE-CERTO-01 | `SO_LIGAR` | aberta e cara | O botão existe desde 06/08, mas o **gesto que ele dispara ficou inerte** quando a E2 entrou — e a própria E2 escreveu isso |
+| MASCARA-POR-JOGADOR-01 | `SO_LIGAR` | **escolha** | As peças existem; o que falta é decidir, não ligar |
+| DOC-VERDADE-01 | `JA_FECHADA` | aberta | A régua da classificação estava errada: grepou nome velho e achou zero |
+| ORDEM-DE-CHEGADA-01 | `JA_FECHADA` | aberta | Existe **decisão datada de NÃO ligar**, dentro da própria lápide usada como prova a favor |
+
+**A conclusão prática:** não há fruta baixa nas parciais. O que parecia "uma
+hora" é faxina documental, feature caducada ou decisão dela. A contagem do
+cabeçalho (74/87/40) **não muda** — as duas `JA_FECHADA` foram derrubadas.
+
+Um achado que vale sprint própria: **`vpad_suspenso` nunca fica `True`**. É
+estado publicado que ninguém pode observar, e há texto de tela que depende dele.
+
+---
+
+## 5. O QUE PRECISA DELA — são SEIS, não 84
+
+**O documento é [`DECISOES.md`](../../DECISOES.md), na raiz.** Ele tem o print, as
+opções e o custo de cada uma. Esta seção não repete o conteúdo dele.
+
+O censo marcou 84 sprints como dependentes dela. Seis agentes leram uma a uma e
+extraíram **163 perguntas**; um cético independente conferiu cada uma, com uma
+instrução acima das outras: *antes de aceitar, procure se já foi decidida.*
+
+```
+163  perguntas extraídas
+ 23  descartadas: não eram decisão dela, eram trabalho
+ 54  DERRUBADAS — já tinham resposta, com data e lugar
+  6  sobreviveram        (29 a 39 minutos, no total)
+```
+
+O projeto carregava um peso falso. As 54 já respondidas estão no fim do
+`DECISOES.md`, em tabela, para ninguém reabri-las — e em quatro delas a coluna
+de data ficou com travessão, porque a pergunta estava **mal feita**, não
+respondida.
+
+Os quatro gestos abaixo continuam descrevendo o TIPO de trabalho que sobra nas
+sprints marcadas `DELA` na seção 3 — a maior parte é bancada e olho na tela, que
+não são decisão e por isso não entram no `DECISOES.md`:
 
 | Gesto | O que destranca |
 |---|---|
