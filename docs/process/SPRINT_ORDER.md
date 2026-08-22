@@ -20,6 +20,7 @@ A ordem e o motivo estão no índice do dia, e não se repetem aqui:
 | **Agora** | `CONFIG-01` — a aba Configurações nasce com placeholders (`sprints/2026-08-21-ABA-CONFIGURACOES/`) |
 | **22/08**, com o hardware na mesa | a bancada de rádio, pelo `GUIA-RADIO-DA-SALA.md` da mesma pasta |
 | Depois | `CONFIG-02`, que consome a leitura de rádio |
+| Quando `CONFIG-09` existir | a E4 da [VPAD-SUSPENSO-MORTO-01](sprints/2026-08-22-VPAD-SUSPENSO-MORTO-01-metade-da-cura-esta-ligada.md) — o estado aparece na seção "Está tudo certo?". As E1 a E3 dela não esperam nada e podem ir antes |
 
 ### Os oito de CÓDIGO de 22/08, em ordem de custo do silêncio
 
@@ -270,8 +271,15 @@ quatro `SO_LIGAR` não são "só ligar":
 hora" é faxina documental, feature caducada ou decisão dela. A contagem do
 cabeçalho (74/87/40) **não muda** — as duas `JA_FECHADA` foram derrubadas.
 
-Um achado que vale sprint própria: **`vpad_suspenso` nunca fica `True`**. É
-estado publicado que ninguém pode observar, e há texto de tela que depende dele.
+**O achado virou sprint:**
+[VPAD-SUSPENSO-MORTO-01](sprints/2026-08-22-VPAD-SUSPENSO-MORTO-01-metade-da-cura-esta-ligada.md).
+Confirmado com o mecanismo exato: `suspend_vpads_for_steam_input()` (que põe
+`True`) **não tem nenhuma chamada em `src/`** — só em quatro arquivos de teste —,
+enquanto a irmã `resume_vpads_after_steam_input()` é chamada em
+`gamepad.py:526`. Existe quem retoma e não existe quem suspende, então a flag só
+anda para `False`, e as três leituras de produção relatam sempre o mesmo estado.
+A suíte verde é o que esconde: a função é testada, ninguém pergunta quem a
+invoca fora dali.
 
 ---
 
