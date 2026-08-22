@@ -112,12 +112,50 @@ Então `io.github.Hefesto-Team.Hefesto` **não existe como opção**. Se a escol
 for essa família, o id é `io.github.HefestoTeam.Hefesto` ou
 `io.github.Hefesto_Team.Hefesto`.
 
-**O que falta conferir antes de executar, e eu não conferi:** a regra do Flathub
-para `io.github.*` exige que o componente corresponda ao dono do repositório, e
-é preciso saber **como o Flathub trata o hífen** nessa correspondência — se
-aceita a remoção, se exige underscore, ou se pede outra forma. Escolher errado
-aqui custa a migração duas vezes, que é exatamente o que esta seção existe para
-evitar. Confirmar na documentação do Flathub antes de qualquer linha de código.
+### CONFERIDO na documentação do Flathub, 21/08/2026
+
+A pendência acima foi fechada na fonte, e o resultado **corrige as duas formas
+que estavam na mesa**. Da página de requisitos do Flathub, literal:
+
+> *"Applications using code hosting IDs and hosted on `github.com, gitlab.com,
+> codeberg.org, framagit.org` must use `io.github., io.gitlab., page.codeberg.,
+> io.frama.` prefixes respectively and must have at least 4 components."*
+
+> *"The domain portion must be in lowercase and must convert dash `-` to
+> underscore `_`."*
+
+E o que ninguém tinha visto, que é o achado que importa:
+
+> *"`io.github.example_foo.bar` maps to `https://github.com/example-foo/bar`."*
+
+**O terceiro e o quarto componentes são o dono e o REPOSITÓRIO**, não o dono e o
+nome do aplicativo. O Flathub calcula a URL do repositório a partir do id e
+confere. Ou seja:
+
+| Candidato | Mapeia para | Existe? |
+|---|---|---|
+| `io.github.HefestoTeam.Hefesto` | `github.com/HefestoTeam/Hefesto` | **não** — a org é `Hefesto-Team` e o repo é `hefesto-dualsense4unix` |
+| `io.github.Hefesto_Team.Hefesto` | `github.com/Hefesto-Team/Hefesto` | **não** — o repo `Hefesto` não existe |
+| `io.github.hefesto_team.hefesto_dualsense4unix` | `github.com/hefesto-team/hefesto-dualsense4unix` | **sim** |
+
+A inclinação dela de 21/08 era `io.github.HefestoTeam.Hefesto`, e depois
+`Hefesto_Team`. **As duas reprovam:** a primeira por perder o hífen em vez de
+convertê-lo (a regra pede `_`, não remoção) e por maiúscula na porção de
+domínio; as duas por apontarem para um repositório que não existe.
+
+### As opções que sobram, e o preço de cada uma
+
+| # | Id | O que exige | Contra |
+|---|---|---|---|
+| 1 | `io.github.hefesto_team.hefesto_dualsense4unix` | nada — casa com o que já existe | Longo, e amarra o id ao nome atual do repositório |
+| 2 | `io.github.hefesto_team.Hefesto` | criar um repositório `Hefesto` na org, ou renomear o atual | Renomear repositório de novo, um dia depois da mudança de dono |
+| 3 | `br.hefestoteam.Hefesto` ou similar | registrar o domínio e servir a página | Custo e manutenção de domínio; o Flathub cobra que ele exista |
+
+**Nenhuma é obviamente melhor, e a escolha é dela.** O que mudou é que agora as
+três estão medidas contra a regra publicada, em vez de contra a memória de quem
+escreve.
+
+**Fonte:** [Requirements — Flathub Documentation](https://docs.flathub.org/docs/for-app-authors/requirements)
 
 ---
 
